@@ -12,6 +12,8 @@ p = arr2[arp][2];
 const x := 10;
 //p = 2.4; //error
 
-// x = 28; //error
+//x = 28; //error
 
 arr2[0][1] = 23;
+
+//arr2[0] = [4.3]; //error
