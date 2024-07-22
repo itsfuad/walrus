@@ -42,5 +42,4 @@ func main() {
 	tc := typechecker.NewTypeENV(nil, filePath)
 	tc.DeclareVar("PI", &typechecker.Float{DataType: typechecker.FLOAT_TYPE, Name: "float"}, false)
 	typechecker.EvaluateTypesOfNode(tree, tc)
-	fmt.Println("No errors")
 }

@@ -5,13 +5,16 @@ import (
 	"walrus/ast"
 	"walrus/builtins"
 	"walrus/errors"
+	"walrus/utils"
 )
 
 func EvaluateProgram(program ast.ProgramStmt, env *TypeEnvironment) ValueTypeInterface {
-	fmt.Printf("Evaluating program\n")
+	utils.ColorPrint(utils.ORANGE, "### Evaluating program ###")
 	for _, item := range program.Contents {
 		EvaluateTypesOfNode(item, env)
 	}
+
+	utils.ColorPrint(utils.GREEN, "--------- passed ---------")
 
 	return nil
 }

@@ -144,10 +144,10 @@ func skipHandler(lex *Lexer, regex *regexp.Regexp) {
 	lex.advance(match)
 }
 
-func Tokenize(file string, debug bool) []Token {
+func Tokenize(filename string, debug bool) []Token {
 
-	lex := createLexer(&file)
-	lex.FilePath = file
+	lex := createLexer(&filename)
+	lex.FilePath = filename
 
 	for !lex.atEOF() {
 
@@ -166,17 +166,17 @@ func Tokenize(file string, debug bool) []Token {
 
 		if !matched {
 			errStr := fmt.Sprintf("lexer:unexpected character: '%c'", lex.at())
-			errors.MakeError(file, lex.Position.Line, lex.Position.Column, lex.Position.Column, errStr).Display()
+			errors.MakeError(filename, lex.Position.Line, lex.Position.Column, lex.Position.Column, errStr).Display()
 			return nil
 		}
 	}
 
-	lex.push(NewToken(EOF_TOKEN, "End of file", lex.Position, lex.Position))
+	lex.push(NewToken(EOF_TOKEN, "eof", lex.Position, lex.Position))
 
 	//litter.Dump(lex.Tokens)
 	if debug {
 		for _, token := range lex.Tokens {
-			token.Debug()
+			token.Debug(filename)
 		}
 	}
 

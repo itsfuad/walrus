@@ -56,8 +56,12 @@ type Token struct {
 	End   Position
 }
 
-func (t *Token) Debug() {
-	fmt.Printf("Value: '%s', Kind: '%v' [Line:%d, Col: %d - Line:%d, Col: %d]\n", t.Value, t.Kind, t.Start.Line, t.Start.Column, t.End.Line, t.End.Column)
+func (t *Token) Debug(filename string) {
+	if t.Value == string(t.Kind) {
+		fmt.Printf("%s:%d:%d\t '%s'\n", filename, t.Start.Line, t.Start.Column, t.Value)
+	} else {
+		fmt.Printf("%s:%d:%d\t '%s'\t('%v')\n", filename, t.Start.Line, t.Start.Column, t.Value, t.Kind)
+	}
 }
 
 func NewToken(kind TOKEN_KIND, value string, start Position, end Position) Token {
