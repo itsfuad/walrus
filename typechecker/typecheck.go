@@ -237,27 +237,7 @@ func checkVariableAssignment(Assignee ast.Node, valueToAssign ast.Node, env *Typ
 	case ast.IdentifierExpr:
 		varName = assignee.Name
 	case ast.ArrayIndexAccess:
-		//arrayValue have to be a direct identifier (lvalue) to be assigned
-		switch arrayValue := assignee.Arrayvalue.(type) {
-		case ast.IdentifierExpr:
-			varName = arrayValue.Name
-		case ast.ArrayIndexAccess:
-			rNode := arrayValue.Arrayvalue
-			_, ok := arrayValue.Arrayvalue.(ast.ArrayIndexAccess)
-			stillArray := ok
-			for stillArray {
-				rawNode, ok := arrayValue.Arrayvalue.(ast.ArrayIndexAccess)
-				rNode = rawNode
-				stillArray = ok
-			}
-			//now must be Identifier
-			if _, ok := rNode.(ast.IdentifierExpr); !ok {
-				errors.MakeError(env.filePath, valueToAssign.StartPos().Line, valueToAssign.StartPos().Column, valueToAssign.EndPos().Column, "cannot assign value").Display()
-			}
-			varName = rNode.(ast.IdentifierExpr).Name
-		default:
-			panic(fmt.Sprintf("cannot assign to %#v\n", arrayValue))
-		}
+		return nil
 	default:
 		panic("cannot assign to this type")
 	}
