@@ -1,0 +1,557 @@
+{
+  "Contents": [
+    {
+      "Variable": {
+        "Name": "arr",
+        "Start": {
+          "Line": 3,
+          "Column": 5,
+          "Index": 8
+        },
+        "End": {
+          "Line": 3,
+          "Column": 8,
+          "Index": 11
+        }
+      },
+      "Value": {
+        "Values": [
+          {
+            "Value": "1",
+            "Start": {
+              "Line": 3,
+              "Column": 13,
+              "Index": 16
+            },
+            "End": {
+              "Line": 3,
+              "Column": 14,
+              "Index": 17
+            }
+          },
+          {
+            "Value": "2",
+            "Start": {
+              "Line": 3,
+              "Column": 15,
+              "Index": 18
+            },
+            "End": {
+              "Line": 3,
+              "Column": 16,
+              "Index": 19
+            }
+          },
+          {
+            "Value": "3",
+            "Start": {
+              "Line": 3,
+              "Column": 17,
+              "Index": 20
+            },
+            "End": {
+              "Line": 3,
+              "Column": 18,
+              "Index": 21
+            }
+          }
+        ],
+        "Start": {
+          "Line": 3,
+          "Column": 12,
+          "Index": 15
+        },
+        "End": {
+          "Line": 3,
+          "Column": 19,
+          "Index": 22
+        }
+      },
+      "ExplicitType": null,
+      "IsConst": false,
+      "IsAssigned": true,
+      "Start": {
+        "Line": 3,
+        "Column": 1,
+        "Index": 4
+      },
+      "End": {
+        "Line": 3,
+        "Column": 20,
+        "Index": 23
+      }
+    },
+    {
+      "Variable": {
+        "Name": "arr2",
+        "Start": {
+          "Line": 5,
+          "Column": 5,
+          "Index": 31
+        },
+        "End": {
+          "Line": 5,
+          "Column": 9,
+          "Index": 35
+        }
+      },
+      "Value": {
+        "Values": [
+          {
+            "Values": [
+              {
+                "Value": "1",
+                "Start": {
+                  "Line": 5,
+                  "Column": 15,
+                  "Index": 41
+                },
+                "End": {
+                  "Line": 5,
+                  "Column": 16,
+                  "Index": 42
+                }
+              },
+              {
+                "Value": "4",
+                "Start": {
+                  "Line": 5,
+                  "Column": 17,
+                  "Index": 43
+                },
+                "End": {
+                  "Line": 5,
+                  "Column": 18,
+                  "Index": 44
+                }
+              }
+            ],
+            "Start": {
+              "Line": 5,
+              "Column": 14,
+              "Index": 40
+            },
+            "End": {
+              "Line": 5,
+              "Column": 19,
+              "Index": 45
+            }
+          },
+          {
+            "Values": [
+              {
+                "Value": "4",
+                "Start": {
+                  "Line": 5,
+                  "Column": 22,
+                  "Index": 48
+                },
+                "End": {
+                  "Line": 5,
+                  "Column": 23,
+                  "Index": 49
+                }
+              },
+              {
+                "Value": "7",
+                "Start": {
+                  "Line": 5,
+                  "Column": 24,
+                  "Index": 50
+                },
+                "End": {
+                  "Line": 5,
+                  "Column": 25,
+                  "Index": 51
+                }
+              }
+            ],
+            "Start": {
+              "Line": 5,
+              "Column": 21,
+              "Index": 47
+            },
+            "End": {
+              "Line": 5,
+              "Column": 26,
+              "Index": 52
+            }
+          },
+          {
+            "Name": "arr",
+            "Start": {
+              "Line": 5,
+              "Column": 28,
+              "Index": 54
+            },
+            "End": {
+              "Line": 5,
+              "Column": 31,
+              "Index": 57
+            }
+          }
+        ],
+        "Start": {
+          "Line": 5,
+          "Column": 13,
+          "Index": 39
+        },
+        "End": {
+          "Line": 5,
+          "Column": 32,
+          "Index": 58
+        }
+      },
+      "ExplicitType": null,
+      "IsConst": false,
+      "IsAssigned": true,
+      "Start": {
+        "Line": 5,
+        "Column": 1,
+        "Index": 27
+      },
+      "End": {
+        "Line": 5,
+        "Column": 33,
+        "Index": 59
+      }
+    },
+    {
+      "Variable": {
+        "Name": "arp",
+        "Start": {
+          "Line": 7,
+          "Column": 5,
+          "Index": 67
+        },
+        "End": {
+          "Line": 7,
+          "Column": 8,
+          "Index": 70
+        }
+      },
+      "Value": {
+        "Value": "20",
+        "Start": {
+          "Line": 7,
+          "Column": 12,
+          "Index": 74
+        },
+        "End": {
+          "Line": 7,
+          "Column": 14,
+          "Index": 76
+        }
+      },
+      "ExplicitType": null,
+      "IsConst": false,
+      "IsAssigned": true,
+      "Start": {
+        "Line": 7,
+        "Column": 1,
+        "Index": 63
+      },
+      "End": {
+        "Line": 7,
+        "Column": 15,
+        "Index": 77
+      }
+    },
+    {
+      "Variable": {
+        "Name": "p",
+        "Start": {
+          "Line": 9,
+          "Column": 5,
+          "Index": 85
+        },
+        "End": {
+          "Line": 9,
+          "Column": 6,
+          "Index": 86
+        }
+      },
+      "Value": null,
+      "ExplicitType": {
+        "TypeName": "int",
+        "Start": {
+          "Line": 9,
+          "Column": 9,
+          "Index": 89
+        },
+        "End": {
+          "Line": 9,
+          "Column": 12,
+          "Index": 92
+        }
+      },
+      "IsConst": false,
+      "IsAssigned": false,
+      "Start": {
+        "Line": 9,
+        "Column": 1,
+        "Index": 81
+      },
+      "End": {
+        "Line": 9,
+        "Column": 13,
+        "Index": 93
+      }
+    },
+    {
+      "Assignee": {
+        "Name": "p",
+        "Start": {
+          "Line": 10,
+          "Column": 1,
+          "Index": 95
+        },
+        "End": {
+          "Line": 10,
+          "Column": 2,
+          "Index": 96
+        }
+      },
+      "Value": {
+        "Index": {
+          "Value": "2",
+          "Start": {
+            "Line": 10,
+            "Column": 15,
+            "Index": 109
+          },
+          "End": {
+            "Line": 10,
+            "Column": 16,
+            "Index": 110
+          }
+        },
+        "Arrayvalue": {
+          "Index": {
+            "Name": "arp",
+            "Start": {
+              "Line": 10,
+              "Column": 10,
+              "Index": 104
+            },
+            "End": {
+              "Line": 10,
+              "Column": 13,
+              "Index": 107
+            }
+          },
+          "Arrayvalue": {
+            "Name": "arr2",
+            "Start": {
+              "Line": 10,
+              "Column": 5,
+              "Index": 99
+            },
+            "End": {
+              "Line": 10,
+              "Column": 9,
+              "Index": 103
+            }
+          },
+          "Start": {
+            "Line": 10,
+            "Column": 9,
+            "Index": 103
+          },
+          "End": {
+            "Line": 10,
+            "Column": 14,
+            "Index": 108
+          }
+        },
+        "Start": {
+          "Line": 10,
+          "Column": 14,
+          "Index": 108
+        },
+        "End": {
+          "Line": 10,
+          "Column": 17,
+          "Index": 111
+        }
+      },
+      "Operator": {
+        "Kind": "=",
+        "Value": "=",
+        "Start": {
+          "Line": 10,
+          "Column": 3,
+          "Index": 97
+        },
+        "End": {
+          "Line": 10,
+          "Column": 4,
+          "Index": 98
+        }
+      },
+      "Start": {
+        "Line": 10,
+        "Column": 3,
+        "Index": 97
+      },
+      "End": {
+        "Line": 10,
+        "Column": 17,
+        "Index": 111
+      }
+    },
+    {
+      "Variable": {
+        "Name": "x",
+        "Start": {
+          "Line": 12,
+          "Column": 7,
+          "Index": 122
+        },
+        "End": {
+          "Line": 12,
+          "Column": 8,
+          "Index": 123
+        }
+      },
+      "Value": {
+        "Value": "10",
+        "Start": {
+          "Line": 12,
+          "Column": 12,
+          "Index": 127
+        },
+        "End": {
+          "Line": 12,
+          "Column": 14,
+          "Index": 129
+        }
+      },
+      "ExplicitType": null,
+      "IsConst": true,
+      "IsAssigned": true,
+      "Start": {
+        "Line": 12,
+        "Column": 1,
+        "Index": 116
+      },
+      "End": {
+        "Line": 12,
+        "Column": 15,
+        "Index": 130
+      }
+    },
+    {
+      "Assignee": {
+        "Index": {
+          "Value": "1",
+          "Start": {
+            "Line": 17,
+            "Column": 9,
+            "Index": 184
+          },
+          "End": {
+            "Line": 17,
+            "Column": 10,
+            "Index": 185
+          }
+        },
+        "Arrayvalue": {
+          "Index": {
+            "Value": "0",
+            "Start": {
+              "Line": 17,
+              "Column": 6,
+              "Index": 181
+            },
+            "End": {
+              "Line": 17,
+              "Column": 7,
+              "Index": 182
+            }
+          },
+          "Arrayvalue": {
+            "Name": "arr2",
+            "Start": {
+              "Line": 17,
+              "Column": 1,
+              "Index": 176
+            },
+            "End": {
+              "Line": 17,
+              "Column": 5,
+              "Index": 180
+            }
+          },
+          "Start": {
+            "Line": 17,
+            "Column": 5,
+            "Index": 180
+          },
+          "End": {
+            "Line": 17,
+            "Column": 8,
+            "Index": 183
+          }
+        },
+        "Start": {
+          "Line": 17,
+          "Column": 8,
+          "Index": 183
+        },
+        "End": {
+          "Line": 17,
+          "Column": 11,
+          "Index": 186
+        }
+      },
+      "Value": {
+        "Value": "23",
+        "Start": {
+          "Line": 17,
+          "Column": 14,
+          "Index": 189
+        },
+        "End": {
+          "Line": 17,
+          "Column": 16,
+          "Index": 191
+        }
+      },
+      "Operator": {
+        "Kind": "=",
+        "Value": "=",
+        "Start": {
+          "Line": 17,
+          "Column": 12,
+          "Index": 187
+        },
+        "End": {
+          "Line": 17,
+          "Column": 13,
+          "Index": 188
+        }
+      },
+      "Start": {
+        "Line": 17,
+        "Column": 12,
+        "Index": 187
+      },
+      "End": {
+        "Line": 17,
+        "Column": 16,
+        "Index": 191
+      }
+    }
+  ],
+  "Start": {
+    "Line": 0,
+    "Column": 0,
+    "Index": 0
+  },
+  "End": {
+    "Line": 0,
+    "Column": 0,
+    "Index": 0
+  }
+}

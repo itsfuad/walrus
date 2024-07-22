@@ -1,0 +1,533 @@
+{
+  "Contents": [
+    {
+      "Variable": {
+        "Name": "a",
+        "Start": {
+          "Line": 3,
+          "Column": 5,
+          "Index": 8
+        },
+        "End": {
+          "Line": 3,
+          "Column": 6,
+          "Index": 9
+        }
+      },
+      "Value": {
+        "Value": "5.3",
+        "Start": {
+          "Line": 3,
+          "Column": 17,
+          "Index": 20
+        },
+        "End": {
+          "Line": 3,
+          "Column": 20,
+          "Index": 23
+        }
+      },
+      "ExplicitType": {
+        "TypeName": "float",
+        "Start": {
+          "Line": 3,
+          "Column": 9,
+          "Index": 12
+        },
+        "End": {
+          "Line": 3,
+          "Column": 14,
+          "Index": 17
+        }
+      },
+      "IsConst": false,
+      "IsAssigned": true,
+      "Start": {
+        "Line": 3,
+        "Column": 1,
+        "Index": 4
+      },
+      "End": {
+        "Line": 3,
+        "Column": 21,
+        "Index": 24
+      }
+    },
+    {
+      "Variable": {
+        "Name": "b",
+        "Start": {
+          "Line": 4,
+          "Column": 5,
+          "Index": 30
+        },
+        "End": {
+          "Line": 4,
+          "Column": 6,
+          "Index": 31
+        }
+      },
+      "Value": {
+        "Value": "6",
+        "Start": {
+          "Line": 4,
+          "Column": 15,
+          "Index": 40
+        },
+        "End": {
+          "Line": 4,
+          "Column": 16,
+          "Index": 41
+        }
+      },
+      "ExplicitType": {
+        "TypeName": "int",
+        "Start": {
+          "Line": 4,
+          "Column": 9,
+          "Index": 34
+        },
+        "End": {
+          "Line": 4,
+          "Column": 12,
+          "Index": 37
+        }
+      },
+      "IsConst": false,
+      "IsAssigned": true,
+      "Start": {
+        "Line": 4,
+        "Column": 1,
+        "Index": 26
+      },
+      "End": {
+        "Line": 4,
+        "Column": 17,
+        "Index": 42
+      }
+    },
+    {
+      "Variable": {
+        "Name": "c",
+        "Start": {
+          "Line": 5,
+          "Column": 7,
+          "Index": 50
+        },
+        "End": {
+          "Line": 5,
+          "Column": 8,
+          "Index": 51
+        }
+      },
+      "Value": {
+        "Name": "a",
+        "Start": {
+          "Line": 5,
+          "Column": 19,
+          "Index": 62
+        },
+        "End": {
+          "Line": 5,
+          "Column": 20,
+          "Index": 63
+        }
+      },
+      "ExplicitType": {
+        "TypeName": "float",
+        "Start": {
+          "Line": 5,
+          "Column": 11,
+          "Index": 54
+        },
+        "End": {
+          "Line": 5,
+          "Column": 16,
+          "Index": 59
+        }
+      },
+      "IsConst": true,
+      "IsAssigned": true,
+      "Start": {
+        "Line": 5,
+        "Column": 1,
+        "Index": 44
+      },
+      "End": {
+        "Line": 5,
+        "Column": 21,
+        "Index": 64
+      }
+    },
+    {
+      "Identifier": {
+        "Name": "c",
+        "Start": {
+          "Line": 7,
+          "Column": 1,
+          "Index": 68
+        },
+        "End": {
+          "Line": 7,
+          "Column": 2,
+          "Index": 69
+        }
+      },
+      "Value": {
+        "Value": "4.6",
+        "Start": {
+          "Line": 7,
+          "Column": 5,
+          "Index": 72
+        },
+        "End": {
+          "Line": 7,
+          "Column": 8,
+          "Index": 75
+        }
+      },
+      "Operator": {
+        "Kind": "=",
+        "Value": "=",
+        "Start": {
+          "Line": 7,
+          "Column": 3,
+          "Index": 70
+        },
+        "End": {
+          "Line": 7,
+          "Column": 4,
+          "Index": 71
+        }
+      },
+      "Start": {
+        "Line": 7,
+        "Column": 3,
+        "Index": 70
+      },
+      "End": {
+        "Line": 7,
+        "Column": 8,
+        "Index": 75
+      }
+    },
+    {
+      "Variable": {
+        "Name": "arr",
+        "Start": {
+          "Line": 9,
+          "Column": 5,
+          "Index": 84
+        },
+        "End": {
+          "Line": 9,
+          "Column": 8,
+          "Index": 87
+        }
+      },
+      "Value": {
+        "Values": [
+          {
+            "Value": "1",
+            "Start": {
+              "Line": 9,
+              "Column": 13,
+              "Index": 92
+            },
+            "End": {
+              "Line": 9,
+              "Column": 14,
+              "Index": 93
+            }
+          },
+          {
+            "Value": "2",
+            "Start": {
+              "Line": 9,
+              "Column": 15,
+              "Index": 94
+            },
+            "End": {
+              "Line": 9,
+              "Column": 16,
+              "Index": 95
+            }
+          },
+          {
+            "Value": "4",
+            "Start": {
+              "Line": 9,
+              "Column": 17,
+              "Index": 96
+            },
+            "End": {
+              "Line": 9,
+              "Column": 18,
+              "Index": 97
+            }
+          },
+          {
+            "Value": "6",
+            "Start": {
+              "Line": 9,
+              "Column": 19,
+              "Index": 98
+            },
+            "End": {
+              "Line": 9,
+              "Column": 20,
+              "Index": 99
+            }
+          }
+        ],
+        "Start": {
+          "Line": 9,
+          "Column": 12,
+          "Index": 91
+        },
+        "End": {
+          "Line": 9,
+          "Column": 21,
+          "Index": 100
+        }
+      },
+      "ExplicitType": null,
+      "IsConst": false,
+      "IsAssigned": true,
+      "Start": {
+        "Line": 9,
+        "Column": 1,
+        "Index": 80
+      },
+      "End": {
+        "Line": 9,
+        "Column": 22,
+        "Index": 101
+      }
+    },
+    {
+      "Variable": {
+        "Name": "arr2",
+        "Start": {
+          "Line": 11,
+          "Column": 5,
+          "Index": 109
+        },
+        "End": {
+          "Line": 11,
+          "Column": 9,
+          "Index": 113
+        }
+      },
+      "Value": null,
+      "ExplicitType": {
+        "TypeName": "array",
+        "ArrayType": {
+          "TypeName": "int",
+          "Start": {
+            "Line": 11,
+            "Column": 14,
+            "Index": 118
+          },
+          "End": {
+            "Line": 11,
+            "Column": 17,
+            "Index": 121
+          }
+        },
+        "Start": {
+          "Line": 11,
+          "Column": 14,
+          "Index": 118
+        },
+        "End": {
+          "Line": 11,
+          "Column": 17,
+          "Index": 121
+        }
+      },
+      "IsConst": false,
+      "IsAssigned": false,
+      "Start": {
+        "Line": 11,
+        "Column": 1,
+        "Index": 105
+      },
+      "End": {
+        "Line": 11,
+        "Column": 18,
+        "Index": 122
+      }
+    },
+    {
+      "Variable": {
+        "Name": "arr3",
+        "Start": {
+          "Line": 12,
+          "Column": 5,
+          "Index": 128
+        },
+        "End": {
+          "Line": 12,
+          "Column": 9,
+          "Index": 132
+        }
+      },
+      "Value": {
+        "Values": [
+          {
+            "Values": [
+              {
+                "Value": "1.7",
+                "Start": {
+                  "Line": 12,
+                  "Column": 26,
+                  "Index": 149
+                },
+                "End": {
+                  "Line": 12,
+                  "Column": 29,
+                  "Index": 152
+                }
+              },
+              {
+                "Value": "4.5",
+                "Start": {
+                  "Line": 12,
+                  "Column": 30,
+                  "Index": 153
+                },
+                "End": {
+                  "Line": 12,
+                  "Column": 33,
+                  "Index": 156
+                }
+              }
+            ],
+            "Start": {
+              "Line": 12,
+              "Column": 25,
+              "Index": 148
+            },
+            "End": {
+              "Line": 12,
+              "Column": 34,
+              "Index": 157
+            }
+          },
+          {
+            "Values": [
+              {
+                "Value": "4.2",
+                "Start": {
+                  "Line": 12,
+                  "Column": 37,
+                  "Index": 160
+                },
+                "End": {
+                  "Line": 12,
+                  "Column": 40,
+                  "Index": 163
+                }
+              },
+              {
+                "Value": "7.9",
+                "Start": {
+                  "Line": 12,
+                  "Column": 41,
+                  "Index": 164
+                },
+                "End": {
+                  "Line": 12,
+                  "Column": 44,
+                  "Index": 167
+                }
+              }
+            ],
+            "Start": {
+              "Line": 12,
+              "Column": 36,
+              "Index": 159
+            },
+            "End": {
+              "Line": 12,
+              "Column": 45,
+              "Index": 168
+            }
+          }
+        ],
+        "Start": {
+          "Line": 12,
+          "Column": 24,
+          "Index": 147
+        },
+        "End": {
+          "Line": 12,
+          "Column": 46,
+          "Index": 169
+        }
+      },
+      "ExplicitType": {
+        "TypeName": "array",
+        "ArrayType": {
+          "TypeName": "array",
+          "ArrayType": {
+            "TypeName": "float",
+            "Start": {
+              "Line": 12,
+              "Column": 16,
+              "Index": 139
+            },
+            "End": {
+              "Line": 12,
+              "Column": 21,
+              "Index": 144
+            }
+          },
+          "Start": {
+            "Line": 12,
+            "Column": 16,
+            "Index": 139
+          },
+          "End": {
+            "Line": 12,
+            "Column": 21,
+            "Index": 144
+          }
+        },
+        "Start": {
+          "Line": 12,
+          "Column": 16,
+          "Index": 139
+        },
+        "End": {
+          "Line": 12,
+          "Column": 21,
+          "Index": 144
+        }
+      },
+      "IsConst": false,
+      "IsAssigned": true,
+      "Start": {
+        "Line": 12,
+        "Column": 1,
+        "Index": 124
+      },
+      "End": {
+        "Line": 12,
+        "Column": 47,
+        "Index": 170
+      }
+    }
+  ],
+  "Start": {
+    "Line": 0,
+    "Column": 0,
+    "Index": 0
+  },
+  "End": {
+    "Line": 0,
+    "Column": 0,
+    "Index": 0
+  }
+}
