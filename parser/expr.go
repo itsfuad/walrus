@@ -3,7 +3,7 @@ package parser
 import (
 	"fmt"
 	"walrus/ast"
-	"walrus/errors"
+	"walrus/errgen"
 	"walrus/lexer"
 )
 
@@ -28,7 +28,7 @@ func parseExpr(p *Parser, bp BINDING_POWER) ast.Node {
 		} else {
 			msg = fmt.Sprintf("parser:nud:unexpected token '%s'\n", tokenKind)
 		}
-		errors.MakeError(p.FilePath, p.currentToken().Start.Line, p.currentToken().Start.Column, p.currentToken().End.Column, msg).Display()
+		errgen.MakeError(p.FilePath, p.currentToken().Start.Line, p.currentToken().Start.Column, p.currentToken().End.Column, msg).Display()
 	}
 
 	left := nudFunction(p)
@@ -41,7 +41,7 @@ func parseExpr(p *Parser, bp BINDING_POWER) ast.Node {
 
 		if !exists {
 			msg := fmt.Sprintf("parser:led:unexpected token %s\n", tokenKind)
-			errors.MakeError(p.FilePath, p.currentToken().Start.Line, p.currentToken().Start.Column, p.currentToken().End.Column, msg).Display()
+			errgen.MakeError(p.FilePath, p.currentToken().Start.Line, p.currentToken().Start.Column, p.currentToken().End.Column, msg).Display()
 		}
 
 		left = ledFunction(p, left, GetBP(p.currentTokenKind()))
@@ -103,7 +103,7 @@ func parsePrimaryExpr(p *Parser) ast.Node {
 		}
 	default:
 		msg := fmt.Sprintf("Cannot create primary expression from %s\n", primaryToken.Value)
-		errors.MakeError(p.FilePath, p.currentToken().Start.Line, p.currentToken().Start.Column, p.currentToken().End.Column, msg).Display()
+		errgen.MakeError(p.FilePath, p.currentToken().Start.Line, p.currentToken().Start.Column, p.currentToken().End.Column, msg).Display()
 	}
 
 	return nil
@@ -118,9 +118,11 @@ func parseVarAssignmentExpr(p *Parser, left ast.Node, bp BINDING_POWER) ast.Node
 		break
 	case ast.ArrayIndexAccess:
 		break
+	case ast.PropertyExpr:
+		break
 	default:
 		errMsg := "cannot assign to a non-identifier\n"
-		errors.MakeError(p.FilePath, left.StartPos().Line, left.StartPos().Column, left.EndPos().Column, errMsg).Display()
+		errgen.MakeError(p.FilePath, left.StartPos().Line, left.StartPos().Column, left.EndPos().Column, errMsg).Display()
 	}
 
 	operator := p.advance()
@@ -150,7 +152,7 @@ func parseArrayExpr(p *Parser) ast.Node {
 		value := parseExpr(p, PRIMARY_BP)
 		values = append(values, value)
 		if p.currentTokenKind() != lexer.CLOSE_BRACKET {
-			p.expect(lexer.COMMA)
+			p.expect(lexer.COMMA_TOKEN)
 		}
 	}
 
@@ -181,12 +183,10 @@ func parseArrayAccess(p *Parser, left ast.Node, bp BINDING_POWER) ast.Node {
 
 func parseStructLiteral(p *Parser, leftNode ast.Node, bp BINDING_POWER) ast.Node {
 
-	fmt.Println("left", leftNode)
-
-	identifier, ok := leftNode.(ast.IdentifierExpr);
+	identifier, ok := leftNode.(ast.IdentifierExpr)
 
 	if !ok {
-		errors.MakeError(p.FilePath, leftNode.StartPos().Line, leftNode.StartPos().Column, leftNode.EndPos().Column, "expected struct name").Display()
+		errgen.MakeError(p.FilePath, leftNode.StartPos().Line, leftNode.StartPos().Column, leftNode.EndPos().Column, "expected struct name").Display()
 		return nil
 	}
 
@@ -203,14 +203,14 @@ func parseStructLiteral(p *Parser, leftNode ast.Node, bp BINDING_POWER) ast.Node
 		//then we expect colon
 		p.expect(lexer.COLON_TOKEN)
 		//now we expect value as expression
-		val := parseExpr(p, bp)
+		val := parseExpr(p, DEFAULT_BP)
 
 		props[iden.Value] = val
 
 		//if the next token is not } then we have more values
 		if p.currentTokenKind() != lexer.CLOSE_CURLY {
 			//we expect comma
-			p.expect(lexer.COMMA)
+			p.expect(lexer.COMMA_TOKEN)
 		}
 	}
 
@@ -221,15 +221,38 @@ func parseStructLiteral(p *Parser, leftNode ast.Node, bp BINDING_POWER) ast.Node
 			Name: identifier.Name,
 			Location: ast.Location{
 				Start: identifier.Start,
-				End: identifier.End,
+				End:   identifier.End,
 			},
 		},
 		Properties: props,
 		Location: ast.Location{
 			Start: start,
-			End: end,
+			End:   end,
 		},
 	}
 
 	return structVal
+}
+
+func parsePropertyExpr(p *Parser, left ast.Node, bp BINDING_POWER) ast.Node {
+	p.expect(lexer.DOT_TOKEN)
+
+	identifier := p.expect(lexer.IDENTIFIER_TOKEN)
+
+	property := ast.IdentifierExpr{
+		Name: identifier.Value,
+		Location: ast.Location{
+			Start: identifier.Start,
+			End: identifier.End,
+		},
+	}
+
+	return ast.PropertyExpr{
+		Object: left,
+		Property: property,
+		Location: ast.Location{
+			Start: left.StartPos(),
+			End: property.End,
+		},
+	}
 }

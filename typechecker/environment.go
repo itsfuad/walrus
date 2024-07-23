@@ -168,7 +168,7 @@ func (t *TypeEnvironment) ResolveType(name string) (*TypeEnvironment, error) {
 func (t *TypeEnvironment) DeclareVar(name string, typeVar ValueTypeInterface, isConst bool) error {
 	//should not be declared
 	if _, err := t.ResolveVar(name); err == nil {
-		return err
+		return fmt.Errorf("'%s' is already declared in this scope", name)
 	}
 
 	t.variables[name] = typeVar

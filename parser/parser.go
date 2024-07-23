@@ -3,8 +3,8 @@ package parser
 import (
 	"fmt"
 	"walrus/ast"
-	"walrus/errors"
 	"walrus/lexer"
+	"walrus/errgen"
 )
 
 type Parser struct {
@@ -41,10 +41,10 @@ func (p *Parser) expectError(expectedKind lexer.TOKEN_KIND, err error) lexer.Tok
 
 	if kind != expectedKind {
 		if err != nil {
-			errors.MakeError(p.FilePath, start.Line, start.Column, end.Column, err.Error()).Display()
+			errgen.MakeError(p.FilePath, start.Line, start.Column, end.Column, err.Error()).Display()
 		} else {
-			msg := fmt.Sprintf("expected '%s' but got '%s'", expectedKind, kind)
-			errors.MakeError(p.FilePath, start.Line, start.Column, end.Column, msg).Display()
+			msg := fmt.Sprintf("parser:expected '%s' but got '%s'", expectedKind, kind)
+			errgen.MakeError(p.FilePath, start.Line, start.Column, end.Column, msg).Display()
 		}
 	}
 	return p.advance()
@@ -52,6 +52,10 @@ func (p *Parser) expectError(expectedKind lexer.TOKEN_KIND, err error) lexer.Tok
 
 func (p *Parser) expect(expectedKind lexer.TOKEN_KIND) lexer.Token {
 	return p.expectError(expectedKind, nil)
+}
+
+func (p *Parser) expectSemicolon() lexer.Token {
+	return p.expectError(lexer.SEMI_COLON_TOKEN, fmt.Errorf("unexpected token '%s'", p.currentTokenKind()))
 }
 
 func parseNode(p *Parser) ast.Node {
@@ -65,7 +69,7 @@ func parseNode(p *Parser) ast.Node {
 	// if not a statement, then it must be an expression
 	expr := parseExpr(p, DEFAULT_BP)
 
-	p.expect(lexer.SEMI_COLON_TOKEN)
+	p.expectSemicolon()
 
 	return expr
 }

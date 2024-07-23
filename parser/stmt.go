@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 	"walrus/ast"
-	"walrus/errors"
+	"walrus/errgen"
 	"walrus/lexer"
 )
 
@@ -13,7 +13,7 @@ func parseVarDeclStmt(p *Parser) ast.Node {
 	declToken := p.advance() // advance the let/const keyword
 
 	// is it let or const?
-	isConst := declToken.Kind == lexer.CONST_TOKEN 
+	isConst := declToken.Kind == lexer.CONST_TOKEN
 
 	identifier := p.expect(lexer.IDENTIFIER_TOKEN)
 
@@ -28,10 +28,10 @@ func parseVarDeclStmt(p *Parser) ast.Node {
 		explicitType = parseType(p, DEFAULT_BP)
 	} else if assToken.Kind != lexer.WALRUS_TOKEN {
 		msg := "expected : or :="
-		errors.MakeError(p.FilePath, assToken.Start.Line, assToken.Start.Column, assToken.End.Column, msg).Display()
+		errgen.MakeError(p.FilePath, assToken.Start.Line, assToken.Start.Column, assToken.End.Column, msg).Display()
 	}
 
-	if (p.currentTokenKind() != lexer.SEMI_COLON_TOKEN) {
+	if p.currentTokenKind() != lexer.SEMI_COLON_TOKEN {
 		if assToken.Kind == lexer.COLON_TOKEN {
 			p.expect(lexer.EQUALS_TOKEN)
 		}
@@ -41,33 +41,31 @@ func parseVarDeclStmt(p *Parser) ast.Node {
 	//if const, we must have a value
 	if isConst && value == nil {
 		msg := "constants must have value when declared"
-		errors.MakeError(p.FilePath, p.currentToken().Start.Line, p.currentToken().Start.Column, p.currentToken().End.Column, msg).Display()
+		errgen.MakeError(p.FilePath, p.currentToken().Start.Line, p.currentToken().Start.Column, p.currentToken().End.Column, msg).Display()
 	}
 
-	end := p.expect(lexer.SEMI_COLON_TOKEN).End
+	end := p.expectSemicolon().End
 
 	node := ast.VarDeclStmt{
 		Variable: ast.IdentifierExpr{
 			Name: identifier.Value,
 			Location: ast.Location{
 				Start: identifier.Start,
-				End: identifier.End,
+				End:   identifier.End,
 			},
 		},
-		Value: value,
+		Value:        value,
 		ExplicitType: explicitType,
-		IsConst: isConst,
-		IsAssigned: value != nil,
+		IsConst:      isConst,
+		IsAssigned:   value != nil,
 		Location: ast.Location{
 			Start: declToken.Start,
-			End: end,
+			End:   end,
 		},
 	}
 
 	return node
 }
-
-
 
 func parseUserDefinedTypeStmt(p *Parser) ast.Node {
 
@@ -76,21 +74,19 @@ func parseUserDefinedTypeStmt(p *Parser) ast.Node {
 	typeName := p.expect(lexer.IDENTIFIER_TOKEN)
 
 	if strings.ToUpper(typeName.Value[:1]) != typeName.Value[:1] {
-		errors.MakeError(p.FilePath, typeName.Start.Line, typeName.Start.Column, typeName.End.Column, "user defined types should start with capital letter").AddHint(fmt.Sprintf("type %s%s [your type]", strings.ToUpper(typeName.Value[:1]), typeName.Value[1:]), errors.TEXT_HINT).Display()
-	} 
+		errgen.MakeError(p.FilePath, typeName.Start.Line, typeName.Start.Column, typeName.End.Column, "user defined types should start with capital letter").AddHint(fmt.Sprintf("type %s%s [your type]", strings.ToUpper(typeName.Value[:1]), typeName.Value[1:]), errgen.TEXT_HINT).Display()
+	}
 
 	udType := parseUDTType(p)
 
-	fmt.Println(start)
-
-	p.expect(lexer.SEMI_COLON_TOKEN)
+	p.expectSemicolon()
 
 	return ast.TypeDeclStmt{
-		UDType: udType,
+		UDType:     udType,
 		UDTypeName: typeName.Value,
 		Location: ast.Location{
 			Start: start,
-			End: udType.EndPos(),
+			End:   udType.EndPos(),
 		},
 	}
 }

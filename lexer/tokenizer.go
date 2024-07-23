@@ -5,7 +5,7 @@ import (
 	"os"
 	"regexp"
 	"strings"
-	"walrus/errors"
+	"walrus/errgen"
 )
 
 type regexHandler func(lex *Lexer, regex *regexp.Regexp)
@@ -70,15 +70,16 @@ func createLexer(filePath *string) *Lexer {
 			{regexp.MustCompile(`'[^']'`), characterHandler},                  // character literals
 			{regexp.MustCompile(`[0-9]+(?:\.[0-9]+)?`), numberHandler},        // decimal numbers
 			{regexp.MustCompile(`[a-zA-Z_][a-zA-Z0-9_]*`), identifierHandler}, // identifiers
-			{regexp.MustCompile(":="), defaultHandler(WALRUS_TOKEN, ":=")},
-			{regexp.MustCompile("="), defaultHandler(EQUALS_TOKEN, "=")},
-			{regexp.MustCompile(":"), defaultHandler(COLON_TOKEN, ":")},
-			{regexp.MustCompile(";"), defaultHandler(SEMI_COLON_TOKEN, ";")},
+			{regexp.MustCompile(`:=`), defaultHandler(WALRUS_TOKEN, ":=")},
+			{regexp.MustCompile(`=`), defaultHandler(EQUALS_TOKEN, "=")},
+			{regexp.MustCompile(`:`), defaultHandler(COLON_TOKEN, ":")},
+			{regexp.MustCompile(`;`), defaultHandler(SEMI_COLON_TOKEN, ";")},
 			{regexp.MustCompile(`\[`), defaultHandler(OPEN_BRACKET, "[")},
 			{regexp.MustCompile(`\]`), defaultHandler(CLOSE_BRACKET, "]")},
 			{regexp.MustCompile(`\{`), defaultHandler(OPEN_CURLY, "{")},
 			{regexp.MustCompile(`\}`), defaultHandler(CLOSE_CURLY, "}")},
-			{regexp.MustCompile(","), defaultHandler(COMMA, ",")},
+			{regexp.MustCompile(","), defaultHandler(COMMA_TOKEN, ",")},
+			{regexp.MustCompile(`\.`), defaultHandler(DOT_TOKEN, ".")},
 		},
 	}
 	return lex
@@ -168,7 +169,7 @@ func Tokenize(filename string, debug bool) []Token {
 
 		if !matched {
 			errStr := fmt.Sprintf("lexer:unexpected character: '%c'", lex.at())
-			errors.MakeError(filename, lex.Position.Line, lex.Position.Column, lex.Position.Column, errStr).Display()
+			errgen.MakeError(filename, lex.Position.Line, lex.Position.Column, lex.Position.Column, errStr).Display()
 			return nil
 		}
 	}

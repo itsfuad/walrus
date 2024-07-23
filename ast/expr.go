@@ -171,3 +171,18 @@ func (a StructLiteral) StartPos() lexer.Position {
 func (a StructLiteral) EndPos() lexer.Position {
 	return a.Location.End
 }
+
+type PropertyExpr struct {
+	Object   Node
+	Property IdentifierExpr
+	Location
+}
+func (a PropertyExpr) INode() {
+	//empty method implements Node interface
+}
+func (a PropertyExpr) StartPos() lexer.Position {
+	return a.Location.Start
+}
+func (a PropertyExpr) EndPos() lexer.Position {
+	return a.Location.End
+}

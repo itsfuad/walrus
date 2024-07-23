@@ -1,4 +1,4 @@
-package errors
+package errgen
 
 import (
 	"fmt"
@@ -55,6 +55,7 @@ func (e *ErrorType) Display() {
 			utils.ColorPrint(utils.ORANGE, hint.message)
 		}
 	}
+	panic("")
 	os.Exit(1)
 }
 
