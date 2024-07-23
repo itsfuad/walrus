@@ -11,6 +11,6 @@ A tiny simple programming language made for simplicity. It borrows syntax from '
         [-] Struct
             [-] Property access
             [-] Property assignment
-            [] Private property deny access
+            [-] Private property deny access
         [-] Builtins
 [] Codegen
