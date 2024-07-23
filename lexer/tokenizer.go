@@ -70,6 +70,8 @@ func createLexer(filePath *string) *Lexer {
 			{regexp.MustCompile(`'[^']'`), characterHandler},                  // character literals
 			{regexp.MustCompile(`[0-9]+(?:\.[0-9]+)?`), numberHandler},        // decimal numbers
 			{regexp.MustCompile(`[a-zA-Z_][a-zA-Z0-9_]*`), identifierHandler}, // identifiers
+			{regexp.MustCompile(`!`), defaultHandler(NOT_TOKEN, "!")},
+			{regexp.MustCompile(`\-`), defaultHandler(MINUS_TOKEN, "-")},
 			{regexp.MustCompile(`:=`), defaultHandler(WALRUS_TOKEN, ":=")},
 			{regexp.MustCompile(`=`), defaultHandler(EQUALS_TOKEN, "=")},
 			{regexp.MustCompile(`:`), defaultHandler(COLON_TOKEN, ":")},

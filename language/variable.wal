@@ -1,7 +1,7 @@
 
 
 let a : float = 5.3;
-let b : int = 6;
+let b : int = -6;
 const c : float = a;
 
 //c = 4.6; // error
@@ -18,4 +18,4 @@ let op : chr = '+';
 
 let none : null = null;
 
-let isTrue := true;
+let isTrue := !true;

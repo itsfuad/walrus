@@ -91,11 +91,6 @@ func parsePrimaryExpr(p *Parser) ast.Node {
 			Value:    rawValue,
 			Location: loc,
 		}
-	case lexer.BOOL:
-		return ast.BooleanLiteralExpr{
-			Value:    rawValue,
-			Location: loc,
-		}
 	case lexer.IDENTIFIER_TOKEN:
 		return ast.IdentifierExpr{
 			Name:     rawValue,
@@ -253,6 +248,24 @@ func parsePropertyExpr(p *Parser, left ast.Node, bp BINDING_POWER) ast.Node {
 		Location: ast.Location{
 			Start: left.StartPos(),
 			End: property.End,
+		},
+	}
+}
+
+func parseUnaryExpr(p *Parser) ast.Node {
+
+	start := p.currentToken().Start
+
+	operator := p.advance()
+
+	argument := parseExpr(p, UNARY_BP)
+
+	return ast.UnaryExpr{
+		Operator: operator,
+		Argument: argument,
+		Location: ast.Location{
+			Start: start,
+			End: argument.EndPos(),
 		},
 	}
 }

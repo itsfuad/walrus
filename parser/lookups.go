@@ -70,4 +70,8 @@ func bindLookupHandlers() {
 	stmt(lexer.LET_TOKEN, parseVarDeclStmt)
 	stmt(lexer.CONST_TOKEN, parseVarDeclStmt)
 	stmt(lexer.TYPE_TOKEN, parseUserDefinedTypeStmt)
+
+	//Unary
+	nud(lexer.MINUS_TOKEN, parseUnaryExpr)
+	nud(lexer.NOT_TOKEN, parseUnaryExpr)
 }

@@ -9,28 +9,30 @@ type TOKEN_KIND string
 
 const (
 	//variable declaration
-	LET_TOKEN        TOKEN_KIND = "let"
-	CONST_TOKEN      TOKEN_KIND = "const"
-	TYPE_TOKEN       TOKEN_KIND = "type"
-	IDENTIFIER_TOKEN TOKEN_KIND = "identifier"
-	PRIVATE_TOKEN    TOKEN_KIND = "priv"
-	INT              TOKEN_KIND = builtins.INT
-	FLOAT            TOKEN_KIND = builtins.FLOAT
-	CHR              TOKEN_KIND = builtins.CHAR
-	STR              TOKEN_KIND = builtins.STRING
-	BOOL             TOKEN_KIND = builtins.BOOL
-	NULL             TOKEN_KIND = builtins.NULL
-	WALRUS_TOKEN     TOKEN_KIND = ":="
-	COLON_TOKEN      TOKEN_KIND = ":"
-	EQUALS_TOKEN     TOKEN_KIND = "="
-	OPEN_BRACKET     TOKEN_KIND = "["
-	CLOSE_BRACKET    TOKEN_KIND = "]"
-	OPEN_CURLY       TOKEN_KIND = "{"
-	CLOSE_CURLY      TOKEN_KIND = "}"
-	COMMA_TOKEN      TOKEN_KIND = ","
-	DOT_TOKEN        TOKEN_KIND = "."
-	SEMI_COLON_TOKEN TOKEN_KIND = ";"
-	EOF_TOKEN        TOKEN_KIND = "eof"
+	LET_TOKEN        	TOKEN_KIND = "let"
+	CONST_TOKEN      	TOKEN_KIND = "const"
+	TYPE_TOKEN       	TOKEN_KIND = "type"
+	IDENTIFIER_TOKEN 	TOKEN_KIND = "identifier"
+	PRIVATE_TOKEN    	TOKEN_KIND = "priv"
+	INT              	TOKEN_KIND = builtins.INT
+	FLOAT            	TOKEN_KIND = builtins.FLOAT
+	CHR              	TOKEN_KIND = builtins.CHAR
+	STR              	TOKEN_KIND = builtins.STRING
+	BOOL             	TOKEN_KIND = builtins.BOOL
+	NULL             	TOKEN_KIND = builtins.NULL
+	NOT_TOKEN			TOKEN_KIND = "!"
+	MINUS_TOKEN			TOKEN_KIND = "-"
+	WALRUS_TOKEN     	TOKEN_KIND = ":="
+	COLON_TOKEN      	TOKEN_KIND = ":"
+	EQUALS_TOKEN     	TOKEN_KIND = "="
+	OPEN_BRACKET     	TOKEN_KIND = "["
+	CLOSE_BRACKET    	TOKEN_KIND = "]"
+	OPEN_CURLY       	TOKEN_KIND = "{"
+	CLOSE_CURLY      	TOKEN_KIND = "}"
+	COMMA_TOKEN      	TOKEN_KIND = ","
+	DOT_TOKEN        	TOKEN_KIND = "."
+	SEMI_COLON_TOKEN 	TOKEN_KIND = ";"
+	EOF_TOKEN        	TOKEN_KIND = "eof"
 )
 
 var keyWordsMap map[string]TOKEN_KIND = map[string]TOKEN_KIND{

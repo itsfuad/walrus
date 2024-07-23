@@ -44,10 +44,8 @@ func CheckAST(node ast.Node, env *TypeEnvironment) ValueTypeInterface {
 		return Chr{
 			DataType: CHAR_TYPE,
 		}
-	case ast.NullLiteralExpr:
-		return Null{
-			DataType: NULL_TYPE,
-		}
+	case ast.UnaryExpr:
+		return checkUnaryExpr(t, env)
 	case ast.ArrayExpr:
 		return evaluateArrayExpr(t, env)
 	case ast.ArrayIndexAccess:
