@@ -16,3 +16,5 @@ let point : Point = Point{ x: 2, y: 4 };
 type Array []int;
 
 let arr : Array = [1,2,3];
+
+//let pi := PI; //declared in the main.go

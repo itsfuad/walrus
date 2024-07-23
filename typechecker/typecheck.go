@@ -32,27 +32,22 @@ func EvaluateTypesOfNode(node ast.Node, env *TypeEnvironment) ValueTypeInterface
 	case ast.IntegerLiteralExpr:
 		return Int{
 			DataType: INT_TYPE,
-			Name:     string(INT_TYPE),
 		}
 	case ast.FloatLiteralExpr:
 		return Float{
 			DataType: FLOAT_TYPE,
-			Name:     string(FLOAT_TYPE),
 		}
 	case ast.StringLiteralExpr:
 		return Str{
 			DataType: STRING_TYPE,
-			Name:     string(STRING_TYPE),
 		}
 	case ast.CharLiteralExpr:
 		return Chr{
 			DataType: CHAR_TYPE,
-			Name:     string(CHAR_TYPE),
 		}
 	case ast.NullLiteralExpr:
 		return Null{
 			DataType: NULL_TYPE,
-			Name:     string(NULL_TYPE),
 		}
 	case ast.ArrayExpr:
 		return evaluateArrayExpr(t, env)
@@ -183,37 +178,30 @@ func makeBuiltinTYPE(typ VALUE_TYPE, env *TypeEnvironment) (ValueTypeInterface, 
 	case INT_TYPE:
 		return Int{
 			DataType: typ,
-			Name:     string(typ),
 		}, nil
 	case FLOAT_TYPE:
 		return Float{
 			DataType: typ,
-			Name:     string(typ),
 		}, nil
 	case CHAR_TYPE:
 		return Chr{
 			DataType: typ,
-			Name:     string(typ),
 		}, nil
 	case STRING_TYPE:
 		return Str{
 			DataType: typ,
-			Name:     string(typ),
 		}, nil
 	case BOOLEAN_TYPE:
 		return Bool{
 			DataType: typ,
-			Name:     string(typ),
 		}, nil
 	case NULL_TYPE:
 		return Null{
 			DataType: typ,
-			Name:     string(typ),
 		}, nil
 	case VOID_TYPE:
 		return Void{
 			DataType: typ,
-			Name:     string(typ),
 		}, nil
 	default:
 		fmt.Println("use type:", typ)

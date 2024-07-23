@@ -26,7 +26,6 @@ type ValueTypeInterface interface {
 
 type Int struct {
 	DataType VALUE_TYPE
-	Name     string
 }
 
 func (t Int) DType() VALUE_TYPE {
@@ -35,7 +34,6 @@ func (t Int) DType() VALUE_TYPE {
 
 type Float struct {
 	DataType VALUE_TYPE
-	Name     string
 }
 
 func (t Float) DType() VALUE_TYPE {
@@ -44,7 +42,6 @@ func (t Float) DType() VALUE_TYPE {
 
 type Chr struct {
 	DataType VALUE_TYPE
-	Name     string
 }
 
 func (t Chr) DType() VALUE_TYPE {
@@ -53,7 +50,6 @@ func (t Chr) DType() VALUE_TYPE {
 
 type Str struct {
 	DataType VALUE_TYPE
-	Name     string
 }
 
 func (t Str) DType() VALUE_TYPE {
@@ -62,7 +58,6 @@ func (t Str) DType() VALUE_TYPE {
 
 type Bool struct {
 	DataType VALUE_TYPE
-	Name     string
 }
 
 func (t Bool) DType() VALUE_TYPE {
@@ -71,7 +66,6 @@ func (t Bool) DType() VALUE_TYPE {
 
 type Null struct {
 	DataType VALUE_TYPE
-	Name     string
 }
 
 func (t Null) DType() VALUE_TYPE {
@@ -80,7 +74,6 @@ func (t Null) DType() VALUE_TYPE {
 
 type Void struct {
 	DataType VALUE_TYPE
-	Name     string
 }
 
 func (t Void) DType() VALUE_TYPE {
