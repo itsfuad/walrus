@@ -258,6 +258,13 @@ func parseUnaryExpr(p *Parser) ast.Node {
 
 	operator := p.advance()
 
+	switch operator.Kind {
+	case lexer.MINUS_TOKEN, lexer.NOT_TOKEN:
+		break
+	default:
+		errgen.MakeError(p.FilePath, operator.Start.Line, operator.Start.Column, operator.End.Column, fmt.Sprintf("invalid unary operator '%s'", operator.Value)).Display()
+	}
+
 	argument := parseExpr(p, UNARY_BP)
 
 	return ast.UnaryExpr{
