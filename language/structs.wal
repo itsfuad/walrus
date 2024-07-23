@@ -1,0 +1,17 @@
+
+
+
+type Point struct{
+	priv x: int,
+    y: int
+};
+
+/*
+type [string] typeNode;
+*/
+
+let point : Point;
+
+//let other : Foo; //error
+
+point = Point{ x: 13, y: 23};

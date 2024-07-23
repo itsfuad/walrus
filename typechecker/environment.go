@@ -16,7 +16,7 @@ const (
 	NULL_TYPE     VALUE_TYPE = builtins.NULL
 	VOID_TYPE     VALUE_TYPE = builtins.VOID
 	FUNCTION_TYPE VALUE_TYPE = builtins.FUNCTION
-	STRUCT_TYPE   VALUE_TYPE = builtins.FUNCTION
+	STRUCT_TYPE   VALUE_TYPE = builtins.STRUCT
 	ARRAY_TYPE    VALUE_TYPE = builtins.ARRAY
 )
 
@@ -97,10 +97,15 @@ func (t Fn) DType() VALUE_TYPE {
 	return t.DataType
 }
 
+type StructProperty struct {
+	IsPrivate	bool
+	Type		ValueTypeInterface
+}
+
 type Struct struct {
 	DataType   VALUE_TYPE
 	StructName string
-	Elements   map[string]ValueTypeInterface
+	Elements   map[string]StructProperty
 }
 
 func (t Struct) DType() VALUE_TYPE {
@@ -116,19 +121,30 @@ func (t Array) DType() VALUE_TYPE {
 	return t.DataType
 }
 
+type UserDefined struct {
+	DataType	VALUE_TYPE
+	TypeDef		ValueTypeInterface
+}
+
+func (t UserDefined) DType() VALUE_TYPE {
+	return t.DataType
+}
+
 type TypeEnvironment struct {
-	parent    *TypeEnvironment
-	variables map[string]ValueTypeInterface
-	constants map[string]bool
-	filePath  string
+	parent    	*TypeEnvironment
+	variables 	map[string]ValueTypeInterface
+	constants 	map[string]bool
+	types		map[string]ValueTypeInterface
+	filePath  	string
 }
 
 func NewTypeENV(parent *TypeEnvironment, filePath string) *TypeEnvironment {
 	return &TypeEnvironment{
-		parent:    parent,
-		filePath:  filePath,
-		variables: make(map[string]ValueTypeInterface),
-		constants: make(map[string]bool),
+		parent:    	parent,
+		filePath:  	filePath,
+		variables: 	make(map[string]ValueTypeInterface),
+		constants: 	make(map[string]bool),
+		types: 		make(map[string]ValueTypeInterface),
 	}
 }
 
@@ -146,15 +162,33 @@ func (t *TypeEnvironment) ResolveVar(name string) (*TypeEnvironment, error) {
 	return t.parent.ResolveVar(name)
 }
 
-func (t *TypeEnvironment) DeclareVar(name string, typVar ValueTypeInterface, isConst bool) error {
+func (t *TypeEnvironment) ResolveType(name string) (*TypeEnvironment, error) {
+	if _, ok := t.types[name]; ok {
+		return t, nil
+	}
+	if t.parent == nil {
+		return nil, fmt.Errorf("type '%s' is not defined", name)
+	}
+	return t.parent.ResolveType(name)
+}
+
+func (t *TypeEnvironment) DeclareVar(name string, typeVar ValueTypeInterface, isConst bool) error {
 	//should not be declared
 	if _, err := t.ResolveVar(name); err == nil {
 		return err
 	}
 
-	t.variables[name] = typVar
+	t.variables[name] = typeVar
 	t.constants[name] = isConst
 
+	return nil
+}
+
+func (t *TypeEnvironment) DeclareType(name string, typeType ValueTypeInterface) error {
+	if _, err := t.ResolveType(name); err == nil {
+		return err
+	}
+	t.types[name] = typeType
 	return nil
 }
 

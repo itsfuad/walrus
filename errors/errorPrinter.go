@@ -45,16 +45,19 @@ func (e *ErrorType) Display() {
 	
 	utils.ColorPrint(utils.RED, underLine)
 	utils.ColorPrint(utils.PURPLE, e.err.Error())
-	for _, hint := range e.hints {
-		utils.ColorPrint(utils.GREEN, "Hint:")
+	for i, hint := range e.hints {
+		if i == 0 {
+			utils.ColorPrint(utils.GREEN, "Hint:")
+		}
 		if hint.hintType == TEXT_HINT {
-			utils.ColorPrint(utils.YELLOW, hint.message + "\n")
+			utils.ColorPrint(utils.YELLOW, hint.message)
 		} else {
-			utils.ColorPrint(utils.ORANGE, hint.message + "\n")
+			utils.ColorPrint(utils.ORANGE, hint.message)
 		}
 	}
 	os.Exit(1)
 }
+
 
 func (e *ErrorType) AddHint(msg string, htype HINT) *ErrorType {
 	e.hints = append(e.hints, Hint{

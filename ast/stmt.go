@@ -35,3 +35,18 @@ func (a VarDeclStmt) StartPos() lexer.Position {
 func (a VarDeclStmt) EndPos() lexer.Position {
 	return a.Location.End
 }
+
+type TypeDeclStmt struct {
+	UDType		DataType
+	UDTypeName	string
+	Location
+}
+func (a TypeDeclStmt) INode() {
+	//empty method implements Node interface
+}
+func (a TypeDeclStmt) StartPos() lexer.Position {
+	return a.Location.Start
+}
+func (a TypeDeclStmt) EndPos() lexer.Position {
+	return a.Location.End
+}

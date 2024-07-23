@@ -7,7 +7,7 @@ const (
 	CHAR = "chr"
 	BOOL = "bool"
 	NULL = "null"
-	FUNCTION = "function"
+	FUNCTION = "fn"
 	STRUCT = "struct"
 	ARRAY = "array"
 	VOID = "void"

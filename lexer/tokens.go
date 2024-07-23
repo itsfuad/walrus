@@ -12,7 +12,11 @@ const (
 	LET_TOKEN   TOKEN_KIND = "let"
 	CONST_TOKEN TOKEN_KIND = "const"
 
+	TYPE_TOKEN	TOKEN_KIND = "type"
+
 	IDENTIFIER_TOKEN TOKEN_KIND = "identifier"
+
+	PRIVATE_TOKEN TOKEN_KIND = "priv"
 
 	//built in types
 	INT   TOKEN_KIND = builtins.INT
@@ -29,6 +33,8 @@ const (
 
 	OPEN_BRACKET  TOKEN_KIND = "["
 	CLOSE_BRACKET TOKEN_KIND = "]"
+	OPEN_CURLY	TOKEN_KIND = "{"
+	CLOSE_CURLY TOKEN_KIND = "}"
 
 	COMMA TOKEN_KIND = ","
 
@@ -40,6 +46,10 @@ const (
 var keyWordsMap map[string]TOKEN_KIND = map[string]TOKEN_KIND{
 	"let":   LET_TOKEN,
 	"const": CONST_TOKEN,
+	"type": TYPE_TOKEN,
+	"priv": PRIVATE_TOKEN,
+	"struct": builtins.STRUCT,
+	"fn": builtins.FUNCTION,
 }
 
 func IsKeyword(token string) bool {

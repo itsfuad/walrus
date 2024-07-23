@@ -131,9 +131,15 @@ func (a ArrayType) EndPos() lexer.Position {
 	return a.Location.End
 }
 
+type StructPropType struct {
+	Prop		IdentifierExpr
+	PropType	DataType
+	IsPrivate	bool
+}
+
 type StructType struct {
-	TypeName DATA_TYPE
-	Name     string
+	TypeName 	DATA_TYPE
+	Properties	map[string]StructPropType
 	Location
 }
 func (a StructType) Type() DATA_TYPE {
@@ -159,5 +165,19 @@ func (a FuctionType) StartPos() lexer.Position {
 	return a.Location.Start
 }
 func (a FuctionType) EndPos() lexer.Position {
+	return a.Location.End
+}
+
+type UserDefinedType struct {
+	TypeName	DATA_TYPE
+	Location
+}
+func (a UserDefinedType) Type() DATA_TYPE {
+	return a.TypeName
+}
+func (a UserDefinedType) StartPos() lexer.Position {
+	return a.Location.Start
+}
+func (a UserDefinedType) EndPos() lexer.Position {
 	return a.Location.End
 }

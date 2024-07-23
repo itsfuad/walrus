@@ -156,3 +156,18 @@ func (a ArrayIndexAccess) StartPos() lexer.Position {
 func (a ArrayIndexAccess) EndPos() lexer.Position {
 	return a.Location.End
 }
+
+type StructLiteral struct {
+	Name		IdentifierExpr
+	Properties	map[string]Node
+	Location
+}
+func (a StructLiteral) INode() {
+	//empty method implements Node interface
+}
+func (a StructLiteral) StartPos() lexer.Position {
+	return a.Location.Start
+}
+func (a StructLiteral) EndPos() lexer.Position {
+	return a.Location.End
+}

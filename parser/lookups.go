@@ -55,6 +55,7 @@ func bindLookupHandlers() {
 
 	led(lexer.EQUALS_TOKEN, ASSIGNMENT_BP, parseVarAssignmentExpr)
 	led(lexer.OPEN_BRACKET, MEMBER_BP, parseArrayAccess)
+	led(lexer.OPEN_CURLY, PRIMARY_BP, parseStructLiteral)
 
 	nud(lexer.IDENTIFIER_TOKEN, parsePrimaryExpr)
 	nud(lexer.INT, parsePrimaryExpr)
@@ -66,4 +67,5 @@ func bindLookupHandlers() {
 
 	stmt(lexer.LET_TOKEN, parseVarDeclStmt)
 	stmt(lexer.CONST_TOKEN, parseVarDeclStmt)
+	stmt(lexer.TYPE_TOKEN, parseUserDefinedTypeStmt)
 }

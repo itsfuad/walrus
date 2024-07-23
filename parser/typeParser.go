@@ -20,12 +20,21 @@ func typeNUD(kind lexer.TOKEN_KIND, handler typeNUDHandler) {
 }
 
 func bindTypeLookups() {
-	typeNUD(lexer.IDENTIFIER_TOKEN, parseDataType)
+	typeNUD(lexer.IDENTIFIER_TOKEN, parseBuiltinType)
 	typeNUD(lexer.OPEN_BRACKET, parseArrayType)
 }
 
-func parseDataType(p *Parser) ast.DataType {
-	identifier := p.expect(lexer.IDENTIFIER_TOKEN)
+func parseBuiltinType(p *Parser) ast.DataType {
+
+	identifier := p.advance()
+
+	switch identifier.Kind {
+	case lexer.IDENTIFIER_TOKEN:
+		break
+	default:
+		errors.MakeError(p.FilePath, identifier.Start.Line, identifier.Start.Column, identifier.End.Column, "invalid data type").Display()
+	}
+
 	value := identifier.Value
 
 	loc := ast.Location{
@@ -65,8 +74,8 @@ func parseDataType(p *Parser) ast.DataType {
 			Location: loc,
 		}
 	default:
-		return ast.StructType{
-			TypeName: ast.DATA_TYPE(builtins.STRUCT),
+		return ast.UserDefinedType{
+			TypeName: ast.DATA_TYPE(v),
 			Location: loc,
 		}
 	}
@@ -125,4 +134,69 @@ func parseType(p *Parser, bp BINDING_POWER) ast.DataType {
 	}
 
 	return left
+}
+
+
+func parseUDTType(p *Parser) ast.DataType {
+
+	identifier := p.currentToken()
+
+	switch v := identifier.Value; lexer.TOKEN_KIND(v) {
+	case builtins.STRUCT:
+		fmt.Println("parsing type of struct")
+		p.advance()
+		props := map[string]ast.StructPropType{}
+	
+		start := p.expect(lexer.OPEN_CURLY).Start
+	
+		for p.hasToken() && p.currentTokenKind() != lexer.CLOSE_CURLY {
+	
+			isPrivate := false
+	
+			if p.currentTokenKind() == lexer.PRIVATE_TOKEN {
+				isPrivate = true
+				p.advance()
+			}
+	
+			iden := p.expect(lexer.IDENTIFIER_TOKEN)
+			idenExpr := ast.IdentifierExpr{
+				Name: iden.Value,
+				Location: ast.Location{
+					Start: iden.Start,
+					End: iden.End,
+				},
+			}
+			p.expect(lexer.COLON_TOKEN)
+			typeName := parseType(p, DEFAULT_BP)
+	
+			props[iden.Value] = ast.StructPropType{
+				Prop: idenExpr,
+				PropType: typeName,
+				IsPrivate: isPrivate,
+			}
+	
+			if p.currentTokenKind() != lexer.CLOSE_CURLY {
+				p.expect(lexer.COMMA)
+			}
+		}
+	
+		end := p.expect(lexer.CLOSE_CURLY).End
+
+		loc := ast.Location{
+			Start: start,
+			End: end,
+		}
+
+		if len(props) == 0 {
+			errors.MakeError(p.FilePath, identifier.Start.Line, identifier.Start.Column, identifier.End.Column, "struct is empty").Display()
+		}
+	
+		return ast.StructType{
+			TypeName: ast.DATA_TYPE(builtins.STRUCT),
+			Properties: props,
+			Location: loc,
+		}
+	default:
+		return parseType(p, DEFAULT_BP)
+	}
 }

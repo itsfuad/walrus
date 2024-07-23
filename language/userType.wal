@@ -1,0 +1,14 @@
+
+
+let a := 78;
+
+type Point struct{
+    x: int,
+    y: int
+};
+
+type easy int;
+
+let x : easy = 3;
+
+let point : Point = 2;

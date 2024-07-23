@@ -4,7 +4,7 @@ let a : float = 5.3;
 let b : int = 6;
 const c : float = a;
 
-c = 4.6;
+//c = 4.6; // error
 
 let arr := [1,2,4,6];
 

@@ -15,7 +15,6 @@ import (
 func parseExpr(p *Parser, bp BINDING_POWER) ast.Node {
 
 	// Fist parse the NUD
-
 	token := p.currentToken()
 
 	tokenKind := token.Kind
@@ -23,7 +22,6 @@ func parseExpr(p *Parser, bp BINDING_POWER) ast.Node {
 	nudFunction, exists := NUDLookup[tokenKind]
 
 	if !exists {
-
 		var msg string
 		if lexer.IsKeyword(string(tokenKind)) {
 			msg = fmt.Sprintf("parser:nud:unexpected keyword '%s'\n", tokenKind)
@@ -121,7 +119,7 @@ func parseVarAssignmentExpr(p *Parser, left ast.Node, bp BINDING_POWER) ast.Node
 	case ast.ArrayIndexAccess:
 		break
 	default:
-		errMsg := "Cannot assign to a non-identifier\n"
+		errMsg := "cannot assign to a non-identifier\n"
 		errors.MakeError(p.FilePath, left.StartPos().Line, left.StartPos().Column, left.EndPos().Column, errMsg).Display()
 	}
 
@@ -168,15 +166,70 @@ func parseArrayExpr(p *Parser) ast.Node {
 }
 
 func parseArrayAccess(p *Parser, left ast.Node, bp BINDING_POWER) ast.Node {
-	start := p.expect(lexer.OPEN_BRACKET).Start
+	p.expect(lexer.OPEN_BRACKET)
 	index := parseExpr(p, bp)
 	end := p.expect(lexer.CLOSE_BRACKET).End
 	return ast.ArrayIndexAccess{
 		Arrayvalue: left,
 		Index:      index,
 		Location: ast.Location{
-			Start: start,
+			Start: left.StartPos(),
 			End:   end,
 		},
 	}
+}
+
+func parseStructLiteral(p *Parser, leftNode ast.Node, bp BINDING_POWER) ast.Node {
+
+	fmt.Println("left", leftNode)
+
+	identifier, ok := leftNode.(ast.IdentifierExpr);
+
+	if !ok {
+		errors.MakeError(p.FilePath, leftNode.StartPos().Line, leftNode.StartPos().Column, leftNode.EndPos().Column, "expected struct name").Display()
+		return nil
+	}
+
+	start := identifier.Start
+
+	p.expect(lexer.OPEN_CURLY)
+
+	//parse the values
+	props := map[string]ast.Node{}
+
+	for p.hasToken() && p.currentTokenKind() != lexer.CLOSE_CURLY {
+		//we expect an identifier
+		iden := p.expect(lexer.IDENTIFIER_TOKEN)
+		//then we expect colon
+		p.expect(lexer.COLON_TOKEN)
+		//now we expect value as expression
+		val := parseExpr(p, bp)
+
+		props[iden.Value] = val
+
+		//if the next token is not } then we have more values
+		if p.currentTokenKind() != lexer.CLOSE_CURLY {
+			//we expect comma
+			p.expect(lexer.COMMA)
+		}
+	}
+
+	end := p.expect(lexer.CLOSE_CURLY).End
+
+	structVal := ast.StructLiteral{
+		Name: ast.IdentifierExpr{
+			Name: identifier.Name,
+			Location: ast.Location{
+				Start: identifier.Start,
+				End: identifier.End,
+			},
+		},
+		Properties: props,
+		Location: ast.Location{
+			Start: start,
+			End: end,
+		},
+	}
+
+	return structVal
 }

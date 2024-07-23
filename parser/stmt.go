@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"fmt"
 	"walrus/ast"
 	"walrus/errors"
 	"walrus/lexer"
@@ -44,7 +45,6 @@ func parseVarDeclStmt(p *Parser) ast.Node {
 
 	end := p.expect(lexer.SEMI_COLON_TOKEN).End
 
-
 	node := ast.VarDeclStmt{
 		Variable: ast.IdentifierExpr{
 			Name: identifier.Value,
@@ -64,4 +64,30 @@ func parseVarDeclStmt(p *Parser) ast.Node {
 	}
 
 	return node
+}
+
+
+
+func parseUserDefinedTypeStmt(p *Parser) ast.Node {
+
+	start := p.advance().Start //eat type token
+
+	typeName := p.expect(lexer.IDENTIFIER_TOKEN)
+
+	udType := parseUDTType(p)
+
+	fmt.Println(start)
+
+	fmt.Printf("typename: %v, udType: %v\n", typeName.Value, udType.Type())
+
+	p.expect(lexer.SEMI_COLON_TOKEN)
+
+	return ast.TypeDeclStmt{
+		UDType: udType,
+		UDTypeName: typeName.Value,
+		Location: ast.Location{
+			Start: start,
+			End: udType.EndPos(),
+		},
+	}
 }

@@ -76,6 +76,8 @@ func createLexer(filePath *string) *Lexer {
 			{regexp.MustCompile(";"), defaultHandler(SEMI_COLON_TOKEN, ";")},
 			{regexp.MustCompile(`\[`), defaultHandler(OPEN_BRACKET, "[")},
 			{regexp.MustCompile(`\]`), defaultHandler(CLOSE_BRACKET, "]")},
+			{regexp.MustCompile(`\{`), defaultHandler(OPEN_CURLY, "{")},
+			{regexp.MustCompile(`\}`), defaultHandler(CLOSE_CURLY, "}")},
 			{regexp.MustCompile(","), defaultHandler(COMMA, ",")},
 		},
 	}
