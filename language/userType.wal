@@ -7,8 +7,12 @@ type Point struct{
     y: int
 };
 
-type easy int;
+type Int int;
 
-let x : easy = 3;
+let x : Int = 3;
 
-let point : Point = 2;
+let point : Point = Point{ x: 2, y: 4 };
+
+type Array []int;
+
+let arr : Array = [1,2,3];
