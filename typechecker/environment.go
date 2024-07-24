@@ -167,7 +167,7 @@ func (t *TypeEnvironment) ResolveType(name string) (*TypeEnvironment, error) {
 
 func (t *TypeEnvironment) DeclareVar(name string, typeVar ValueTypeInterface, isConst bool) error {
 	//should not be declared
-	if _, err := t.ResolveVar(name); err == nil {
+	if scope, err := t.ResolveVar(name); err == nil && scope == t {
 		return fmt.Errorf("'%s' is already declared in this scope", name)
 	}
 
@@ -178,14 +178,9 @@ func (t *TypeEnvironment) DeclareVar(name string, typeVar ValueTypeInterface, is
 }
 
 func (t *TypeEnvironment) DeclareType(name string, typeType ValueTypeInterface) error {
-	if _, err := t.ResolveType(name); err == nil {
+	if scope, err := t.ResolveType(name); err == nil && scope == t {
 		return err
 	}
 	t.types[name] = typeType
-	return nil
-}
-
-func (t *TypeEnvironment) DeclareStruct(name string, typVar ValueTypeInterface) error {
-	// will implement later
 	return nil
 }
