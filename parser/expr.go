@@ -104,6 +104,13 @@ func parsePrimaryExpr(p *Parser) ast.Node {
 	return nil
 }
 
+func parseGroupingExpr(p *Parser) ast.Node {
+	p.expect(lexer.OPEN_PAREN)
+	expr := parseExpr(p, DEFAULT_BP)
+	p.expect(lexer.CLOSE_PAREN)
+	return expr
+}
+
 func parseVarAssignmentExpr(p *Parser, left ast.Node, bp BINDING_POWER) ast.Node {
 
 	start := p.currentToken().Start
@@ -273,6 +280,23 @@ func parseUnaryExpr(p *Parser) ast.Node {
 		Location: ast.Location{
 			Start: start,
 			End: argument.EndPos(),
+		},
+	}
+}
+
+func parseBinaryExpr(p *Parser, left ast.Node, bp BINDING_POWER) ast.Node {
+
+	op := p.advance()
+
+	right := parseExpr(p, bp)
+
+	return ast.BinaryExpr{
+		Operator: op,
+		Left: left,
+		Right: right,
+		Location: ast.Location{
+			Start: left.StartPos(),
+			End: right.EndPos(),
 		},
 	}
 }

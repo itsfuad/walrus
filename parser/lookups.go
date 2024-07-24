@@ -59,6 +59,14 @@ func bindLookupHandlers() {
 
 	led(lexer.DOT_TOKEN, MEMBER_BP, parsePropertyExpr)
 
+	//arithmetics
+	led(lexer.PLUS_TOKEN, ADDITIVE_BP, parseBinaryExpr)
+	led(lexer.MINUS_TOKEN, ADDITIVE_BP, parseBinaryExpr)
+	led(lexer.MUL_TOKEN, MULTIPLICATIVE_BP, parseBinaryExpr)
+	led(lexer.DIV_TOKEN, MULTIPLICATIVE_BP, parseBinaryExpr)
+	led(lexer.MOD_TOKEN, MULTIPLICATIVE_BP, parseBinaryExpr)
+	led(lexer.EXP_TOKEN, MULTIPLICATIVE_BP, parseBinaryExpr)
+
 	nud(lexer.IDENTIFIER_TOKEN, parsePrimaryExpr)
 	nud(lexer.INT, parsePrimaryExpr)
 	nud(lexer.FLOAT, parsePrimaryExpr)
@@ -66,6 +74,7 @@ func bindLookupHandlers() {
 	nud(lexer.CHR, parsePrimaryExpr)
 	nud(lexer.NULL, parsePrimaryExpr)
 	nud(lexer.OPEN_BRACKET, parseArrayExpr)
+	nud(lexer.OPEN_PAREN, parseGroupingExpr)
 
 	stmt(lexer.LET_TOKEN, parseVarDeclStmt)
 	stmt(lexer.CONST_TOKEN, parseVarDeclStmt)

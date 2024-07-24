@@ -7,9 +7,9 @@ A tiny simple programming language made for simplicity. It borrows syntax from '
     - [x] Variable assign
     - [x] Expressions
         - [x] Unary (int, float, bool) `- !`
-        - [ ] Additive `+ -`
-        - [ ] Multiplicative `* / % ^`
-        - [ ] Grouping `( )`
+        - [x] Additive `+ -`
+        - [x] Multiplicative `* / % ^`
+        - [x] Grouping `( )`
     - [x] Array
         - [x] Array indexing
     - [x] User defined types
@@ -18,5 +18,6 @@ A tiny simple programming language made for simplicity. It borrows syntax from '
             - [x] Property assignment
             - [x] Private property deny access
         - [x] Builtins
+    - [ ] Functions
 - [x] Analyzer
 - [ ] Codegen

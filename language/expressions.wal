@@ -1,0 +1,9 @@
+
+
+let a := 10;
+let b := a * (34 - 18);
+let c := a * 34 - 18;
+let d := a - 34 * 18;
+
+let e := "hello" + 2; // ok
+//e = "hello" - 2; // error

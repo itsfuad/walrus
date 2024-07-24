@@ -125,6 +125,23 @@ func (a UnaryExpr) EndPos() lexer.Position {
 	return a.Location.End
 }
 
+type BinaryExpr struct {
+	Operator	lexer.Token
+	Left		Node
+	Right		Node
+	Location
+}
+
+func (a BinaryExpr) INode() {
+	//empty method implements Node interface
+}
+func (a BinaryExpr) StartPos() lexer.Position {
+	return a.Location.Start
+}
+func (a BinaryExpr) EndPos() lexer.Position {
+	return a.Location.End
+}
+
 type VarAssignmentExpr struct {
 	Assignee Node // Check later if we should use IdentifierExpr instead
 	Value    Node

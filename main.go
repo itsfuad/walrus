@@ -14,7 +14,7 @@ import (
 
 func main() {
 	fmt.Println("Hello world!")
-	filePath := "language/variable.wal"
+	filePath := "language/expressions.wal"
 	tokens := lexer.Tokenize(filePath, true)
 	parser := parseMachine.NewParser(filePath, tokens)
 	tree := parser.Parse()
