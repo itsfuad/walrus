@@ -56,7 +56,6 @@ func (e *ErrorType) Display() {
 		}
 	}
 	panic("")
-	os.Exit(1)
 }
 
 
