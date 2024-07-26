@@ -11,7 +11,7 @@ type Int int;
 
 let x : Int = 3;
 
-let point : Point = Point{ x: 2, y: 4 };
+let point : Point = @Point{ x: 2, y: 4 };
 
 type Array []int;
 

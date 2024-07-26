@@ -58,6 +58,10 @@ func CheckAST(node ast.Node, env *TypeEnvironment) ValueTypeInterface {
 		return checkStructLiteral(t, env)
 	case ast.PropertyExpr:
 		return checkProperty(t, env)
+	case ast.IfStmt:
+		return checkIfStmt(t, env)
+	case ast.BlockStmt:
+		return checkBlock(t, env)
 	}
 	errgen.MakeError(env.filePath, node.StartPos().Line, node.StartPos().Column, node.EndPos().Column, fmt.Sprintf("<%T> node is not implemented yet", node)).Display()
 	return nil

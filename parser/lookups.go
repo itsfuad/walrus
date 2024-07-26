@@ -55,7 +55,7 @@ func bindLookupHandlers() {
 
 	led(lexer.EQUALS_TOKEN, ASSIGNMENT_BP, parseVarAssignmentExpr)
 	led(lexer.OPEN_BRACKET, MEMBER_BP, parseArrayAccess)
-	led(lexer.OPEN_CURLY, PRIMARY_BP, parseStructLiteral)
+	nud(lexer.AT_TOKEN, parseStructLiteral)
 
 	led(lexer.DOT_TOKEN, MEMBER_BP, parsePropertyExpr)
 
@@ -66,6 +66,13 @@ func bindLookupHandlers() {
 	led(lexer.DIV_TOKEN, MULTIPLICATIVE_BP, parseBinaryExpr)
 	led(lexer.MOD_TOKEN, MULTIPLICATIVE_BP, parseBinaryExpr)
 	led(lexer.EXP_TOKEN, MULTIPLICATIVE_BP, parseBinaryExpr)
+
+	led(lexer.DOUBLE_EQUAL_TOKEN, RELATIONAL_BP, parseBinaryExpr)
+	led(lexer.NOT_EQUAL_TOKEN, RELATIONAL_BP, parseBinaryExpr)
+	led(lexer.LESS_EQUAL_TOKEN, RELATIONAL_BP, parseBinaryExpr)
+	led(lexer.LESS_TOKEN, RELATIONAL_BP, parseBinaryExpr)
+	led(lexer.GREATER_EQUAL_TOKEN, RELATIONAL_BP, parseBinaryExpr)
+	led(lexer.GREATER_TOKEN, RELATIONAL_BP, parseBinaryExpr)
 
 	nud(lexer.IDENTIFIER_TOKEN, parsePrimaryExpr)
 	nud(lexer.INT, parsePrimaryExpr)
@@ -79,6 +86,8 @@ func bindLookupHandlers() {
 	stmt(lexer.LET_TOKEN, parseVarDeclStmt)
 	stmt(lexer.CONST_TOKEN, parseVarDeclStmt)
 	stmt(lexer.TYPE_TOKEN, parseUserDefinedTypeStmt)
+
+	stmt(lexer.IF_TOKEN, parseIfStmt)
 
 	//Unary
 	nud(lexer.MINUS_TOKEN, parseUnaryExpr)

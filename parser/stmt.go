@@ -90,3 +90,53 @@ func parseUserDefinedTypeStmt(p *Parser) ast.Node {
 		},
 	}
 }
+
+func parseBlock(p *Parser) ast.BlockStmt {
+
+	start := p.expect(lexer.OPEN_CURLY).Start
+
+	body := make([]ast.Node, 0)
+
+	for p.hasToken() && p.currentTokenKind() != lexer.CLOSE_CURLY {
+		body = append(body, parseNode(p))
+	}
+
+	end := p.expect(lexer.CLOSE_CURLY).End
+
+	return ast.BlockStmt{
+		Contents: body,
+		Location: ast.Location{
+			Start: start,
+			End:   end,
+		},
+	}
+}
+
+func parseIfStmt(p *Parser) ast.Node {
+
+	start := p.advance().Start // eat if token
+
+	condition := parseExpr(p, ASSIGNMENT_BP)
+
+	//parse block
+	consequentBlock := parseBlock(p)
+
+	var alternate ast.Node
+
+	if p.hasToken() && p.currentTokenKind() == lexer.ELSE_TOKEN {
+		p.advance() // eat else token
+		alternate = parseBlock(p)
+	} else if p.hasToken() && p.currentTokenKind() == lexer.ELSEIF_TOKEN {
+		alternate = parseIfStmt(p)
+	}
+
+	return ast.IfStmt{
+		Condition:      condition,
+		Block:          consequentBlock,
+		AlternateBlock: alternate,
+		Location: ast.Location{
+			Start: start,
+			End:   consequentBlock.End,
+		},
+	}
+}

@@ -14,7 +14,7 @@ let point : Point;
 
 //let other : Foo; //error
 
-point = Point{ x: 13, y: 23};
+point = @Point{ x: 13, y: 23};
 
 type Distance struct {
     start: Point,
@@ -25,8 +25,8 @@ type Distance struct {
 
 let a := 0;
 
-let distance := Distance{
-    start: Point{
+let distance := @Distance{
+    start: @Point{
         x: 2,
         y: 3,
     },

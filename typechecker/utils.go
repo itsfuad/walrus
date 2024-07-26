@@ -109,6 +109,15 @@ func IsLValue(node ast.Node) bool {
 	}
 }
 
+func IsNumberType(operand ValueTypeInterface) bool {
+	switch operand.(type) {
+	case Int, Float:
+		return true
+	default:
+		return false
+	}
+}
+
 func EvaluateTypeName(dtype ast.DataType, env *TypeEnvironment) (ValueTypeInterface, error) {
 	switch t := dtype.(type) {
 	case ast.ArrayType:

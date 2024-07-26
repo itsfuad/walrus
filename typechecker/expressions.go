@@ -34,7 +34,7 @@ func checkUnaryExpr(node ast.UnaryExpr, env *TypeEnvironment) ValueTypeInterface
 
 func checkBinaryExpr(node ast.BinaryExpr, env *TypeEnvironment) ValueTypeInterface {
 	op := node.Operator
-	
+
 	left := CheckAST(node.Left, env)
 	right := CheckAST(node.Right, env)
 
@@ -46,7 +46,7 @@ func checkBinaryExpr(node ast.BinaryExpr, env *TypeEnvironment) ValueTypeInterfa
 
 	switch op.Kind {
 	case lexer.PLUS_TOKEN:
-		return checkAdditionAndConcat(node, env)
+		return checkAdditionAndConcat(node, left, right, env)
 	case lexer.MINUS_TOKEN, lexer.MUL_TOKEN, lexer.DIV_TOKEN, lexer.MOD_TOKEN, lexer.EXP_TOKEN:
 		//must have to be numeric type on both side
 		if leftType != builtins.INT && leftType != builtins.FLOAT {
@@ -62,6 +62,8 @@ func checkBinaryExpr(node ast.BinaryExpr, env *TypeEnvironment) ValueTypeInterfa
 		} else {
 			return left
 		}
+	case lexer.DOUBLE_EQUAL_TOKEN, lexer.NOT_EQUAL_TOKEN, lexer.LESS_EQUAL_TOKEN, lexer.LESS_TOKEN, lexer.GREATER_EQUAL_TOKEN, lexer.GREATER_TOKEN:
+		return checkComparison(node, left, right, env)
 	default:
 		errMsg = "invalid operator"
 		errLine = op.Start.Line
@@ -73,10 +75,32 @@ func checkBinaryExpr(node ast.BinaryExpr, env *TypeEnvironment) ValueTypeInterfa
 	return nil
 }
 
-func checkAdditionAndConcat(node ast.BinaryExpr, env *TypeEnvironment) ValueTypeInterface {
+func checkComparison(node ast.BinaryExpr, left ValueTypeInterface, right ValueTypeInterface, env *TypeEnvironment) ValueTypeInterface {
+
+	leftType := left.DType()
+	rightType := right.DType()
+
+	op := node.Operator
 	
-	left := CheckAST(node.Left, env)
-	right := CheckAST(node.Right, env)
+	if op.Kind == lexer.DOUBLE_EQUAL_TOKEN || op.Kind == lexer.NOT_EQUAL_TOKEN {
+		// ( ==, != ) allow every type
+		if IsNumberType(left) && IsNumberType(right) {
+			return left
+		} else if leftType == rightType {
+			return left
+		}
+	} else {
+		// ( >=, >, <=, < ) allow only numeric types
+		if IsNumberType(left) && IsNumberType(right) {
+			return left
+		}
+	}
+	errMsg := fmt.Sprintf("invalid compare operation between '%s' and '%s'", leftType, rightType)
+	errgen.MakeError(env.filePath, node.Start.Line, node.Start.Column, node.End.Column, errMsg).Display()
+	return nil
+}
+
+func checkAdditionAndConcat(node ast.BinaryExpr, left ValueTypeInterface, right ValueTypeInterface, env *TypeEnvironment) ValueTypeInterface {
 
 	leftType := left.DType()
 	rightType := right.DType()

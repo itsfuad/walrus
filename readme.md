@@ -18,6 +18,10 @@ A tiny simple programming language made for simplicity. It borrows syntax from '
             - [x] Property assignment
             - [x] Private property deny access
         - [x] Builtins
+    - [x] Conditionals
+        - [x] if
+        - [x] else
+        - [x] else if
     - [ ] Functions
 - [x] Analyzer
 - [ ] Codegen

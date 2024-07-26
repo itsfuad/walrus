@@ -1,0 +1,21 @@
+
+
+let a := 12;
+let b := 3;
+
+let c: int;
+
+c = 20;
+
+if a > b {
+    c = a;
+    /* // error
+    if a > true {
+        c = a;
+    }
+    */
+} elf a < b {
+    c = b;
+} els {
+    c = c;
+}

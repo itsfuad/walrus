@@ -183,16 +183,19 @@ func parseArrayAccess(p *Parser, left ast.Node, bp BINDING_POWER) ast.Node {
 	}
 }
 
-func parseStructLiteral(p *Parser, leftNode ast.Node, bp BINDING_POWER) ast.Node {
+func parseStructLiteral(p *Parser) ast.Node {
 
-	identifier, ok := leftNode.(ast.IdentifierExpr)
+	start := p.expect(lexer.AT_TOKEN).Start
 
-	if !ok {
-		errgen.MakeError(p.FilePath, leftNode.StartPos().Line, leftNode.StartPos().Column, leftNode.EndPos().Column, "expected struct name").Display()
-		return nil
+	idetifierToken := p.expectError(lexer.IDENTIFIER_TOKEN, fmt.Errorf("expected a struct name"))
+
+	identidier := ast.IdentifierExpr{
+		Name: idetifierToken.Value,
+		Location: ast.Location{
+			Start: idetifierToken.Start,
+			End: idetifierToken.End,
+		},
 	}
-
-	start := identifier.Start
 
 	p.expect(lexer.OPEN_CURLY)
 
@@ -219,13 +222,7 @@ func parseStructLiteral(p *Parser, leftNode ast.Node, bp BINDING_POWER) ast.Node
 	end := p.expect(lexer.CLOSE_CURLY).End
 
 	structVal := ast.StructLiteral{
-		Name: ast.IdentifierExpr{
-			Name: identifier.Name,
-			Location: ast.Location{
-				Start: identifier.Start,
-				End:   identifier.End,
-			},
-		},
+		Name: identidier,
 		Properties: props,
 		Location: ast.Location{
 			Start: start,
