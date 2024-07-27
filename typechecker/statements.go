@@ -1,6 +1,10 @@
 package typechecker
 
-import "walrus/ast"
+import (
+	"fmt"
+	"walrus/ast"
+	"walrus/errgen"
+)
 
 func checkIfStmt(node ast.IfStmt, env *TypeEnvironment) ValueTypeInterface {
 	//check the if condition
@@ -22,11 +26,32 @@ func checkIfStmt(node ast.IfStmt, env *TypeEnvironment) ValueTypeInterface {
 
 func checkBlock(node ast.BlockStmt, env *TypeEnvironment) ValueTypeInterface {
 
-	for _, stmt := range node.Contents {
-		CheckAST(stmt, env)
+	var returnType ValueTypeInterface
+
+	for i, stmt := range node.Contents {
+		typ := CheckAST(stmt, env)
+		fmt.Println(typ)
+		if typ.DType() == RETURN_TYPE {
+			returnedExpr := typ.(ReturnType).Expression
+			//if has more statements,
+			if i + 1 < len(node.Contents) {
+				s := node.Contents[i + 1]
+				fmt.Println(s)
+				errgen.MakeError(env.filePath, s.StartPos().Line, s.EndPos().Line, s.StartPos().Column, s.EndPos().Column, "remove this unreachable code after return").Display()
+			}
+			returnType = ReturnType{
+				DataType: RETURN_TYPE,
+				Expression: returnedExpr,
+			}
+			break
+		}
 	}
 
-	return Void{
-		DataType: VOID_TYPE,
+	if returnType == nil {
+		returnType = Void{
+			DataType: VOID_TYPE,
+		}
 	}
+
+	return returnType
 }

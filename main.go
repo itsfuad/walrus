@@ -14,7 +14,7 @@ import (
 
 func main() {
 	fmt.Println("Hello world!")
-	filePath := "language/ifelse.wal"
+	filePath := "language/function.wal"
 	tokens := lexer.Tokenize(filePath, true)
 	parser := parseMachine.NewParser(filePath, tokens)
 	tree := parser.Parse()
@@ -39,7 +39,7 @@ func main() {
 
 	file.Close()
 
-	tc := typechecker.NewTypeENV(nil, filePath)
+	tc := typechecker.NewTypeENV(nil, typechecker.GLOBAL_SCOPE, filePath)
 	tc.DeclareVar("null", typechecker.Null{DataType: typechecker.NULL_TYPE}, true)
 	tc.DeclareVar("true", typechecker.Bool{DataType: typechecker.BOOLEAN_TYPE}, true)
 	tc.DeclareVar("false", typechecker.Bool{DataType: typechecker.BOOLEAN_TYPE}, true)

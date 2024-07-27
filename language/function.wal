@@ -1,0 +1,24 @@
+
+
+fn sayHello(){
+    let hello := "Hello world";
+}
+
+fn large() -> int {
+    let a := 1;
+    let b := 2;
+    if a > b {
+        ret 5.5;
+    } els {
+        //ret b;
+        if a > b {
+            //ret 5;
+        } els {
+            ret 6;
+        }
+    }
+    ret 0;
+}
+
+let a := 12;
+let b := 3;

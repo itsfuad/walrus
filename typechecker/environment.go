@@ -18,6 +18,7 @@ const (
 	FUNCTION_TYPE VALUE_TYPE = builtins.FUNCTION
 	STRUCT_TYPE   VALUE_TYPE = builtins.STRUCT
 	ARRAY_TYPE    VALUE_TYPE = builtins.ARRAY
+	RETURN_TYPE	  VALUE_TYPE = "return"
 )
 
 type ValueTypeInterface interface {
@@ -82,7 +83,7 @@ func (t Void) DType() VALUE_TYPE {
 
 type Fn struct {
 	DataType VALUE_TYPE
-	Params   []ValueTypeInterface
+	Params   map[string]ValueTypeInterface
 	Returns  ValueTypeInterface
 }
 
@@ -123,22 +124,52 @@ func (t UserDefined) DType() VALUE_TYPE {
 	return t.DataType
 }
 
+type ReturnType struct {
+	DataType VALUE_TYPE
+	Expression ValueTypeInterface
+}
+
+func (t ReturnType) DType() VALUE_TYPE {
+	return t.DataType
+}
+
+type SCOPE_NAME int
+
+const (
+	GLOBAL_SCOPE  SCOPE_NAME = iota
+	FUNCTION_SCOPE
+	CONDITIONAL_SCOPE
+	LOOP_SCOPE
+)
+
 type TypeEnvironment struct {
 	parent    	*TypeEnvironment
+	scopeType 	SCOPE_NAME
 	variables 	map[string]ValueTypeInterface
 	constants 	map[string]bool
 	types		map[string]ValueTypeInterface
 	filePath  	string
 }
 
-func NewTypeENV(parent *TypeEnvironment, filePath string) *TypeEnvironment {
+func NewTypeENV(parent *TypeEnvironment, scope SCOPE_NAME, filePath string) *TypeEnvironment {
 	return &TypeEnvironment{
 		parent:    	parent,
+		scopeType: 	scope,
 		filePath:  	filePath,
 		variables: 	make(map[string]ValueTypeInterface),
 		constants: 	make(map[string]bool),
 		types: 		make(map[string]ValueTypeInterface),
 	}
+}
+
+func (t *TypeEnvironment) ResolveFunctionParent() (*TypeEnvironment, error) {
+	if t.scopeType == FUNCTION_SCOPE {
+		return t, nil
+	}
+	if t.parent == nil {
+		return nil, fmt.Errorf("function not found")
+	}
+	return t.parent.ResolveFunctionParent()
 }
 
 func (t *TypeEnvironment) ResolveVar(name string) (*TypeEnvironment, error) {

@@ -15,7 +15,9 @@ func EvaluateProgram(program ast.ProgramStmt, env *TypeEnvironment) ValueTypeInt
 
 	utils.ColorPrint(utils.GREEN, "--------- passed ---------")
 
-	return nil
+	return Void{
+		DataType: VOID_TYPE,
+	}
 }
 
 func CheckAST(node ast.Node, env *TypeEnvironment) ValueTypeInterface {
@@ -56,13 +58,17 @@ func CheckAST(node ast.Node, env *TypeEnvironment) ValueTypeInterface {
 		return checkTypeDeclaration(t, env)
 	case ast.StructLiteral:
 		return checkStructLiteral(t, env)
-	case ast.PropertyExpr:
+	case ast.StructPropertyAccessExpr:
 		return checkProperty(t, env)
 	case ast.IfStmt:
 		return checkIfStmt(t, env)
 	case ast.BlockStmt:
 		return checkBlock(t, env)
+	case ast.FunctionDeclStmt:
+		return checkFuncDecl(t, env)
+	case ast.ReturnStmt:
+		return checkReturnStmt(t, env)
 	}
-	errgen.MakeError(env.filePath, node.StartPos().Line, node.StartPos().Column, node.EndPos().Column, fmt.Sprintf("<%T> node is not implemented yet", node)).Display()
+	errgen.MakeError(env.filePath, node.StartPos().Line, node.EndPos().Line, node.StartPos().Column, node.EndPos().Column, fmt.Sprintf("<%T> node is not implemented yet to check", node)).Display()
 	return nil
 }

@@ -32,7 +32,7 @@ func parseBuiltinType(p *Parser) ast.DataType {
 	case lexer.IDENTIFIER_TOKEN:
 		break
 	default:
-		errgen.MakeError(p.FilePath, identifier.Start.Line, identifier.Start.Column, identifier.End.Column, "invalid data type").Display()
+		errgen.MakeError(p.FilePath, identifier.Start.Line, identifier.End.Line, identifier.Start.Column, identifier.End.Column, "invalid data type").Display()
 	}
 
 	value := identifier.Value
@@ -105,7 +105,7 @@ func parseType(p *Parser, bp BINDING_POWER) ast.DataType {
 
 	if !exists {
 		//panic(fmt.Sprintf("TYPE NUD handler expected for token %s\n", tokenKind))
-		err := errgen.MakeError(p.FilePath, p.currentToken().Start.Line, p.currentToken().Start.Column, p.currentToken().End.Column, fmt.Sprintf("Unexpected token %s\n", tokenKind))
+		err := errgen.MakeError(p.FilePath, p.currentToken().Start.Line, p.currentToken().End.Line,  p.currentToken().Start.Column, p.currentToken().End.Column, fmt.Sprintf("Unexpected token %s\n", tokenKind))
 		err.AddHint("Follow ", errgen.TEXT_HINT)
 		err.AddHint("let x := 10", errgen.CODE_HINT)
 		err.AddHint(" syntax or", errgen.TEXT_HINT)
@@ -134,6 +134,15 @@ func parseType(p *Parser, bp BINDING_POWER) ast.DataType {
 	return left
 }
 
+/*
+Used to parse type for the type declaration with type keyword
+
+Example:
+type MyType struct {
+	x: int,
+	y: float,
+};
+*/
 func parseUDTType(p *Parser) ast.DataType {
 
 	identifier := p.currentToken()
@@ -184,7 +193,7 @@ func parseUDTType(p *Parser) ast.DataType {
 		}
 
 		if len(props) == 0 {
-			errgen.MakeError(p.FilePath, identifier.Start.Line, identifier.Start.Column, identifier.End.Column, "struct is empty").Display()
+			errgen.MakeError(p.FilePath, identifier.Start.Line, identifier.End.Line,  identifier.Start.Column, identifier.End.Column, "struct is empty").Display()
 		}
 
 		return ast.StructType{

@@ -8,7 +8,7 @@ import (
 )
 
 // generate interfaces from the type enum
-func makeBuiltinTYPE(typ VALUE_TYPE, env *TypeEnvironment) (ValueTypeInterface, error) {
+func makeTypesInterface(typ VALUE_TYPE, env *TypeEnvironment) (ValueTypeInterface, error) {
 	switch typ {
 	case INT_TYPE:
 		return Int{
@@ -51,20 +51,20 @@ func makeBuiltinTYPE(typ VALUE_TYPE, env *TypeEnvironment) (ValueTypeInterface, 
 	}
 }
 
-func handleExplicitType(node ast.VarDeclStmt, env *TypeEnvironment) ValueTypeInterface {
+func handleExplicitType(explicitType ast.DataType, env *TypeEnvironment) ValueTypeInterface {
 	//Explicit type is defined
 	var expectedTypeInterface ValueTypeInterface
-	switch t := node.ExplicitType.(type) {
+	switch t := explicitType.(type) {
 	case ast.ArrayType:
 		val, err := EvaluateTypeName(t, env)
 		if err != nil {
-			errgen.MakeError(env.filePath, t.Start.Line, t.Start.Column, t.End.Column, err.Error()).Display()
+			errgen.MakeError(env.filePath, t.Start.Line, t.End.Line, t.Start.Column, t.End.Column, err.Error()).Display()
 		}
 		expectedTypeInterface = val
 	default:
-		val, err := makeBuiltinTYPE(VALUE_TYPE(node.ExplicitType.Type()), env)
+		val, err := makeTypesInterface(VALUE_TYPE(explicitType.Type()), env)
 		if err != nil {
-			errgen.MakeError(env.filePath, node.ExplicitType.StartPos().Line, node.ExplicitType.StartPos().Column, node.ExplicitType.EndPos().Column, err.Error()).Display()
+			errgen.MakeError(env.filePath, explicitType.StartPos().Line, explicitType.EndPos().Line, explicitType.StartPos().Column, explicitType.EndPos().Column, err.Error()).Display()
 		}
 		expectedTypeInterface = val
 	}
@@ -86,13 +86,13 @@ func getTypename(typeName ValueTypeInterface) VALUE_TYPE {
 	}
 }
 
-func MatchTypes(expected ValueTypeInterface, provided ValueTypeInterface, filePath string, line, start, end int) {
+func MatchTypes(expected ValueTypeInterface, provided ValueTypeInterface, filePath string, lineStart, lineEnd, start, end int) {
 
 	expectedType := getTypename(expected)
 	gotType := getTypename(provided)
 
 	if expectedType != gotType {
-		errgen.MakeError(filePath, line, start, end, fmt.Sprintf("typecheck:expected '%s', got '%s'", expectedType, gotType)).Display()
+		errgen.MakeError(filePath, lineStart, lineEnd, start, end, fmt.Sprintf("typecheck:expected '%s', got '%s'", expectedType, gotType)).Display()
 	}
 }
 
@@ -102,7 +102,7 @@ func IsLValue(node ast.Node) bool {
 		return true
 	case ast.ArrayIndexAccess:
 		return IsLValue(t.Arrayvalue)
-	case ast.PropertyExpr:
+	case ast.StructPropertyAccessExpr:
 		return IsLValue(t.Object)
 	default:
 		return false
@@ -131,6 +131,6 @@ func EvaluateTypeName(dtype ast.DataType, env *TypeEnvironment) (ValueTypeInterf
 		}
 		return arr, nil
 	default:
-		return makeBuiltinTYPE(VALUE_TYPE(t.Type()), env)
+		return makeTypesInterface(VALUE_TYPE(t.Type()), env)
 	}
 }

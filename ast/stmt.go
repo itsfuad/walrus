@@ -37,10 +37,11 @@ func (a VarDeclStmt) EndPos() lexer.Position {
 }
 
 type TypeDeclStmt struct {
-	UDType		DataType
-	UDTypeName	string
+	UDType     DataType
+	UDTypeName string
 	Location
 }
+
 func (a TypeDeclStmt) INode() {
 	//empty method implements Node interface
 }
@@ -55,6 +56,7 @@ type BlockStmt struct {
 	Contents []Node
 	Location
 }
+
 func (a BlockStmt) INode() {
 	//empty method implements Node interface
 }
@@ -66,11 +68,12 @@ func (a BlockStmt) EndPos() lexer.Position {
 }
 
 type IfStmt struct {
-	Condition 		Node
-	Block	 		BlockStmt
-	AlternateBlock 	interface{}
+	Condition      Node
+	Block          BlockStmt
+	AlternateBlock interface{}
 	Location
 }
+
 func (a IfStmt) INode() {
 	//empty method implements Node interface
 }
@@ -78,5 +81,60 @@ func (a IfStmt) StartPos() lexer.Position {
 	return a.Location.Start
 }
 func (a IfStmt) EndPos() lexer.Position {
+	return a.Location.End
+}
+
+type FunctionParam struct {
+	Name IdentifierExpr
+	Type DataType
+	Location
+}
+
+func (a FunctionParam) INode() {
+	//empty method implements Node interface
+}
+
+func (a FunctionParam) StartPos() lexer.Position {
+	return a.Location.Start
+}
+
+func (a FunctionParam) EndPos() lexer.Position {
+	return a.Location.End
+}
+
+type FunctionDeclStmt struct {
+	Name       IdentifierExpr
+	Params     []FunctionParam
+	ReturnType DataType
+	Block      BlockStmt
+	Location
+}
+
+func (a FunctionDeclStmt) INode() {
+	//empty method implements Node interface
+}
+
+func (a FunctionDeclStmt) StartPos() lexer.Position {
+	return a.Location.Start
+}
+
+func (a FunctionDeclStmt) EndPos() lexer.Position {
+	return a.Location.End
+}
+
+
+type ReturnStmt struct {
+	Value Node
+	Location
+}
+func (a ReturnStmt) INode() {
+	//empty method implements Node interface
+}
+
+func (a ReturnStmt) StartPos() lexer.Position {
+	return a.Location.Start
+}
+
+func (a ReturnStmt) EndPos() lexer.Position {
 	return a.Location.End
 }

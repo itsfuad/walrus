@@ -10,18 +10,20 @@ func evaluateArrayAccess(array ast.ArrayIndexAccess, env *TypeEnvironment) Value
 	//Array must be evaluated to an array value
 	arrType := CheckAST(array.Arrayvalue, env)
 	if _, ok := arrType.(Array); !ok {
-		line := array.Arrayvalue.StartPos().Line
+		lineStart := array.Arrayvalue.StartPos().Line
+		lineEnd := array.Arrayvalue.EndPos().Line
 		start := array.Arrayvalue.StartPos().Column
 		end := array.Arrayvalue.EndPos().Column
-		errgen.MakeError(env.filePath, line, start, end, fmt.Sprintf("cannot access index of type %s", arrType.DType())).AddHint("type must be an array", errgen.TEXT_HINT).Display()
+		errgen.MakeError(env.filePath, lineStart, lineEnd, start, end, fmt.Sprintf("cannot access index of type %s", arrType.DType())).AddHint("type must be an array", errgen.TEXT_HINT).Display()
 	}
 	//index must be evaluated to int
 	indexType := CheckAST(array.Index, env)
 	if _, ok := indexType.(Int); !ok {
-		line := array.Index.StartPos().Line
+		lineStart := array.Index.StartPos().Line
+		lineEnd := array.Index.EndPos().Line
 		start := array.Index.StartPos().Column
 		end := array.Index.EndPos().Column
-		errgen.MakeError(env.filePath, line, start, end, fmt.Sprintf("cannot use index of type %s", indexType.DType())).AddHint("index must be valid integer", errgen.TEXT_HINT).Display()
+		errgen.MakeError(env.filePath, lineStart, lineEnd, start, end, fmt.Sprintf("cannot use index of type %s", indexType.DType())).AddHint("index must be valid integer", errgen.TEXT_HINT).Display()
 	}
 	return arrType.(Array).ArrayType
 }
@@ -34,7 +36,7 @@ func evaluateArrayExpr(array ast.ArrayExpr, env *TypeEnvironment) ValueTypeInter
 			expectedType = v
 		}
 		//check every type is same or not
-		MatchTypes(expectedType, v, env.filePath, array.Start.Line, array.Values[i].StartPos().Column, array.Values[i].EndPos().Column)
+		MatchTypes(expectedType, v, env.filePath, array.Start.Line, array.End.Line, array.Values[i].StartPos().Column, array.Values[i].EndPos().Column)
 	}
 
 	return Array{

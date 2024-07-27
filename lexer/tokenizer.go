@@ -70,6 +70,7 @@ func createLexer(filePath *string) *Lexer {
 			{regexp.MustCompile(`'[^']'`), characterHandler},                  // character literals
 			{regexp.MustCompile(`[0-9]+(?:\.[0-9]+)?`), numberHandler},        // decimal numbers
 			{regexp.MustCompile(`[a-zA-Z_][a-zA-Z0-9_]*`), identifierHandler}, // identifiers
+			{regexp.MustCompile(`\->`), defaultHandler(ARROW_TOKEN, "->")},
 			{regexp.MustCompile(`@`), defaultHandler(AT_TOKEN, "@")},
 			{regexp.MustCompile(`!=`), defaultHandler(NOT_EQUAL_TOKEN, "!=")},
 			{regexp.MustCompile(`!`), defaultHandler(NOT_TOKEN, "!")},
@@ -185,7 +186,7 @@ func Tokenize(filename string, debug bool) []Token {
 
 		if !matched {
 			errStr := fmt.Sprintf("lexer:unexpected character: '%c'", lex.at())
-			errgen.MakeError(filename, lex.Position.Line, lex.Position.Column, lex.Position.Column, errStr).Display()
+			errgen.MakeError(filename, lex.Position.Line, lex.Position.Line, lex.Position.Column, lex.Position.Column, errStr).Display()
 			return nil
 		}
 	}

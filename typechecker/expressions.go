@@ -19,14 +19,14 @@ func checkUnaryExpr(node ast.UnaryExpr, env *TypeEnvironment) ValueTypeInterface
 	case Int, Float:
 		//allow - only
 		if op.Kind != lexer.MINUS_TOKEN {
-			errgen.MakeError(env.filePath, op.Start.Line, op.Start.Column, op.End.Column, "invalid unary operation with numeric types").Display()
+			errgen.MakeError(env.filePath, op.Start.Line, op.End.Line, op.Start.Column, op.End.Column, "invalid unary operation with numeric types").Display()
 		}
 	case Bool:
 		if op.Kind != lexer.NOT_TOKEN {
-			errgen.MakeError(env.filePath, op.Start.Line, op.Start.Column, op.End.Column, "invalid unary operation with boolean types").Display()
+			errgen.MakeError(env.filePath, op.Start.Line, op.End.Line, op.Start.Column, op.End.Column, "invalid unary operation with boolean types").Display()
 		}
 	default:
-		errgen.MakeError(env.filePath, op.Start.Line, op.Start.Column, op.End.Column, fmt.Sprintf("this unary operation is not supported with %s types", t.DType())).Display()
+		errgen.MakeError(env.filePath, op.Start.Line, op.End.Line, op.Start.Column, op.End.Column, fmt.Sprintf("this unary operation is not supported with %s types", t.DType())).Display()
 	}
 
 	return typeVal
@@ -41,7 +41,7 @@ func checkBinaryExpr(node ast.BinaryExpr, env *TypeEnvironment) ValueTypeInterfa
 	leftType := left.DType()
 	rightType := right.DType()
 
-	var errLine, errStart, errEnd int
+	var errLineStart, errLineEnd, errStart, errEnd int
 	var errMsg string
 
 	switch op.Kind {
@@ -51,12 +51,14 @@ func checkBinaryExpr(node ast.BinaryExpr, env *TypeEnvironment) ValueTypeInterfa
 		//must have to be numeric type on both side
 		if leftType != builtins.INT && leftType != builtins.FLOAT {
 			errMsg = "left hand side expression must be evaluated to a numeric type"
-			errLine = node.Left.StartPos().Line
+			errLineStart = node.Left.StartPos().Line
+			errLineEnd = node.Left.EndPos().Line
 			errStart = node.Left.StartPos().Column
 			errEnd = node.Left.EndPos().Column
 		} else if rightType != builtins.INT && rightType != builtins.FLOAT {
 			errMsg = "right hand side expression must be evaluated to a numeric type"
-			errLine = node.Right.StartPos().Line
+			errLineStart = node.Right.StartPos().Line
+			errLineEnd = node.Right.EndPos().Line
 			errStart = node.Right.StartPos().Column
 			errEnd = node.Right.EndPos().Column
 		} else {
@@ -66,12 +68,13 @@ func checkBinaryExpr(node ast.BinaryExpr, env *TypeEnvironment) ValueTypeInterfa
 		return checkComparison(node, left, right, env)
 	default:
 		errMsg = "invalid operator"
-		errLine = op.Start.Line
+		errLineStart = op.Start.Line
+		errLineEnd = op.End.Line
 		errStart = op.Start.Column
 		errEnd = op.End.Column
 	}
 
-	errgen.MakeError(env.filePath, errLine, errStart, errEnd, errMsg).Display()
+	errgen.MakeError(env.filePath, errLineStart, errLineEnd, errStart, errEnd, errMsg).Display()
 	return nil
 }
 
@@ -96,7 +99,7 @@ func checkComparison(node ast.BinaryExpr, left ValueTypeInterface, right ValueTy
 		}
 	}
 	errMsg := fmt.Sprintf("invalid compare operation between '%s' and '%s'", leftType, rightType)
-	errgen.MakeError(env.filePath, node.Start.Line, node.Start.Column, node.End.Column, errMsg).Display()
+	errgen.MakeError(env.filePath, node.Start.Line, node.End.Line, node.Start.Column, node.End.Column, errMsg).Display()
 	return nil
 }
 
@@ -105,14 +108,15 @@ func checkAdditionAndConcat(node ast.BinaryExpr, left ValueTypeInterface, right 
 	leftType := left.DType()
 	rightType := right.DType()
 
-	var errLine, errStart, errEnd int
+	var errLineStart, errLineEnd, errStart, errEnd int
 	var errMsg string
 	//only string concat, int and floats are allowed.
 	if leftType == builtins.INT || leftType == builtins.FLOAT {
 		//right has to be int or float
 		if rightType != builtins.INT && rightType != builtins.FLOAT {
 			errMsg = "right hand side expression must be evaluated to a numeric type"
-			errLine = node.Right.StartPos().Line
+			errLineStart = node.Right.StartPos().Line
+			errLineEnd = node.Right.EndPos().Line
 			errStart = node.Right.StartPos().Column
 			errEnd = node.Right.EndPos().Column
 		} else {
@@ -124,11 +128,12 @@ func checkAdditionAndConcat(node ast.BinaryExpr, left ValueTypeInterface, right 
 		return left
 	} else {
 		errMsg = "invalid expression"
-		errLine = node.StartPos().Line
+		errLineStart = node.Start.Line
+		errLineEnd = node.End.Line
 		errStart = node.StartPos().Column
 		errEnd = node.EndPos().Column
 	}
 
-	errgen.MakeError(env.filePath, errLine, errStart, errEnd, errMsg).Display()
+	errgen.MakeError(env.filePath, errLineStart, errLineEnd, errStart, errEnd, errMsg).Display()
 	return nil
 }

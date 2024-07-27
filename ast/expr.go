@@ -110,8 +110,8 @@ func (a NullLiteralExpr) EndPos() lexer.Position {
 }
 
 type UnaryExpr struct {
-	Operator	lexer.Token
-	Argument	Node
+	Operator lexer.Token
+	Argument Node
 	Location
 }
 
@@ -126,9 +126,9 @@ func (a UnaryExpr) EndPos() lexer.Position {
 }
 
 type BinaryExpr struct {
-	Operator	lexer.Token
-	Left		Node
-	Right		Node
+	Operator lexer.Token
+	Left     Node
+	Right    Node
 	Location
 }
 
@@ -191,10 +191,11 @@ func (a ArrayIndexAccess) EndPos() lexer.Position {
 }
 
 type StructLiteral struct {
-	Name		IdentifierExpr
-	Properties	map[string]Node
+	Name       IdentifierExpr
+	Properties map[string]Node
 	Location
 }
+
 func (a StructLiteral) INode() {
 	//empty method implements Node interface
 }
@@ -205,17 +206,18 @@ func (a StructLiteral) EndPos() lexer.Position {
 	return a.Location.End
 }
 
-type PropertyExpr struct {
+type StructPropertyAccessExpr struct {
 	Object   Node
 	Property IdentifierExpr
 	Location
 }
-func (a PropertyExpr) INode() {
+
+func (a StructPropertyAccessExpr) INode() {
 	//empty method implements Node interface
 }
-func (a PropertyExpr) StartPos() lexer.Position {
+func (a StructPropertyAccessExpr) StartPos() lexer.Position {
 	return a.Location.Start
 }
-func (a PropertyExpr) EndPos() lexer.Position {
+func (a StructPropertyAccessExpr) EndPos() lexer.Position {
 	return a.Location.End
 }

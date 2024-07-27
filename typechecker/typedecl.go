@@ -17,7 +17,7 @@ func checkTypeDeclaration(node ast.TypeDeclStmt, env *TypeEnvironment) ValueType
 		for propname, propval := range t.Properties {
 			propType, err := EvaluateTypeName(propval.PropType, env)
 			if err != nil {
-				errgen.MakeError(env.filePath, t.Start.Line, t.Start.Column, t.End.Column, err.Error()).Display()
+				errgen.MakeError(env.filePath, t.Start.Line, t.End.Line, t.Start.Column, t.End.Column, err.Error()).Display()
 			}
 			p := StructProperty{
 				IsPrivate: propval.IsPrivate,
@@ -33,7 +33,7 @@ func checkTypeDeclaration(node ast.TypeDeclStmt, env *TypeEnvironment) ValueType
 	default:
 		typ, err := EvaluateTypeName(node.UDType, env)
 		if err != nil {
-			errgen.MakeError(env.filePath, node.UDType.StartPos().Line, node.UDType.StartPos().Column, node.UDType.EndPos().Column, err.Error()).Display()
+			errgen.MakeError(env.filePath, node.UDType.StartPos().Line, node.UDType.EndPos().Line, node.UDType.StartPos().Column, node.UDType.EndPos().Column, err.Error()).Display()
 		}
 		val = typ
 	}

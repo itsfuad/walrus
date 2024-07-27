@@ -28,7 +28,7 @@ func parseVarDeclStmt(p *Parser) ast.Node {
 		explicitType = parseType(p, DEFAULT_BP)
 	} else if assToken.Kind != lexer.WALRUS_TOKEN {
 		msg := "expected : or :="
-		errgen.MakeError(p.FilePath, assToken.Start.Line, assToken.Start.Column, assToken.End.Column, msg).Display()
+		errgen.MakeError(p.FilePath, assToken.Start.Line, assToken.End.Line, assToken.Start.Column, assToken.End.Column, msg).Display()
 	}
 
 	if p.currentTokenKind() != lexer.SEMI_COLON_TOKEN {
@@ -41,7 +41,7 @@ func parseVarDeclStmt(p *Parser) ast.Node {
 	//if const, we must have a value
 	if isConst && value == nil {
 		msg := "constants must have value when declared"
-		errgen.MakeError(p.FilePath, p.currentToken().Start.Line, p.currentToken().Start.Column, p.currentToken().End.Column, msg).Display()
+		errgen.MakeError(p.FilePath, p.currentToken().Start.Line, p.currentToken().End.Line, p.currentToken().Start.Column, p.currentToken().End.Column, msg).Display()
 	}
 
 	end := p.expectSemicolon().End
@@ -74,7 +74,7 @@ func parseUserDefinedTypeStmt(p *Parser) ast.Node {
 	typeName := p.expect(lexer.IDENTIFIER_TOKEN)
 
 	if strings.ToUpper(typeName.Value[:1]) != typeName.Value[:1] {
-		errgen.MakeError(p.FilePath, typeName.Start.Line, typeName.Start.Column, typeName.End.Column, "user defined types should start with capital letter").AddHint(fmt.Sprintf("type %s%s [your type]", strings.ToUpper(typeName.Value[:1]), typeName.Value[1:]), errgen.TEXT_HINT).Display()
+		errgen.MakeError(p.FilePath, typeName.Start.Line, typeName.End.Line, typeName.Start.Column, typeName.End.Column, "user defined types should start with capital letter").AddHint(fmt.Sprintf("type %s%s [your type]", strings.ToUpper(typeName.Value[:1]), typeName.Value[1:]), errgen.TEXT_HINT).Display()
 	}
 
 	udType := parseUDTType(p)
@@ -137,6 +137,97 @@ func parseIfStmt(p *Parser) ast.Node {
 		Location: ast.Location{
 			Start: start,
 			End:   consequentBlock.End,
+		},
+	}
+}
+
+func parseFunctionDeclStmt(p *Parser) ast.Node {
+
+	start := p.advance().Start // eat fn token
+
+	nameToken := p.expect(lexer.IDENTIFIER_TOKEN)
+
+	p.expect(lexer.OPEN_PAREN)
+
+	//parse params
+	params := make([]ast.FunctionParam, 0)
+
+	for p.hasToken() && p.currentTokenKind() != lexer.CLOSE_PAREN {
+		paramToken := p.expect(lexer.IDENTIFIER_TOKEN)
+		param := ast.IdentifierExpr{
+			Name: paramToken.Value,
+			Location: ast.Location{
+				Start: paramToken.Start,
+				End:   paramToken.End,
+			},
+		}
+
+		p.expect(lexer.COLON_TOKEN)
+
+		paramType := parseType(p, DEFAULT_BP)
+
+		params = append(params, ast.FunctionParam{
+			Name: param,
+			Type: paramType,
+			Location: ast.Location{
+				Start: param.Start,
+				End:   paramType.EndPos(),
+			},
+		})
+
+		if p.currentTokenKind() != lexer.CLOSE_PAREN {
+			p.expect(lexer.COMMA_TOKEN)
+		}
+	}
+
+	p.expect(lexer.CLOSE_PAREN)
+
+	var returnType ast.DataType
+
+	//parse return type which is optional
+	if p.currentTokenKind() != lexer.OPEN_CURLY {
+		p.expect(lexer.ARROW_TOKEN)
+		returnType = parseType(p, DEFAULT_BP)
+	}
+
+	block := parseBlock(p)
+
+	return ast.FunctionDeclStmt{
+		Name: ast.IdentifierExpr{
+			Name: nameToken.Value,
+			Location: ast.Location{
+				Start: nameToken.Start,
+				End:   nameToken.End,
+			},
+		},
+		Params:     params,
+		ReturnType: returnType,
+		Block:      block,
+		Location: ast.Location{
+			Start: start,
+			End:   block.End,
+		},
+	}
+}
+
+
+func parseReturnStmt(p *Parser) ast.Node {
+
+	start := p.advance().Start // eat return token
+
+	var value ast.Node
+
+	if p.currentTokenKind() != lexer.SEMI_COLON_TOKEN {
+		value = parseExpr(p, ASSIGNMENT_BP)
+	}
+
+	end := p.expectSemicolon().End
+
+	return ast.ReturnStmt{
+		Value: value,
+		Location: ast.Location{
+			Start: start,
+			End:   end,
 		},
 	}
 }

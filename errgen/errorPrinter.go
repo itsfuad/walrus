@@ -21,7 +21,8 @@ type Hint struct {
 
 type ErrorType struct {
 	filePath	string
-	line 		int
+	lineStart 	int
+	lineEnd		int
 	colStart	int
 	colEnd		int
 	err 		error
@@ -33,10 +34,16 @@ func (e *ErrorType) Display() {
 	if err != nil {
 		panic(err)
 	}
-	utils.ColorPrint(utils.GREY, fmt.Sprintf("\nIn file: %s:%d:%d\n", e.filePath, e.line, e.colStart))
+	utils.ColorPrint(utils.GREY, fmt.Sprintf("\nIn file: %s:%d:%d\n", e.filePath, e.lineStart, e.colStart))
 	lines := strings.Split(string(fileData), "\n")
-	line := lines[e.line - 1]
-	hLen := (e.colEnd - e.colStart) - 1
+	line := lines[e.lineStart - 1]
+	hLen := 0
+	if e.lineStart == e.lineEnd {
+		hLen = (e.colEnd - e.colStart) - 1
+	} else {
+		//full line
+		hLen = len(line) - 2
+	}
 	if hLen < 0 {
 		hLen = 0
 	}
@@ -44,7 +51,7 @@ func (e *ErrorType) Display() {
 	underLine := fmt.Sprintf("%s^%s", strings.Repeat(" ", e.colStart - 1), strings.Repeat("~", hLen))
 	
 	utils.ColorPrint(utils.RED, underLine)
-	utils.ColorPrint(utils.PURPLE, e.err.Error())
+	utils.ColorPrint(utils.RED, e.err.Error())
 	for i, hint := range e.hints {
 		if i == 0 {
 			utils.ColorPrint(utils.GREEN, "Hint:")
@@ -68,10 +75,11 @@ func (e *ErrorType) AddHint(msg string, htype HINT) *ErrorType {
 	return e
 }
 
-func MakeError(filePath string, line int, colStart, colEnd int, err string) *ErrorType {
+func MakeError(filePath string, lineStart, lineEnd int, colStart, colEnd int, err string) *ErrorType {
 	return &ErrorType{
 		filePath: filePath,
-		line: line,
+		lineStart: lineStart,
+		lineEnd: lineEnd,
 		colStart: colStart,
 		colEnd: colEnd,
 		err: fmt.Errorf(err),

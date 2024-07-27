@@ -41,10 +41,10 @@ func (p *Parser) expectError(expectedKind lexer.TOKEN_KIND, err error) lexer.Tok
 
 	if kind != expectedKind {
 		if err != nil {
-			errgen.MakeError(p.FilePath, start.Line, start.Column, end.Column, err.Error()).Display()
+			errgen.MakeError(p.FilePath, start.Line, end.Line, start.Column, end.Column, err.Error()).Display()
 		} else {
 			msg := fmt.Sprintf("parser:expected '%s' but got '%s'", expectedKind, kind)
-			errgen.MakeError(p.FilePath, start.Line, start.Column, end.Column, msg).Display()
+			errgen.MakeError(p.FilePath, start.Line, end.Line, start.Column, end.Column, msg).Display()
 		}
 	}
 	return p.advance()

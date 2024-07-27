@@ -28,7 +28,7 @@ func parseExpr(p *Parser, bp BINDING_POWER) ast.Node {
 		} else {
 			msg = fmt.Sprintf("parser:nud:unexpected token '%s'\n", tokenKind)
 		}
-		errgen.MakeError(p.FilePath, p.currentToken().Start.Line, p.currentToken().Start.Column, p.currentToken().End.Column, msg).Display()
+		errgen.MakeError(p.FilePath, p.currentToken().Start.Line, p.currentToken().End.Line, p.currentToken().Start.Column, p.currentToken().End.Column, msg).Display()
 	}
 
 	left := nudFunction(p)
@@ -41,7 +41,7 @@ func parseExpr(p *Parser, bp BINDING_POWER) ast.Node {
 
 		if !exists {
 			msg := fmt.Sprintf("parser:led:unexpected token %s\n", tokenKind)
-			errgen.MakeError(p.FilePath, p.currentToken().Start.Line, p.currentToken().Start.Column, p.currentToken().End.Column, msg).Display()
+			errgen.MakeError(p.FilePath, p.currentToken().Start.Line, p.currentToken().End.Line, p.currentToken().Start.Column, p.currentToken().End.Column, msg).Display()
 		}
 
 		left = ledFunction(p, left, GetBP(p.currentTokenKind()))
@@ -98,7 +98,7 @@ func parsePrimaryExpr(p *Parser) ast.Node {
 		}
 	default:
 		msg := fmt.Sprintf("Cannot create primary expression from %s\n", primaryToken.Value)
-		errgen.MakeError(p.FilePath, p.currentToken().Start.Line, p.currentToken().Start.Column, p.currentToken().End.Column, msg).Display()
+		errgen.MakeError(p.FilePath, p.currentToken().Start.Line, p.currentToken().End.Line, p.currentToken().Start.Column, p.currentToken().End.Column, msg).Display()
 	}
 
 	return nil
@@ -113,18 +113,16 @@ func parseGroupingExpr(p *Parser) ast.Node {
 
 func parseVarAssignmentExpr(p *Parser, left ast.Node, bp BINDING_POWER) ast.Node {
 
-	start := p.currentToken().Start
-
 	switch left.(type) {
 	case ast.IdentifierExpr:
 		break
 	case ast.ArrayIndexAccess:
 		break
-	case ast.PropertyExpr:
+	case ast.StructPropertyAccessExpr:
 		break
 	default:
 		errMsg := "cannot assign to a non-identifier\n"
-		errgen.MakeError(p.FilePath, left.StartPos().Line, left.StartPos().Column, left.EndPos().Column, errMsg).Display()
+		errgen.MakeError(p.FilePath, left.StartPos().Line, left.EndPos().Line, left.StartPos().Column, left.EndPos().Column, errMsg).Display()
 	}
 
 	operator := p.advance()
@@ -138,7 +136,7 @@ func parseVarAssignmentExpr(p *Parser, left ast.Node, bp BINDING_POWER) ast.Node
 		Value:    right,
 		Operator: operator,
 		Location: ast.Location{
-			Start: start,
+			Start: left.StartPos(),
 			End:   endPos,
 		},
 	}
@@ -193,7 +191,7 @@ func parseStructLiteral(p *Parser) ast.Node {
 		Name: idetifierToken.Value,
 		Location: ast.Location{
 			Start: idetifierToken.Start,
-			End: idetifierToken.End,
+			End:   idetifierToken.End,
 		},
 	}
 
@@ -222,7 +220,7 @@ func parseStructLiteral(p *Parser) ast.Node {
 	end := p.expect(lexer.CLOSE_CURLY).End
 
 	structVal := ast.StructLiteral{
-		Name: identidier,
+		Name:       identidier,
 		Properties: props,
 		Location: ast.Location{
 			Start: start,
@@ -242,16 +240,16 @@ func parsePropertyExpr(p *Parser, left ast.Node, bp BINDING_POWER) ast.Node {
 		Name: identifier.Value,
 		Location: ast.Location{
 			Start: identifier.Start,
-			End: identifier.End,
+			End:   identifier.End,
 		},
 	}
 
-	return ast.PropertyExpr{
-		Object: left,
+	return ast.StructPropertyAccessExpr{
+		Object:   left,
 		Property: property,
 		Location: ast.Location{
 			Start: left.StartPos(),
-			End: property.End,
+			End:   property.End,
 		},
 	}
 }
@@ -266,7 +264,7 @@ func parseUnaryExpr(p *Parser) ast.Node {
 	case lexer.MINUS_TOKEN, lexer.NOT_TOKEN:
 		break
 	default:
-		errgen.MakeError(p.FilePath, operator.Start.Line, operator.Start.Column, operator.End.Column, fmt.Sprintf("invalid unary operator '%s'", operator.Value)).Display()
+		errgen.MakeError(p.FilePath, operator.Start.Line, operator.End.Line, operator.Start.Column, operator.End.Column, fmt.Sprintf("invalid unary operator '%s'", operator.Value)).Display()
 	}
 
 	argument := parseExpr(p, UNARY_BP)
@@ -276,7 +274,7 @@ func parseUnaryExpr(p *Parser) ast.Node {
 		Argument: argument,
 		Location: ast.Location{
 			Start: start,
-			End: argument.EndPos(),
+			End:   argument.EndPos(),
 		},
 	}
 }
@@ -289,11 +287,11 @@ func parseBinaryExpr(p *Parser, left ast.Node, bp BINDING_POWER) ast.Node {
 
 	return ast.BinaryExpr{
 		Operator: op,
-		Left: left,
-		Right: right,
+		Left:     left,
+		Right:    right,
 		Location: ast.Location{
 			Start: left.StartPos(),
-			End: right.EndPos(),
+			End:   right.EndPos(),
 		},
 	}
 }
