@@ -59,6 +59,7 @@ func bindLookupHandlers() {
 	nud(lexer.AT_TOKEN, parseStructLiteral)
 
 	led(lexer.DOT_TOKEN, MEMBER_BP, parsePropertyExpr)
+	led(lexer.OPEN_PAREN, CALL_BP, parseCallExpr)
 
 	//arithmetics
 	led(lexer.PLUS_TOKEN, ADDITIVE_BP, parseBinaryExpr)

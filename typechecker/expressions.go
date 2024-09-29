@@ -84,18 +84,22 @@ func checkComparison(node ast.BinaryExpr, left ValueTypeInterface, right ValueTy
 	rightType := right.DType()
 
 	op := node.Operator
+
+	boolean := Bool{
+		DataType: BOOLEAN_TYPE,
+	}
 	
 	if op.Kind == lexer.DOUBLE_EQUAL_TOKEN || op.Kind == lexer.NOT_EQUAL_TOKEN {
 		// ( ==, != ) allow every type
 		if IsNumberType(left) && IsNumberType(right) {
-			return left
+			return boolean
 		} else if leftType == rightType {
-			return left
+			return boolean
 		}
 	} else {
 		// ( >=, >, <=, < ) allow only numeric types
 		if IsNumberType(left) && IsNumberType(right) {
-			return left
+			return boolean
 		}
 	}
 	errMsg := fmt.Sprintf("invalid compare operation between '%s' and '%s'", leftType, rightType)

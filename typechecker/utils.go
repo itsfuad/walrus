@@ -130,6 +130,10 @@ func EvaluateTypeName(dtype ast.DataType, env *TypeEnvironment) (ValueTypeInterf
 			ArrayType: val,
 		}
 		return arr, nil
+	case nil:
+		return Void{
+			DataType: VOID_TYPE,
+		}, nil
 	default:
 		return makeTypesInterface(VALUE_TYPE(t.Type()), env)
 	}

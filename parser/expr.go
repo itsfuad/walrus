@@ -295,3 +295,35 @@ func parseBinaryExpr(p *Parser, left ast.Node, bp BINDING_POWER) ast.Node {
 		},
 	}
 }
+
+
+func parseCallExpr(p *Parser, left ast.Node, bp BINDING_POWER) ast.Node {
+
+	if _, ok := left.(ast.IdentifierExpr); !ok {
+		errgen.MakeError(p.FilePath, left.StartPos().Line, left.EndPos().Line, left.StartPos().Column, left.EndPos().Column, "only identifiers can be called").Display()
+	}
+
+	name := left.(ast.IdentifierExpr)
+
+	p.advance() //eat the open paren
+	startPos := left.StartPos()
+	var args []ast.Node
+	for p.currentTokenKind() != lexer.CLOSE_PAREN {
+		arg := parseExpr(p, DEFAULT_BP)
+		args = append(args, arg)
+		if p.currentTokenKind() != lexer.CLOSE_PAREN {
+			p.expect(lexer.COMMA_TOKEN)
+		}
+	}
+
+	endPos := p.expect(lexer.CLOSE_PAREN).End
+
+	return ast.FunctionCallExpr{
+		Name: name,
+		Arguments: args,
+		Location: ast.Location{
+			Start: startPos,
+			End:   endPos,
+		},
+	}
+}

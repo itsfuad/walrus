@@ -45,6 +45,9 @@ func checkVariableAssignment(node ast.VarAssignmentExpr, env *TypeEnvironment) V
 		errgen.MakeError(env.filePath, valueToAssign.StartPos().Line, valueToAssign.EndPos().Line, valueToAssign.StartPos().Column, valueToAssign.EndPos().Column, fmt.Sprintf("'%s' is constant", varName)).AddHint("cannot assign value to constant variables", errgen.TEXT_HINT).Display()
 	}
 	scope.variables[varName] = provided
+
+	fmt.Printf("Assigned variable %s of type %s\n", varName, provided.DType())
+
 	return provided
 }
 
@@ -70,6 +73,9 @@ func checkVariableDeclaration(node ast.VarDeclStmt, env *TypeEnvironment) ValueT
 	if err != nil {
 		errgen.MakeError(env.filePath, node.Variable.StartPos().Line, node.Variable.EndPos().Line, node.Variable.StartPos().Column, node.Variable.EndPos().Column, err.Error()).Display()
 	}
+
+	fmt.Printf("Declared variable %s of type %s\n", varToDecl.Name, expectedTypeInterface.DType())
+
 	return Void{
 		DataType: VOID_TYPE,
 	}

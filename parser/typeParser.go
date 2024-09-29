@@ -201,6 +201,7 @@ func parseUDTType(p *Parser) ast.DataType {
 			Properties: props,
 			Location:   loc,
 		}
+
 	default:
 		return parseType(p, DEFAULT_BP)
 	}

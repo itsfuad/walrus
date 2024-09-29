@@ -221,3 +221,20 @@ func (a StructPropertyAccessExpr) StartPos() lexer.Position {
 func (a StructPropertyAccessExpr) EndPos() lexer.Position {
 	return a.Location.End
 }
+
+
+type FunctionCallExpr struct {
+	Name       IdentifierExpr
+	Arguments  []Node
+	Location
+}
+
+func (a FunctionCallExpr) INode() {
+	//empty method implements Node interface
+}
+func (a FunctionCallExpr) StartPos() lexer.Position {
+	return a.Location.Start
+}
+func (a FunctionCallExpr) EndPos() lexer.Position {
+	return a.Location.End
+}

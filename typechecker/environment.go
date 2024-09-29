@@ -2,6 +2,7 @@ package typechecker
 
 import (
 	"fmt"
+	"walrus/ast"
 	"walrus/builtins"
 )
 
@@ -18,6 +19,7 @@ const (
 	FUNCTION_TYPE VALUE_TYPE = builtins.FUNCTION
 	STRUCT_TYPE   VALUE_TYPE = builtins.STRUCT
 	ARRAY_TYPE    VALUE_TYPE = builtins.ARRAY
+	BLOCK_TYPE	  VALUE_TYPE = "block"
 	RETURN_TYPE	  VALUE_TYPE = "return"
 )
 
@@ -85,9 +87,26 @@ type Fn struct {
 	DataType VALUE_TYPE
 	Params   map[string]ValueTypeInterface
 	Returns  ValueTypeInterface
+	Body     Block
+	FunctionScope TypeEnvironment
 }
 
 func (t Fn) DType() VALUE_TYPE {
+	return t.DataType
+}
+
+type ConditionBranch struct {
+	DataType 	VALUE_TYPE
+	Next    	ValueTypeInterface
+	Returns 	ValueTypeInterface
+}
+
+type ConditionStmt struct {
+	DataType 	VALUE_TYPE
+	Branches 	[]ConditionBranch
+}
+
+func (t ConditionStmt) DType() VALUE_TYPE {
 	return t.DataType
 }
 
@@ -133,10 +152,20 @@ func (t ReturnType) DType() VALUE_TYPE {
 	return t.DataType
 }
 
-type SCOPE_NAME int
+type Block struct {
+	DataType VALUE_TYPE
+	Returns ValueTypeInterface
+	Node 	ast.Node
+}
+
+func (t Block) DType() VALUE_TYPE {
+	return t.DataType
+}
+
+type SCOPE_TYPE int
 
 const (
-	GLOBAL_SCOPE  SCOPE_NAME = iota
+	GLOBAL_SCOPE  SCOPE_TYPE = iota
 	FUNCTION_SCOPE
 	CONDITIONAL_SCOPE
 	LOOP_SCOPE
@@ -144,17 +173,19 @@ const (
 
 type TypeEnvironment struct {
 	parent    	*TypeEnvironment
-	scopeType 	SCOPE_NAME
+	scopeType 	SCOPE_TYPE
+	scopeName 	string
 	variables 	map[string]ValueTypeInterface
 	constants 	map[string]bool
 	types		map[string]ValueTypeInterface
 	filePath  	string
 }
 
-func NewTypeENV(parent *TypeEnvironment, scope SCOPE_NAME, filePath string) *TypeEnvironment {
+func NewTypeENV(parent *TypeEnvironment, scope SCOPE_TYPE, scopeName string, filePath string) *TypeEnvironment {
 	return &TypeEnvironment{
 		parent:    	parent,
 		scopeType: 	scope,
+		scopeName: 	scopeName,
 		filePath:  	filePath,
 		variables: 	make(map[string]ValueTypeInterface),
 		constants: 	make(map[string]bool),
@@ -173,7 +204,7 @@ func (t *TypeEnvironment) ResolveFunctionParent() (*TypeEnvironment, error) {
 }
 
 func (t *TypeEnvironment) ResolveVar(name string) (*TypeEnvironment, error) {
-	if _, ok := t.variables[name]; ok {
+	if t.isDeclared(name) {
 		return t, nil
 	}
 
@@ -214,4 +245,11 @@ func (t *TypeEnvironment) DeclareType(name string, typeType ValueTypeInterface) 
 	}
 	t.types[name] = typeType
 	return nil
+}
+
+func (t *TypeEnvironment) isDeclared(name string) bool {
+	if _, ok := t.variables[name]; ok {
+		return true
+	}
+	return false
 }

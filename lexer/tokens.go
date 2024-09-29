@@ -24,6 +24,8 @@ const (
 	STR                 TOKEN_KIND = builtins.STRING
 	BOOL                TOKEN_KIND = builtins.BOOL
 	NULL                TOKEN_KIND = builtins.NULL
+	STRUCT			  	TOKEN_KIND = builtins.STRUCT
+	FUNCTION            TOKEN_KIND = builtins.FUNCTION
 	NOT_TOKEN           TOKEN_KIND = "!"
 	MINUS_TOKEN         TOKEN_KIND = "-"
 	PLUS_TOKEN          TOKEN_KIND = "+"

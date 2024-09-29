@@ -76,6 +76,18 @@ func (e *ErrorType) AddHint(msg string, htype HINT) *ErrorType {
 }
 
 func MakeError(filePath string, lineStart, lineEnd int, colStart, colEnd int, err string) *ErrorType {
+	if lineStart < 1 {
+		lineStart = 1
+	}
+	if lineEnd < 1 {
+		lineEnd = 1
+	}
+	if colStart < 1 {
+		colStart = 1
+	}
+	if colEnd < 1 {
+		colEnd = 1
+	}
 	return &ErrorType{
 		filePath: filePath,
 		lineStart: lineStart,
@@ -83,5 +95,26 @@ func MakeError(filePath string, lineStart, lineEnd int, colStart, colEnd int, er
 		colStart: colStart,
 		colEnd: colEnd,
 		err: fmt.Errorf(err),
+	}
+}
+
+// global error store
+var errors []*ErrorType
+
+func AddGlobalError(err *ErrorType) {
+	errors = append(errors, err)
+}
+
+func GetGlobalErrors() []*ErrorType {
+	return errors
+}
+
+func ClearGlobalErrors() {
+	errors = []*ErrorType{}
+}
+
+func DisplayErrors() {
+	for _, err := range errors {
+		err.Display()
 	}
 }
