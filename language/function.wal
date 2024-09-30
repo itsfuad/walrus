@@ -49,3 +49,11 @@ fn testFn(param1: int, param2: FN) -> int {
 testFn(4, fn (a: int, b: float) -> int {
     ret a + 5;
 });
+
+fn testFn2(param1: int, param2: fn (a: int, b: float) -> int) -> int {
+    ret param2(param1, 5.0);
+}
+
+testFn2(4, fn (a: int, b: float) -> int {
+    ret a + 5;
+});

@@ -78,8 +78,7 @@ func CheckAST(node ast.Node, env *TypeEnvironment) ValueTypeInterface {
 
 func checkFunctionExpr(funcNode ast.FunctionExpr, env *TypeEnvironment) ValueTypeInterface {
 	parameters := make(map[string]ValueTypeInterface)
-	name := RandStringRunes(10)
-	name = fmt.Sprintf("_FN_%s", name)
+	name := fmt.Sprintf("_FN_%s", RandStringRunes(10))
 	fnEnv := NewTypeENV(env, FUNCTION_SCOPE, name, env.filePath)
 
 	for _, param := range funcNode.Params {
@@ -141,10 +140,10 @@ func checkFunctionCall(callNode ast.FunctionCallExpr, env *TypeEnvironment) Valu
 
 	//check if the arguments match the parameters
 	i := 0
-	for paramName, param := range fnParams {
+	for paramName, paramValue := range fnParams {
 		arg := CheckAST(callNode.Arguments[i], env)
-		if !matchTypes(param, arg) {
-			errgen.MakeError(env.filePath, callNode.Arguments[i].StartPos().Line, callNode.Arguments[i].EndPos().Line, callNode.Arguments[i].StartPos().Column, callNode.Arguments[i].EndPos().Column, fmt.Sprintf("Argument %s expects type %s, got %s", paramName, param.DType(), arg.DType())).Display()
+		if !matchTypes(paramValue, arg) {
+			errgen.MakeError(env.filePath, callNode.Arguments[i].StartPos().Line, callNode.Arguments[i].EndPos().Line, callNode.Arguments[i].StartPos().Column, callNode.Arguments[i].EndPos().Column, fmt.Sprintf("Argument %s expects type %s, got %s", paramName, paramValue.DType(), arg.DType())).Display()
 		}
 		i++
 	}

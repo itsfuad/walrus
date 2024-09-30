@@ -26,7 +26,6 @@ func RandStringRunes(n int) string {
 
 // generate interfaces from the type enum
 func makeTypesInterface(typ VALUE_TYPE, env *TypeEnvironment) (ValueTypeInterface, error) {
-	fmt.Printf("Making type interface for %s\n", typ)
 	switch typ {
 	case INT_TYPE:
 		return Int{
@@ -149,6 +148,32 @@ func EvaluateTypeName(dtype ast.DataType, env *TypeEnvironment) (ValueTypeInterf
 			ArrayType: val,
 		}
 		return arr, nil
+	case ast.FunctionType:
+		
+		params := make(map[string]ValueTypeInterface)
+
+		for name, param := range t.Parameters {
+			val, err := EvaluateTypeName(param, env)
+			if err != nil {
+				return nil, err
+			}
+			params[name] = val
+		}
+
+		returns, err := EvaluateTypeName(t.ReturnType, env)
+		if err != nil {
+			return nil, err
+		}
+
+		scope := NewTypeENV(env, FUNCTION_SCOPE, fmt.Sprintf("_FN_%s", RandStringRunes(10)), env.filePath)
+
+		return Fn{
+			DataType: builtins.FUNCTION,
+			Params: params,
+			Returns: returns,
+			FunctionScope: *scope,
+		}, nil
+
 	case nil:
 		return Void{
 			DataType: VOID_TYPE,
