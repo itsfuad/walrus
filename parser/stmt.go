@@ -141,12 +141,56 @@ func parseIfStmt(p *Parser) ast.Node {
 	}
 }
 
+func parseFunctionExpr(p *Parser) ast.Node {
+	//annonymous function
+	start := p.advance().Start // eat fn token
+
+	params, returnType := parseFunctionSignature(p)
+
+	block := parseBlock(p)
+
+	return ast.FunctionExpr{
+		Params:     params,
+		ReturnType: returnType,
+		Block:      block,
+		Location: ast.Location{
+			Start: start,
+			End:   block.End,
+		},
+	}
+}
+
 func parseFunctionDeclStmt(p *Parser) ast.Node {
 
 	start := p.advance().Start // eat fn token
 
 	nameToken := p.expect(lexer.IDENTIFIER_TOKEN)
 
+	params, returnType := parseFunctionSignature(p)
+
+	block := parseBlock(p)
+
+	return ast.FunctionDeclStmt{
+		Name: ast.IdentifierExpr{
+			Name: nameToken.Value,
+			Location: ast.Location{
+				Start: nameToken.Start,
+				End:   nameToken.End,
+			},
+		},
+		FunctionExpr: ast.FunctionExpr{
+			Params:     params,
+			ReturnType: returnType,
+			Block:      block,
+			Location: ast.Location{
+				Start: start,
+				End:   block.End,
+			},
+		},
+	}
+}
+
+func parseFunctionSignature(p *Parser) ([]ast.FunctionParam, ast.DataType) {
 	p.expect(lexer.OPEN_PAREN)
 
 	//parse params
@@ -190,24 +234,7 @@ func parseFunctionDeclStmt(p *Parser) ast.Node {
 		returnType = parseType(p, DEFAULT_BP)
 	}
 
-	block := parseBlock(p)
-
-	return ast.FunctionDeclStmt{
-		Name: ast.IdentifierExpr{
-			Name: nameToken.Value,
-			Location: ast.Location{
-				Start: nameToken.Start,
-				End:   nameToken.End,
-			},
-		},
-		Params:     params,
-		ReturnType: returnType,
-		Block:      block,
-		Location: ast.Location{
-			Start: start,
-			End:   block.End,
-		},
-	}
+	return params, returnType
 }
 
 

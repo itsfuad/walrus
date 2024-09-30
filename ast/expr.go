@@ -238,3 +238,22 @@ func (a FunctionCallExpr) StartPos() lexer.Position {
 func (a FunctionCallExpr) EndPos() lexer.Position {
 	return a.Location.End
 }
+
+type FunctionExpr struct {
+	Params     []FunctionParam
+	ReturnType DataType
+	Block      BlockStmt
+	Location
+}
+
+func (a FunctionExpr) INode() {
+	//empty method implements Node interface
+}
+
+func (a FunctionExpr) StartPos() lexer.Position {
+	return a.Location.Start
+}
+
+func (a FunctionExpr) EndPos() lexer.Position {
+	return a.Location.End
+}

@@ -62,6 +62,8 @@ func CheckAST(node ast.Node, env *TypeEnvironment) ValueTypeInterface {
 		return checkProperty(t, env)
 	case ast.FunctionDeclStmt:
 		return checkFunctionDeclStmt(t, env);
+	case ast.FunctionExpr:
+		return checkFunctionExpr(t, env)
 	case ast.FunctionCallExpr:
 		return checkFunctionCall(t, env)
 	case ast.IfStmt:
@@ -73,6 +75,52 @@ func CheckAST(node ast.Node, env *TypeEnvironment) ValueTypeInterface {
 	return nil
 }
 
+
+func checkFunctionExpr(funcNode ast.FunctionExpr, env *TypeEnvironment) ValueTypeInterface {
+	parameters := make(map[string]ValueTypeInterface)
+	name := RandStringRunes(10)
+	name = fmt.Sprintf("_FN_%s", name)
+	fnEnv := NewTypeENV(env, FUNCTION_SCOPE, name, env.filePath)
+
+	for _, param := range funcNode.Params {
+
+		if fnEnv.isDeclared(param.Name.Name) {
+			errgen.MakeError(fnEnv.filePath, param.Name.Start.Line, param.Name.End.Line, param.Name.Start.Column, param.Name.End.Column, fmt.Sprintf("Parameter %s is already declared", param.Name.Name)).Display()
+		}
+
+		paramType, err := EvaluateTypeName(param.Type, fnEnv)
+		if err != nil {
+			errgen.MakeError(fnEnv.filePath, param.Start.Line, param.End.Line, param.Start.Column, param.End.Column, err.Error()).Display()
+		}
+		fnEnv.DeclareVar(param.Name.Name, paramType, false)
+		parameters[param.Name.Name] = paramType
+	}
+
+	//check return type
+	returnType, err := EvaluateTypeName(funcNode.ReturnType, fnEnv)
+	if err != nil {
+		errgen.MakeError(fnEnv.filePath, funcNode.ReturnType.StartPos().Line, funcNode.ReturnType.EndPos().Line, funcNode.ReturnType.StartPos().Column, funcNode.ReturnType.EndPos().Column, err.Error()).Display()
+	}
+
+	fn := Fn{
+		DataType: FUNCTION_TYPE,
+		Params: parameters,
+		Returns: returnType,
+		FunctionScope: *fnEnv,
+	}
+
+	//declare the function
+	env.DeclareVar(name, fn, true)
+
+	//check the function body
+	for _, stmt := range funcNode.Block.Contents {
+		CheckAST(stmt, fnEnv)
+	}
+
+	return fn
+}
+
+
 func checkFunctionCall(callNode ast.FunctionCallExpr, env *TypeEnvironment) ValueTypeInterface {
 	//check if the function is declared
 	if !env.isDeclared(callNode.Name.Name) {
@@ -80,28 +128,57 @@ func checkFunctionCall(callNode ast.FunctionCallExpr, env *TypeEnvironment) Valu
 	}
 
 	//check if the function is a function
-	fn := env.variables[callNode.Name.Name]
-	if fn.DType() != FUNCTION_TYPE {
-		errgen.MakeError(env.filePath, callNode.Name.Start.Line, callNode.Name.End.Line, callNode.Name.Start.Column, callNode.Name.End.Column, fmt.Sprintf("%s is not a function", callNode.Name.Name)).Display()
+	fn, err := userDefinedToFn(env.variables[callNode.Name.Name])
+	if err != nil {
+		errgen.MakeError(env.filePath, callNode.Name.Start.Line, callNode.Name.End.Line, callNode.Name.Start.Column, callNode.Name.End.Column, fmt.Sprintf("'%s' is not a function", callNode.Name.Name)).Display()
 	}
 
 	//check if the number of arguments match the number of parameters
-	fnParams := fn.(Fn).Params
+	fnParams := fn.Params
 	if len(callNode.Arguments) != len(fnParams) {
 		errgen.MakeError(env.filePath, callNode.Name.Start.Line, callNode.Name.End.Line, callNode.Name.Start.Column, callNode.Name.End.Column, fmt.Sprintf("Function %s expects %d arguments, got %d", callNode.Name.Name, len(fnParams), len(callNode.Arguments))).Display()
 	}
 
 	//check if the arguments match the parameters
 	i := 0
-	for _, param := range fnParams {
+	for paramName, param := range fnParams {
 		arg := CheckAST(callNode.Arguments[i], env)
-		if arg.DType() != param.DType() {
-			errgen.MakeError(env.filePath, callNode.Arguments[i].StartPos().Line, callNode.Arguments[i].EndPos().Line, callNode.Arguments[i].StartPos().Column, callNode.Arguments[i].EndPos().Column, fmt.Sprintf("Argument %d expects type %s, got %s", i, param.DType(), arg.DType())).Display()
+		if !matchTypes(param, arg) {
+			errgen.MakeError(env.filePath, callNode.Arguments[i].StartPos().Line, callNode.Arguments[i].EndPos().Line, callNode.Arguments[i].StartPos().Column, callNode.Arguments[i].EndPos().Column, fmt.Sprintf("Argument %s expects type %s, got %s", paramName, param.DType(), arg.DType())).Display()
 		}
 		i++
 	}
 
-	return fn.(Fn).Returns
+	return fn.Returns
+}
+
+func userDefinedToFn(ud ValueTypeInterface) (Fn, error) {
+	// if UserDefined then chain until Fn or error
+	switch t := ud.(type) {
+	case Fn:
+		return t, nil
+	case UserDefined:
+		return userDefinedToFn(t.TypeDef)
+	default:
+		return Fn{}, fmt.Errorf("'%s' is not a function", ud.DType())
+	}
+}
+
+func matchTypes(expected, provided ValueTypeInterface) bool {
+	if expected.DType() == provided.DType() {
+		return true
+	}
+
+	// the typed can be user defined which wraps the actual type but may be the types are same
+	if _, ok := expected.(UserDefined); ok {
+		return matchTypes(expected.(UserDefined).TypeDef, provided)
+	}
+
+	if _, ok := provided.(UserDefined); ok {
+		return matchTypes(expected, provided.(UserDefined).TypeDef)
+	}
+
+	return false
 }
 
 func checkFunctionDeclStmt(funcNode ast.FunctionDeclStmt, env *TypeEnvironment) ValueTypeInterface {
@@ -154,10 +231,6 @@ func checkFunctionDeclStmt(funcNode ast.FunctionDeclStmt, env *TypeEnvironment) 
 		CheckAST(stmt, fnEnv)
 	}
 
-	if len(errgen.GetGlobalErrors()) > 0 {
-		errgen.DisplayErrors()
-	}
-	
 	return fn
 }
 
@@ -201,7 +274,7 @@ func checkReturnStmt(returnNode ast.ReturnStmt, env *TypeEnvironment) ValueTypeI
 
 	fn := getFunctionReturnValue(env, returnNode)
 
-	if returnType.DType() != fn.DType() {
+	if !matchTypes(fn, returnType) {
 		errgen.MakeError(env.filePath, returnNode.StartPos().Line, returnNode.EndPos().Line, returnNode.StartPos().Column, returnNode.EndPos().Column, fmt.Sprintf("Return type does not match function return type. Expected %s, got %s", fn.DType(), returnType.DType())).Display()
 	}
 
@@ -212,7 +285,7 @@ func checkReturnStmt(returnNode ast.ReturnStmt, env *TypeEnvironment) ValueTypeI
 }
 
 func getFunctionReturnValue(env *TypeEnvironment, returnNode ast.Node) ValueTypeInterface {
-	funcParent, err := env.ResolveFunctionParent()
+	funcParent, err := env.ResolveFunctionEnv()
 	if err != nil {
 		errgen.MakeError(env.filePath, returnNode.StartPos().Line, returnNode.EndPos().Line, returnNode.StartPos().Column, returnNode.EndPos().Column, err.Error()).Display()
 	}

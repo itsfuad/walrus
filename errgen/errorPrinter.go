@@ -97,24 +97,3 @@ func MakeError(filePath string, lineStart, lineEnd int, colStart, colEnd int, er
 		err: fmt.Errorf(err),
 	}
 }
-
-// global error store
-var errors []*ErrorType
-
-func AddGlobalError(err *ErrorType) {
-	errors = append(errors, err)
-}
-
-func GetGlobalErrors() []*ErrorType {
-	return errors
-}
-
-func ClearGlobalErrors() {
-	errors = []*ErrorType{}
-}
-
-func DisplayErrors() {
-	for _, err := range errors {
-		err.Display()
-	}
-}

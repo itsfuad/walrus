@@ -2,13 +2,31 @@ package typechecker
 
 import (
 	"fmt"
+	"math/rand"
+	"time"
+
 	"walrus/ast"
 	"walrus/builtins"
 	"walrus/errgen"
 )
 
+func init() {
+    rand.New(rand.NewSource(time.Now().UnixNano())).Intn(len(letterRunes))
+}
+
+var letterRunes = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
+
+func RandStringRunes(n int) string {
+    b := make([]rune, n)
+    for i := range b {
+        b[i] = letterRunes[rand.Intn(len(letterRunes))]
+    }
+    return string(b)
+}
+
 // generate interfaces from the type enum
 func makeTypesInterface(typ VALUE_TYPE, env *TypeEnvironment) (ValueTypeInterface, error) {
+	fmt.Printf("Making type interface for %s\n", typ)
 	switch typ {
 	case INT_TYPE:
 		return Int{
@@ -44,6 +62,7 @@ func makeTypesInterface(typ VALUE_TYPE, env *TypeEnvironment) (ValueTypeInterfac
 		if err != nil {
 			return nil, err
 		}
+
 		return UserDefined{
 			DataType: typ,
 			TypeDef:  e.types[string(typ)],

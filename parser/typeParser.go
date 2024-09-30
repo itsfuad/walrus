@@ -22,6 +22,54 @@ func typeNUD(kind lexer.TOKEN_KIND, handler typeNUDHandler) {
 func bindTypeLookups() {
 	typeNUD(lexer.IDENTIFIER_TOKEN, parseBuiltinType)
 	typeNUD(lexer.OPEN_BRACKET, parseArrayType)
+	typeNUD(lexer.FUNCTION, parseFunctionType)
+}
+
+func parseFunctionType(p *Parser) ast.DataType {
+	
+	start := p.advance().Start
+
+	p.expect(lexer.OPEN_PAREN)
+	params := make(map[string]ast.DataType)
+	for p.hasToken() && p.currentTokenKind() != lexer.CLOSE_PAREN {
+		iden := p.expect(lexer.IDENTIFIER_TOKEN)
+		if _, exists := params[iden.Value]; exists {
+			errgen.MakeError(p.FilePath, iden.Start.Line, iden.End.Line, iden.Start.Column, iden.End.Column, fmt.Sprintf("parameter '%s' already defined", iden.Value)).Display()
+		}
+		p.expect(lexer.COLON_TOKEN)
+		typeName := parseType(p, DEFAULT_BP)
+		params[iden.Value] = typeName
+		if p.currentTokenKind() != lexer.CLOSE_PAREN {
+			p.expect(lexer.COMMA_TOKEN)
+		}
+	}
+
+	p.expect(lexer.CLOSE_PAREN)
+
+	var returnType ast.DataType
+
+	if p.currentTokenKind() == lexer.ARROW_TOKEN {
+		p.advance()
+		returnType = parseType(p, DEFAULT_BP)
+	} else {
+		returnType = ast.VoidType{
+			TypeName: ast.DATA_TYPE(builtins.VOID),
+			Location: ast.Location{
+				Start: p.currentToken().Start,
+				End:   p.currentToken().End,
+			},
+		}
+	}
+
+	return ast.FunctionType{
+		TypeName: ast.DATA_TYPE(builtins.FUNCTION),
+		Parameters: params,
+		ReturnType: returnType,
+		Location: ast.Location{
+			Start: start,
+			End:   returnType.EndPos(),
+		},
+	}
 }
 
 func parseBuiltinType(p *Parser) ast.DataType {

@@ -61,6 +61,7 @@ func checkVariableDeclaration(node ast.VarDeclStmt, env *TypeEnvironment) ValueT
 		expectedTypeInterface = handleExplicitType(node.ExplicitType, env)
 	} else {
 		typ := CheckAST(node.Value, env)
+		fmt.Printf("Auto detected type %s\n", typ.DType())
 		expectedTypeInterface = typ
 	}
 

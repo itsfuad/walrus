@@ -29,3 +29,23 @@ fn large(u: int) -> int {
 
 let b := 3;
 b = large(6);
+
+const f := fn () -> int {
+    ret 5;
+};
+
+let c := f();
+
+type Int int;
+
+let typedInt: Int = 5;
+
+type FN fn (a: int, b: float) -> int;
+
+fn testFn(param1: int, param2: FN) -> int {
+    ret param2(param1, 5.0);
+}
+
+testFn(4, fn (a: int, b: float) -> int {
+    ret a + 5;
+});

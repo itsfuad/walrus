@@ -104,10 +104,7 @@ func (a FunctionParam) EndPos() lexer.Position {
 
 type FunctionDeclStmt struct {
 	Name       IdentifierExpr
-	Params     []FunctionParam
-	ReturnType DataType
-	Block      BlockStmt
-	Location
+	FunctionExpr
 }
 
 func (a FunctionDeclStmt) INode() {

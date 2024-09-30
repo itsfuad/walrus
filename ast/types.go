@@ -152,19 +152,19 @@ func (a StructType) EndPos() lexer.Position {
 	return a.Location.End
 }
 
-type FuctionType struct {
+type FunctionType struct {
 	TypeName       	DATA_TYPE
-	Parameters 		[]DataType
+	Parameters 		map[string]DataType
 	ReturnType 		DataType
 	Location
 }
-func (a FuctionType) Type() DATA_TYPE {
+func (a FunctionType) Type() DATA_TYPE {
 	return a.TypeName
 }
-func (a FuctionType) StartPos() lexer.Position {
+func (a FunctionType) StartPos() lexer.Position {
 	return a.Location.Start
 }
-func (a FuctionType) EndPos() lexer.Position {
+func (a FunctionType) EndPos() lexer.Position {
 	return a.Location.End
 }
 
