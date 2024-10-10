@@ -83,9 +83,14 @@ func (t Void) DType() VALUE_TYPE {
 	return t.DataType
 }
 
+type FnParam struct {
+	Name string
+	Type ValueTypeInterface
+}
+
 type Fn struct {
 	DataType      VALUE_TYPE
-	Params        map[string]ValueTypeInterface
+	Params        []FnParam
 	Returns       ValueTypeInterface
 	FunctionScope TypeEnvironment
 }

@@ -11,17 +11,17 @@ import (
 )
 
 func init() {
-    rand.New(rand.NewSource(time.Now().UnixNano())).Intn(len(letterRunes))
+	rand.New(rand.NewSource(time.Now().UnixNano())).Intn(len(letterRunes))
 }
 
 var letterRunes = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
 
 func RandStringRunes(n int) string {
-    b := make([]rune, n)
-    for i := range b {
-        b[i] = letterRunes[rand.Intn(len(letterRunes))]
-    }
-    return string(b)
+	b := make([]rune, n)
+	for i := range b {
+		b[i] = letterRunes[rand.Intn(len(letterRunes))]
+	}
+	return string(b)
 }
 
 // generate interfaces from the type enum
@@ -149,15 +149,18 @@ func EvaluateTypeName(dtype ast.DataType, env *TypeEnvironment) (ValueTypeInterf
 		}
 		return arr, nil
 	case ast.FunctionType:
-		
-		params := make(map[string]ValueTypeInterface)
 
-		for name, param := range t.Parameters {
-			val, err := EvaluateTypeName(param, env)
+		var params []FnParam
+
+		for _, param := range t.Parameters {
+			paramType, err := EvaluateTypeName(param.Type, env)
 			if err != nil {
 				return nil, err
 			}
-			params[name] = val
+			params = append(params, FnParam{
+				Name: param.Identifier.Name,
+				Type: paramType,
+			})
 		}
 
 		returns, err := EvaluateTypeName(t.ReturnType, env)
@@ -168,9 +171,9 @@ func EvaluateTypeName(dtype ast.DataType, env *TypeEnvironment) (ValueTypeInterf
 		scope := NewTypeENV(env, FUNCTION_SCOPE, fmt.Sprintf("_FN_%s", RandStringRunes(10)), env.filePath)
 
 		return Fn{
-			DataType: builtins.FUNCTION,
-			Params: params,
-			Returns: returns,
+			DataType:      builtins.FUNCTION,
+			Params:        params,
+			Returns:       returns,
 			FunctionScope: *scope,
 		}, nil
 

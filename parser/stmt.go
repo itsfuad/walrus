@@ -171,7 +171,7 @@ func parseFunctionDeclStmt(p *Parser) ast.Node {
 	block := parseBlock(p)
 
 	return ast.FunctionDeclStmt{
-		Name: ast.IdentifierExpr{
+		Identifier: ast.IdentifierExpr{
 			Name: nameToken.Value,
 			Location: ast.Location{
 				Start: nameToken.Start,
@@ -194,7 +194,7 @@ func parseFunctionSignature(p *Parser) ([]ast.FunctionParam, ast.DataType) {
 	p.expect(lexer.OPEN_PAREN)
 
 	//parse params
-	params := make([]ast.FunctionParam, 0)
+	var params []ast.FunctionParam
 
 	for p.hasToken() && p.currentTokenKind() != lexer.CLOSE_PAREN {
 		paramToken := p.expect(lexer.IDENTIFIER_TOKEN)
@@ -211,8 +211,8 @@ func parseFunctionSignature(p *Parser) ([]ast.FunctionParam, ast.DataType) {
 		paramType := parseType(p, DEFAULT_BP)
 
 		params = append(params, ast.FunctionParam{
-			Name: param,
-			Type: paramType,
+			Identifier: param,
+			Type:       paramType,
 			Location: ast.Location{
 				Start: param.Start,
 				End:   paramType.EndPos(),
@@ -236,7 +236,6 @@ func parseFunctionSignature(p *Parser) ([]ast.FunctionParam, ast.DataType) {
 
 	return params, returnType
 }
-
 
 func parseReturnStmt(p *Parser) ast.Node {
 

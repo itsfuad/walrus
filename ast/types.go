@@ -154,7 +154,7 @@ func (a StructType) EndPos() lexer.Position {
 
 type FunctionType struct {
 	TypeName       	DATA_TYPE
-	Parameters 		map[string]DataType
+	Parameters 		[]FunctionParam
 	ReturnType 		DataType
 	Location
 }

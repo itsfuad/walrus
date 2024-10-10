@@ -85,8 +85,8 @@ func (a IfStmt) EndPos() lexer.Position {
 }
 
 type FunctionParam struct {
-	Name IdentifierExpr
-	Type DataType
+	Identifier IdentifierExpr
+	Type       DataType
 	Location
 }
 
@@ -103,7 +103,7 @@ func (a FunctionParam) EndPos() lexer.Position {
 }
 
 type FunctionDeclStmt struct {
-	Name       IdentifierExpr
+	Identifier IdentifierExpr
 	FunctionExpr
 }
 
@@ -119,11 +119,11 @@ func (a FunctionDeclStmt) EndPos() lexer.Position {
 	return a.Location.End
 }
 
-
 type ReturnStmt struct {
 	Value Node
 	Location
 }
+
 func (a ReturnStmt) INode() {
 	//empty method implements Node interface
 }

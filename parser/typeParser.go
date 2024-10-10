@@ -26,19 +26,38 @@ func bindTypeLookups() {
 }
 
 func parseFunctionType(p *Parser) ast.DataType {
-	
+
 	start := p.advance().Start
 
 	p.expect(lexer.OPEN_PAREN)
-	params := make(map[string]ast.DataType)
+	var params []ast.FunctionParam
 	for p.hasToken() && p.currentTokenKind() != lexer.CLOSE_PAREN {
 		iden := p.expect(lexer.IDENTIFIER_TOKEN)
-		if _, exists := params[iden.Value]; exists {
-			errgen.MakeError(p.FilePath, iden.Start.Line, iden.End.Line, iden.Start.Column, iden.End.Column, fmt.Sprintf("parameter '%s' already defined", iden.Value)).Display()
+		//if exists, then it is a duplicate
+		for _, param := range params {
+			if param.Identifier.Name == iden.Value {
+				errgen.MakeError(p.FilePath, iden.Start.Line, iden.End.Line, iden.Start.Column, iden.End.Column, fmt.Sprintf("parameter '%s' already defined", iden.Value)).Display()
+			}
 		}
+
 		p.expect(lexer.COLON_TOKEN)
 		typeName := parseType(p, DEFAULT_BP)
-		params[iden.Value] = typeName
+
+		params = append(params, ast.FunctionParam{
+			Identifier: ast.IdentifierExpr{
+				Name: iden.Value,
+				Location: ast.Location{
+					Start: iden.Start,
+					End:   iden.End,
+				},
+			},
+			Type: typeName,
+			Location: ast.Location{
+				Start: iden.Start,
+				End:   typeName.EndPos(),
+			},
+		})
+
 		if p.currentTokenKind() != lexer.CLOSE_PAREN {
 			p.expect(lexer.COMMA_TOKEN)
 		}
@@ -62,7 +81,7 @@ func parseFunctionType(p *Parser) ast.DataType {
 	}
 
 	return ast.FunctionType{
-		TypeName: ast.DATA_TYPE(builtins.FUNCTION),
+		TypeName:   ast.DATA_TYPE(builtins.FUNCTION),
 		Parameters: params,
 		ReturnType: returnType,
 		Location: ast.Location{
@@ -153,7 +172,7 @@ func parseType(p *Parser, bp BINDING_POWER) ast.DataType {
 
 	if !exists {
 		//panic(fmt.Sprintf("TYPE NUD handler expected for token %s\n", tokenKind))
-		err := errgen.MakeError(p.FilePath, p.currentToken().Start.Line, p.currentToken().End.Line,  p.currentToken().Start.Column, p.currentToken().End.Column, fmt.Sprintf("Unexpected token %s\n", tokenKind))
+		err := errgen.MakeError(p.FilePath, p.currentToken().Start.Line, p.currentToken().End.Line, p.currentToken().Start.Column, p.currentToken().End.Column, fmt.Sprintf("Unexpected token %s\n", tokenKind))
 		err.AddHint("Follow ", errgen.TEXT_HINT)
 		err.AddHint("let x := 10", errgen.CODE_HINT)
 		err.AddHint(" syntax or", errgen.TEXT_HINT)
@@ -186,10 +205,11 @@ func parseType(p *Parser, bp BINDING_POWER) ast.DataType {
 Used to parse type for the type declaration with type keyword
 
 Example:
-type MyType struct {
-	x: int,
-	y: float,
-};
+
+	type MyType struct {
+		x: int,
+		y: float,
+	};
 */
 func parseUDTType(p *Parser) ast.DataType {
 
@@ -241,7 +261,7 @@ func parseUDTType(p *Parser) ast.DataType {
 		}
 
 		if len(props) == 0 {
-			errgen.MakeError(p.FilePath, identifier.Start.Line, identifier.End.Line,  identifier.Start.Column, identifier.End.Column, "struct is empty").Display()
+			errgen.MakeError(p.FilePath, identifier.Start.Line, identifier.End.Line, identifier.Start.Column, identifier.End.Column, "struct is empty").Display()
 		}
 
 		return ast.StructType{

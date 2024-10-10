@@ -32,18 +32,22 @@ func checkTypeDeclaration(node ast.TypeDeclStmt, env *TypeEnvironment) ValueType
 			Elements:   props,
 		}
 	case ast.FunctionType:
-		params := map[string]ValueTypeInterface{}
+		var params []FnParam
 
 		fmt.Printf("Declaring type of function with UDTypeName: %s\n", node.UDTypeName)
 
 		funcEnv := NewTypeENV(env, FUNCTION_SCOPE, node.UDTypeName, env.filePath)
 
-		for name, paramType := range t.Parameters {
-			typ, err := EvaluateTypeName(paramType, funcEnv)
+		for _, param := range t.Parameters {
+			typ, err := EvaluateTypeName(param.Type, funcEnv)
 			if err != nil {
 				errgen.MakeError(funcEnv.filePath, t.Start.Line, t.End.Line, t.Start.Column, t.End.Column, err.Error()).Display()
 			}
-			params[name] = typ
+
+			params = append(params, FnParam{
+				Name: param.Identifier.Name,
+				Type: typ,
+			})
 		}
 
 		var ret ValueTypeInterface
@@ -55,9 +59,9 @@ func checkTypeDeclaration(node ast.TypeDeclStmt, env *TypeEnvironment) ValueType
 		ret = typ
 
 		val = Fn{
-			DataType: 	FUNCTION_TYPE,
-			Params:  	params,
-			Returns: 	ret,
+			DataType:      FUNCTION_TYPE,
+			Params:        params,
+			Returns:       ret,
 			FunctionScope: *funcEnv,
 		}
 
