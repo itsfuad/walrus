@@ -11,7 +11,7 @@ type VALUE_TYPE string
 const (
 	INT_TYPE      VALUE_TYPE = builtins.INT
 	FLOAT_TYPE    VALUE_TYPE = builtins.FLOAT
-	CHAR_TYPE     VALUE_TYPE = builtins.CHAR
+	CHAR_TYPE     VALUE_TYPE = builtins.BYTE
 	STRING_TYPE   VALUE_TYPE = builtins.STRING
 	BOOLEAN_TYPE  VALUE_TYPE = builtins.BOOL
 	NULL_TYPE     VALUE_TYPE = builtins.NULL

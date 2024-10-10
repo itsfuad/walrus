@@ -125,7 +125,7 @@ func parseBuiltinType(p *Parser) ast.DataType {
 			TypeName: ast.DATA_TYPE(v),
 			Location: loc,
 		}
-	case lexer.CHR:
+	case lexer.BYTE:
 		return ast.CharType{
 			TypeName: ast.DATA_TYPE(v),
 			Location: loc,

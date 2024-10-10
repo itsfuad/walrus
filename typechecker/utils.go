@@ -74,10 +74,7 @@ func handleExplicitType(explicitType ast.DataType, env *TypeEnvironment) ValueTy
 	var expectedTypeInterface ValueTypeInterface
 	switch t := explicitType.(type) {
 	case ast.ArrayType:
-		val, err := EvaluateTypeName(t, env)
-		if err != nil {
-			errgen.MakeError(env.filePath, t.Start.Line, t.End.Line, t.Start.Column, t.End.Column, err.Error()).Display()
-		}
+		val := EvaluateTypeName(t, env)
 		expectedTypeInterface = val
 	default:
 		val, err := makeTypesInterface(VALUE_TYPE(explicitType.Type()), env)
@@ -136,37 +133,28 @@ func IsNumberType(operand ValueTypeInterface) bool {
 	}
 }
 
-func EvaluateTypeName(dtype ast.DataType, env *TypeEnvironment) (ValueTypeInterface, error) {
+func EvaluateTypeName(dtype ast.DataType, env *TypeEnvironment) ValueTypeInterface {
 	switch t := dtype.(type) {
 	case ast.ArrayType:
-		val, err := EvaluateTypeName(t.ArrayType, env)
-		if err != nil {
-			return nil, err
-		}
+		val := EvaluateTypeName(t.ArrayType, env)
 		arr := Array{
 			DataType:  builtins.ARRAY,
 			ArrayType: val,
 		}
-		return arr, nil
+		return arr
 	case ast.FunctionType:
 
 		var params []FnParam
 
 		for _, param := range t.Parameters {
-			paramType, err := EvaluateTypeName(param.Type, env)
-			if err != nil {
-				return nil, err
-			}
+			paramType := EvaluateTypeName(param.Type, env)
 			params = append(params, FnParam{
 				Name: param.Identifier.Name,
 				Type: paramType,
 			})
 		}
 
-		returns, err := EvaluateTypeName(t.ReturnType, env)
-		if err != nil {
-			return nil, err
-		}
+		returns := EvaluateTypeName(t.ReturnType, env)
 
 		scope := NewTypeENV(env, FUNCTION_SCOPE, fmt.Sprintf("_FN_%s", RandStringRunes(10)), env.filePath)
 
@@ -175,13 +163,17 @@ func EvaluateTypeName(dtype ast.DataType, env *TypeEnvironment) (ValueTypeInterf
 			Params:        params,
 			Returns:       returns,
 			FunctionScope: *scope,
-		}, nil
+		}
 
 	case nil:
 		return Void{
 			DataType: VOID_TYPE,
-		}, nil
+		}
 	default:
-		return makeTypesInterface(VALUE_TYPE(t.Type()), env)
+		val, err := makeTypesInterface(VALUE_TYPE(t.Type()), env)
+		if err != nil {
+			errgen.MakeError(env.filePath, dtype.StartPos().Line, dtype.EndPos().Line, dtype.StartPos().Column, dtype.EndPos().Column, err.Error()).Display()
+		}
+		return val
 	}
 }

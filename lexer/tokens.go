@@ -17,14 +17,14 @@ const (
 	ELSEIF_TOKEN        TOKEN_KIND = "elf"
 	IDENTIFIER_TOKEN    TOKEN_KIND = "identifier"
 	PRIVATE_TOKEN       TOKEN_KIND = "priv"
-	RETURN_TOKEN		TOKEN_KIND = "ret"
+	RETURN_TOKEN        TOKEN_KIND = "ret"
 	INT                 TOKEN_KIND = builtins.INT
 	FLOAT               TOKEN_KIND = builtins.FLOAT
-	CHR                 TOKEN_KIND = builtins.CHAR
+	BYTE                TOKEN_KIND = builtins.BYTE
 	STR                 TOKEN_KIND = builtins.STRING
 	BOOL                TOKEN_KIND = builtins.BOOL
 	NULL                TOKEN_KIND = builtins.NULL
-	STRUCT			  	TOKEN_KIND = builtins.STRUCT
+	STRUCT              TOKEN_KIND = builtins.STRUCT
 	FUNCTION            TOKEN_KIND = builtins.FUNCTION
 	NOT_TOKEN           TOKEN_KIND = "!"
 	MINUS_TOKEN         TOKEN_KIND = "-"
@@ -57,16 +57,16 @@ const (
 )
 
 var keyWordsMap map[string]TOKEN_KIND = map[string]TOKEN_KIND{
-	"let":    	LET_TOKEN,
-	"const":  	CONST_TOKEN,
-	"if":     	IF_TOKEN,
-	"els":    	ELSE_TOKEN,
-	"elf":    	ELSEIF_TOKEN,
-	"type":   	TYPE_TOKEN,
-	"priv":   	PRIVATE_TOKEN,
-	"struct": 	builtins.STRUCT,
-	"fn":     	builtins.FUNCTION,
-	"ret": 		RETURN_TOKEN,
+	"let":    LET_TOKEN,
+	"const":  CONST_TOKEN,
+	"if":     IF_TOKEN,
+	"els":    ELSE_TOKEN,
+	"elf":    ELSEIF_TOKEN,
+	"type":   TYPE_TOKEN,
+	"priv":   PRIVATE_TOKEN,
+	"struct": builtins.STRUCT,
+	"fn":     builtins.FUNCTION,
+	"ret":    RETURN_TOKEN,
 }
 
 func IsKeyword(token string) bool {

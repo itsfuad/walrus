@@ -80,7 +80,7 @@ func bindLookupHandlers() {
 	nud(lexer.INT, parsePrimaryExpr)
 	nud(lexer.FLOAT, parsePrimaryExpr)
 	nud(lexer.STR, parsePrimaryExpr)
-	nud(lexer.CHR, parsePrimaryExpr)
+	nud(lexer.BYTE, parsePrimaryExpr)
 	nud(lexer.NULL, parsePrimaryExpr)
 	nud(lexer.OPEN_BRACKET, parseArrayExpr)
 	nud(lexer.OPEN_PAREN, parseGroupingExpr)

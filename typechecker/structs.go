@@ -12,7 +12,7 @@ func checkStructLiteral(structLit ast.StructLiteral, env *TypeEnvironment) Value
 	//check if defined
 	scope, err := env.ResolveType(sName.Name)
 	if err != nil {
-		errgen.MakeError(env.filePath, sName.StartPos().Line, sName.EndPos().Line, sName.StartPos().Column, sName.EndPos().Column, fmt.Sprintf("type '%s' is not defined", sName.Name)).Display()
+		errgen.MakeError(env.filePath, sName.StartPos().Line, sName.EndPos().Line, sName.StartPos().Column, sName.EndPos().Column, fmt.Sprintf("struct type '%s' is not defined", sName.Name)).Display()
 	}
 
 	udType := scope.types[sName.Name].(UserDefined)

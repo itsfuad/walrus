@@ -16,10 +16,7 @@ func checkTypeDeclaration(node ast.TypeDeclStmt, env *TypeEnvironment) ValueType
 	case ast.StructType:
 		props := map[string]StructProperty{}
 		for propname, propval := range t.Properties {
-			propType, err := EvaluateTypeName(propval.PropType, env)
-			if err != nil {
-				errgen.MakeError(env.filePath, t.Start.Line, t.End.Line, t.Start.Column, t.End.Column, err.Error()).Display()
-			}
+			propType := EvaluateTypeName(propval.PropType, env)
 			p := StructProperty{
 				IsPrivate: propval.IsPrivate,
 				Type:      propType,
@@ -39,10 +36,7 @@ func checkTypeDeclaration(node ast.TypeDeclStmt, env *TypeEnvironment) ValueType
 		funcEnv := NewTypeENV(env, FUNCTION_SCOPE, node.UDTypeName, env.filePath)
 
 		for _, param := range t.Parameters {
-			typ, err := EvaluateTypeName(param.Type, funcEnv)
-			if err != nil {
-				errgen.MakeError(funcEnv.filePath, t.Start.Line, t.End.Line, t.Start.Column, t.End.Column, err.Error()).Display()
-			}
+			typ := EvaluateTypeName(param.Type, funcEnv)
 
 			params = append(params, FnParam{
 				Name: param.Identifier.Name,
@@ -51,10 +45,7 @@ func checkTypeDeclaration(node ast.TypeDeclStmt, env *TypeEnvironment) ValueType
 		}
 
 		var ret ValueTypeInterface
-		typ, err := EvaluateTypeName(t.ReturnType, funcEnv)
-		if err != nil {
-			errgen.MakeError(funcEnv.filePath, t.Start.Line, t.End.Line, t.Start.Column, t.End.Column, err.Error()).Display()
-		}
+		typ := EvaluateTypeName(t.ReturnType, funcEnv)
 
 		ret = typ
 
@@ -66,10 +57,7 @@ func checkTypeDeclaration(node ast.TypeDeclStmt, env *TypeEnvironment) ValueType
 		}
 
 	default:
-		typ, err := EvaluateTypeName(node.UDType, env)
-		if err != nil {
-			errgen.MakeError(env.filePath, node.UDType.StartPos().Line, node.UDType.EndPos().Line, node.UDType.StartPos().Column, node.UDType.EndPos().Column, err.Error()).Display()
-		}
+		typ := EvaluateTypeName(node.UDType, env)
 		val = typ
 	}
 

@@ -86,7 +86,7 @@ func parsePrimaryExpr(p *Parser) ast.Node {
 			Value:    rawValue,
 			Location: loc,
 		}
-	case lexer.CHR:
+	case lexer.BYTE:
 		return ast.CharLiteralExpr{
 			Value:    rawValue,
 			Location: loc,
@@ -296,7 +296,6 @@ func parseBinaryExpr(p *Parser, left ast.Node, bp BINDING_POWER) ast.Node {
 	}
 }
 
-
 func parseCallExpr(p *Parser, left ast.Node, bp BINDING_POWER) ast.Node {
 
 	if _, ok := left.(ast.IdentifierExpr); !ok {
@@ -319,7 +318,7 @@ func parseCallExpr(p *Parser, left ast.Node, bp BINDING_POWER) ast.Node {
 	endPos := p.expect(lexer.CLOSE_PAREN).End
 
 	return ast.FunctionCallExpr{
-		Name: name,
+		Name:      name,
 		Arguments: args,
 		Location: ast.Location{
 			Start: startPos,

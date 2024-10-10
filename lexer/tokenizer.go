@@ -156,7 +156,7 @@ func characterHandler(lex *Lexer, regex *regexp.Regexp) {
 	start := lex.Position
 	lex.advance(match)
 	end := lex.Position
-	lex.push(NewToken(CHR, characterLiteral, start, end))
+	lex.push(NewToken(BYTE, characterLiteral, start, end))
 }
 
 func skipHandler(lex *Lexer, regex *regexp.Regexp) {

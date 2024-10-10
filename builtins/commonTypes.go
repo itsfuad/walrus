@@ -1,14 +1,14 @@
 package builtins
 
 const (
-	INT = "int"
-	FLOAT = "float"
-	STRING = "str"
-	CHAR = "chr"
-	BOOL = "bool"
-	NULL = "null"
+	INT      = "int"
+	FLOAT    = "fl"
+	STRING   = "str"
+	BYTE     = "byte"
+	BOOL     = "bool"
+	NULL     = "null"
 	FUNCTION = "fn"
-	STRUCT = "struct"
-	ARRAY = "array"
-	VOID = "void"
+	STRUCT   = "struct"
+	ARRAY    = "array"
+	VOID     = "void"
 )

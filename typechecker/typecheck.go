@@ -86,10 +86,7 @@ func checkFunctionExpr(funcNode ast.FunctionExpr, env *TypeEnvironment) ValueTyp
 			errgen.MakeError(fnEnv.filePath, param.Identifier.Start.Line, param.Identifier.End.Line, param.Identifier.Start.Column, param.Identifier.End.Column, fmt.Sprintf("Parameter %s is already declared", param.Identifier.Name)).Display()
 		}
 
-		paramType, err := EvaluateTypeName(param.Type, fnEnv)
-		if err != nil {
-			errgen.MakeError(fnEnv.filePath, param.Start.Line, param.End.Line, param.Start.Column, param.End.Column, err.Error()).Display()
-		}
+		paramType := EvaluateTypeName(param.Type, fnEnv)
 		fnEnv.DeclareVar(param.Identifier.Name, paramType, false)
 		parameters = append(parameters, FnParam{
 			Name: param.Identifier.Name,
@@ -98,10 +95,7 @@ func checkFunctionExpr(funcNode ast.FunctionExpr, env *TypeEnvironment) ValueTyp
 	}
 
 	//check return type
-	returnType, err := EvaluateTypeName(funcNode.ReturnType, fnEnv)
-	if err != nil {
-		errgen.MakeError(fnEnv.filePath, funcNode.ReturnType.StartPos().Line, funcNode.ReturnType.EndPos().Line, funcNode.ReturnType.StartPos().Column, funcNode.ReturnType.EndPos().Column, err.Error()).Display()
-	}
+	returnType := EvaluateTypeName(funcNode.ReturnType, fnEnv)
 
 	fn := Fn{
 		DataType:      FUNCTION_TYPE,
@@ -201,10 +195,7 @@ func checkFunctionDeclStmt(funcNode ast.FunctionDeclStmt, env *TypeEnvironment) 
 		if fnEnv.isDeclared(param.Identifier.Name) {
 			errgen.MakeError(fnEnv.filePath, param.Identifier.Start.Line, param.Identifier.End.Line, param.Identifier.Start.Column, param.Identifier.End.Column, fmt.Sprintf("Parameter %s is already declared", param.Identifier.Name)).Display()
 		}
-		paramType, err := EvaluateTypeName(param.Type, fnEnv)
-		if err != nil {
-			errgen.MakeError(fnEnv.filePath, param.Start.Line, param.End.Line, param.Start.Column, param.End.Column, err.Error()).Display()
-		}
+		paramType := EvaluateTypeName(param.Type, fnEnv)
 		fnEnv.DeclareVar(param.Identifier.Name, paramType, false)
 		parameterTypes = append(parameterTypes, FnParam{
 			Name: param.Identifier.Name,
@@ -213,10 +204,7 @@ func checkFunctionDeclStmt(funcNode ast.FunctionDeclStmt, env *TypeEnvironment) 
 	}
 
 	//check return type
-	returnType, err := EvaluateTypeName(funcNode.ReturnType, fnEnv)
-	if err != nil {
-		errgen.MakeError(fnEnv.filePath, funcNode.ReturnType.StartPos().Column, funcNode.ReturnType.EndPos().Line, funcNode.ReturnType.StartPos().Column, funcNode.ReturnType.EndPos().Column, err.Error()).Display()
-	}
+	returnType := EvaluateTypeName(funcNode.ReturnType, fnEnv)
 
 	//declare the function
 	fn := Fn{
