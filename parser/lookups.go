@@ -98,4 +98,7 @@ func bindLookupHandlers() {
 	//Unary
 	nud(lexer.MINUS_TOKEN, parseUnaryExpr)
 	nud(lexer.NOT_TOKEN, parseUnaryExpr)
+	//Increment and Decrement
+	nud(lexer.PLUS_PLUS_TOKEN, parsePrefixExpr)
+	nud(lexer.MINUS_MINUS_TOKEN, parsePrefixExpr)
 }

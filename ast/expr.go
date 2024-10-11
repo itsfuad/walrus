@@ -132,6 +132,22 @@ type BinaryExpr struct {
 	Location
 }
 
+type PrefixExpr struct {
+	Operator lexer.Token
+	Argument IdentifierExpr
+	Location
+}
+
+func (a PrefixExpr) INode() {
+	//empty method implements Node interface
+}
+func (a PrefixExpr) StartPos() lexer.Position {
+	return a.Location.Start
+}
+func (a PrefixExpr) EndPos() lexer.Position {
+	return a.Location.End
+}
+
 func (a BinaryExpr) INode() {
 	//empty method implements Node interface
 }

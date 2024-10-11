@@ -8,7 +8,7 @@ import (
 type TOKEN_KIND string
 
 const (
-	//variable declaration
+	//keywords
 	LET_TOKEN           TOKEN_KIND = "let"
 	CONST_TOKEN         TOKEN_KIND = "const"
 	TYPE_TOKEN          TOKEN_KIND = "type"
@@ -20,6 +20,7 @@ const (
 	PRIVATE_TOKEN       TOKEN_KIND = "priv"
 	RETURN_TOKEN        TOKEN_KIND = "ret"
 	IN_TOKEN			TOKEN_KIND = "in"
+	//data types
 	INT                 TOKEN_KIND = builtins.INT
 	FLOAT               TOKEN_KIND = builtins.FLOAT
 	BYTE                TOKEN_KIND = builtins.BYTE
@@ -28,6 +29,10 @@ const (
 	NULL                TOKEN_KIND = builtins.NULL
 	STRUCT              TOKEN_KIND = builtins.STRUCT
 	FUNCTION            TOKEN_KIND = builtins.FUNCTION
+	//increment and decrement
+	PLUS_PLUS_TOKEN		TOKEN_KIND = "++"
+	MINUS_MINUS_TOKEN	TOKEN_KIND = "--"
+	//logical operators
 	NOT_TOKEN           TOKEN_KIND = "!"
 	MINUS_TOKEN         TOKEN_KIND = "-"
 	PLUS_TOKEN          TOKEN_KIND = "+"
@@ -41,9 +46,11 @@ const (
 	GREATER_EQUAL_TOKEN TOKEN_KIND = ">="
 	NOT_EQUAL_TOKEN     TOKEN_KIND = "!="
 	DOUBLE_EQUAL_TOKEN  TOKEN_KIND = "=="
+	//assignment
 	WALRUS_TOKEN        TOKEN_KIND = ":="
 	COLON_TOKEN         TOKEN_KIND = ":"
 	EQUALS_TOKEN        TOKEN_KIND = "="
+	//delimiters
 	OPEN_PAREN          TOKEN_KIND = "("
 	CLOSE_PAREN         TOKEN_KIND = ")"
 	OPEN_BRACKET        TOKEN_KIND = "["

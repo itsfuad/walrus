@@ -50,6 +50,8 @@ func CheckAST(node ast.Node, env *TypeEnvironment) ValueTypeInterface {
 		return checkBinaryExpr(t, env)
 	case ast.UnaryExpr:
 		return checkUnaryExpr(t, env)
+	case ast.PrefixExpr:
+		return checkPrefixExpr(t, env)
 	case ast.ArrayExpr:
 		return evaluateArrayExpr(t, env)
 	case ast.ArrayIndexAccess:
@@ -118,11 +120,6 @@ func checkParamaters(params []ast.FunctionParam, fnEnv *TypeEnvironment) []FnPar
 		if param.IsOptional {
 			//default value type
 			defaultValue := CheckAST(param.DefaultValue, fnEnv)
-			/*
-			if !matchTypes(paramType, defaultValue) {
-				errgen.MakeError(fnEnv.filePath, param.DefaultValue.StartPos().Line, param.DefaultValue.EndPos().Line, param.DefaultValue.StartPos().Column, param.DefaultValue.EndPos().Column, fmt.Sprintf("Default value type does not match parameter type. Expected %s, got %s", paramType.DType(), defaultValue.DType())).Display()
-			}
-			*/
 			MatchTypes(paramType, defaultValue, fnEnv.filePath, param.DefaultValue.StartPos().Line, param.DefaultValue.EndPos().Line, param.DefaultValue.StartPos().Column, param.DefaultValue.EndPos().Column)
 		}
 		
@@ -170,12 +167,6 @@ func checkFunctionCall(callNode ast.FunctionCallExpr, env *TypeEnvironment) Valu
 	//check if the arguments match the parameters
 	for i := 0; i < len(callNode.Arguments); i++ {
 		arg := CheckAST(callNode.Arguments[i], env)
-		fmt.Printf("Argument type: %v, Param type: %v\n", arg.DType(), fnParams[i].Type.DType())
-		/*
-		if !matchTypes(fnParams[i].Type, arg) {
-			errgen.MakeError(env.filePath, callNode.Arguments[i].StartPos().Line, callNode.Arguments[i].EndPos().Line, callNode.Arguments[i].StartPos().Column, callNode.Arguments[i].EndPos().Column, fmt.Sprintf("Argument %s expects type %s, got %s", fnParams[i].Name, fnParams[i].Type.DType(), arg.DType())).Display()
-		}
-		*/
 		MatchTypes(fnParams[i].Type, arg, env.filePath, callNode.Arguments[i].StartPos().Line, callNode.Arguments[i].EndPos().Line, callNode.Arguments[i].StartPos().Column, callNode.Arguments[i].EndPos().Column)
 	}
 
@@ -193,24 +184,6 @@ func userDefinedToFn(ud ValueTypeInterface) (Fn, error) {
 		return Fn{}, fmt.Errorf("'%s' is not a function", ud.DType())
 	}
 }
-/*
-func matchTypes(expected, provided ValueTypeInterface) bool {
-	if expected.DType() == provided.DType() {
-		return true
-	}
-
-	// the typed can be user defined which wraps the actual type but may be the types are same
-	if _, ok := expected.(UserDefined); ok {
-		return matchTypes(expected.(UserDefined).TypeDef, provided)
-	}
-
-	if _, ok := provided.(UserDefined); ok {
-		return matchTypes(expected, provided.(UserDefined).TypeDef)
-	}
-
-	return false
-}
-*/
 
 func checkFunctionDeclStmt(funcNode ast.FunctionDeclStmt, env *TypeEnvironment) ValueTypeInterface {
 
@@ -287,11 +260,6 @@ func checkReturnStmt(returnNode ast.ReturnStmt, env *TypeEnvironment) ValueTypeI
 
 	fn := getFunctionReturnValue(env, returnNode)
 
-	/*
-	if !matchTypes(fn, returnType) {
-		errgen.MakeError(env.filePath, returnNode.StartPos().Line, returnNode.EndPos().Line, returnNode.StartPos().Column, returnNode.EndPos().Column, fmt.Sprintf("Return type does not match function return type. Expected %s, got %s", fn.DType(), returnType.DType())).Display()
-	}
-	*/
 	MatchTypes(fn, returnType, env.filePath, returnNode.Start.Line, returnNode.End.Line, returnNode.Start.Column, returnNode.End.Column)
 
 	return ReturnType{

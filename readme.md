@@ -22,6 +22,30 @@ A tiny simple programming language made for simplicity. It borrows syntax from '
         - [x] if
         - [x] else
         - [x] else if
-    - [ ] Functions
+    - [x] Functions
+        - [x] Function declaration
+        - [x] Function call
+        - [x] Function return
+        - [x] Optional parameters
+    - [x] User defined types
+        - [x] Struct
+            - [x] Property access
+            - [x] Property assignment
+            - [x] Private property deny access
+        - [x] Builtins (int, float, bool, string)
+        - [x] Function
+    - [ ] Increment/Decrement
+        - [x] Prefix
+        - [ ] Postfix
+    - [ ] Assignment operators
+        - [ ] +=
+        - [ ] -=
+        - [ ] *=
+        - [ ] /=
+        - [ ] %=
+    - [ ] For loop
+        - [x] for [condition]
+        - [ ] for [start] [condition] [end]
+        - [ ] for [start] in [range] 
 - [x] Analyzer
 - [ ] Codegen

@@ -254,6 +254,26 @@ func parsePropertyExpr(p *Parser, left ast.Node, bp BINDING_POWER) ast.Node {
 	}
 }
 
+func parsePrefixExpr(p *Parser) ast.Node {
+	start := p.currentToken().Start
+	operator := p.advance()
+	argument := p.expect(lexer.IDENTIFIER_TOKEN)
+	return ast.PrefixExpr{
+		Operator: operator,
+		Argument: ast.IdentifierExpr{
+			Name: argument.Value,
+			Location: ast.Location{
+				Start: argument.Start,
+				End:  argument.End,
+			},
+		},
+		Location: ast.Location{
+			Start: start,
+			End:   argument.End,
+		},
+	}
+}
+
 func parseUnaryExpr(p *Parser) ast.Node {
 
 	start := p.currentToken().Start
