@@ -1,1 +1,0 @@
-# will be made public after final 1.0.0 release
