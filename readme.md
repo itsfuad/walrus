@@ -34,18 +34,21 @@ A tiny simple programming language made for simplicity. It borrows syntax from '
             - [x] Private property deny access
         - [x] Builtins (int, float, bool, string)
         - [x] Function
-    - [ ] Increment/Decrement
+    - [x] Increment/Decrement
         - [x] Prefix
-        - [ ] Postfix
-    - [ ] Assignment operators
-        - [ ] +=
-        - [ ] -=
-        - [ ] *=
-        - [ ] /=
-        - [ ] %=
+        - [x] Postfix
+    - [x] Assignment operators
+        - [x] +=
+        - [x] -=
+        - [x] *=
+        - [x] /=
+        - [x] %=
     - [ ] For loop
         - [x] for [condition]
         - [ ] for [start] [condition] [end]
         - [ ] for [start] in [range] 
+    - [ ] Struct embedding
+    - [ ] Traits
+    - [ ] Generics
 - [x] Analyzer
 - [ ] Codegen

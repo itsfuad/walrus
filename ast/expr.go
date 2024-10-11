@@ -132,6 +132,11 @@ type BinaryExpr struct {
 	Location
 }
 
+type IncrementalInterface interface {
+	Arg() IdentifierExpr
+	Op() lexer.Token
+}
+
 type PrefixExpr struct {
 	Operator lexer.Token
 	Argument IdentifierExpr
@@ -146,6 +151,34 @@ func (a PrefixExpr) StartPos() lexer.Position {
 }
 func (a PrefixExpr) EndPos() lexer.Position {
 	return a.Location.End
+}
+func (a PrefixExpr) Arg() IdentifierExpr {
+	return a.Argument
+}
+func (a PrefixExpr) Op() lexer.Token {
+	return a.Operator
+}
+
+type PostfixExpr struct {
+	Operator lexer.Token
+	Argument IdentifierExpr
+	Location
+}
+
+func (a PostfixExpr) INode() {
+	//empty method implements Node interface
+}
+func (a PostfixExpr) StartPos() lexer.Position {
+	return a.Location.Start
+}
+func (a PostfixExpr) EndPos() lexer.Position {
+	return a.Location.End
+}
+func (a PostfixExpr) Arg() IdentifierExpr {
+	return a.Argument
+}
+func (a PostfixExpr) Op() lexer.Token {
+	return a.Operator
 }
 
 func (a BinaryExpr) INode() {
@@ -238,9 +271,8 @@ func (a StructPropertyAccessExpr) EndPos() lexer.Position {
 	return a.Location.End
 }
 
-
 type FunctionCallExpr struct {
-	Name       IdentifierExpr
+	Identifier IdentifierExpr
 	Arguments  []Node
 	Location
 }

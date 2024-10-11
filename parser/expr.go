@@ -254,6 +254,23 @@ func parsePropertyExpr(p *Parser, left ast.Node, bp BINDING_POWER) ast.Node {
 	}
 }
 
+func parsePostfixExpr(p *Parser, left ast.Node, bp BINDING_POWER) ast.Node {
+	start := left.StartPos()
+	// left must be an identifier
+	if _, ok := left.(ast.IdentifierExpr); !ok {
+		errgen.MakeError(p.FilePath, left.StartPos().Line, left.EndPos().Line, left.StartPos().Column, left.EndPos().Column, "only identifiers can be incremented or decremented").Display()
+	}
+	operator := p.advance()
+	return ast.PostfixExpr{
+		Operator: operator,
+		Argument: left.(ast.IdentifierExpr),
+		Location: ast.Location{
+			Start: start,
+			End:   operator.End,
+		},
+	}
+}
+
 func parsePrefixExpr(p *Parser) ast.Node {
 	start := p.currentToken().Start
 	operator := p.advance()
@@ -264,7 +281,7 @@ func parsePrefixExpr(p *Parser) ast.Node {
 			Name: argument.Value,
 			Location: ast.Location{
 				Start: argument.Start,
-				End:  argument.End,
+				End:   argument.End,
 			},
 		},
 		Location: ast.Location{
@@ -338,8 +355,8 @@ func parseCallExpr(p *Parser, left ast.Node, bp BINDING_POWER) ast.Node {
 	endPos := p.expect(lexer.CLOSE_PAREN).End
 
 	return ast.FunctionCallExpr{
-		Name:      name,
-		Arguments: args,
+		Identifier: name,
+		Arguments:  args,
 		Location: ast.Location{
 			Start: startPos,
 			End:   endPos,

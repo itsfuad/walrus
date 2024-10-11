@@ -54,7 +54,15 @@ func stmt(tokenKind lexer.TOKEN_KIND, handler STMTHandler) {
 
 func bindLookupHandlers() {
 
+	//Assignment
 	led(lexer.EQUALS_TOKEN, ASSIGNMENT_BP, parseVarAssignmentExpr)
+	led(lexer.PLUS_EQUALS_TOKEN, ASSIGNMENT_BP, parseVarAssignmentExpr)
+	led(lexer.MINUS_EQUALS_TOKEN, ASSIGNMENT_BP, parseVarAssignmentExpr)
+	led(lexer.MUL_EQUALS_TOKEN, ASSIGNMENT_BP, parseVarAssignmentExpr)
+	led(lexer.DIV_EQUALS_TOKEN, ASSIGNMENT_BP, parseVarAssignmentExpr)
+	led(lexer.MOD_EQUALS_TOKEN, ASSIGNMENT_BP, parseVarAssignmentExpr)
+	led(lexer.EXP_EQUALS_TOKEN, ASSIGNMENT_BP, parseVarAssignmentExpr)
+
 	led(lexer.OPEN_BRACKET, MEMBER_BP, parseArrayAccess)
 	nud(lexer.AT_TOKEN, parseStructLiteral)
 
@@ -99,6 +107,10 @@ func bindLookupHandlers() {
 	nud(lexer.MINUS_TOKEN, parseUnaryExpr)
 	nud(lexer.NOT_TOKEN, parseUnaryExpr)
 	//Increment and Decrement
+	//Prefix
 	nud(lexer.PLUS_PLUS_TOKEN, parsePrefixExpr)
 	nud(lexer.MINUS_MINUS_TOKEN, parsePrefixExpr)
+	//Postfix
+	led(lexer.PLUS_PLUS_TOKEN, UNARY_BP, parsePostfixExpr)
+	led(lexer.MINUS_MINUS_TOKEN, UNARY_BP, parsePostfixExpr)
 }

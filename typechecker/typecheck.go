@@ -50,8 +50,8 @@ func CheckAST(node ast.Node, env *TypeEnvironment) ValueTypeInterface {
 		return checkBinaryExpr(t, env)
 	case ast.UnaryExpr:
 		return checkUnaryExpr(t, env)
-	case ast.PrefixExpr:
-		return checkPrefixExpr(t, env)
+	case ast.IncrementalInterface:
+		return checkIncrementalExpr(t, env)
 	case ast.ArrayExpr:
 		return evaluateArrayExpr(t, env)
 	case ast.ArrayIndexAccess:
@@ -106,9 +106,9 @@ func checkFunctionExpr(funcNode ast.FunctionExpr, env *TypeEnvironment) ValueTyp
 }
 
 func checkParamaters(params []ast.FunctionParam, fnEnv *TypeEnvironment) []FnParam {
-	
+
 	var parameters []FnParam
-	
+
 	for _, param := range params {
 
 		if fnEnv.isDeclared(param.Identifier.Name) {
@@ -116,19 +116,19 @@ func checkParamaters(params []ast.FunctionParam, fnEnv *TypeEnvironment) []FnPar
 		}
 
 		paramType := EvaluateTypeName(param.Type, fnEnv)
-		
+
 		if param.IsOptional {
 			//default value type
 			defaultValue := CheckAST(param.DefaultValue, fnEnv)
 			MatchTypes(paramType, defaultValue, fnEnv.filePath, param.DefaultValue.StartPos().Line, param.DefaultValue.EndPos().Line, param.DefaultValue.StartPos().Column, param.DefaultValue.EndPos().Column)
 		}
-		
+
 		fnEnv.DeclareVar(param.Identifier.Name, paramType, false, param.IsOptional)
-		
+
 		parameters = append(parameters, FnParam{
-			Name: param.Identifier.Name,
+			Name:       param.Identifier.Name,
 			IsOptional: param.IsOptional,
-			Type: paramType,
+			Type:       paramType,
 		})
 	}
 	return parameters
@@ -136,14 +136,14 @@ func checkParamaters(params []ast.FunctionParam, fnEnv *TypeEnvironment) []FnPar
 
 func checkFunctionCall(callNode ast.FunctionCallExpr, env *TypeEnvironment) ValueTypeInterface {
 	//check if the function is declared
-	if !env.isDeclared(callNode.Name.Name) {
-		errgen.MakeError(env.filePath, callNode.Name.Start.Line, callNode.Name.End.Line, callNode.Name.Start.Column, callNode.Name.End.Column, fmt.Sprintf("Function %s is not declared", callNode.Name.Name)).Display()
+	if !env.isDeclared(callNode.Identifier.Name) {
+		errgen.MakeError(env.filePath, callNode.Identifier.Start.Line, callNode.Identifier.End.Line, callNode.Identifier.Start.Column, callNode.Identifier.End.Column, fmt.Sprintf("Function %s is not declared", callNode.Identifier.Name)).Display()
 	}
 
 	//check if the function is a function
-	fn, err := userDefinedToFn(env.variables[callNode.Name.Name])
+	fn, err := userDefinedToFn(env.variables[callNode.Identifier.Name])
 	if err != nil {
-		errgen.MakeError(env.filePath, callNode.Name.Start.Line, callNode.Name.End.Line, callNode.Name.Start.Column, callNode.Name.End.Column, fmt.Sprintf("'%s' is not a function", callNode.Name.Name)).Display()
+		errgen.MakeError(env.filePath, callNode.Identifier.Start.Line, callNode.Identifier.End.Line, callNode.Identifier.Start.Column, callNode.Identifier.End.Column, fmt.Sprintf("'%s' is not a function", callNode.Identifier.Name)).Display()
 	}
 
 	//check if the number of arguments match the number of parameters
@@ -157,10 +157,10 @@ func checkFunctionCall(callNode ast.FunctionCallExpr, env *TypeEnvironment) Valu
 			}
 		}
 		if len(callNode.Arguments) < len(fnParams)-optionalParams {
-			errgen.MakeError(env.filePath, callNode.Name.Start.Line, callNode.Name.End.Line, callNode.Name.Start.Column, callNode.Name.End.Column, fmt.Sprintf("Function %s expects at least %d arguments, got %d", callNode.Name.Name, len(fnParams)-optionalParams, len(callNode.Arguments))).Display()
+			errgen.MakeError(env.filePath, callNode.Identifier.Start.Line, callNode.Identifier.End.Line, callNode.Identifier.Start.Column, callNode.Identifier.End.Column, fmt.Sprintf("Function %s expects at least %d arguments, got %d", callNode.Identifier.Name, len(fnParams)-optionalParams, len(callNode.Arguments))).Display()
 		}
 		if len(callNode.Arguments) > len(fnParams) {
-			errgen.MakeError(env.filePath, callNode.Name.Start.Line, callNode.Name.End.Line, callNode.Name.Start.Column, callNode.Name.End.Column, fmt.Sprintf("Function %s expects at most %d arguments, got %d", callNode.Name.Name, len(fnParams), len(callNode.Arguments))).Display()
+			errgen.MakeError(env.filePath, callNode.Identifier.Start.Line, callNode.Identifier.End.Line, callNode.Identifier.Start.Column, callNode.Identifier.End.Column, fmt.Sprintf("Function %s expects at most %d arguments, got %d", callNode.Identifier.Name, len(fnParams), len(callNode.Arguments))).Display()
 		}
 	}
 

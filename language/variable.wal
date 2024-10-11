@@ -22,4 +22,4 @@ let isTrue := !true;
 
 let counter := 0;
 ++counter;
-// b--; // to be implemented
+b--;

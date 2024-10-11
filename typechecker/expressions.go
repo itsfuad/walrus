@@ -8,10 +8,10 @@ import (
 	"walrus/lexer"
 )
 
-func checkPrefixExpr(node ast.PrefixExpr, env *TypeEnvironment) ValueTypeInterface {
-	op := node.Operator
-	arg := node.Argument
-
+func checkIncrementalExpr(node ast.IncrementalInterface, env *TypeEnvironment) ValueTypeInterface {
+	op := node.Op()
+	arg := node.Arg()
+	fmt.Printf("op: %s, arg: %s\n", op.Value, arg.Name)
 	// the argument must be an identifier evaluated to a number
 	typeVal := CheckAST(arg, env)
 	if !IsNumberType(typeVal) {
@@ -20,7 +20,7 @@ func checkPrefixExpr(node ast.PrefixExpr, env *TypeEnvironment) ValueTypeInterfa
 	if op.Kind != lexer.PLUS_PLUS_TOKEN && op.Kind != lexer.MINUS_MINUS_TOKEN {
 		errgen.MakeError(env.filePath, op.Start.Line, op.End.Line, op.Start.Column, op.End.Column, "invalid prefix operation").Display()
 	}
-	return typeVal	
+	return typeVal
 }
 
 func checkUnaryExpr(node ast.UnaryExpr, env *TypeEnvironment) ValueTypeInterface {
@@ -103,7 +103,7 @@ func checkComparison(node ast.BinaryExpr, left ValueTypeInterface, right ValueTy
 	boolean := Bool{
 		DataType: BOOLEAN_TYPE,
 	}
-	
+
 	if op.Kind == lexer.DOUBLE_EQUAL_TOKEN || op.Kind == lexer.NOT_EQUAL_TOKEN {
 		// ( ==, != ) allow every type
 		if IsNumberType(left) && IsNumberType(right) {
