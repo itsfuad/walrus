@@ -1,0 +1,1 @@
+# Syntax highlighter for walrus

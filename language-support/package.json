@@ -1,0 +1,63 @@
+{
+  "name": "walrus",
+  "displayName": "Walrus",
+  "description": "Walrus Language Support",
+  "version": "1.0.4",
+  "icon": "icon.png",
+  "publisher": "Walrus",
+  "activationEvents": [],
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/BrainbirdLab/Rex-Language-Support"
+  },
+  "contributes": {
+    "languages": [
+      {
+        "id": "walrus",
+        "aliases": [
+          "walrusLang",
+          "walrus"
+        ],
+        "extensions": [
+          ".wal",
+          ".walrus"
+        ],
+        "configuration": "./language-configuration.json",
+        "icon": {
+          "dark": "icon.png",
+          "light": "icon.png"
+        }
+      }
+    ],
+    "grammars": [
+      {
+        "language": "walrus",
+        "scopeName": "source.wal",
+        "path": "./syntaxes/wal.tmLanguage.json"
+      }
+    ],
+    "snippets": [
+      {
+        "language": "walrus",
+        "path": "./snippets/walrus.json"
+      }
+    ]
+  },
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "Walrus",
+    "Programming",
+    "Language"
+  ],
+  "author": "Fuad Hasan",
+  "license": "ISC"
+}

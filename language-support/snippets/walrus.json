@@ -1,0 +1,28 @@
+{
+    "Declare Variable": {
+      "prefix": "let",
+      "body": ["let $1 = $2"],
+      "description": "Declare a variable"
+    },
+    "Const Declare Statement": {
+      "prefix": "const",
+      "body": ["const $1 = $2"],
+      "description": "Declare a const variable"
+    },
+    "If Statement": {
+      "prefix": "if",
+      "body": ["if $1 {\n\t$2\n}"],
+      "description": "If statement"
+    },
+    "Else if Statement":{
+      "prefix": "elf",
+      "body": ["elf $1 {\n\t$2\n}"],
+      "description": "Else if statement"
+    }, 
+    "Else statement":{
+      "prefix": "els",
+      "body": ["els {\n\t$1\n}"],
+      "description": "Else statement"
+    }
+}
+  

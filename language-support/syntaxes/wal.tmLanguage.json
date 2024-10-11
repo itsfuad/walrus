@@ -1,0 +1,984 @@
+{
+    "name": "Rex language",
+    "scopeName": "source.wal",
+    "patterns": [
+        {
+            "comment": "import statements",
+            "name": "meta.import.wal",
+            "begin": "\\b(import)\\s+\\{([^\\}]+)\\}\\s+(from)\\s+(\"[^\"]+\")",
+            "beginCaptures": {
+                "1": {
+                    "name": "keyword.other.import.wal"
+                },
+                "2": {
+                    "name": "variable.other.wal"
+                },
+                "3": {
+                    "name": "keyword.other.import.wal"
+                },
+                "4": {
+                    "name": "string.quoted.double.wal"
+                }
+            },
+            "end": ";",
+            "endCaptures": {
+                "0": {
+                    "name": "punctuation.semi.wal"
+                }
+            },
+            "patterns": [
+                {
+                    "include": "#block-comments"
+                },
+                {
+                    "include": "#comments"
+                },
+                {
+                    "include": "#keywords"
+                },
+                {
+                    "include": "#punctuations"
+                },
+                {
+                    "include": "#types"
+                },
+                {
+                    "include": "#lvariables"
+                }
+            ]
+        },
+        {
+            "comment": "Imports with single module",
+            "match": "\\b(import)\\s+(\"[^\"]+\");",
+            "captures": {
+                "1": {
+                    "name": "keyword.other.import.wal"
+                },
+                "2": {
+                    "name": "string.quoted.double.wal"
+                }
+            }
+        },
+        {
+            "include": "#block-comments"
+        },
+        {
+            "include": "#comments"
+        },
+        {
+            "include": "#attributes"
+        },
+        {
+            "include": "#lvariables"
+        },
+        {
+            "include": "#constants"
+        },
+        {
+            "include": "#functions"
+        },
+        {
+            "include": "#types"
+        },
+        {
+            "include": "#keywords"
+        },
+        {
+            "include": "#namespaces"
+        },
+        {
+            "include": "#punctuation"
+        },
+        {
+            "include": "#strings"
+        },
+        {
+            "include": "#variables"
+        }
+    ],
+    "repository": {
+        "comments": {
+            "patterns": [
+                {
+                    "comment": "documentation comments",
+                    "name": "comment.line.documentaion.wal",
+                    "match": "(///).*$",
+                    "captures": {
+                        "1": {
+                            "name": "punctuation.definition.comment.wal"
+                        }
+                    }
+                },
+                {
+                    "comment": "line comments",
+                    "name": "comment.line.double-slash.wal",
+                    "match": "(//).*$",
+                    "captures": {
+                        "1": {
+                            "name": "punctuation.definition.comment.wal"
+                        }
+                    }
+                }
+            ]
+        },
+        "block-comments": {
+            "patterns": [
+                {
+                    "comment": "empty block comments",
+                    "name": "comment.block.wal",
+                    "match": "/\\*\\*/"
+                },
+                {
+                    "comment": "block documentation comments",
+                    "name": "comment.blocky.documentation.wal",
+                    "begin": "/\\*\\*",
+                    "end": "\\*/",
+                    "patterns": [
+                        {
+                            "include": "#block-comments"
+                        }
+                    ]
+                },
+                {
+                    "comment": "block comments",
+                    "name": "comment.block.wal",
+                    "begin": "/\\*(?!\\*)",
+                    "end": "\\*/",
+                    "patterns": [
+                        {
+                            "include": "#block-comments"
+                        }
+                    ]
+                }
+            ]
+        },
+        "constants": {
+            "patterns": [
+                {
+                    "comment": "All caps constants",
+                    "name": "constant.other.caps.wal",
+                    "match": "\\b[A-Z]+[A-Z0-9_]*\\b"
+                },
+                {
+                    "comment": "constant declarations",
+                    "match": "\\b(const)\\s+([A-Z]+[A-Za-z0-9_]*)\\b",
+                    "captures": {
+                        "1": {
+                            "name": "storage.type.wal"
+                        },
+                        "2": {
+                            "name": "constant.other.caps.wal"
+                        }
+                    }
+                },
+                {
+                    "comment": "decimal integers and floats",
+                    "name": "constant.numeric.decimal.wal",
+                    "match": "\\b\\d[\\d_]*(\\.?)[\\d_]*(?:(E|e)([+-]?)([\\d_]+))?\\b",
+                    "captures": {
+                        "1": {
+                            "name": "punctuation.separator.dot.decimal.wal"
+                        },
+                        "2": {
+                            "name": "keyword.operator.exponent.wal"
+                        },
+                        "3": {
+                            "name": "keyword.operator.exponent.sign.wal"
+                        },
+                        "4": {
+                            "name": "constant.numeric.decimal.exponent.mantissa.wal"
+                        },
+                        "5": {
+                            "name": "entity.name.type.numeric.wal"
+                        }
+                    }
+                },
+                {
+                    "comment": "hexadecimal integers",
+                    "name": "constant.numeric.hex.wal",
+                    "match": "\\b0x[\\da-fA-F_]+\\b",
+                    "captures": {
+                        "1": {
+                            "name": "entity.name.type.numeric.wal"
+                        }
+                    }
+                },
+                {
+                    "comment": "octal integers",
+                    "name": "constant.numeric.oct.wal",
+                    "match": "\\b0o[0-7_]+\\b",
+                    "captures": {
+                        "1": {
+                            "name": "entity.name.type.numeric.wal"
+                        }
+                    }
+                },
+                {
+                    "comment": "binary integers",
+                    "name": "constant.numeric.bin.wal",
+                    "match": "\\b0b[01_]+\\b",
+                    "captures": {
+                        "1": {
+                            "name": "entity.name.type.numeric.wal"
+                        }
+                    }
+                },
+                {
+                    "comment": "booleans",
+                    "name": "constant.language.bool.wal",
+                    "match": "\\b(true|false|null)\\b"
+                }
+            ]
+        },
+        "escapes": {
+            "comment": "escapes: ASCII, byte, Unicode, quote, regex",
+            "name": "constant.character.escape.wal",
+            "match": "(\\\\)(?:(?:(x[0-7][\\da-fA-F])|(u(\\{)[\\da-fA-F]{4,6}(\\}))|.))",
+            "captures": {
+                "1": {
+                    "name": "constant.character.escape.backslash.wal"
+                },
+                "2": {
+                    "name": "constant.character.escape.bit.wal"
+                },
+                "3": {
+                    "name": "constant.character.escape.unicode.wal"
+                },
+                "4": {
+                    "name": "constant.character.escape.unicode.punctuation.wal"
+                },
+                "5": {
+                    "name": "constant.character.escape.unicode.punctuation.wal"
+                }
+            }
+        },
+        "attributes": {
+            "comment": "attributes",
+            "name": "meta.attribute.wal",
+            "begin": "(#)(\\!?)(\\[)",
+            "beginCaptures": {
+                "1": {
+                    "name": "punctuation.definition.attribute.wal"
+                },
+                "3": {
+                    "name": "punctuation.brackets.attribute.wal"
+                }
+            },
+            "end": "\\]",
+            "endCaptures": {
+                "0": {
+                    "name": "punctuation.brackets.attribute.wal"
+                }
+            },
+            "patterns": [
+                {
+                    "include": "#block-comments"
+                },
+                {
+                    "include": "#comments"
+                },
+                {
+                    "include": "#keywords"
+                },
+                {
+                    "include": "#lifetimes"
+                },
+                {
+                    "include": "#punctuation"
+                },
+                {
+                    "include": "#strings"
+                },
+                {
+                    "include": "#gtypes"
+                },
+                {
+                    "include": "#types"
+                }
+            ]
+        },
+        "functions": {
+            "patterns": [
+                {
+                    "comment": "function definition",
+                    "name": "meta.function.definition.wal",
+                    "begin": "\\b(fn)\\s+((?:r#(?![Ss]elf))?[A-Za-z0-9_]+)((\\()|(<))",
+                    "beginCaptures": {
+                        "1": {
+                            "name": "keyword.other.fn.wal"
+                        },
+                        "2": {
+                            "name": "entity.name.function.wal"
+                        },
+                        "4": {
+                            "name": "punctuation.brackets.round.wal"
+                        },
+                        "5": {
+                            "name": "punctuation.brackets.angle.wal"
+                        }
+                    },
+                    "end": "\\{|;",
+                    "endCaptures": {
+                        "0": {
+                            "name": "punctuation.brackets.curly.wal"
+                        }
+                    },
+                    "patterns": [
+                        {
+                            "include": "#block-comments"
+                        },
+                        {
+                            "include": "#comments"
+                        },
+                        {
+                            "include": "#keywords"
+                        },
+                        {
+                            "include": "#lvariables"
+                        },
+                        {
+                            "include": "#constants"
+                        },
+                        {
+                            "include": "#gtypes"
+                        },
+                        {
+                            "include": "#functions"
+                        },
+                        {
+                            "include": "#lifetimes"
+                        },
+                        {
+                            "include": "#macros"
+                        },
+                        {
+                            "include": "#namespaces"
+                        },
+                        {
+                            "include": "#punctuation"
+                        },
+                        {
+                            "include": "#strings"
+                        },
+                        {
+                            "include": "#types"
+                        },
+                        {
+                            "include": "#variables"
+                        }
+                    ]
+                },
+                {
+                    "comment": "function/method calls, chaining",
+                    "name": "meta.function.call.wal",
+                    "begin": "((?:r#(?![Ss]elf))?[A-Za-z0-9_]+)(\\()",
+                    "beginCaptures": {
+                        "1": {
+                            "name": "entity.name.function.wal"
+                        },
+                        "2": {
+                            "name": "punctuation.brackets.round.wal"
+                        }
+                    },
+                    "end": "\\)",
+                    "endCaptures": {
+                        "0": {
+                            "name": "punctuation.brackets.round.wal"
+                        }
+                    },
+                    "patterns": [
+                        {
+                            "include": "#block-comments"
+                        },
+                        {
+                            "include": "#comments"
+                        },
+                        {
+                            "include": "#attributes"
+                        },
+                        {
+                            "include": "#keywords"
+                        },
+                        {
+                            "include": "#lvariables"
+                        },
+                        {
+                            "include": "#constants"
+                        },
+                        {
+                            "include": "#gtypes"
+                        },
+                        {
+                            "include": "#functions"
+                        },
+                        {
+                            "include": "#lifetimes"
+                        },
+                        {
+                            "include": "#macros"
+                        },
+                        {
+                            "include": "#namespaces"
+                        },
+                        {
+                            "include": "#punctuation"
+                        },
+                        {
+                            "include": "#strings"
+                        },
+                        {
+                            "include": "#types"
+                        },
+                        {
+                            "include": "#variables"
+                        }
+                    ]
+                },
+                {
+                    "comment": "function/method calls with turbofish",
+                    "name": "meta.function.call.wal",
+                    "begin": "((?:r#(?![Ss]elf))?[A-Za-z0-9_]+)(?=::<.*>\\()",
+                    "beginCaptures": {
+                        "1": {
+                            "name": "entity.name.function.wal"
+                        }
+                    },
+                    "end": "\\)",
+                    "endCaptures": {
+                        "0": {
+                            "name": "punctuation.brackets.round.wal"
+                        }
+                    },
+                    "patterns": [
+                        {
+                            "include": "#block-comments"
+                        },
+                        {
+                            "include": "#comments"
+                        },
+                        {
+                            "include": "#attributes"
+                        },
+                        {
+                            "include": "#keywords"
+                        },
+                        {
+                            "include": "#lvariables"
+                        },
+                        {
+                            "include": "#constants"
+                        },
+                        {
+                            "include": "#gtypes"
+                        },
+                        {
+                            "include": "#functions"
+                        },
+                        {
+                            "include": "#lifetimes"
+                        },
+                        {
+                            "include": "#macros"
+                        },
+                        {
+                            "include": "#namespaces"
+                        },
+                        {
+                            "include": "#punctuation"
+                        },
+                        {
+                            "include": "#strings"
+                        },
+                        {
+                            "include": "#types"
+                        },
+                        {
+                            "include": "#variables"
+                        }
+                    ]
+                }
+            ]
+        },
+        "keywords": {
+            "patterns": [
+                {
+                    "comment": "control flow keywords",
+                    "name": "keyword.control.wal",
+                    "match": "\\b(await|switch|break|case|default|continue|do|els|elf|for|foreach|if|where|try|while)\\b"
+                },
+                {
+                    "comment": "storage keywords",
+                    "name": "keyword.other.wal storage.type.wal",
+                    "match": "\\b(let|const)\\b"
+                },
+                {
+                    "comment": "const keyword",
+                    "name": "storage.modifier.wal",
+                    "match": "\\b(const)\\b"
+                },
+                {
+                    "comment": "type keyword",
+                    "name": "keyword.declaration.type.wal storage.type.wal",
+                    "match": "\\b(type)\\b"
+                },
+                {
+                    "comment": "enum keyword",
+                    "name": "keyword.declaration.enum.wal storage.type.wal",
+                    "match": "\\b(enum)\\b"
+                },
+                {
+                    "comment": "struct keyword",
+                    "name": "keyword.declaration.struct.wal storage.type.wal",
+                    "match": "\\b(struct)\\b"
+                },
+                {
+                    "comment": "storage modifiers",
+                    "name": "storage.modifier.wal",
+                    "match": "\\b(static)\\b"
+                },
+                {
+                    "comment": "other keywords",
+                    "name": "keyword.other.wal",
+                    "match": "\\b(async|in|priv|pub|readonly|typeof|union|import|export|from|trait|impl|ret|mod|embed|override)\\b"
+                },
+                {
+                    "comment": "fn",
+                    "name": "keyword.other.fn.wal",
+                    "match": "\\bfn\\b"
+                },
+                {
+                    "comment": "logical operators",
+                    "name": "keyword.operator.logical.wal",
+                    "match": "(\\^|\\||\\|\\||&&|<<|>>|!)(?!=)"
+                },
+                {
+                    "comment": "logical AND, borrow references",
+                    "name": "keyword.operator.borrow.and.wal",
+                    "match": "&(?![&=])"
+                },
+                {
+                    "comment": "assignment operators",
+                    "name": "keyword.operator.assignment.wal",
+                    "match": "(\\+=|-=|\\*=|/=|%=|\\^=|&=|\\|=|<<=|>>=)"
+                },
+                {
+                    "comment": "single equal",
+                    "name": "keyword.operator.assignment.equal.wal",
+                    "match": "(?<![<>])=(?!=|>)"
+                },
+                {
+                    "comment": "comparison operators",
+                    "name": "keyword.operator.comparison.wal",
+                    "match": "(=(=)?(?!>)|!=|<=|(?<!=)>=)"
+                },
+                {
+                    "comment": "math operators",
+                    "name": "keyword.operator.math.wal",
+                    "match": "(([+%]|(\\*(?!\\w)))(?!=))|(-(?!>))|(/(?!/))"
+                },
+                {
+                    "comment": "less than, greater than (special case)",
+                    "match": "(?:\\b|(?:(\\))|(\\])|(\\})))[ \\t]+([<>])[ \\t]+(?:\\b|(?:(\\()|(\\[)|(\\{)))",
+                    "captures": {
+                        "1": {
+                            "name": "punctuation.brackets.round.wal"
+                        },
+                        "2": {
+                            "name": "punctuation.brackets.square.wal"
+                        },
+                        "3": {
+                            "name": "punctuation.brackets.curly.wal"
+                        },
+                        "4": {
+                            "name": "keyword.operator.comparison.wal"
+                        },
+                        "5": {
+                            "name": "punctuation.brackets.round.wal"
+                        },
+                        "6": {
+                            "name": "punctuation.brackets.square.wal"
+                        },
+                        "7": {
+                            "name": "punctuation.brackets.curly.wal"
+                        }
+                    }
+                },
+                {
+                    "comment": "namespace operator",
+                    "name": "keyword.operator.namespace.wal",
+                    "match": "::"
+                },
+                {
+                    "comment": "dereference asterisk",
+                    "match": "(\\*)(?=\\w+)",
+                    "captures": {
+                        "1": {
+                            "name": "keyword.operator.dereference.wal"
+                        }
+                    }
+                },
+                {
+                    "comment": "subpattern binding",
+                    "name": "keyword.operator.subpattern.wal",
+                    "match": "@"
+                },
+                {
+                    "comment": "dot access",
+                    "name": "keyword.operator.access.dot.wal",
+                    "match": "\\.(?!\\.)"
+                },
+                {
+                    "comment": "ranges, range patterns",
+                    "name": "keyword.operator.range.wal",
+                    "match": "\\.{2}(=|\\.)?"
+                },
+                {
+                    "comment": "colon",
+                    "name": "keyword.operator.key-value.wal",
+                    "match": ":(?!:)"
+                },
+                {
+                    "comment": "dashrocket, skinny arrow",
+                    "name": "keyword.operator.arrow.skinny.wal",
+                    "match": "->"
+                },
+                {
+                    "comment": "hashrocket, fat arrow",
+                    "name": "keyword.operator.arrow.fat.wal",
+                    "match": "=>"
+                },
+                {
+                    "comment": "dollar macros",
+                    "name": "keyword.operator.macro.dollar.wal",
+                    "match": "\\$"
+                },
+                {
+                    "comment": "question mark operator, questionably sized, macro kleene matcher",
+                    "name": "keyword.operator.question.wal",
+                    "match": "\\?"
+                }
+            ]
+        },
+        "interpolations": {
+            "comment": "curly brace interpolations",
+            "name": "meta.interpolation.wal",
+            "match": "({)[^\"{}]*(})",
+            "captures": {
+                "1": {
+                    "name": "punctuation.definition.interpolation.wal"
+                },
+                "2": {
+                    "name": "punctuation.definition.interpolation.wal"
+                }
+            }
+        },
+        "lifetimes": {
+            "patterns": [
+                {
+                    "comment": "named lifetime parameters",
+                    "match": "(['])([a-zA-Z_][0-9a-zA-Z_]*)(?!['])\\b",
+                    "captures": {
+                        "1": {
+                            "name": "punctuation.definition.lifetime.wal"
+                        },
+                        "2": {
+                            "name": "entity.name.type.lifetime.wal"
+                        }
+                    }
+                },
+                {
+                    "comment": "borrowing references to named lifetimes",
+                    "match": "(\\&)(['])([a-zA-Z_][0-9a-zA-Z_]*)(?!['])\\b",
+                    "captures": {
+                        "1": {
+                            "name": "keyword.operator.borrow.wal"
+                        },
+                        "2": {
+                            "name": "punctuation.definition.lifetime.wal"
+                        },
+                        "3": {
+                            "name": "entity.name.type.lifetime.wal"
+                        }
+                    }
+                }
+            ]
+        },
+        "macros": {
+            "patterns": [
+                {
+                    "comment": "macros",
+                    "name": "meta.macro.wal",
+                    "match": "(([a-z_][A-Za-z0-9_]*!)|([A-Z_][A-Za-z0-9_]*!))",
+                    "captures": {
+                        "2": {
+                            "name": "entity.name.function.macro.wal"
+                        },
+                        "3": {
+                            "name": "entity.name.type.macro.wal"
+                        }
+                    }
+                }
+            ]
+        },
+        "namespaces": {
+            "patterns": [
+                {
+                    "comment": "namespace (non-type, non-function path segment)",
+                    "match": "(?<![A-Za-z0-9_])([A-Za-z0-9_]+)((?<!super|self)::)",
+                    "captures": {
+                        "1": {
+                            "name": "entity.name.namespace.wal"
+                        },
+                        "2": {
+                            "name": "keyword.operator.namespace.wal"
+                        }
+                    }
+                }
+            ]
+        },
+        "types": {
+            "patterns": [
+                {
+                    "comment": "numeric types",
+                    "match": "(?<![A-Za-z])(int|fl|str|byte)\\b",
+                    "captures": {
+                        "1": {
+                            "name": "keyword.other.wal"
+                        }
+                    }
+                },
+                {
+                    "comment": "parameterized types",
+                    "begin": "\\b(_?[A-Z][A-Za-z0-9_]*)(<)",
+                    "beginCaptures": {
+                        "1": {
+                            "name": "entity.name.type.wal"
+                        },
+                        "2": {
+                            "name": "punctuation.brackets.angle.wal"
+                        }
+                    },
+                    "end": ">",
+                    "endCaptures": {
+                        "0": {
+                            "name": "punctuation.brackets.angle.wal"
+                        }
+                    },
+                    "patterns": [
+                        {
+                            "include": "#block-comments"
+                        },
+                        {
+                            "include": "#comments"
+                        },
+                        {
+                            "include": "#keywords"
+                        },
+                        {
+                            "include": "#lvariables"
+                        },
+                        {
+                            "include": "#lifetimes"
+                        },
+                        {
+                            "include": "#punctuation"
+                        },
+                        {
+                            "include": "#types"
+                        },
+                        {
+                            "include": "#variables"
+                        }
+                    ]
+                },
+                {
+                    "comment": "primitive types",
+                    "name": "keyword.other.wal",
+                    "match": "\\b(bool|chr|str)\\b"
+                },
+                {
+                    "comment": "struct declarations",
+                    "match": "\\b(struct)\\s+(_?[A-Z][A-Za-z0-9_]*)\\b",
+                    "captures": {
+                        "1": {
+                            "name": "keyword.declaration.struct.wal storage.type.wal"
+                        },
+                        "2": {
+                            "name": "entity.name.type.struct.wal"
+                        }
+                    }
+                },
+                {
+                    "comment": "enum declarations",
+                    "match": "\\b(enum)\\s+(_?[A-Z][A-Za-z0-9_]*)\\b",
+                    "captures": {
+                        "1": {
+                            "name": "keyword.declaration.enum.wal storage.type.wal"
+                        },
+                        "2": {
+                            "name": "entity.name.type.enum.wal"
+                        }
+                    }
+                },
+                {
+                    "comment": "type declarations",
+                    "match": "\\b(type)\\s+(_?[A-Z][A-Za-z0-9_]*)\\b",
+                    "captures": {
+                        "1": {
+                            "name": "keyword.declaration.type.wal storage.type.wal"
+                        },
+                        "2": {
+                            "name": "entity.name.type.declaration.wal"
+                        }
+                    }
+                },
+                {
+                    "comment": "types",
+                    "name": "entity.name.type.wal",
+                    "match": "\\b_?[A-Z][A-Za-z0-9_]*\\b(?!!)"
+                }
+            ]
+        },
+        "gtypes": {
+            "patterns": [
+                {
+                    "comment": "none types",
+                    "name": "entity.name.type.option.wal",
+                    "match": "\\b(none)\\b"
+                }
+            ]
+        },
+        "punctuation": {
+            "patterns": [
+                {
+                    "comment": "comma",
+                    "name": "punctuation.comma.wal",
+                    "match": ","
+                },
+                {
+                    "comment": "curly braces",
+                    "name": "punctuation.brackets.curly.wal",
+                    "match": "[{}]"
+                },
+                {
+                    "comment": "parentheses, round brackets",
+                    "name": "punctuation.brackets.round.wal",
+                    "match": "[()]"
+                },
+                {
+                    "comment": "semicolon",
+                    "name": "punctuation.semi.wal",
+                    "match": ";"
+                },
+                {
+                    "comment": "square brackets",
+                    "name": "punctuation.brackets.square.wal",
+                    "match": "[\\[\\]]"
+                },
+                {
+                    "comment": "angle brackets",
+                    "name": "punctuation.brackets.angle.wal",
+                    "match": "(?<!=)[<>]"
+                }
+            ]
+        },
+        "strings": {
+            "patterns": [
+                {
+                    "comment": "double-quoted strings and byte strings",
+                    "name": "string.quoted.double.wal",
+                    "begin": "(b?)(\")",
+                    "beginCaptures": {
+                        "1": {
+                            "name": "string.quoted.byte.raw.wal"
+                        },
+                        "2": {
+                            "name": "punctuation.definition.string.wal"
+                        }
+                    },
+                    "end": "\"",
+                    "endCaptures": {
+                        "0": {
+                            "name": "punctuation.definition.string.wal"
+                        }
+                    },
+                    "patterns": [
+                        {
+                            "include": "#escapes"
+                        },
+                        {
+                            "include": "#interpolations"
+                        }
+                    ]
+                },
+                {
+                    "comment": "double-quoted raw strings and raw byte strings",
+                    "name": "string.quoted.double.wal",
+                    "begin": "(b?r)(#*)(\")",
+                    "beginCaptures": {
+                        "1": {
+                            "name": "string.quoted.byte.raw.wal"
+                        },
+                        "2": {
+                            "name": "punctuation.definition.string.raw.wal"
+                        },
+                        "3": {
+                            "name": "punctuation.definition.string.wal"
+                        }
+                    },
+                    "end": "(\")(\\2)",
+                    "endCaptures": {
+                        "1": {
+                            "name": "punctuation.definition.string.wal"
+                        },
+                        "2": {
+                            "name": "punctuation.definition.string.raw.wal"
+                        }
+                    }
+                },
+                {
+                    "comment": "characters and bytes",
+                    "name": "string.quoted.single.char.wal",
+                    "begin": "(b)?(')",
+                    "beginCaptures": {
+                        "1": {
+                            "name": "string.quoted.byte.raw.wal"
+                        },
+                        "2": {
+                            "name": "punctuation.definition.char.wal"
+                        }
+                    },
+                    "end": "'",
+                    "endCaptures": {
+                        "0": {
+                            "name": "punctuation.definition.char.wal"
+                        }
+                    },
+                    "patterns": [
+                        {
+                            "include": "#escapes"
+                        }
+                    ]
+                }
+            ]
+        },
+        "lvariables": {
+            "patterns": [
+                {
+                    "comment": "self",
+                    "name": "variable.language.self.wal",
+                    "match": "\\b[Ss]elf\\b"
+                }
+            ]
+        },
+        "variables": {
+            "patterns": [
+                {
+                    "comment": "variables",
+                    "name": "variable.other.wal",
+                    "match": "\\b(?<!(?<!\\.)\\.)(?:r#(?!([Ss]elf)))?[a-z0-9_]+\\b"
+                }
+            ]
+        }
+    }
+}
