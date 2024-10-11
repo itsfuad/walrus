@@ -62,4 +62,4 @@ fn add(a: int, b?: int = 9) -> int {
     ret a + b;
 }
 
-const addRes := add(5, 6);
+const addRes := add(1);

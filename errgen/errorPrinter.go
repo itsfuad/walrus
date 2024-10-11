@@ -1,6 +1,7 @@
 package errgen
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"strings"
@@ -19,7 +20,7 @@ type Hint struct {
 	hintType	HINT
 }
 
-type ErrorType struct {
+type WalrusError struct {
 	filePath	string
 	lineStart 	int
 	lineEnd		int
@@ -29,7 +30,7 @@ type ErrorType struct {
 	hints		[]Hint
 }
 
-func (e *ErrorType) Display() {
+func (e *WalrusError) Display() {
 	fileData, err := os.ReadFile(e.filePath)
 	if err != nil {
 		panic(err)
@@ -66,7 +67,7 @@ func (e *ErrorType) Display() {
 }
 
 
-func (e *ErrorType) AddHint(msg string, htype HINT) *ErrorType {
+func (e *WalrusError) AddHint(msg string, htype HINT) *WalrusError {
 	e.hints = append(e.hints, Hint{
 		message: msg,
 		hintType: htype,
@@ -75,7 +76,7 @@ func (e *ErrorType) AddHint(msg string, htype HINT) *ErrorType {
 	return e
 }
 
-func MakeError(filePath string, lineStart, lineEnd int, colStart, colEnd int, err string) *ErrorType {
+func MakeError(filePath string, lineStart, lineEnd int, colStart, colEnd int, err string) *WalrusError {
 	if lineStart < 1 {
 		lineStart = 1
 	}
@@ -88,12 +89,12 @@ func MakeError(filePath string, lineStart, lineEnd int, colStart, colEnd int, er
 	if colEnd < 1 {
 		colEnd = 1
 	}
-	return &ErrorType{
+	return &WalrusError{
 		filePath: filePath,
 		lineStart: lineStart,
 		lineEnd: lineEnd,
 		colStart: colStart,
 		colEnd: colEnd,
-		err: fmt.Errorf(err),
+		err: errors.New(err),
 	}
 }
