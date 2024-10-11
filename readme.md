@@ -1,4 +1,4 @@
-# Walrus language
+# Walrus Programming language
 A tiny simple programming language made for simplicity. It borrows syntax from 'go', 'rust' and 'typescript'
 
 - [x] Lexer
