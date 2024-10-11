@@ -1,5 +1,6 @@
 package builtins
 
+// common types
 const (
 	INT      = "int"
 	FLOAT    = "fl"
