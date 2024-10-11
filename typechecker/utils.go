@@ -93,7 +93,24 @@ func getTypename(typeName ValueTypeInterface) VALUE_TYPE {
 	case Struct:
 		return VALUE_TYPE(t.StructName)
 	case Fn:
-		return VALUE_TYPE(t.DataType)
+		ParamStrs := ""
+		for i, param := range t.Params {
+			ParamStrs += param.Name
+			if param.IsOptional {
+				ParamStrs += "?: "
+			} else {
+				ParamStrs += ": "
+			}
+			ParamStrs += string(getTypename(param.Type))
+			if i != len(t.Params)-1 {
+				ParamStrs += ", "
+			}
+		}
+		ReturnStr := string(getTypename(t.Returns))
+		if ReturnStr != "" {
+			ReturnStr = " -> " + ReturnStr
+		}
+		return VALUE_TYPE(fmt.Sprintf("fn(%s)%s", ParamStrs, ReturnStr))
 	case UserDefined:
 		return getTypename(t.TypeDef)
 	default:
@@ -101,13 +118,13 @@ func getTypename(typeName ValueTypeInterface) VALUE_TYPE {
 	}
 }
 
-func MatchTypes(expected ValueTypeInterface, provided ValueTypeInterface, filePath string, lineStart, lineEnd, start, end int) {
+func MatchTypes(expected, provided ValueTypeInterface, filePath string, lineStart, lineEnd, colStart, colEnd int) {
 
 	expectedType := getTypename(expected)
 	gotType := getTypename(provided)
 
 	if expectedType != gotType {
-		errgen.MakeError(filePath, lineStart, lineEnd, start, end, fmt.Sprintf("typecheck:expected '%s', got '%s'", expectedType, gotType)).Display()
+		errgen.MakeError(filePath, lineStart, lineEnd, colStart, colEnd, fmt.Sprintf("typecheck:expected '%s', got '%s'", expectedType, gotType)).Display()
 	}
 }
 

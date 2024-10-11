@@ -1,0 +1,10 @@
+
+
+let i := 10;
+
+for i > 0 {
+
+    // do something
+
+    --i;
+}

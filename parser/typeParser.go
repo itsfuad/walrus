@@ -30,7 +30,7 @@ func parseFunctionType(p *Parser) ast.DataType {
 	start := p.advance().Start
 
 	p.expect(lexer.OPEN_PAREN)
-	var params []ast.FunctionParam
+	var params []ast.FunctionTypeParam
 	for p.hasToken() && p.currentTokenKind() != lexer.CLOSE_PAREN {
 		iden := p.expect(lexer.IDENTIFIER_TOKEN)
 		//if exists, then it is a duplicate
@@ -40,10 +40,17 @@ func parseFunctionType(p *Parser) ast.DataType {
 			}
 		}
 
-		p.expect(lexer.COLON_TOKEN)
+		curentToken := p.currentToken()
+
+		if curentToken.Kind != lexer.COLON_TOKEN && curentToken.Kind != lexer.OPTIONAL_TOKEN {
+			errgen.MakeError(p.FilePath, curentToken.Start.Line, curentToken.End.Line, curentToken.Start.Column, curentToken.End.Column, "expected : or ?:").Display()
+		}
+
+		isOptional := p.advance().Kind == lexer.OPTIONAL_TOKEN
+		
 		typeName := parseType(p, DEFAULT_BP)
 
-		params = append(params, ast.FunctionParam{
+		params = append(params, ast.FunctionTypeParam{
 			Identifier: ast.IdentifierExpr{
 				Name: iden.Value,
 				Location: ast.Location{
@@ -52,6 +59,7 @@ func parseFunctionType(p *Parser) ast.DataType {
 				},
 			},
 			Type: typeName,
+			IsOptional: isOptional,
 			Location: ast.Location{
 				Start: iden.Start,
 				End:   typeName.EndPos(),

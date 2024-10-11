@@ -24,7 +24,7 @@ func checkTypeDeclaration(node ast.TypeDeclStmt, env *TypeEnvironment) ValueType
 			props[propname] = p
 		}
 		val = Struct{
-			DataType:   VALUE_TYPE(t.TypeName),
+			DataType:   STRUCT_TYPE, // old: VALUE_TYPE(t.TypeName)
 			StructName: node.UDTypeName,
 			Elements:   props,
 		}
@@ -40,6 +40,7 @@ func checkTypeDeclaration(node ast.TypeDeclStmt, env *TypeEnvironment) ValueType
 
 			params = append(params, FnParam{
 				Name: param.Identifier.Name,
+				IsOptional: param.IsOptional,
 				Type: typ,
 			})
 		}

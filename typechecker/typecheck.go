@@ -76,23 +76,11 @@ func CheckAST(node ast.Node, env *TypeEnvironment) ValueTypeInterface {
 }
 
 func checkFunctionExpr(funcNode ast.FunctionExpr, env *TypeEnvironment) ValueTypeInterface {
-	var parameters []FnParam
+
 	name := fmt.Sprintf("_FN_%s", RandStringRunes(10))
 	fnEnv := NewTypeENV(env, FUNCTION_SCOPE, name, env.filePath)
 
-	for _, param := range funcNode.Params {
-
-		if fnEnv.isDeclared(param.Identifier.Name) {
-			errgen.MakeError(fnEnv.filePath, param.Identifier.Start.Line, param.Identifier.End.Line, param.Identifier.Start.Column, param.Identifier.End.Column, fmt.Sprintf("Parameter %s is already declared", param.Identifier.Name)).Display()
-		}
-
-		paramType := EvaluateTypeName(param.Type, fnEnv)
-		fnEnv.DeclareVar(param.Identifier.Name, paramType, false)
-		parameters = append(parameters, FnParam{
-			Name: param.Identifier.Name,
-			Type: paramType,
-		})
-	}
+	parameters := checkParamaters(funcNode.Params, fnEnv)
 
 	//check return type
 	returnType := EvaluateTypeName(funcNode.ReturnType, fnEnv)
@@ -105,7 +93,7 @@ func checkFunctionExpr(funcNode ast.FunctionExpr, env *TypeEnvironment) ValueTyp
 	}
 
 	//declare the function
-	env.DeclareVar(name, fn, true)
+	env.DeclareVar(name, fn, true, false)
 
 	//check the function body
 	for _, stmt := range funcNode.Block.Contents {
@@ -113,6 +101,40 @@ func checkFunctionExpr(funcNode ast.FunctionExpr, env *TypeEnvironment) ValueTyp
 	}
 
 	return fn
+}
+
+func checkParamaters(params []ast.FunctionParam, fnEnv *TypeEnvironment) []FnParam {
+	
+	var parameters []FnParam
+	
+	for _, param := range params {
+
+		if fnEnv.isDeclared(param.Identifier.Name) {
+			errgen.MakeError(fnEnv.filePath, param.Identifier.Start.Line, param.Identifier.End.Line, param.Identifier.Start.Column, param.Identifier.End.Column, fmt.Sprintf("Parameter %s is already declared", param.Identifier.Name)).Display()
+		}
+
+		paramType := EvaluateTypeName(param.Type, fnEnv)
+		
+		if param.IsOptional {
+			//default value type
+			defaultValue := CheckAST(param.DefaultValue, fnEnv)
+			/*
+			if !matchTypes(paramType, defaultValue) {
+				errgen.MakeError(fnEnv.filePath, param.DefaultValue.StartPos().Line, param.DefaultValue.EndPos().Line, param.DefaultValue.StartPos().Column, param.DefaultValue.EndPos().Column, fmt.Sprintf("Default value type does not match parameter type. Expected %s, got %s", paramType.DType(), defaultValue.DType())).Display()
+			}
+			*/
+			MatchTypes(paramType, defaultValue, fnEnv.filePath, param.DefaultValue.StartPos().Line, param.DefaultValue.EndPos().Line, param.DefaultValue.StartPos().Column, param.DefaultValue.EndPos().Column)
+		}
+		
+		fnEnv.DeclareVar(param.Identifier.Name, paramType, false, param.IsOptional)
+		
+		parameters = append(parameters, FnParam{
+			Name: param.Identifier.Name,
+			IsOptional: param.IsOptional,
+			Type: paramType,
+		})
+	}
+	return parameters
 }
 
 func checkFunctionCall(callNode ast.FunctionCallExpr, env *TypeEnvironment) ValueTypeInterface {
@@ -130,17 +152,31 @@ func checkFunctionCall(callNode ast.FunctionCallExpr, env *TypeEnvironment) Valu
 	//check if the number of arguments match the number of parameters
 	fnParams := fn.Params
 	if len(callNode.Arguments) != len(fnParams) {
-		fmt.Printf("Value: %v, Length: %d\n", callNode.Arguments, len(callNode.Arguments))
-		fmt.Printf("Value: %v, Length: %d\n", fnParams, len(fnParams))
-		errgen.MakeError(env.filePath, callNode.Name.Start.Line, callNode.Name.End.Line, callNode.Name.Start.Column, callNode.Name.End.Column, fmt.Sprintf("Function %s expects %d arguments, got %d", callNode.Name.Name, len(fnParams), len(callNode.Arguments))).Display()
+		// exclude the optional parameters from the count
+		optionalParams := 0
+		for _, param := range fnParams {
+			if param.IsOptional {
+				optionalParams++
+			}
+		}
+		if len(callNode.Arguments) < len(fnParams)-optionalParams {
+			errgen.MakeError(env.filePath, callNode.Name.Start.Line, callNode.Name.End.Line, callNode.Name.Start.Column, callNode.Name.End.Column, fmt.Sprintf("Function %s expects at least %d arguments, got %d", callNode.Name.Name, len(fnParams)-optionalParams, len(callNode.Arguments))).Display()
+		}
+		if len(callNode.Arguments) > len(fnParams) {
+			errgen.MakeError(env.filePath, callNode.Name.Start.Line, callNode.Name.End.Line, callNode.Name.Start.Column, callNode.Name.End.Column, fmt.Sprintf("Function %s expects at most %d arguments, got %d", callNode.Name.Name, len(fnParams), len(callNode.Arguments))).Display()
+		}
 	}
 
 	//check if the arguments match the parameters
 	for i := 0; i < len(callNode.Arguments); i++ {
 		arg := CheckAST(callNode.Arguments[i], env)
+		fmt.Printf("Argument type: %v, Param type: %v\n", arg.DType(), fnParams[i].Type.DType())
+		/*
 		if !matchTypes(fnParams[i].Type, arg) {
 			errgen.MakeError(env.filePath, callNode.Arguments[i].StartPos().Line, callNode.Arguments[i].EndPos().Line, callNode.Arguments[i].StartPos().Column, callNode.Arguments[i].EndPos().Column, fmt.Sprintf("Argument %s expects type %s, got %s", fnParams[i].Name, fnParams[i].Type.DType(), arg.DType())).Display()
 		}
+		*/
+		MatchTypes(fnParams[i].Type, arg, env.filePath, callNode.Arguments[i].StartPos().Line, callNode.Arguments[i].EndPos().Line, callNode.Arguments[i].StartPos().Column, callNode.Arguments[i].EndPos().Column)
 	}
 
 	return fn.Returns
@@ -157,7 +193,7 @@ func userDefinedToFn(ud ValueTypeInterface) (Fn, error) {
 		return Fn{}, fmt.Errorf("'%s' is not a function", ud.DType())
 	}
 }
-
+/*
 func matchTypes(expected, provided ValueTypeInterface) bool {
 	if expected.DType() == provided.DType() {
 		return true
@@ -174,6 +210,7 @@ func matchTypes(expected, provided ValueTypeInterface) bool {
 
 	return false
 }
+*/
 
 func checkFunctionDeclStmt(funcNode ast.FunctionDeclStmt, env *TypeEnvironment) ValueTypeInterface {
 
@@ -184,24 +221,10 @@ func checkFunctionDeclStmt(funcNode ast.FunctionDeclStmt, env *TypeEnvironment) 
 		errgen.MakeError(env.filePath, funcNode.Identifier.Start.Line, funcNode.Identifier.End.Line, funcNode.Identifier.Start.Column, funcNode.Identifier.End.Column, fmt.Sprintf("Function %s is already declared", funcName)).Display()
 	}
 
-	var parameterTypes []FnParam
-
 	//create a new environment for the function
 	fnEnv := NewTypeENV(env, FUNCTION_SCOPE, funcName, env.filePath)
 
-	//check parameters
-	for _, param := range funcNode.Params {
-		//check if the parameter is already declared
-		if fnEnv.isDeclared(param.Identifier.Name) {
-			errgen.MakeError(fnEnv.filePath, param.Identifier.Start.Line, param.Identifier.End.Line, param.Identifier.Start.Column, param.Identifier.End.Column, fmt.Sprintf("Parameter %s is already declared", param.Identifier.Name)).Display()
-		}
-		paramType := EvaluateTypeName(param.Type, fnEnv)
-		fnEnv.DeclareVar(param.Identifier.Name, paramType, false)
-		parameterTypes = append(parameterTypes, FnParam{
-			Name: param.Identifier.Name,
-			Type: paramType,
-		})
-	}
+	parameterTypes := checkParamaters(funcNode.Params, fnEnv)
 
 	//check return type
 	returnType := EvaluateTypeName(funcNode.ReturnType, fnEnv)
@@ -214,7 +237,7 @@ func checkFunctionDeclStmt(funcNode ast.FunctionDeclStmt, env *TypeEnvironment) 
 		FunctionScope: *fnEnv,
 	}
 
-	env.DeclareVar(funcName, fn, true)
+	env.DeclareVar(funcName, fn, true, false)
 
 	//check the function body
 	for _, stmt := range funcNode.Block.Contents {
@@ -264,9 +287,12 @@ func checkReturnStmt(returnNode ast.ReturnStmt, env *TypeEnvironment) ValueTypeI
 
 	fn := getFunctionReturnValue(env, returnNode)
 
+	/*
 	if !matchTypes(fn, returnType) {
 		errgen.MakeError(env.filePath, returnNode.StartPos().Line, returnNode.EndPos().Line, returnNode.StartPos().Column, returnNode.EndPos().Column, fmt.Sprintf("Return type does not match function return type. Expected %s, got %s", fn.DType(), returnType.DType())).Display()
 	}
+	*/
+	MatchTypes(fn, returnType, env.filePath, returnNode.Start.Line, returnNode.End.Line, returnNode.Start.Column, returnNode.End.Column)
 
 	return ReturnType{
 		DataType:   RETURN_TYPE,

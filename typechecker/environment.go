@@ -85,6 +85,8 @@ func (t Void) DType() VALUE_TYPE {
 
 type FnParam struct {
 	Name string
+	IsOptional bool
+	//DefaultValueType ValueTypeInterface
 	Type ValueTypeInterface
 }
 
@@ -176,13 +178,14 @@ const (
 )
 
 type TypeEnvironment struct {
-	parent    *TypeEnvironment
-	scopeType SCOPE_TYPE
-	scopeName string
-	variables map[string]ValueTypeInterface
-	constants map[string]bool
-	types     map[string]ValueTypeInterface
-	filePath  string
+	parent    	*TypeEnvironment
+	scopeType 	SCOPE_TYPE
+	scopeName 	string
+	variables 	map[string]ValueTypeInterface
+	constants 	map[string]bool
+	isOptional 	map[string]bool
+	types    	map[string]ValueTypeInterface
+	filePath  	string
 }
 
 func NewTypeENV(parent *TypeEnvironment, scope SCOPE_TYPE, scopeName string, filePath string) *TypeEnvironment {
@@ -193,6 +196,7 @@ func NewTypeENV(parent *TypeEnvironment, scope SCOPE_TYPE, scopeName string, fil
 		filePath:  filePath,
 		variables: make(map[string]ValueTypeInterface),
 		constants: make(map[string]bool),
+		isOptional: make(map[string]bool),
 		types:     make(map[string]ValueTypeInterface),
 	}
 }
@@ -231,7 +235,7 @@ func (t *TypeEnvironment) ResolveType(name string) (*TypeEnvironment, error) {
 	return t.parent.ResolveType(name)
 }
 
-func (t *TypeEnvironment) DeclareVar(name string, typeVar ValueTypeInterface, isConst bool) error {
+func (t *TypeEnvironment) DeclareVar(name string, typeVar ValueTypeInterface, isConst bool, isOptional bool) error {
 	//should not be declared
 	if scope, err := t.ResolveVar(name); err == nil && scope == t {
 		return fmt.Errorf("'%s' is already declared in this scope", name)
@@ -239,6 +243,7 @@ func (t *TypeEnvironment) DeclareVar(name string, typeVar ValueTypeInterface, is
 
 	t.variables[name] = typeVar
 	t.constants[name] = isConst
+	t.isOptional[name] = isOptional
 
 	return nil
 }

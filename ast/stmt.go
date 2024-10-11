@@ -84,9 +84,31 @@ func (a IfStmt) EndPos() lexer.Position {
 	return a.Location.End
 }
 
+type ForStmt struct {
+	Start     Node
+	StartExpr Node
+	Condition Node
+	Increment Node
+	Iterable  Node
+	Block     BlockStmt
+	Location
+}
+
+func (a ForStmt) INode() {
+	//empty method implements Node interface
+}
+func (a ForStmt) StartPos() lexer.Position {
+	return a.Location.Start
+}
+func (a ForStmt) EndPos() lexer.Position {
+	return a.Location.End
+}
+
 type FunctionParam struct {
-	Identifier IdentifierExpr
-	Type       DataType
+	Identifier 			IdentifierExpr
+	Type       			DataType
+	IsOptional 			bool
+	DefaultValue		Node
 	Location
 }
 

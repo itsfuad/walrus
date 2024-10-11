@@ -15,9 +15,11 @@ const (
 	IF_TOKEN            TOKEN_KIND = "if"
 	ELSE_TOKEN          TOKEN_KIND = "els"
 	ELSEIF_TOKEN        TOKEN_KIND = "elf"
+	FOR_TOKEN			TOKEN_KIND = "for"
 	IDENTIFIER_TOKEN    TOKEN_KIND = "identifier"
 	PRIVATE_TOKEN       TOKEN_KIND = "priv"
 	RETURN_TOKEN        TOKEN_KIND = "ret"
+	IN_TOKEN			TOKEN_KIND = "in"
 	INT                 TOKEN_KIND = builtins.INT
 	FLOAT               TOKEN_KIND = builtins.FLOAT
 	BYTE                TOKEN_KIND = builtins.BYTE
@@ -52,6 +54,7 @@ const (
 	DOT_TOKEN           TOKEN_KIND = "."
 	SEMI_COLON_TOKEN    TOKEN_KIND = ";"
 	ARROW_TOKEN         TOKEN_KIND = "->"
+	OPTIONAL_TOKEN		TOKEN_KIND = "?:"
 	AT_TOKEN            TOKEN_KIND = "@"
 	EOF_TOKEN           TOKEN_KIND = "eof"
 )
@@ -62,11 +65,13 @@ var keyWordsMap map[string]TOKEN_KIND = map[string]TOKEN_KIND{
 	"if":     IF_TOKEN,
 	"els":    ELSE_TOKEN,
 	"elf":    ELSEIF_TOKEN,
+	"for":    FOR_TOKEN,
 	"type":   TYPE_TOKEN,
 	"priv":   PRIVATE_TOKEN,
 	"struct": builtins.STRUCT,
 	"fn":     builtins.FUNCTION,
 	"ret":    RETURN_TOKEN,
+	"in":     IN_TOKEN,
 }
 
 func IsKeyword(token string) bool {

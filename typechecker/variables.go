@@ -70,7 +70,7 @@ func checkVariableDeclaration(node ast.VarDeclStmt, env *TypeEnvironment) ValueT
 		MatchTypes(expectedTypeInterface, providedValue, env.filePath, node.Value.StartPos().Line, node.Value.EndPos().Line, node.Value.StartPos().Column, node.Value.EndPos().Column)
 	}
 
-	err := env.DeclareVar(varToDecl.Name, expectedTypeInterface, node.IsConst)
+	err := env.DeclareVar(varToDecl.Name, expectedTypeInterface, node.IsConst, false)
 	if err != nil {
 		errgen.MakeError(env.filePath, node.Variable.StartPos().Line, node.Variable.EndPos().Line, node.Variable.StartPos().Column, node.Variable.EndPos().Column, err.Error()).Display()
 	}

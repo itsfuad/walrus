@@ -91,6 +91,7 @@ func bindLookupHandlers() {
 	stmt(lexer.TYPE_TOKEN, parseUserDefinedTypeStmt)
 
 	stmt(lexer.IF_TOKEN, parseIfStmt)
+	stmt(lexer.FOR_TOKEN, parseForStmt)
 	stmt(builtins.FUNCTION, parseFunctionDeclStmt)
 	stmt(lexer.RETURN_TOKEN, parseReturnStmt)
 
