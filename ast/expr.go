@@ -289,8 +289,8 @@ func (a FunctionCallExpr) EndPos() lexer.Position {
 
 type FunctionExpr struct {
 	Params     []FunctionParam
+	Body       BlockStmt
 	ReturnType DataType
-	Block      BlockStmt
 	Location
 }
 

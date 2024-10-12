@@ -122,7 +122,7 @@ func parseForStmt(p *Parser) ast.Node {
 		// infinite loop
 		block := parseBlock(p)
 		return ast.ForStmt{
-			Start:   nil,
+			Start:     nil,
 			Condition: nil,
 			Increment: nil,
 			Block:     block,
@@ -204,9 +204,11 @@ func parseIfStmt(p *Parser) ast.Node {
 
 	if p.hasToken() && p.currentTokenKind() == lexer.ELSE_TOKEN {
 		p.advance() // eat else token
-		alternate = parseBlock(p)
-	} else if p.hasToken() && p.currentTokenKind() == lexer.ELSEIF_TOKEN {
-		alternate = parseIfStmt(p)
+		if p.hasToken() && p.currentTokenKind() == lexer.IF_TOKEN {
+			alternate = parseIfStmt(p)
+		} else {
+			alternate = parseBlock(p)
+		}
 	}
 
 	return ast.IfStmt{
@@ -220,7 +222,7 @@ func parseIfStmt(p *Parser) ast.Node {
 	}
 }
 
-func parseFunctionExpr(p *Parser) ast.Node {
+func parseLambdaFunction(p *Parser) ast.Node {
 	//annonymous function
 	start := p.advance().Start // eat fn token
 
@@ -231,7 +233,7 @@ func parseFunctionExpr(p *Parser) ast.Node {
 	return ast.FunctionExpr{
 		Params:     params,
 		ReturnType: returnType,
-		Block:      block,
+		Body:      	block,
 		Location: ast.Location{
 			Start: start,
 			End:   block.End,
@@ -260,7 +262,7 @@ func parseFunctionDeclStmt(p *Parser) ast.Node {
 		FunctionExpr: ast.FunctionExpr{
 			Params:     params,
 			ReturnType: returnType,
-			Block:      block,
+			Body:      block,
 			Location: ast.Location{
 				Start: start,
 				End:   block.End,
@@ -310,9 +312,9 @@ func parseFunctionSignature(p *Parser) ([]ast.FunctionParam, ast.DataType) {
 		}
 
 		params = append(params, ast.FunctionParam{
-			Identifier: param,
-			Type:       paramType,
-			IsOptional: isOptional,
+			Identifier:   param,
+			Type:         paramType,
+			IsOptional:   isOptional,
 			DefaultValue: defaultValue,
 			Location: ast.Location{
 				Start: param.Start,
@@ -352,6 +354,124 @@ func parseReturnStmt(p *Parser) ast.Node {
 
 	return ast.ReturnStmt{
 		Value: value,
+		Location: ast.Location{
+			Start: start,
+			End:   end,
+		},
+	}
+}
+
+func parseImplementStmt(p *Parser) ast.Node {
+
+	start := p.advance().Start // eat implement token
+
+	// syntax: impl A, B, C for T { ... } or impl A for T { ... } or impl T { ... }
+	var implFor ast.IdentifierExpr
+	var trait ast.IdentifierExpr
+
+	//parse the trait
+	implForIdentifier := p.expect(lexer.IDENTIFIER_TOKEN)
+	implFor = ast.IdentifierExpr{
+		Name: implForIdentifier.Value,
+		Location: ast.Location{
+			Start: implForIdentifier.Start,
+			End:   implForIdentifier.End,
+		},
+	}
+
+	if p.currentTokenKind() != lexer.OPEN_BRACKET {
+		p.expect(lexer.FOR_TOKEN)
+		identifier := p.expect(lexer.IDENTIFIER_TOKEN)
+		trait = implFor
+		implFor = ast.IdentifierExpr{
+			Name: identifier.Value,
+			Location: ast.Location{
+				Start: identifier.Start,
+				End:   identifier.End,
+			},
+		}
+	}
+
+	//parse the type
+	p.expect(lexer.OPEN_CURLY)
+
+	methods := make(map[string]ast.FunctionDeclStmt, 0)
+
+	for p.hasToken() && p.currentTokenKind() != lexer.CLOSE_CURLY {
+		method := parseFunctionDeclStmt(p).(ast.FunctionDeclStmt)
+		methods[method.Identifier.Name] = method
+	}
+
+	end := p.expect(lexer.CLOSE_CURLY).End
+
+	return ast.ImplStmt{
+		ImplFor: implFor,
+		Trait:   trait,
+		Methods: methods,
+		Location: ast.Location{
+			Start: start,
+			End:   end,
+		},
+	}
+}
+
+func parseTraitDeclStmt(p *Parser) ast.Node {
+
+	start := p.advance().Start // eat trait token
+
+	trait := p.expect(lexer.IDENTIFIER_TOKEN)
+
+	p.expect(lexer.OPEN_CURLY)
+
+	methods := make(map[string]ast.TraitMethod, 0)
+
+	for p.hasToken() && p.currentTokenKind() != lexer.CLOSE_CURLY {
+
+		start := p.expect(lexer.FUNCTION).Start
+
+		if p.currentTokenKind() != lexer.IDENTIFIER_TOKEN {
+			errgen.MakeError(p.FilePath, p.currentToken().Start.Line, p.currentToken().End.Line, p.currentToken().Start.Column, p.currentToken().End.Column, "expected method name").Display()
+		}
+
+		name := p.expect(lexer.IDENTIFIER_TOKEN)
+
+		dataType, params, returnType := getFunctionTypeSignature(p)
+
+		methods[name.Value] = ast.TraitMethod{
+			Identifier: ast.IdentifierExpr{
+				Name: name.Value,
+				Location: ast.Location{
+					Start: name.Start,
+					End:   name.End,
+				},
+			},
+			FunctionType: ast.FunctionType{
+				TypeName:   dataType,
+				Parameters: params,
+				ReturnType: returnType,
+				Location: ast.Location{
+					Start: start,
+					End:   returnType.EndPos(),
+				},
+			},
+		}
+
+		if p.currentTokenKind() != lexer.CLOSE_CURLY {
+			p.expect(lexer.SEMI_COLON_TOKEN)
+		}
+	}
+
+	end := p.expect(lexer.CLOSE_CURLY).End
+
+	return ast.TraitDeclStmt{
+		Trait: ast.IdentifierExpr{
+			Name: trait.Value,
+			Location: ast.Location{
+				Start: trait.Start,
+				End:   trait.End,
+			},
+		},
+		Methods: methods,
 		Location: ast.Location{
 			Start: start,
 			End:   end,

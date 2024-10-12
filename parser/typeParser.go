@@ -27,8 +27,31 @@ func bindTypeLookups() {
 
 func parseFunctionType(p *Parser) ast.DataType {
 
-	start := p.advance().Start
+	start := p.advance().Start // eat function token
 
+	typeName, params, returnType := getFunctionTypeSignature(p)
+
+	loc := ast.Location{
+		Start: start,
+		End:   returnType.EndPos(),
+	}
+
+	return ast.FunctionType{
+		TypeName: typeName,
+		Parameters: params,
+		ReturnType: returnType,
+		Location: loc,
+	}
+}
+
+//parseType is the entry point for parsing types
+/*
+Returns
+ - ast.DataType : The parsed type
+ - []ast.FunctionTypeParam : The parameters of the function type
+ - ast.DataType : The return type of the function type
+*/
+func getFunctionTypeSignature(p *Parser) (ast.DATA_TYPE, []ast.FunctionTypeParam, ast.DataType) {
 	p.expect(lexer.OPEN_PAREN)
 	var params []ast.FunctionTypeParam
 	for p.hasToken() && p.currentTokenKind() != lexer.CLOSE_PAREN {
@@ -88,17 +111,12 @@ func parseFunctionType(p *Parser) ast.DataType {
 		}
 	}
 
-	return ast.FunctionType{
-		TypeName:   ast.DATA_TYPE(builtins.FUNCTION),
-		Parameters: params,
-		ReturnType: returnType,
-		Location: ast.Location{
-			Start: start,
-			End:   returnType.EndPos(),
-		},
-	}
+	return ast.DATA_TYPE(builtins.FUNCTION), params, returnType
 }
 
+// Parses the builtin types like int, float, bool, char, str, null.
+// If the type is not a builtin type, then it is a user defined type
+// Type must be a single token identifier
 func parseBuiltinType(p *Parser) ast.DataType {
 
 	identifier := p.advance()
@@ -220,65 +238,84 @@ Example:
 	};
 */
 func parseUDTType(p *Parser) ast.DataType {
-
-	identifier := p.currentToken()
-
-	switch v := identifier.Value; lexer.TOKEN_KIND(v) {
+	switch v := p.currentToken().Value; lexer.TOKEN_KIND(v) {
 	case builtins.STRUCT:
-		p.advance()
-		props := map[string]ast.StructPropType{}
+		return parseStructType(p)
+	default:
+		return parseType(p, DEFAULT_BP)
+	}
+}
 
-		start := p.expect(lexer.OPEN_CURLY).Start
+func parseStructType(p *Parser) ast.DataType {
 
-		for p.hasToken() && p.currentTokenKind() != lexer.CLOSE_CURLY {
+	identifier := p.advance()
 
-			isPrivate := false
+	props := make(map[string]ast.StructPropType)
+	embeds := []ast.UserDefinedType{}
 
-			if p.currentTokenKind() == lexer.PRIVATE_TOKEN {
-				isPrivate = true
-				p.advance()
-			}
+	start := p.expect(lexer.OPEN_CURLY).Start
 
-			iden := p.expect(lexer.IDENTIFIER_TOKEN)
-			idenExpr := ast.IdentifierExpr{
-				Name: iden.Value,
+	for p.hasToken() && p.currentTokenKind() != lexer.CLOSE_CURLY {
+
+		isPrivate := false
+
+		if p.currentTokenKind() == lexer.PRIVATE_TOKEN {
+			isPrivate = true
+			p.advance()
+		} else if p.currentTokenKind() == lexer.EMBED_TOKEN {
+			p.advance() //eat embed token
+			embedStruct := p.expect(lexer.IDENTIFIER_TOKEN)
+			embedStructType := ast.UserDefinedType{
+				TypeName: ast.DATA_TYPE(embedStruct.Value),
 				Location: ast.Location{
-					Start: iden.Start,
-					End:   iden.End,
+					Start: embedStruct.Start,
+					End:   embedStruct.End,
 				},
 			}
-			p.expect(lexer.COLON_TOKEN)
-			typeName := parseType(p, DEFAULT_BP)
-
-			props[iden.Value] = ast.StructPropType{
-				Prop:      idenExpr,
-				PropType:  typeName,
-				IsPrivate: isPrivate,
-			}
-
+			embeds = append(embeds, embedStructType)
 			if p.currentTokenKind() != lexer.CLOSE_CURLY {
 				p.expect(lexer.COMMA_TOKEN)
 			}
+			continue
 		}
 
-		end := p.expect(lexer.CLOSE_CURLY).End
+		iden := p.expect(lexer.IDENTIFIER_TOKEN)
+		idenExpr := ast.IdentifierExpr{
+			Name: iden.Value,
+			Location: ast.Location{
+				Start: iden.Start,
+				End:   iden.End,
+			},
+		}
+		p.expect(lexer.COLON_TOKEN)
+		typeName := parseType(p, DEFAULT_BP)
 
-		loc := ast.Location{
-			Start: start,
-			End:   end,
+		props[iden.Value] = ast.StructPropType{
+			Prop:      idenExpr,
+			PropType:  typeName,
+			IsPrivate: isPrivate,
 		}
 
-		if len(props) == 0 {
-			errgen.MakeError(p.FilePath, identifier.Start.Line, identifier.End.Line, identifier.Start.Column, identifier.End.Column, "struct is empty").Display()
+		if p.currentTokenKind() != lexer.CLOSE_CURLY {
+			p.expect(lexer.COMMA_TOKEN)
 		}
+	}
 
-		return ast.StructType{
-			TypeName:   ast.DATA_TYPE(builtins.STRUCT),
-			Properties: props,
-			Location:   loc,
-		}
+	end := p.expect(lexer.CLOSE_CURLY).End
 
-	default:
-		return parseType(p, DEFAULT_BP)
+	loc := ast.Location{
+		Start: start,
+		End:   end,
+	}
+
+	if len(props) == 0 {
+		errgen.MakeError(p.FilePath, identifier.Start.Line, identifier.End.Line, identifier.Start.Column, identifier.End.Column, "struct is empty").Display()
+	}
+
+	return ast.StructType{
+		TypeName:   ast.DATA_TYPE(builtins.STRUCT),
+		Properties: props,
+		Embeds:    	embeds,
+		Location:   loc,
 	}
 }

@@ -47,8 +47,13 @@ A tiny simple programming language made for simplicity. It borrows syntax from '
         - [x] for [condition]
         - [ ] for [start] [condition] [end]
         - [ ] for [start] in [range] 
-    - [ ] Struct embedding
-    - [ ] Traits
+    - [x] Struct embedding
+    - [x] Traits
+    - [x] Implement
     - [ ] Generics
 - [x] Analyzer
+    - [x] Everything in parser except - 
+        - [ ] For loop
+        - [ ] Traits
+        - [ ] Implement
 - [ ] Codegen

@@ -3,7 +3,7 @@ package builtins
 // common types
 const (
 	INT      = "int"
-	FLOAT    = "fl"
+	FLOAT    = "float"
 	STRING   = "str"
 	BYTE     = "byte"
 	BOOL     = "bool"

@@ -140,6 +140,7 @@ type StructPropType struct {
 type StructType struct {
 	TypeName 	DATA_TYPE
 	Properties	map[string]StructPropType
+	Embeds		[]UserDefinedType
 	Location
 }
 func (a StructType) Type() DATA_TYPE {

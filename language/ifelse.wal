@@ -14,8 +14,8 @@ if a > b {
         c = a;
     }
     */
-} elf a < b {
+} else if a < b {
     c = b;
-} els {
+} else {
     c = c;
 }

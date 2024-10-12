@@ -84,33 +84,36 @@ func bindLookupHandlers() {
 	led(lexer.GREATER_EQUAL_TOKEN, RELATIONAL_BP, parseBinaryExpr)
 	led(lexer.GREATER_TOKEN, RELATIONAL_BP, parseBinaryExpr)
 
-	nud(lexer.IDENTIFIER_TOKEN, parsePrimaryExpr)
-	nud(lexer.INT, parsePrimaryExpr)
-	nud(lexer.FLOAT, parsePrimaryExpr)
-	nud(lexer.STR, parsePrimaryExpr)
-	nud(lexer.BYTE, parsePrimaryExpr)
-	nud(lexer.NULL, parsePrimaryExpr)
-	nud(lexer.OPEN_BRACKET, parseArrayExpr)
-	nud(lexer.OPEN_PAREN, parseGroupingExpr)
-	nud(lexer.FUNCTION, parseFunctionExpr)
+	nud(lexer.IDENTIFIER_TOKEN, parsePrimaryExpr) // identifier
+	nud(lexer.INT, parsePrimaryExpr)              // int literal
+	nud(lexer.FLOAT, parsePrimaryExpr)            // float literal
+	nud(lexer.STR, parsePrimaryExpr)              // string literal
+	nud(lexer.BYTE, parsePrimaryExpr)             // byte literal
+	nud(lexer.NULL, parsePrimaryExpr)             // null literal
+	nud(lexer.OPEN_BRACKET, parseArrayExpr)       // array literal [1,2,3]
+	nud(lexer.OPEN_PAREN, parseGroupingExpr)      // grouping expression a + (b+c)
+	nud(lexer.FUNCTION, parseLambdaFunction)      // anonymous function
 
-	stmt(lexer.LET_TOKEN, parseVarDeclStmt)
-	stmt(lexer.CONST_TOKEN, parseVarDeclStmt)
-	stmt(lexer.TYPE_TOKEN, parseUserDefinedTypeStmt)
+	stmt(lexer.LET_TOKEN, parseVarDeclStmt)          // variable declaration
+	stmt(lexer.CONST_TOKEN, parseVarDeclStmt)        // constant declaration
+	stmt(lexer.TYPE_TOKEN, parseUserDefinedTypeStmt) // user defined type
 
-	stmt(lexer.IF_TOKEN, parseIfStmt)
-	stmt(lexer.FOR_TOKEN, parseForStmt)
-	stmt(builtins.FUNCTION, parseFunctionDeclStmt)
-	stmt(lexer.RETURN_TOKEN, parseReturnStmt)
+	stmt(lexer.IF_TOKEN, parseIfStmt)              // if statement
+	stmt(lexer.FOR_TOKEN, parseForStmt)            // for statement
+	stmt(builtins.FUNCTION, parseFunctionDeclStmt) // function declaration
+	stmt(lexer.RETURN_TOKEN, parseReturnStmt)      // return statement
 
 	//Unary
-	nud(lexer.MINUS_TOKEN, parseUnaryExpr)
-	nud(lexer.NOT_TOKEN, parseUnaryExpr)
+	nud(lexer.MINUS_TOKEN, parseUnaryExpr) // unary minus : -a
+	nud(lexer.NOT_TOKEN, parseUnaryExpr)   // unary not : !a
 	//Increment and Decrement
 	//Prefix
-	nud(lexer.PLUS_PLUS_TOKEN, parsePrefixExpr)
-	nud(lexer.MINUS_MINUS_TOKEN, parsePrefixExpr)
+	nud(lexer.PLUS_PLUS_TOKEN, parsePrefixExpr)   // ++a
+	nud(lexer.MINUS_MINUS_TOKEN, parsePrefixExpr) // --a
 	//Postfix
-	led(lexer.PLUS_PLUS_TOKEN, UNARY_BP, parsePostfixExpr)
-	led(lexer.MINUS_MINUS_TOKEN, UNARY_BP, parsePostfixExpr)
+	led(lexer.PLUS_PLUS_TOKEN, UNARY_BP, parsePostfixExpr)   // a++
+	led(lexer.MINUS_MINUS_TOKEN, UNARY_BP, parsePostfixExpr) // a--
+
+	stmt(lexer.TRAIT_TOKEN, parseTraitDeclStmt)     // trait declaration
+	stmt(lexer.IMPLEMENT_TOKEN, parseImplementStmt) // implement statement
 }

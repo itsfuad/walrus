@@ -13,11 +13,13 @@ const (
 	CONST_TOKEN         TOKEN_KIND = "const"
 	TYPE_TOKEN          TOKEN_KIND = "type"
 	IF_TOKEN            TOKEN_KIND = "if"
-	ELSE_TOKEN          TOKEN_KIND = "els"
-	ELSEIF_TOKEN        TOKEN_KIND = "elf"
+	ELSE_TOKEN          TOKEN_KIND = "else"
 	FOR_TOKEN			TOKEN_KIND = "for"
 	IDENTIFIER_TOKEN    TOKEN_KIND = "identifier"
 	PRIVATE_TOKEN       TOKEN_KIND = "priv"
+	EMBED_TOKEN			TOKEN_KIND = "embed"
+	TRAIT_TOKEN			TOKEN_KIND = "trait"
+	IMPLEMENT_TOKEN		TOKEN_KIND = "impl"
 	RETURN_TOKEN        TOKEN_KIND = "ret"
 	IN_TOKEN			TOKEN_KIND = "in"
 	//data types
@@ -76,11 +78,13 @@ var keyWordsMap map[string]TOKEN_KIND = map[string]TOKEN_KIND{
 	"let":    LET_TOKEN,
 	"const":  CONST_TOKEN,
 	"if":     IF_TOKEN,
-	"els":    ELSE_TOKEN,
-	"elf":    ELSEIF_TOKEN,
+	"else":   ELSE_TOKEN,
 	"for":    FOR_TOKEN,
 	"type":   TYPE_TOKEN,
-	"priv":   PRIVATE_TOKEN,
+	"priv":	  PRIVATE_TOKEN,
+	"embed":  EMBED_TOKEN,
+	"trait":  TRAIT_TOKEN,
+	"impl":   IMPLEMENT_TOKEN,
 	"struct": builtins.STRUCT,
 	"fn":     builtins.FUNCTION,
 	"ret":    RETURN_TOKEN,

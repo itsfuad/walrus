@@ -504,7 +504,7 @@
                 {
                     "comment": "control flow keywords",
                     "name": "keyword.control.wal",
-                    "match": "\\b(await|switch|break|case|default|continue|do|els|elf|for|foreach|if|where|try|while)\\b"
+                    "match": "\\b(await|switch|break|case|default|continue|do|else|for|foreach|if|where|try|while)\\b"
                 },
                 {
                     "comment": "storage keywords",
@@ -740,7 +740,7 @@
             "patterns": [
                 {
                     "comment": "numeric types",
-                    "match": "(?<![A-Za-z])(int|fl|str|byte)\\b",
+                    "match": "(?<![A-Za-z])(int|float|str|byte)\\b",
                     "captures": {
                         "1": {
                             "name": "keyword.other.wal"
@@ -794,7 +794,7 @@
                 {
                     "comment": "primitive types",
                     "name": "keyword.other.wal",
-                    "match": "\\b(bool|chr|str)\\b"
+                    "match": "\\b(bool|byte|str)\\b"
                 },
                 {
                     "comment": "struct declarations",

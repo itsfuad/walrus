@@ -78,8 +78,12 @@ func CheckAST(node ast.Node, env *TypeEnvironment) ValueTypeInterface {
 }
 
 func checkFunctionExpr(funcNode ast.FunctionExpr, env *TypeEnvironment) ValueTypeInterface {
-
 	name := fmt.Sprintf("_FN_%s", RandStringRunes(10))
+	return analyzeFuntion(funcNode, name, env)
+}
+
+func analyzeFuntion(funcNode ast.FunctionExpr, name string, env *TypeEnvironment) Fn {
+
 	fnEnv := NewTypeENV(env, FUNCTION_SCOPE, name, env.filePath)
 
 	parameters := checkParamaters(funcNode.Params, fnEnv)
@@ -98,7 +102,7 @@ func checkFunctionExpr(funcNode ast.FunctionExpr, env *TypeEnvironment) ValueTyp
 	env.DeclareVar(name, fn, true, false)
 
 	//check the function body
-	for _, stmt := range funcNode.Block.Contents {
+	for _, stmt := range funcNode.Body.Contents {
 		CheckAST(stmt, fnEnv)
 	}
 
@@ -194,30 +198,7 @@ func checkFunctionDeclStmt(funcNode ast.FunctionDeclStmt, env *TypeEnvironment) 
 		errgen.MakeError(env.filePath, funcNode.Identifier.Start.Line, funcNode.Identifier.End.Line, funcNode.Identifier.Start.Column, funcNode.Identifier.End.Column, fmt.Sprintf("Function %s is already declared", funcName)).Display()
 	}
 
-	//create a new environment for the function
-	fnEnv := NewTypeENV(env, FUNCTION_SCOPE, funcName, env.filePath)
-
-	parameterTypes := checkParamaters(funcNode.Params, fnEnv)
-
-	//check return type
-	returnType := EvaluateTypeName(funcNode.ReturnType, fnEnv)
-
-	//declare the function
-	fn := Fn{
-		DataType:      FUNCTION_TYPE,
-		Params:        parameterTypes,
-		Returns:       returnType,
-		FunctionScope: *fnEnv,
-	}
-
-	env.DeclareVar(funcName, fn, true, false)
-
-	//check the function body
-	for _, stmt := range funcNode.Block.Contents {
-		CheckAST(stmt, fnEnv)
-	}
-
-	return fn
+	return analyzeFuntion(funcNode.FunctionExpr, funcName, env)
 }
 
 func checkIfStmt(ifNode ast.IfStmt, env *TypeEnvironment) ValueTypeInterface {

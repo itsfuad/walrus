@@ -1,5 +1,11 @@
+
+type ID struct {
+    priv id: int
+};
+
 type Point struct{
-	priv x: int,
+    embed ID,
+    priv x: int,
     y: int
 };
 
@@ -30,3 +36,23 @@ let distance := @Distance{
 
 //distance.max = 9; // error - private prop
 distance.min = 1;
+
+trait Drawable {
+    fn draw();
+}
+
+impl Drawable for Point {
+    fn draw() {
+        //print("Point: x: ", this.x, ", y: ", this.y);
+    }
+}
+
+impl Drawable for Distance {
+    fn draw() {
+        //print("Distance: start: ");
+        this.start.draw();
+        //print(", end: ");
+        this.end.draw();
+        //print(", max: ", this.max, ", min: ", this.min);
+    }
+}

@@ -232,6 +232,7 @@ func parseStructLiteral(p *Parser) ast.Node {
 }
 
 func parsePropertyExpr(p *Parser, left ast.Node, bp BINDING_POWER) ast.Node {
+
 	p.expect(lexer.DOT_TOKEN)
 
 	identifier := p.expect(lexer.IDENTIFIER_TOKEN)
@@ -333,13 +334,36 @@ func parseBinaryExpr(p *Parser, left ast.Node, bp BINDING_POWER) ast.Node {
 	}
 }
 
-func parseCallExpr(p *Parser, left ast.Node, bp BINDING_POWER) ast.Node {
-
-	if _, ok := left.(ast.IdentifierExpr); !ok {
-		errgen.MakeError(p.FilePath, left.StartPos().Line, left.EndPos().Line, left.StartPos().Column, left.EndPos().Column, "only identifiers can be called").Display()
+func IsCallable(node ast.Node) (bool, ast.IdentifierExpr) {
+	// if already is an identifier
+	if iden, ok := node.(ast.IdentifierExpr); ok {
+		return true, iden
 	}
 
-	name := left.(ast.IdentifierExpr)
+	switch t := node.(type) {
+	case ast.StructPropertyAccessExpr:
+		prop := t
+		return IsCallable(prop.Property)
+	case ast.ArrayIndexAccess:
+		index := t
+		return IsCallable(index.Arrayvalue)
+	default:
+		return false, ast.IdentifierExpr{}
+	}
+}
+
+func parseCallExpr(p *Parser, left ast.Node, bp BINDING_POWER) ast.Node {
+
+	fmt.Printf("Left: %T: %v\n", left, left)
+
+	var identifier ast.IdentifierExpr
+
+	if isCallable, ok := IsCallable(left); isCallable {
+		identifier = ok
+	} else {
+		errgen.MakeError(p.FilePath, left.StartPos().Line, left.EndPos().Line, left.StartPos().Column, left.EndPos().Column, "cannot call a non-identifier").Display()
+	}
+
 
 	p.advance() //eat the open paren
 	startPos := left.StartPos()
@@ -355,7 +379,7 @@ func parseCallExpr(p *Parser, left ast.Node, bp BINDING_POWER) ast.Node {
 	endPos := p.expect(lexer.CLOSE_PAREN).End
 
 	return ast.FunctionCallExpr{
-		Identifier: name,
+		Identifier: identifier,
 		Arguments:  args,
 		Location: ast.Location{
 			Start: startPos,

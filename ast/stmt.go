@@ -105,10 +105,10 @@ func (a ForStmt) EndPos() lexer.Position {
 }
 
 type FunctionParam struct {
-	Identifier 			IdentifierExpr
-	Type       			DataType
-	IsOptional 			bool
-	DefaultValue		Node
+	Identifier   IdentifierExpr
+	Type         DataType
+	IsOptional   bool
+	DefaultValue Node
 	Location
 }
 
@@ -155,5 +155,47 @@ func (a ReturnStmt) StartPos() lexer.Position {
 }
 
 func (a ReturnStmt) EndPos() lexer.Position {
+	return a.Location.End
+}
+
+type TraitMethod struct {
+	Identifier IdentifierExpr
+	FunctionType
+}
+
+type TraitDeclStmt struct {
+	Trait   IdentifierExpr
+	Methods map[string]TraitMethod
+	Location
+}
+
+func (a TraitDeclStmt) INode() {
+	//empty method implements Node interface
+}
+
+func (a TraitDeclStmt) StartPos() lexer.Position {
+	return a.Location.Start
+}
+
+func (a TraitDeclStmt) EndPos() lexer.Position {
+	return a.Location.End
+}
+
+type ImplStmt struct {
+	ImplFor IdentifierExpr
+	Trait   IdentifierExpr
+	Methods map[string]FunctionDeclStmt
+	Location
+}
+
+func (a ImplStmt) INode() {
+	//empty method implements Node interface
+}
+
+func (a ImplStmt) StartPos() lexer.Position {
+	return a.Location.Start
+}
+
+func (a ImplStmt) EndPos() lexer.Position {
 	return a.Location.End
 }
