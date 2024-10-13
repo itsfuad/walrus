@@ -27,6 +27,7 @@ A tiny simple programming language made for simplicity. It borrows syntax from '
         - [x] Function call
         - [x] Function return
         - [x] Optional parameters
+    - [x] Closure
     - [x] User defined types
         - [x] Struct
             - [x] Property access
