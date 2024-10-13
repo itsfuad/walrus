@@ -73,3 +73,4 @@ const addRes := add(1);
 const closureRes1 := closure(1);
 const closureRes2 := closureRes1(2);
 const closureRes3 := closure(1)(2);
+const fnval := add; 
