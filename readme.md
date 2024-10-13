@@ -60,7 +60,7 @@ A tiny simple programming language made for simplicity. It borrows syntax from '
 ```rust
 // Declare a variable with let or const keyword
 let a := 10; // The variable is mutable and its type is inferred from the value e.g. int
-const pi := 3.14; // constannt variable with type float
+const pi := 3.14; // constant variable with type float
 
 // Declare a variable with type
 let b: int = 20; // The variable is mutable and its type is int

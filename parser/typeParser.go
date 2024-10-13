@@ -174,6 +174,17 @@ func parseBuiltinType(p *Parser) ast.DataType {
 	}
 }
 
+// parseArrayType parses an array type from the input and returns an ast.DataType
+// representing the array type.
+//
+// The function expects the parser to be positioned at the opening bracket of the array type.
+// It advances the parser, expects a closing bracket, and then parses the element type of the array.
+//
+// Parameters:
+// - p: A pointer to the Parser instance.
+//
+// Returns:
+// - ast.DataType: An instance of ast.ArrayType representing the parsed array type.
 func parseArrayType(p *Parser) ast.DataType {
 
 	p.advance()
@@ -191,6 +202,18 @@ func parseArrayType(p *Parser) ast.DataType {
 	}
 }
 
+// parseType parses a data type from the given parser instance, respecting the specified binding power.
+// It first attempts to parse a null denotation (NUD) based on the current token kind.
+// If no NUD handler is found for the token, it generates an error with hints and displays it.
+// If a NUD handler is found, it proceeds to parse left denotations (LED) while the binding power of the current token kind is greater than the specified binding power.
+// The function returns the parsed data type.
+//
+// Parameters:
+// - p: A pointer to the Parser instance from which to parse the data type.
+// - bp: The binding power to respect during parsing.
+//
+// Returns:
+// - An ast.DataType representing the parsed data type, or nil if an error occurs.
 func parseType(p *Parser, bp BINDING_POWER) ast.DataType {
 	// Fist parse the NUD
 	tokenKind := p.currentTokenKind()
@@ -246,6 +269,24 @@ func parseUDTType(p *Parser) ast.DataType {
 	}
 }
 
+// parseStructType parses a struct type definition from the provided parser.
+// It expects the parser to be positioned at the start of the struct definition.
+//
+// The function handles the following:
+// - Parsing the struct identifier.
+// - Parsing properties of the struct, including their types and visibility (public/private).
+// - Parsing embedded structs.
+//
+// It returns an ast.DataType representing the parsed struct type.
+//
+// Parameters:
+// - p: A pointer to the Parser instance.
+//
+// Returns:
+// - ast.DataType: The parsed struct type.
+//
+// Errors:
+// - If the struct is empty, an error is generated and displayed.
 func parseStructType(p *Parser) ast.DataType {
 
 	identifier := p.advance()

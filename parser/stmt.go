@@ -9,6 +9,25 @@ import (
 	"walrus/lexer"
 )
 
+// parseVarDeclStmt parses a variable declaration statement in the source code.
+// It handles both `let` and `const` declarations, with optional type annotations
+// and initial values.
+//
+// Parameters:
+// - p: A pointer to the Parser instance.
+//
+// Returns:
+// - An ast.Node representing the parsed variable declaration statement.
+//
+// The function performs the following steps:
+// 1. Advances the parser to consume the `let` or `const` keyword.
+// 2. Determines if the declaration is a constant.
+// 3. Expects and consumes an identifier token for the variable name.
+// 4. Optionally parses an explicit type if a colon `:` is present.
+// 5. Parses the assignment operator `:=` or `=` and the initial value expression if present.
+// 6. Ensures that constants have an initial value.
+// 7. Expects and consumes a semicolon `;` to terminate the statement.
+// 8. Constructs and returns an ast.VarDeclStmt node with the parsed information.
 func parseVarDeclStmt(p *Parser) ast.Node {
 
 	declToken := p.advance() // advance the let/const keyword
@@ -16,24 +35,27 @@ func parseVarDeclStmt(p *Parser) ast.Node {
 	// is it let or const?
 	isConst := declToken.Kind == lexer.CONST_TOKEN
 
+	// parse the variable name
 	identifier := p.expect(lexer.IDENTIFIER_TOKEN)
 
+	// parse the explicit type if present. This will be nil if no type is specified.
 	var explicitType ast.DataType
 
 	var value ast.Node
 
-	assToken := p.advance()
+	assignmentToken := p.advance()
 
-	if assToken.Kind == lexer.COLON_TOKEN {
+	if assignmentToken.Kind == lexer.COLON_TOKEN {
 		// syntax is let a : <type>
 		explicitType = parseType(p, DEFAULT_BP)
-	} else if assToken.Kind != lexer.WALRUS_TOKEN {
-		msg := "expected : or :="
-		errgen.MakeError(p.FilePath, assToken.Start.Line, assToken.End.Line, assToken.Start.Column, assToken.End.Column, msg).Display()
+	} else if assignmentToken.Kind != lexer.WALRUS_TOKEN {
+		msg := "Invalid variable declaration syntax"
+		errgen.MakeError(p.FilePath, assignmentToken.Start.Line, assignmentToken.End.Line, assignmentToken.Start.Column, assignmentToken.End.Column, msg).AddHint("Maybe you want to use : or := instead of =", errgen.TEXT_HINT).Display()
 	}
 
 	if p.currentTokenKind() != lexer.SEMI_COLON_TOKEN {
-		if assToken.Kind == lexer.COLON_TOKEN {
+		// then we have an assignment
+		if assignmentToken.Kind == lexer.COLON_TOKEN {
 			p.expect(lexer.EQUALS_TOKEN)
 		}
 		value = parseExpr(p, ASSIGNMENT_BP)
@@ -68,6 +90,18 @@ func parseVarDeclStmt(p *Parser) ast.Node {
 	return node
 }
 
+
+// parseUserDefinedTypeStmt parses a user-defined type statement in the source code.
+// It expects the 'type' keyword followed by an identifier that starts with a capital letter.
+// If the identifier does not start with a capital letter, an error is generated with a hint.
+// The function then parses the user-defined type and expects a semicolon at the end.
+// It returns an AST node representing the type declaration statement.
+//
+// Parameters:
+// - p: A pointer to the Parser instance.
+//
+// Returns:
+// - ast.Node: An AST node representing the type declaration statement.
 func parseUserDefinedTypeStmt(p *Parser) ast.Node {
 
 	start := p.advance().Start //eat type token
@@ -92,6 +126,16 @@ func parseUserDefinedTypeStmt(p *Parser) ast.Node {
 	}
 }
 
+// parseBlock parses a block statement from the input tokens.
+// It expects the block to start with an opening curly brace '{' and end with a closing curly brace '}'.
+// The function iterates over the tokens within the braces, parsing each node and adding it to the block's body.
+// It returns an ast.BlockStmt containing the parsed nodes and their location in the source code.
+//
+// Parameters:
+//   - p: A pointer to the Parser instance.
+//
+// Returns:
+//   - ast.BlockStmt: The parsed block statement, including its contents and location.
 func parseBlock(p *Parser) ast.BlockStmt {
 
 	start := p.expect(lexer.OPEN_CURLY).Start
@@ -113,10 +157,21 @@ func parseBlock(p *Parser) ast.BlockStmt {
 	}
 }
 
+// parseForStmt parses a 'for' statement in the source code.
+// It handles different types of 'for' loops:
+// - Infinite loop: `for { }`
+// - Condition-only loop: `for i < 10 { }`
+// - Traditional for loop with initialization, condition, and increment: `for i := 0; i < 10; i++ { }`
+// - For-each loop: `for i in arr { }`
+//
+// Parameters:
+// - p: A pointer to the Parser instance.
+//
+// Returns:
+// - An ast.Node representing the parsed 'for' statement.
+// - If the syntax is invalid, it generates an error and returns nil.
 func parseForStmt(p *Parser) ast.Node {
 	start := p.advance().Start // eat for token
-	// we can have `for i := 0; i < 10; i++ { }` or `for i < 10 { }` or `for { }` or `for i in arr { }`
-	// get which type of for loop it is
 	//first token is either an identifier or open curly
 	if p.currentTokenKind() == lexer.OPEN_CURLY {
 		// infinite loop
@@ -191,6 +246,22 @@ func parseForStmt(p *Parser) ast.Node {
 	}
 }
 
+// parseIfStmt parses an if statement from the input and returns an AST node representing the if statement.
+// It expects the parser to be positioned at the 'if' token at the start of the if statement.
+//
+// The function performs the following steps:
+// 1. Advances the parser to consume the 'if' token and records the start position.
+// 2. Parses the condition expression of the if statement.
+// 3. Parses the consequent block of the if statement.
+// 4. Checks for the presence of an 'else' token and, if found, parses the alternate block or another if statement.
+//
+// The returned AST node includes the condition, the consequent block, and optionally the alternate block.
+//
+// Parameters:
+// - p: A pointer to the Parser instance.
+//
+// Returns:
+// - An AST node representing the parsed if statement.
 func parseIfStmt(p *Parser) ast.Node {
 
 	start := p.advance().Start // eat if token
@@ -222,6 +293,16 @@ func parseIfStmt(p *Parser) ast.Node {
 	}
 }
 
+// parseLambdaFunction parses a lambda function expression from the input and returns an AST node representing the function.
+// It expects the parser to be positioned at the start of the lambda function.
+//
+// The function performs the following steps:
+// 1. Advances the parser to consume the 'fn' token and records the start position.
+// 2. Parses the function signature, including parameters and return type.
+// 3. Parses the function body block.
+//
+// Returns:
+// - ast.Node: An AST node representing the parsed lambda function expression, including its parameters, return type, body, and location.
 func parseLambdaFunction(p *Parser) ast.Node {
 	//annonymous function
 	start := p.advance().Start // eat fn token
@@ -241,6 +322,20 @@ func parseLambdaFunction(p *Parser) ast.Node {
 	}
 }
 
+// parseFunctionDeclStmt parses a function declaration statement from the input
+// and returns an AST node representing the function declaration.
+//
+// The function expects the parser to be positioned at the start of the function
+// declaration (i.e., the 'fn' token). It advances the parser, consumes the
+// function name, parses the function signature (parameters and return type),
+// and then parses the function body block.
+//
+// Parameters:
+//   - p: A pointer to the Parser instance.
+//
+// Returns:
+//   - ast.Node: An AST node representing the function declaration, which includes
+//     the function's identifier, parameters, return type, and body block.
 func parseFunctionDeclStmt(p *Parser) ast.Node {
 
 	start := p.advance().Start // eat fn token
@@ -271,6 +366,17 @@ func parseFunctionDeclStmt(p *Parser) ast.Node {
 	}
 }
 
+// parseFunctionSignature parses the signature of a function, including its parameters and return type.
+// It expects the function signature to start with an opening parenthesis and end with a closing parenthesis.
+// Parameters can be either required or optional, and optional parameters must have a default value.
+// The return type is optional and, if present, is indicated by an arrow (->) followed by the type.
+//
+// Parameters:
+// - p (*Parser): The parser instance used to parse the function signature.
+//
+// Returns:
+// - ([]ast.FunctionParam): A slice of FunctionParam representing the parameters of the function.
+// - (ast.DataType): The return type of the function.
 func parseFunctionSignature(p *Parser) ([]ast.FunctionParam, ast.DataType) {
 	p.expect(lexer.OPEN_PAREN)
 
@@ -286,12 +392,8 @@ func parseFunctionSignature(p *Parser) ([]ast.FunctionParam, ast.DataType) {
 				End:   paramToken.End,
 			},
 		}
-
-		// p.expect(lexer.COLON_TOKEN)
-
 		// if : then the param is not optional
 		// if ?: then the param is optional
-
 		currentToken := p.currentToken()
 
 		if currentToken.Kind != lexer.COLON_TOKEN && currentToken.Kind != lexer.OPTIONAL_TOKEN {
@@ -340,6 +442,16 @@ func parseFunctionSignature(p *Parser) ([]ast.FunctionParam, ast.DataType) {
 	return params, returnType
 }
 
+// parseReturnStmt parses a return statement in the source code.
+// It expects the current token to be a return token and advances the parser.
+// If the next token is not a semicolon, it parses an expression for the return value.
+// Finally, it expects a semicolon to end the return statement and returns an ast.ReturnStmt node.
+//
+// Parameters:
+//   - p: A pointer to the Parser instance.
+//
+// Returns:
+//   - An ast.Node representing the return statement.
 func parseReturnStmt(p *Parser) ast.Node {
 
 	start := p.advance().Start // eat return token
@@ -361,6 +473,19 @@ func parseReturnStmt(p *Parser) ast.Node {
 	}
 }
 
+// parseImplementStmt parses an implementation statement in the source code.
+// The syntax for the implementation statement can be one of the following:
+// - impl A, B, C for T { ... }
+// - impl A for T { ... }
+// - impl T { ... }
+//
+// It expects the parser to be positioned at the start of the 'impl' keyword.
+//
+// Parameters:
+// - p: A pointer to the Parser instance.
+//
+// Returns:
+// - An ast.Node representing the parsed implementation statement.
 func parseImplementStmt(p *Parser) ast.Node {
 
 	start := p.advance().Start // eat implement token
@@ -415,6 +540,21 @@ func parseImplementStmt(p *Parser) ast.Node {
 	}
 }
 
+// parseTraitDeclStmt parses a trait declaration statement from the provided parser.
+// It expects the following structure:
+// 
+// trait <identifier> {
+//     function <method_name>(<parameters>) -> <return_type>;
+//     ...
+// }
+// 
+// The function returns an ast.Node representing the trait declaration statement.
+//
+// Parameters:
+// - p: A pointer to the Parser instance.
+//
+// Returns:
+// - ast.Node: The parsed trait declaration statement node.
 func parseTraitDeclStmt(p *Parser) ast.Node {
 
 	start := p.advance().Start // eat trait token

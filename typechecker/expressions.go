@@ -11,7 +11,6 @@ import (
 func checkIncrementalExpr(node ast.IncrementalInterface, env *TypeEnvironment) ValueTypeInterface {
 	op := node.Op()
 	arg := node.Arg()
-	fmt.Printf("op: %s, arg: %s\n", op.Value, arg.Name)
 	// the argument must be an identifier evaluated to a number
 	typeVal := CheckAST(arg, env)
 	if !IsNumberType(typeVal) {

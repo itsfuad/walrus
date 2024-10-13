@@ -1,13 +1,23 @@
 package lexer
 
+// Position represents a specific location in the source code with line, column, and index information.
 type Position struct {
-	Line	int
-	Column	int
-	Index	int
+	Line   int // Line number in the source code.
+	Column int // Column number in the source code.
+	Index  int // Index in the source code.
 }
 
+// Advance updates the Position by advancing it based on the characters in the provided string.
+// It increments the line number for newline characters and the column number for other characters.
+// The index is incremented for each character in the string.
+// 
+// Parameters:
+// - toSkip: A string containing characters to advance the position by.
+//
+// Returns:
+// - A pointer to the updated Position.
 func (p *Position) Advance(toSkip string) *Position {
-	for _, char := range toSkip { // a rune is an alias for int32
+	for _, char := range toSkip {
 		if char == '\n' {
 			p.Line++
 			p.Column = 1
