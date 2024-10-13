@@ -15,11 +15,11 @@ fn large(u: int) -> int {
     let b := 2;
     if a > b {
         ret 5;
-    } els {
+    } else {
         //ret b;
         if a > b {
             ret 5;
-        } els {
+        } else {
             ret 6;
         }
     }
@@ -62,4 +62,14 @@ fn add(a: int, b?: int = 9) -> int {
     ret a + b;
 }
 
+fn closure(a: int) -> fn (b: int) -> int {
+    ret fn (b: int) -> int {
+        ret a + b;
+    };
+}
+
 const addRes := add(1);
+
+const closureRes1 := closure(1);
+const closureRes2 := closureRes1(2);
+const closureRes3 := closure(1)(2);

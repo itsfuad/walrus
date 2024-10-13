@@ -272,8 +272,8 @@ func (a StructPropertyAccessExpr) EndPos() lexer.Position {
 }
 
 type FunctionCallExpr struct {
-	Identifier IdentifierExpr
-	Arguments  []Node
+	Caller    	Node
+	Arguments  	[]Node
 	Location
 }
 

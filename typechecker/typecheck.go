@@ -140,17 +140,13 @@ func checkParamaters(params []ast.FunctionParam, fnEnv *TypeEnvironment) []FnPar
 
 func checkFunctionCall(callNode ast.FunctionCallExpr, env *TypeEnvironment) ValueTypeInterface {
 	//check if the function is declared
-	if !env.isDeclared(callNode.Identifier.Name) {
-		errgen.MakeError(env.filePath, callNode.Identifier.Start.Line, callNode.Identifier.End.Line, callNode.Identifier.Start.Column, callNode.Identifier.End.Column, fmt.Sprintf("Function %s is not declared", callNode.Identifier.Name)).Display()
-	}
+	caller := CheckAST(callNode.Caller, env)
+	fn, err := userDefinedToFn(caller)
 
-	//check if the function is a function
-	fn, err := userDefinedToFn(env.variables[callNode.Identifier.Name])
 	if err != nil {
-		errgen.MakeError(env.filePath, callNode.Identifier.Start.Line, callNode.Identifier.End.Line, callNode.Identifier.Start.Column, callNode.Identifier.End.Column, fmt.Sprintf("'%s' is not a function", callNode.Identifier.Name)).Display()
+		errgen.MakeError(env.filePath, callNode.Caller.StartPos().Line, callNode.Caller.EndPos().Line, callNode.Caller.StartPos().Column, callNode.Caller.EndPos().Column, err.Error()).Display()
 	}
 
-	//check if the number of arguments match the number of parameters
 	fnParams := fn.Params
 	if len(callNode.Arguments) != len(fnParams) {
 		// exclude the optional parameters from the count
@@ -161,10 +157,10 @@ func checkFunctionCall(callNode ast.FunctionCallExpr, env *TypeEnvironment) Valu
 			}
 		}
 		if len(callNode.Arguments) < len(fnParams)-optionalParams {
-			errgen.MakeError(env.filePath, callNode.Identifier.Start.Line, callNode.Identifier.End.Line, callNode.Identifier.Start.Column, callNode.Identifier.End.Column, fmt.Sprintf("Function %s expects at least %d arguments, got %d", callNode.Identifier.Name, len(fnParams)-optionalParams, len(callNode.Arguments))).Display()
+			errgen.MakeError(env.filePath, callNode.Start.Line, callNode.End.Line, callNode.Start.Column, callNode.End.Column, fmt.Sprintf("Function expects at least %d arguments, got %d", len(fnParams)-optionalParams, len(callNode.Arguments))).Display()
 		}
 		if len(callNode.Arguments) > len(fnParams) {
-			errgen.MakeError(env.filePath, callNode.Identifier.Start.Line, callNode.Identifier.End.Line, callNode.Identifier.Start.Column, callNode.Identifier.End.Column, fmt.Sprintf("Function %s expects at most %d arguments, got %d", callNode.Identifier.Name, len(fnParams), len(callNode.Arguments))).Display()
+			errgen.MakeError(env.filePath, callNode.Start.Line, callNode.End.Line, callNode.Start.Column, callNode.End.Column, fmt.Sprintf("Function expects at most %d arguments, got %d", len(fnParams), len(callNode.Arguments))).Display()
 		}
 	}
 
@@ -185,7 +181,7 @@ func userDefinedToFn(ud ValueTypeInterface) (Fn, error) {
 	case UserDefined:
 		return userDefinedToFn(t.TypeDef)
 	default:
-		return Fn{}, fmt.Errorf("'%s' is not a function", ud.DType())
+		return Fn{}, fmt.Errorf("type of '%s' is not callable", ud.DType())
 	}
 }
 

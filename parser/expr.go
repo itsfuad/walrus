@@ -333,7 +333,7 @@ func parseBinaryExpr(p *Parser, left ast.Node, bp BINDING_POWER) ast.Node {
 		},
 	}
 }
-
+/*
 func IsCallable(node ast.Node) (bool, ast.IdentifierExpr) {
 	// if already is an identifier
 	if iden, ok := node.(ast.IdentifierExpr); ok {
@@ -347,22 +347,27 @@ func IsCallable(node ast.Node) (bool, ast.IdentifierExpr) {
 	case ast.ArrayIndexAccess:
 		index := t
 		return IsCallable(index.Arrayvalue)
+	case ast.FunctionCallExpr:
+		return IsCallable(t.Identifier)
 	default:
 		return false, ast.IdentifierExpr{}
 	}
 }
+*/
 
 func parseCallExpr(p *Parser, left ast.Node, bp BINDING_POWER) ast.Node {
 
 	fmt.Printf("Left: %T: %v\n", left, left)
 
+	/*
 	var identifier ast.IdentifierExpr
 
 	if isCallable, ok := IsCallable(left); isCallable {
 		identifier = ok
 	} else {
-		errgen.MakeError(p.FilePath, left.StartPos().Line, left.EndPos().Line, left.StartPos().Column, left.EndPos().Column, "cannot call a non-identifier").Display()
+		errgen.MakeError(p.FilePath, left.StartPos().Line, left.EndPos().Line, left.StartPos().Column, left.EndPos().Column, "parser:cannot call a non-identifier").Display()
 	}
+	*/
 
 
 	p.advance() //eat the open paren
@@ -379,7 +384,7 @@ func parseCallExpr(p *Parser, left ast.Node, bp BINDING_POWER) ast.Node {
 	endPos := p.expect(lexer.CLOSE_PAREN).End
 
 	return ast.FunctionCallExpr{
-		Identifier: identifier,
+		Caller: left,
 		Arguments:  args,
 		Location: ast.Location{
 			Start: startPos,
