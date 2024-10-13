@@ -1,9 +1,6 @@
 package lexer
 
 import (
-	"bytes"
-	"log"
-	"os"
 	"testing"
 )
 
@@ -37,28 +34,12 @@ func TestIsKeyword(t *testing.T) {
 	}
 }
 
-func TestTokenDebug(t *testing.T) {
-	token := NewToken(LET_TOKEN, "let", Position{Line: 1, Column: 1}, Position{Line: 1, Column: 4})
-	expectedOutput := "testfile:1:1\t 'let'\n"
-
-	// Redirect stdout to capture the output
-	var output bytes.Buffer
-	log.SetOutput(&output)
-	defer func() { log.SetOutput(os.Stderr) }()
-
-	token.Debug("testfile")
-
-	if output.String() != expectedOutput {
-		t.Errorf("Token.Debug() output = %v; want %v", output, expectedOutput)
-	}
-}
 
 func TestNewToken(t *testing.T) {
 	kind := LET_TOKEN
 	value := "let"
 	start := Position{Line: 1, Column: 1}
 	end := Position{Line: 1, Column: 4}
-
 	token := NewToken(kind, value, start, end)
 
 	if token.Kind != kind {

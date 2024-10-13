@@ -2,7 +2,6 @@ package utils
 
 import (
 	"fmt"
-	"regexp"
 )
 
 // ANSI color escape codes
@@ -25,10 +24,11 @@ const (
 
 func Colorize(color COLOR, text string) string {
 
-	regex := regexp.MustCompile(`\033\[[0-9]{1,3}[0-9;]*m`)
-
-	//panic if the color is not valid
-	if !regex.MatchString(string(color)) {
+	//regex to check if the color is valid
+	switch color {
+	case RESET, RED, BOLD_RED, GREEN, YELLOW, ORANGE, BLUE, PURPLE, CYAN, WHITE, GREY, BOLD:
+		break
+	default:
 		panic("Invalid color")
 	}
 
