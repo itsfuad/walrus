@@ -4,20 +4,21 @@ type ID struct {
 };
 
 type Point struct{
-    embed ID,
     priv x: int,
-    y: int
+    y: int,
 };
 
 let point : Point;
 
-point = @Point{ x: 13, y: 23};
+point = @Point{ x: 13, y: 23 };
+
+//point.id;
 
 type Distance struct {
     start: Point,
     end: Point,
     priv max: int,
-    min: int
+    min: int,
 };
 
 let a := 0;
@@ -29,7 +30,7 @@ let distance := @Distance{
     },
     end: point,
     max: 10,
-    min: 0
+    min: 0,
 };
 
 //let a := distance; // error
@@ -39,6 +40,7 @@ distance.min = 1;
 
 trait Drawable {
     fn draw();
+    fn update();
 }
 
 impl Drawable for Point {

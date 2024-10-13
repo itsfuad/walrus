@@ -61,7 +61,9 @@ func CheckAST(node ast.Node, env *TypeEnvironment) ValueTypeInterface {
 	case ast.StructLiteral:
 		return checkStructLiteral(t, env)
 	case ast.StructPropertyAccessExpr:
-		return checkProperty(t, env)
+		return checkPropertyAccess(t, env)
+	case ast.TraitDeclStmt:
+		return checkTraitDeclaration(t, env)
 	case ast.FunctionDeclStmt:
 		return checkFunctionDeclStmt(t, env)
 	case ast.FunctionExpr:

@@ -2,7 +2,6 @@ package parser
 
 import (
 	"walrus/ast"
-	"walrus/builtins"
 	"walrus/lexer"
 )
 
@@ -100,7 +99,7 @@ func bindLookupHandlers() {
 
 	stmt(lexer.IF_TOKEN, parseIfStmt)              // if statement
 	stmt(lexer.FOR_TOKEN, parseForStmt)            // for statement
-	stmt(builtins.FUNCTION, parseFunctionDeclStmt) // function declaration
+	stmt(lexer.FUNCTION, parseFunctionDeclStmt) // function declaration
 	stmt(lexer.RETURN_TOKEN, parseReturnStmt)      // return statement
 
 	//Unary
@@ -114,6 +113,6 @@ func bindLookupHandlers() {
 	led(lexer.PLUS_PLUS_TOKEN, UNARY_BP, parsePostfixExpr)   // a++
 	led(lexer.MINUS_MINUS_TOKEN, UNARY_BP, parsePostfixExpr) // a--
 
-	stmt(lexer.TRAIT_TOKEN, parseTraitDeclStmt)     // trait declaration
+	stmt(lexer.TRAIT, parseTraitDeclStmt)     // trait declaration
 	stmt(lexer.IMPLEMENT_TOKEN, parseImplementStmt) // implement statement
 }

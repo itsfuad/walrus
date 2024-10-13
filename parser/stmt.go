@@ -563,7 +563,7 @@ func parseTraitDeclStmt(p *Parser) ast.Node {
 
 	p.expect(lexer.OPEN_CURLY)
 
-	methods := make(map[string]ast.TraitMethod, 0)
+	methods := make(map[string]ast.TraitMethod)
 
 	for p.hasToken() && p.currentTokenKind() != lexer.CLOSE_CURLY {
 
@@ -576,6 +576,11 @@ func parseTraitDeclStmt(p *Parser) ast.Node {
 		name := p.expect(lexer.IDENTIFIER_TOKEN)
 
 		dataType, params, returnType := getFunctionTypeSignature(p)
+
+		if _, ok := methods[name.Value]; ok {
+			msg := fmt.Sprintf("method %s already defined", name.Value)
+			errgen.MakeError(p.FilePath, name.Start.Line, name.End.Line, name.Start.Column, name.End.Column, msg).Display()
+		}
 
 		methods[name.Value] = ast.TraitMethod{
 			Identifier: ast.IdentifierExpr{

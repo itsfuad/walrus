@@ -68,6 +68,11 @@ func (e *WalrusError) Display() {
 
 
 func (e *WalrusError) AddHint(msg string, htype HINT) *WalrusError {
+
+	if msg == "" {
+		return e
+	}
+
 	e.hints = append(e.hints, Hint{
 		message: msg,
 		hintType: htype,

@@ -18,7 +18,6 @@ const (
 	IDENTIFIER_TOKEN    TOKEN_KIND = "identifier"
 	PRIVATE_TOKEN       TOKEN_KIND = "priv"
 	EMBED_TOKEN			TOKEN_KIND = "embed"
-	TRAIT_TOKEN			TOKEN_KIND = "trait"
 	IMPLEMENT_TOKEN		TOKEN_KIND = "impl"
 	RETURN_TOKEN        TOKEN_KIND = "ret"
 	IN_TOKEN			TOKEN_KIND = "in"
@@ -31,6 +30,7 @@ const (
 	NULL                TOKEN_KIND = builtins.NULL
 	STRUCT              TOKEN_KIND = builtins.STRUCT
 	FUNCTION            TOKEN_KIND = builtins.FUNCTION
+	TRAIT 				TOKEN_KIND = builtins.TRAIT
 	//increment and decrement
 	PLUS_PLUS_TOKEN		TOKEN_KIND = "++"
 	MINUS_MINUS_TOKEN	TOKEN_KIND = "--"
@@ -83,10 +83,10 @@ var keyWordsMap map[string]TOKEN_KIND = map[string]TOKEN_KIND{
 	"type":   TYPE_TOKEN,
 	"priv":	  PRIVATE_TOKEN,
 	"embed":  EMBED_TOKEN,
-	"trait":  TRAIT_TOKEN,
+	"trait":  TRAIT,
 	"impl":   IMPLEMENT_TOKEN,
-	"struct": builtins.STRUCT,
-	"fn":     builtins.FUNCTION,
+	"struct": STRUCT,
+	"fn":     FUNCTION,
 	"ret":    RETURN_TOKEN,
 	"in":     IN_TOKEN,
 }

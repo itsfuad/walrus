@@ -9,18 +9,19 @@ import (
 type VALUE_TYPE string
 
 const (
-	INT_TYPE      VALUE_TYPE = builtins.INT
-	FLOAT_TYPE    VALUE_TYPE = builtins.FLOAT
-	CHAR_TYPE     VALUE_TYPE = builtins.BYTE
-	STRING_TYPE   VALUE_TYPE = builtins.STRING
-	BOOLEAN_TYPE  VALUE_TYPE = builtins.BOOL
-	NULL_TYPE     VALUE_TYPE = builtins.NULL
-	VOID_TYPE     VALUE_TYPE = builtins.VOID
-	FUNCTION_TYPE VALUE_TYPE = builtins.FUNCTION
-	STRUCT_TYPE   VALUE_TYPE = builtins.STRUCT
-	ARRAY_TYPE    VALUE_TYPE = builtins.ARRAY
-	BLOCK_TYPE    VALUE_TYPE = "block"
-	RETURN_TYPE   VALUE_TYPE = "return"
+	INT_TYPE      	VALUE_TYPE = builtins.INT
+	FLOAT_TYPE    	VALUE_TYPE = builtins.FLOAT
+	CHAR_TYPE     	VALUE_TYPE = builtins.BYTE
+	STRING_TYPE   	VALUE_TYPE = builtins.STRING
+	BOOLEAN_TYPE  	VALUE_TYPE = builtins.BOOL
+	NULL_TYPE     	VALUE_TYPE = builtins.NULL
+	VOID_TYPE     	VALUE_TYPE = builtins.VOID
+	FUNCTION_TYPE 	VALUE_TYPE = builtins.FUNCTION
+	STRUCT_TYPE   	VALUE_TYPE = builtins.STRUCT
+	TRAIT_TYPE		VALUE_TYPE = builtins.TRAIT
+	ARRAY_TYPE    	VALUE_TYPE = builtins.ARRAY
+	BLOCK_TYPE    	VALUE_TYPE = "block"
+	RETURN_TYPE   	VALUE_TYPE = "return"
 )
 
 type ValueTypeInterface interface {
@@ -122,9 +123,10 @@ type StructProperty struct {
 }
 
 type Struct struct {
-	DataType   VALUE_TYPE
-	StructName string
-	Elements   map[string]StructProperty
+	DataType   	VALUE_TYPE
+	StructName 	string
+	Elements   	map[string]StructProperty
+	Embeds    	[]Struct
 }
 
 func (t Struct) DType() VALUE_TYPE {
@@ -168,6 +170,16 @@ func (t Block) DType() VALUE_TYPE {
 	return t.DataType
 }
 
+type Trait struct {
+	DataType VALUE_TYPE
+	TraitName string
+	Methods   map[string]Fn
+}
+
+func (t Trait) DType() VALUE_TYPE {
+	return t.DataType
+}
+
 type SCOPE_TYPE int
 
 const (
@@ -185,6 +197,7 @@ type TypeEnvironment struct {
 	constants 	map[string]bool
 	isOptional 	map[string]bool
 	types    	map[string]ValueTypeInterface
+	traits  	map[string]ValueTypeInterface
 	filePath  	string
 }
 
@@ -198,6 +211,7 @@ func NewTypeENV(parent *TypeEnvironment, scope SCOPE_TYPE, scopeName string, fil
 		constants: make(map[string]bool),
 		isOptional: make(map[string]bool),
 		types:     make(map[string]ValueTypeInterface),
+		traits:    make(map[string]ValueTypeInterface),
 	}
 }
 
@@ -261,4 +275,14 @@ func (t *TypeEnvironment) isDeclared(name string) bool {
 		return true
 	}
 	return false
+}
+
+func (t *TypeEnvironment) DeclareTrait(name string, trait ValueTypeInterface) error {
+	if _, ok := t.traits[name]; ok {
+		return fmt.Errorf("trait '%s' is already declared", name)
+	}
+
+	t.traits[name] = trait
+
+	return nil
 }

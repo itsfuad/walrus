@@ -240,7 +240,7 @@ func (a ArrayIndexAccess) EndPos() lexer.Position {
 }
 
 type StructLiteral struct {
-	Name       IdentifierExpr
+	Identifier IdentifierExpr
 	Properties map[string]Node
 	Location
 }
@@ -272,8 +272,8 @@ func (a StructPropertyAccessExpr) EndPos() lexer.Position {
 }
 
 type FunctionCallExpr struct {
-	Caller    	Node
-	Arguments  	[]Node
+	Caller    Node
+	Arguments []Node
 	Location
 }
 

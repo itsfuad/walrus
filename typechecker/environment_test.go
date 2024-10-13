@@ -4,8 +4,14 @@ import (
 	"testing"
 )
 
+const (
+	FILE = "/path/to/file"
+	EXPECTED_ERROR = "Expected error, got nil"
+	EXPECTED_NO_ERROR = "Expected no error, got %v"
+)
+
 func TestNewTypeENV(t *testing.T) {
-	env := NewTypeENV(nil, GLOBAL_SCOPE, "global", "/path/to/file")
+	env := NewTypeENV(nil, GLOBAL_SCOPE, "global", FILE)
 	if env == nil {
 		t.Fatal("Expected non-nil TypeEnvironment")
 	}
@@ -15,18 +21,18 @@ func TestNewTypeENV(t *testing.T) {
 	if env.scopeName != "global" {
 		t.Errorf("Expected scopeName to be 'global', got %v", env.scopeName)
 	}
-	if env.filePath != "/path/to/file" {
+	if env.filePath != FILE {
 		t.Errorf("Expected filePath to be '/path/to/file', got %v", env.filePath)
 	}
 }
 
 func TestDeclareVar(t *testing.T) {
-	env := NewTypeENV(nil, GLOBAL_SCOPE, "global", "/path/to/file")
+	env := NewTypeENV(nil, GLOBAL_SCOPE, "global", FILE)
 	intType := Int{DataType: INT_TYPE}
 
 	err := env.DeclareVar("x", intType, false, false)
 	if err != nil {
-		t.Fatalf("Expected no error, got %v", err)
+		t.Fatalf(EXPECTED_NO_ERROR, err)
 	}
 
 	if _, ok := env.variables["x"]; !ok {
@@ -43,13 +49,13 @@ func TestDeclareVar(t *testing.T) {
 }
 
 func TestResolveVar(t *testing.T) {
-	env := NewTypeENV(nil, GLOBAL_SCOPE, "global", "/path/to/file")
+	env := NewTypeENV(nil, GLOBAL_SCOPE, "global", FILE)
 	intType := Int{DataType: INT_TYPE}
 	env.DeclareVar("x", intType, false, false)
 
 	scope, err := env.ResolveVar("x")
 	if err != nil {
-		t.Fatalf("Expected no error, got %v", err)
+		t.Fatalf(EXPECTED_NO_ERROR, err)
 	}
 
 	if scope != env {
@@ -58,17 +64,17 @@ func TestResolveVar(t *testing.T) {
 
 	_, err = env.ResolveVar("y")
 	if err == nil {
-		t.Fatalf("Expected error, got nil")
+		t.Fatalf("EXPECTED_ERROR")
 	}
 }
 
 func TestDeclareType(t *testing.T) {
-	env := NewTypeENV(nil, GLOBAL_SCOPE, "global", "/path/to/file")
+	env := NewTypeENV(nil, GLOBAL_SCOPE, "global", FILE)
 	structType := Struct{DataType: STRUCT_TYPE, StructName: "MyStruct"}
 
 	err := env.DeclareType("MyStruct", structType)
 	if err != nil {
-		t.Fatalf("Expected no error, got %v", err)
+		t.Fatalf(EXPECTED_NO_ERROR, err)
 	}
 
 	if _, ok := env.types["MyStruct"]; !ok {
@@ -77,13 +83,13 @@ func TestDeclareType(t *testing.T) {
 }
 
 func TestResolveType(t *testing.T) {
-	env := NewTypeENV(nil, GLOBAL_SCOPE, "global", "/path/to/file")
+	env := NewTypeENV(nil, GLOBAL_SCOPE, "global", FILE)
 	structType := Struct{DataType: STRUCT_TYPE, StructName: "MyStruct"}
 	env.DeclareType("MyStruct", structType)
 
 	scope, err := env.ResolveType("MyStruct")
 	if err != nil {
-		t.Fatalf("Expected no error, got %v", err)
+		t.Fatalf(EXPECTED_NO_ERROR, err)
 	}
 
 	if scope != env {
@@ -92,17 +98,17 @@ func TestResolveType(t *testing.T) {
 
 	_, err = env.ResolveType("UnknownType")
 	if err == nil {
-		t.Fatalf("Expected error, got nil")
+		t.Fatalf("EXPECTED_ERROR")
 	}
 }
 
 func TestResolveFunctionEnv(t *testing.T) {
-	globalEnv := NewTypeENV(nil, GLOBAL_SCOPE, "global", "/path/to/file")
-	funcEnv := NewTypeENV(globalEnv, FUNCTION_SCOPE, "function", "/path/to/file")
+	globalEnv := NewTypeENV(nil, GLOBAL_SCOPE, "global", FILE)
+	funcEnv := NewTypeENV(globalEnv, FUNCTION_SCOPE, "function", FILE)
 
 	resolvedEnv, err := funcEnv.ResolveFunctionEnv()
 	if err != nil {
-		t.Fatalf("Expected no error, got %v", err)
+		t.Fatalf(EXPECTED_NO_ERROR, err)
 	}
 
 	if resolvedEnv != funcEnv {
@@ -111,6 +117,6 @@ func TestResolveFunctionEnv(t *testing.T) {
 
 	_, err = globalEnv.ResolveFunctionEnv()
 	if err == nil {
-		t.Fatalf("Expected error, got nil")
+		t.Fatalf("EXPECTED_ERROR")
 	}
 }

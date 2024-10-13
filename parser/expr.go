@@ -237,6 +237,7 @@ func parseArrayAccess(p *Parser, left ast.Node, bp BINDING_POWER) ast.Node {
 //   - A colon ':' token.
 //   - An expression representing the property value.
 //   - An optional comma ',' token if there are more properties.
+//
 // - A closing curly brace '}'.
 //
 // The function returns an ast.Node representing the parsed struct literal.
@@ -273,6 +274,10 @@ func parseStructLiteral(p *Parser) ast.Node {
 		//now we expect value as expression
 		val := parseExpr(p, DEFAULT_BP)
 
+		if _, ok := props[iden.Value]; ok {
+			errgen.MakeError(p.FilePath, iden.Start.Line, iden.End.Line, iden.Start.Column, iden.End.Column, fmt.Sprintf("property '%s' was previously assigned", iden.Value)).Display()
+		}
+
 		props[iden.Value] = val
 
 		//if the next token is not } then we have more values
@@ -285,7 +290,7 @@ func parseStructLiteral(p *Parser) ast.Node {
 	end := p.expect(lexer.CLOSE_CURLY).End
 
 	structVal := ast.StructLiteral{
-		Name:       identidier,
+		Identifier: identidier,
 		Properties: props,
 		Location: ast.Location{
 			Start: start,
@@ -467,8 +472,8 @@ func parseBinaryExpr(p *Parser, left ast.Node, bp BINDING_POWER) ast.Node {
 // - bp: The binding power, which determines the precedence of the expression.
 //
 // Returns:
-// - An ast.Node representing the function call expression, including the
-//   caller, arguments, and their location in the source code.
+//   - An ast.Node representing the function call expression, including the
+//     caller, arguments, and their location in the source code.
 func parseCallExpr(p *Parser, left ast.Node, bp BINDING_POWER) ast.Node {
 
 	p.advance() //eat the open paren
@@ -476,7 +481,7 @@ func parseCallExpr(p *Parser, left ast.Node, bp BINDING_POWER) ast.Node {
 	var args []ast.Node
 	// parse the arguments
 	for p.currentTokenKind() != lexer.CLOSE_PAREN {
-		arg := parseExpr(p, DEFAULT_BP) 
+		arg := parseExpr(p, DEFAULT_BP)
 		args = append(args, arg)
 		if p.currentTokenKind() != lexer.CLOSE_PAREN {
 			p.expect(lexer.COMMA_TOKEN)
@@ -486,8 +491,8 @@ func parseCallExpr(p *Parser, left ast.Node, bp BINDING_POWER) ast.Node {
 	endPos := p.expect(lexer.CLOSE_PAREN).End
 
 	return ast.FunctionCallExpr{
-		Caller: left,
-		Arguments:  args,
+		Caller:    left,
+		Arguments: args,
 		Location: ast.Location{
 			Start: startPos,
 			End:   endPos,

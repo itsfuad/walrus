@@ -8,7 +8,7 @@ import (
 
 func checkStructLiteral(structLit ast.StructLiteral, env *TypeEnvironment) ValueTypeInterface {
 
-	sName := structLit.Name
+	sName := structLit.Identifier
 	//check if defined
 	scope, err := env.ResolveType(sName.Name)
 	if err != nil {
@@ -19,22 +19,33 @@ func checkStructLiteral(structLit ast.StructLiteral, env *TypeEnvironment) Value
 
 	structType := udType.TypeDef.(Struct)
 
+	embeds := make([]Struct, 0)
+
 	// now we match the defined props with the provided props
 	// first check names on the provided value
 	for propName, propValue := range structLit.Properties {
 		//if prop exist
 		if elem, ok := structType.Elements[propName]; !ok {
-			errgen.MakeError(env.filePath, propValue.StartPos().Line, propValue.EndPos().Line,  propValue.StartPos().Column, propValue.EndPos().Column, fmt.Sprintf("property '%s' does not exists on type '%s'", propName, sName.Name)).Display()
+			errgen.MakeError(env.filePath, propValue.StartPos().Line, propValue.EndPos().Line, propValue.StartPos().Column, propValue.EndPos().Column, fmt.Sprintf("property '%s' does not exist on type '%s'", propName, sName.Name)).Display()
 		} else {
 			MatchTypes(elem.Type, CheckAST(propValue, env), env.filePath, propValue.StartPos().Line, propValue.EndPos().Line, propValue.StartPos().Column, propValue.EndPos().Column)
 		}
 	}
 
+	//check if all required props are provided
+	hint := ""
 	//now check all from defined type
 	for propName := range structType.Elements {
 		if _, ok := structLit.Properties[propName]; !ok {
-			//if does not exists
-			errgen.MakeError(env.filePath, structLit.StartPos().Line, structLit.EndPos().Line, structLit.StartPos().Column, structLit.EndPos().Column, fmt.Sprintf("property '%s' is missing from type '%s'", propName, sName.Name)).Display()
+			structType := scope.types[structLit.Identifier.Name].(UserDefined).TypeDef.(Struct)
+			for _, embeddedType := range structType.Embeds {
+				if _, ok := embeddedType.Elements[propName]; ok {
+					hint += fmt.Sprintf("did you forgot to initialize property '%s' embedded from type '%s'?\n", propName, embeddedType.StructName)
+					break
+				}
+			}
+			embeds = structType.Embeds
+			errgen.MakeError(env.filePath, structLit.StartPos().Line, structLit.EndPos().Line, structLit.StartPos().Column, structLit.EndPos().Column, fmt.Sprintf("property '%s' is missing from type '%s'", propName, sName.Name)).AddHint(hint, errgen.TEXT_HINT).Display()
 		}
 	}
 
@@ -42,10 +53,11 @@ func checkStructLiteral(structLit ast.StructLiteral, env *TypeEnvironment) Value
 		DataType:   STRUCT_TYPE,
 		StructName: sName.Name,
 		Elements:   structType.Elements,
+		Embeds:     embeds,
 	}
 }
 
-func checkProperty(expr ast.StructPropertyAccessExpr, env *TypeEnvironment) ValueTypeInterface {
+func checkPropertyAccess(expr ast.StructPropertyAccessExpr, env *TypeEnvironment) ValueTypeInterface {
 	object := CheckAST(expr.Object, env)
 	prop := expr.Property
 
