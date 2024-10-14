@@ -65,7 +65,8 @@ func checkVariableDeclaration(node ast.VarDeclStmt, env *TypeEnvironment) ValueT
 		expectedTypeInterface = typ
 	}
 
-	if node.IsAssigned && node.ExplicitType != nil {
+	if node.Value != nil && node.ExplicitType != nil {
+		fmt.Printf("Explicit type provided, but value is also provided. Expected type %s\n", expectedTypeInterface.DType())
 		providedValue := CheckAST(node.Value, env)
 		MatchTypes(expectedTypeInterface, providedValue, env.filePath, node.Value.StartPos().Line, node.Value.EndPos().Line, node.Value.StartPos().Column, node.Value.EndPos().Column)
 	}

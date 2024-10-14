@@ -80,7 +80,6 @@ func parseVarDeclStmt(p *Parser) ast.Node {
 		Value:        value,
 		ExplicitType: explicitType,
 		IsConst:      isConst,
-		IsAssigned:   value != nil,
 		Location: ast.Location{
 			Start: declToken.Start,
 			End:   end,
@@ -89,7 +88,6 @@ func parseVarDeclStmt(p *Parser) ast.Node {
 
 	return node
 }
-
 
 // parseUserDefinedTypeStmt parses a user-defined type statement in the source code.
 // It expects the 'type' keyword followed by an identifier that starts with a capital letter.
@@ -162,7 +160,7 @@ func parseBlock(p *Parser) ast.BlockStmt {
 // - Infinite loop: `for { }`
 // - Condition-only loop: `for i < 10 { }`
 // - Traditional for loop with initialization, condition, and increment: `for i := 0; i < 10; i++ { }`
-// - For-each loop: `for i in arr { }`
+// - For-each loop: `for v in arr { }` or `for i, v in arr { }`
 //
 // Parameters:
 // - p: A pointer to the Parser instance.
@@ -187,57 +185,122 @@ func parseForStmt(p *Parser) ast.Node {
 			},
 		}
 	} else if p.currentTokenKind() == lexer.IDENTIFIER_TOKEN {
-		token := p.currentToken()
-		idententifier := ast.IdentifierExpr{
-			Name: token.Value,
+
+		identifier := p.currentToken()
+
+		idententifierExpr := ast.IdentifierExpr{
+			Name: identifier.Value,
 			Location: ast.Location{
-				Start: token.Start,
-				End:   token.End,
+				Start: identifier.Start,
+				End:   identifier.End,
 			},
 		}
 
-		var startExpr ast.Node
-		var condition ast.Node
-		var increment ast.Node
-		var iterable ast.Node
+		switch p.nextTokenKind() {
+		case lexer.WALRUS_TOKEN: // for i := 0; i < 10; i++ { }
+			p.advance() // eat the identifier
+			p.advance() // eat the walrus token
+			// value of the identifier
+			value := parseExpr(p, ASSIGNMENT_BP)
+			p.expect(lexer.SEMI_COLON_TOKEN)
+			// condition
+			condition := parseExpr(p, ASSIGNMENT_BP)
+			p.expect(lexer.SEMI_COLON_TOKEN)
+			// increment
+			increment := parseExpr(p, ASSIGNMENT_BP)
 
-		switch p.currentTokenKind() {
-		case lexer.WALRUS_TOKEN:
-			// for i := 0; i < 10; i++ { }
-			p.advance() // eat variable
-			//parse start
-			p.advance() // eat walrus token
-			startExpr = parseExpr(p, ASSIGNMENT_BP)
-			p.expect(lexer.SEMI_COLON_TOKEN)
-			//parse condition
-			condition = parseExpr(p, ASSIGNMENT_BP)
-			p.expect(lexer.SEMI_COLON_TOKEN)
-			//parse increment
-			increment = parseExpr(p, ASSIGNMENT_BP)
-		case lexer.IN_TOKEN:
-			// for i in arr { }
-			p.advance() // eat i token
-			p.advance() // eat in token
-			iterable = parseExpr(p, ASSIGNMENT_BP)
+			block := parseBlock(p)
+
+			return ast.ForStmt{
+				Start: ast.VarDeclStmt{
+					Variable:     idententifierExpr,
+					Value:        value,
+					ExplicitType: nil,
+					IsConst:      false,
+					Location: ast.Location{
+						Start: identifier.Start,
+						End:   value.EndPos(),
+					},
+				},
+				Condition: condition,
+				Increment: increment,
+				Block:     block,
+				Location: ast.Location{
+					Start: start,
+					End:   block.End,
+				},
+			}
+		case lexer.IN_TOKEN: // for v in arr { }
+			p.advance() // eat the identifier
+			p.advance() // eat the in token
+			// value of the identifier
+			value := parseExpr(p, ASSIGNMENT_BP)
+			
+			block := parseBlock(p)
+
+			return ast.ForEachStmt{
+				Key:  nil,
+				Value: idententifierExpr,
+				Iterable: value,
+				Block: block,
+				Location: ast.Location{
+					Start: start,
+					End:   block.End,
+				},
+			}
+		case lexer.COMMA_TOKEN: // for i, v in arr { }
+			p.advance() // eat the identifier
+			p.advance() // eat the comma token
+			// value of the identifier
+			key := idententifierExpr
+			value := ast.IdentifierExpr{
+				Name: p.expect(lexer.IDENTIFIER_TOKEN).Value,
+				Location: ast.Location{
+					Start: identifier.Start,
+					End:   identifier.End,
+				},
+			}
+
+			p.expect(lexer.IN_TOKEN)
+
+			// value of the identifier
+			iterable := parseExpr(p, ASSIGNMENT_BP)
+
+			block := parseBlock(p)
+
+			return ast.ForEachStmt{
+				Key:  key,
+				Value: value,
+				Iterable: iterable,
+				Block: block,
+				Location: ast.Location{
+					Start: start,
+					End:   block.End,
+				},
+			}
+
 		default:
 			// for i < 10 { } // condition only
-			condition = parseExpr(p, ASSIGNMENT_BP)
+			condition := parseExpr(p, ASSIGNMENT_BP)
+			block := parseBlock(p)
+			return ast.ForStmt{
+				Start: ast.IdentifierExpr{
+					Name: identifier.Value,
+					Location: ast.Location{
+						Start: identifier.Start,
+						End:   identifier.End,
+					},
+				},
+				Condition: condition,
+				Increment: nil,
+				Block:     block,
+				Location: ast.Location{
+					Start: start,
+					End:   block.End,
+				},
+			}
 		}
 
-		block := parseBlock(p)
-
-		return ast.ForStmt{
-			Start:     idententifier,
-			StartExpr: startExpr,
-			Condition: condition,
-			Increment: increment,
-			Iterable:  iterable,
-			Block:     block,
-			Location: ast.Location{
-				Start: start,
-				End:   block.End,
-			},
-		}
 	} else {
 		//error
 		//msg := "invalid for loop syntax"
@@ -314,7 +377,7 @@ func parseLambdaFunction(p *Parser) ast.Node {
 	return ast.FunctionExpr{
 		Params:     params,
 		ReturnType: returnType,
-		Body:      	block,
+		Body:       block,
 		Location: ast.Location{
 			Start: start,
 			End:   block.End,
@@ -357,7 +420,7 @@ func parseFunctionDeclStmt(p *Parser) ast.Node {
 		FunctionExpr: ast.FunctionExpr{
 			Params:     params,
 			ReturnType: returnType,
-			Body:      block,
+			Body:       block,
 			Location: ast.Location{
 				Start: start,
 				End:   block.End,
@@ -542,12 +605,12 @@ func parseImplementStmt(p *Parser) ast.Node {
 
 // parseTraitDeclStmt parses a trait declaration statement from the provided parser.
 // It expects the following structure:
-// 
-// trait <identifier> {
-//     function <method_name>(<parameters>) -> <return_type>;
-//     ...
-// }
-// 
+//
+//	trait <identifier> {
+//	    function <method_name>(<parameters>) -> <return_type>;
+//	    ...
+//	}
+//
 // The function returns an ast.Node representing the trait declaration statement.
 //
 // Parameters:

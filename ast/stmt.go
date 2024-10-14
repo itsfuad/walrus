@@ -22,7 +22,6 @@ type VarDeclStmt struct {
 	Value        Node
 	ExplicitType DataType
 	IsConst      bool
-	IsAssigned   bool
 	Location
 }
 
@@ -85,11 +84,9 @@ func (a IfStmt) EndPos() lexer.Position {
 }
 
 type ForStmt struct {
-	Start     Node
-	StartExpr Node
+	Start	  Node
 	Condition Node
 	Increment Node
-	Iterable  Node
 	Block     BlockStmt
 	Location
 }
@@ -101,6 +98,26 @@ func (a ForStmt) StartPos() lexer.Position {
 	return a.Location.Start
 }
 func (a ForStmt) EndPos() lexer.Position {
+	return a.Location.End
+}
+
+type ForEachStmt struct {
+	Key 	 Node
+	Value    Node
+	Iterable Node
+	Block    BlockStmt
+	Location
+}
+
+func (a ForEachStmt) INode() {
+	//empty method implements Node interface
+}
+
+func (a ForEachStmt) StartPos() lexer.Position {
+	return a.Location.Start
+}
+
+func (a ForEachStmt) EndPos() lexer.Position {
 	return a.Location.End
 }
 

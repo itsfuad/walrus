@@ -22,6 +22,17 @@ func (p *Parser) currentTokenKind() lexer.TOKEN_KIND {
 	return p.currentToken().Kind
 }
 
+func (p *Parser) nextToken() lexer.Token {
+	if p.index+1 < len(p.tokens) {
+		return p.tokens[p.index+1]
+	}
+	return lexer.Token{Kind: lexer.EOF_TOKEN}
+}
+
+func (p *Parser) nextTokenKind() lexer.TOKEN_KIND {
+	return p.nextToken().Kind
+}
+
 func (p *Parser) hasToken() bool {
 	return p.index < len(p.tokens) && p.currentTokenKind() != lexer.EOF_TOKEN
 }

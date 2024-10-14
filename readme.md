@@ -39,10 +39,10 @@ A tiny simple programming language made for simplicity. It borrows syntax from '
         - [x] *=
         - [x] /=
         - [x] %=
-    - [ ] [For loop](#for-loop)
+    - [x] [For loop](#for-loop)
         - [x] for [condition]
-        - [ ] for [start] [condition] [end]
-        - [ ] for [start] in [range] 
+        - [x] for [start] [condition] [end]
+        - [x] for [start] in [range] 
     - [x] [Traits](#traits)
         - [x] Implement
         - [x] Implement for struct
@@ -50,7 +50,6 @@ A tiny simple programming language made for simplicity. It borrows syntax from '
 - [x] Analyzer
     - [x] Everything in parser except - 
         - [ ] For loop
-        - [x] Traits
         - [ ] Implement
 - [ ] Codegen
 

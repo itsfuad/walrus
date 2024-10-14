@@ -6,4 +6,5 @@ let c := a * 34 - 18;
 let d := a - 34 * 18;
 
 let e := "hello" + 2; // ok
+let logic := a > b;
 //e = "hello" - 2; // error

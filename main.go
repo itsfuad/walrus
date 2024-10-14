@@ -1,20 +1,19 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"os"
-	"path/filepath"
 	"strings"
-
+	"encoding/json"
+	"path/filepath"
 	"walrus/lexer"
-	parseMachine "walrus/parser"
 	"walrus/typechecker"
+	parseMachine "walrus/parser"
 )
 
 func main() {
 	fmt.Println("Hello world!")
-	filePath := "language/structs.wal"
+	filePath := "language/variable.wal"
 	tokens := lexer.Tokenize(filePath, false)
 	parser := parseMachine.NewParser(filePath, tokens)
 	tree := parser.Parse()
