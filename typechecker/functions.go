@@ -107,6 +107,8 @@ func userDefinedToFn(ud ValueTypeInterface) (Fn, error) {
 	switch t := ud.(type) {
 	case Fn:
 		return t, nil
+	case StructMethod:
+		return t.Fn, nil
 	case UserDefined:
 		return userDefinedToFn(t.TypeDef)
 	default:

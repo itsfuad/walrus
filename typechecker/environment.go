@@ -22,6 +22,7 @@ const (
 	ARRAY_TYPE    	VALUE_TYPE = builtins.ARRAY
 	BLOCK_TYPE    	VALUE_TYPE = "block"
 	RETURN_TYPE   	VALUE_TYPE = "return"
+	USER_DEFINED_TYPE VALUE_TYPE = "user_defined"
 )
 
 type ValueTypeInterface interface {
@@ -122,11 +123,16 @@ type StructProperty struct {
 	Type      ValueTypeInterface
 }
 
+type StructMethod struct {
+	IsPrivate bool
+	Fn
+}
+
 type Struct struct {
-	DataType   	VALUE_TYPE
-	StructName 	string
-	Elements   	map[string]StructProperty
-	Embeds    	[]Struct
+	DataType   		VALUE_TYPE
+	StructName 		string
+	Elements   		map[string]StructProperty
+	Methods			map[string]StructMethod
 }
 
 func (t Struct) DType() VALUE_TYPE {
@@ -197,7 +203,7 @@ type TypeEnvironment struct {
 	constants 	map[string]bool
 	isOptional 	map[string]bool
 	types    	map[string]ValueTypeInterface
-	traits  	map[string]ValueTypeInterface
+	traits  	map[string]Trait
 	filePath  	string
 }
 
@@ -211,7 +217,7 @@ func NewTypeENV(parent *TypeEnvironment, scope SCOPE_TYPE, scopeName string, fil
 		constants: make(map[string]bool),
 		isOptional: make(map[string]bool),
 		types:     make(map[string]ValueTypeInterface),
-		traits:    make(map[string]ValueTypeInterface),
+		traits:    make(map[string]Trait),
 	}
 }
 
@@ -249,6 +255,17 @@ func (t *TypeEnvironment) ResolveType(name string) (*TypeEnvironment, error) {
 	return t.parent.ResolveType(name)
 }
 
+func (t *TypeEnvironment) ResolveStruct(name string) (*TypeEnvironment, error) {
+	value, err := t.ResolveType(name)
+	if err != nil {
+		return nil, err
+	}
+	if _, ok := value.types[name].(UserDefined).TypeDef.(Struct); !ok {
+		return nil, fmt.Errorf("'%s' is not a struct", name)
+	}
+	return value, nil
+}
+
 func (t *TypeEnvironment) DeclareVar(name string, typeVar ValueTypeInterface, isConst bool, isOptional bool) error {
 	//should not be declared
 	if scope, err := t.ResolveVar(name); err == nil && scope == t {
@@ -277,7 +294,7 @@ func (t *TypeEnvironment) isDeclared(name string) bool {
 	return false
 }
 
-func (t *TypeEnvironment) DeclareTrait(name string, trait ValueTypeInterface) error {
+func (t *TypeEnvironment) DeclareTrait(name string, trait Trait) error {
 	if _, ok := t.traits[name]; ok {
 		return fmt.Errorf("trait '%s' is already declared", name)
 	}
@@ -285,4 +302,14 @@ func (t *TypeEnvironment) DeclareTrait(name string, trait ValueTypeInterface) er
 	t.traits[name] = trait
 
 	return nil
+}
+
+func (t *TypeEnvironment) ResolveTrait(name string) (*TypeEnvironment, error) {
+	if _, ok := t.traits[name]; ok {
+		return t, nil
+	}
+	if t.parent == nil {
+		return nil, fmt.Errorf("trait '%s' is not defined", name)
+	}
+	return t.parent.ResolveTrait(name)
 }

@@ -86,6 +86,7 @@ func handleExplicitType(explicitType ast.DataType, env *TypeEnvironment) ValueTy
 	return expectedTypeInterface
 }
 
+
 func getTypename(typeName ValueTypeInterface) VALUE_TYPE {
 	switch t := typeName.(type) {
 	case Array:
@@ -150,6 +151,21 @@ func IsNumberType(operand ValueTypeInterface) bool {
 	}
 }
 
+// EvaluateTypeName evaluates the given DataType and returns a corresponding ValueTypeInterface.
+// It handles different types of DataType such as ArrayType, FunctionType, and others.
+//
+// Parameters:
+//   - dtype: The DataType to be evaluated.
+//   - env: The TypeEnvironment in which the DataType is evaluated.
+//
+// Returns:
+//   - A ValueTypeInterface representing the evaluated type.
+//
+// The function performs the following steps:
+//   1. If the dtype is an ArrayType, it recursively evaluates the element type and returns an Array.
+//   2. If the dtype is a FunctionType, it evaluates the parameter types and return type, creates a new function scope, and returns a Fn.
+//   3. If the dtype is nil, it returns a Void type.
+//   4. For other types, it attempts to create a ValueTypeInterface and handles any errors that occur.
 func EvaluateTypeName(dtype ast.DataType, env *TypeEnvironment) ValueTypeInterface {
 	switch t := dtype.(type) {
 	case ast.ArrayType:

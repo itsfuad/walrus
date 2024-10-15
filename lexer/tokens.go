@@ -17,7 +17,6 @@ const (
 	FOR_TOKEN			TOKEN_KIND = "for"
 	IDENTIFIER_TOKEN    TOKEN_KIND = "identifier"
 	PRIVATE_TOKEN       TOKEN_KIND = "priv"
-	EMBED_TOKEN			TOKEN_KIND = "embed"
 	IMPLEMENT_TOKEN		TOKEN_KIND = "impl"
 	RETURN_TOKEN        TOKEN_KIND = "ret"
 	IN_TOKEN			TOKEN_KIND = "in"
@@ -82,7 +81,6 @@ var keyWordsMap map[string]TOKEN_KIND = map[string]TOKEN_KIND{
 	"for":    FOR_TOKEN,
 	"type":   TYPE_TOKEN,
 	"priv":	  PRIVATE_TOKEN,
-	"embed":  EMBED_TOKEN,
 	"trait":  TRAIT,
 	"impl":   IMPLEMENT_TOKEN,
 	"struct": STRUCT,

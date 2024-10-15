@@ -292,7 +292,6 @@ func parseStructType(p *Parser) ast.DataType {
 	identifier := p.advance()
 
 	props := make(map[string]ast.StructPropType)
-	embeds := make(map[string]ast.IdentifierExpr)
 
 	start := p.expect(lexer.OPEN_CURLY).Start
 
@@ -303,11 +302,8 @@ func parseStructType(p *Parser) ast.DataType {
 		if p.currentTokenKind() == lexer.PRIVATE_TOKEN {
 			isPrivate = true
 			p.advance()
-		} else if p.currentTokenKind() == lexer.EMBED_TOKEN {
-			handleEmbeddings(p, embeds)
-			continue // skip the rest of the loop and continue to the next iteration
 		}
-
+		
 		iden := p.expect(lexer.IDENTIFIER_TOKEN)
 
 		if _, ok := props[iden.Value]; ok {
@@ -321,7 +317,9 @@ func parseStructType(p *Parser) ast.DataType {
 				End:   iden.End,
 			},
 		}
+		
 		p.expect(lexer.COLON_TOKEN)
+		
 		typeName := parseType(p, DEFAULT_BP)
 
 		props[iden.Value] = ast.StructPropType{
@@ -349,38 +347,6 @@ func parseStructType(p *Parser) ast.DataType {
 	return ast.StructType{
 		TypeName:   ast.DATA_TYPE(builtins.STRUCT),
 		Properties: props,
-		Embeds:    	embeds,
 		Location:   loc,
-	}
-}
-
-
-// handleEmbeddings processes and stores embedded struct identifiers in the provided map.
-// It advances the parser to consume the embed token, checks for duplicate embeddings,
-// and updates the embeds map with the new struct identifier.
-//
-// Parameters:
-// - p: A pointer to the Parser instance.
-// - embeds: A map where the key is a string representing the struct name and the value is an ast.IdentifierExpr.
-//
-// Note: The embeds map is passed by reference, so changes to it will be reflected outside the function.
-func handleEmbeddings(p *Parser, embeds map[string]ast.IdentifierExpr) { //Did'nt use pointer because embeds is already a reference.
-	p.advance() //eat embed token
-	embedStruct := p.expect(lexer.IDENTIFIER_TOKEN)
-
-	if _, ok := embeds[embedStruct.Value]; ok {
-		errgen.MakeError(p.FilePath, embedStruct.Start.Line, embedStruct.End.Line, embedStruct.Start.Column, embedStruct.End.Column, fmt.Sprintf("struct '%s' already embedded", embedStruct.Value)).Display()
-	}
-
-	embedStructType := ast.IdentifierExpr{
-		Name: embedStruct.Value,
-		Location: ast.Location{
-			Start: embedStruct.Start,
-			End:   embedStruct.End,
-		},
-	}
-	embeds[embedStruct.Value] = embedStructType
-	if p.currentTokenKind() != lexer.CLOSE_CURLY {
-		p.expect(lexer.COMMA_TOKEN)
 	}
 }

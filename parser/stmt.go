@@ -555,7 +555,7 @@ func parseImplementStmt(p *Parser) ast.Node {
 
 	// syntax: impl A, B, C for T { ... } or impl A for T { ... } or impl T { ... }
 	var implFor ast.IdentifierExpr
-	var trait ast.IdentifierExpr
+	var trait ast.Node
 
 	//parse the trait
 	implForIdentifier := p.expect(lexer.IDENTIFIER_TOKEN)
@@ -567,7 +567,7 @@ func parseImplementStmt(p *Parser) ast.Node {
 		},
 	}
 
-	if p.currentTokenKind() != lexer.OPEN_BRACKET {
+	if p.currentTokenKind() != lexer.OPEN_CURLY {
 		p.expect(lexer.FOR_TOKEN)
 		identifier := p.expect(lexer.IDENTIFIER_TOKEN)
 		trait = implFor
@@ -583,11 +583,24 @@ func parseImplementStmt(p *Parser) ast.Node {
 	//parse the type
 	p.expect(lexer.OPEN_CURLY)
 
-	methods := make(map[string]ast.FunctionDeclStmt, 0)
+	methods := make(map[string]ast.ImplMethod, 0)
 
 	for p.hasToken() && p.currentTokenKind() != lexer.CLOSE_CURLY {
+		isPrivate := false
+
+		if p.currentTokenKind() == lexer.PRIVATE_TOKEN {
+			if trait != nil {
+				errgen.MakeError(p.FilePath, p.currentToken().Start.Line, p.currentToken().End.Line, p.currentToken().Start.Column, p.currentToken().End.Column, "trait methods cannot be private").Display()
+			}
+			isPrivate = true
+			p.advance()
+		}
+
 		method := parseFunctionDeclStmt(p).(ast.FunctionDeclStmt)
-		methods[method.Identifier.Name] = method
+		methods[method.Identifier.Name] = ast.ImplMethod{
+			FunctionDeclStmt: method,
+			IsPrivate: isPrivate,
+		}
 	}
 
 	end := p.expect(lexer.CLOSE_CURLY).End

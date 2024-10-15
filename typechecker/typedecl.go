@@ -16,43 +16,18 @@ func checkTypeDeclaration(node ast.TypeDeclStmt, env *TypeEnvironment) ValueType
 		props := map[string]StructProperty{}
 		for propname, propval := range t.Properties {
 			propType := EvaluateTypeName(propval.PropType, env)
-			p := StructProperty{
+			property := StructProperty{
 				IsPrivate: propval.IsPrivate,
 				Type:      propType,
 			}
-			props[propname] = p
-		}
-
-		embeds := make([]Struct, 0)
-
-		//get all embedded structs
-		for _, embed := range t.Embeds {
-			//check if defined
-			scope, err := env.ResolveType(embed.Name)
-			if err != nil {
-				errgen.MakeError(env.filePath, embed.StartPos().Line, embed.EndPos().Line, embed.StartPos().Column, embed.EndPos().Column, err.Error()).Display()
-			}
-
-			//check if struct
-			udType, _ := scope.types[embed.Name].(UserDefined)
-			if udType.TypeDef.DType() != STRUCT_TYPE {
-				errgen.MakeError(env.filePath, embed.StartPos().Line, embed.EndPos().Line, embed.StartPos().Column, embed.EndPos().Column, "only structs can be embedded").Display()
-			}
-
-			//get struct and add its props to the current struct
-			structType := udType.TypeDef.(Struct)
-			for propName, prop := range structType.Elements {
-				props[propName] = prop
-			}
-
-			embeds = append(embeds, structType)
+			props[propname] = property
 		}
 
 		val = Struct{
-			DataType:   STRUCT_TYPE, // old: VALUE_TYPE(t.TypeName)
+			DataType:   STRUCT_TYPE,
 			StructName: node.UDTypeName,
 			Elements:   props,
-			Embeds: embeds,
+			Methods:   	map[string]StructMethod{},
 		}
 	case ast.FunctionType:
 		val = checkFunctionSignature(node.UDTypeName, t, env)
@@ -62,7 +37,7 @@ func checkTypeDeclaration(node ast.TypeDeclStmt, env *TypeEnvironment) ValueType
 	}
 
 	typeVal := UserDefined{
-		DataType: "user-defined",
+		DataType: USER_DEFINED_TYPE,
 		TypeDef:  val,
 	}
 

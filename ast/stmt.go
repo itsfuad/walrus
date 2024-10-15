@@ -198,10 +198,15 @@ func (a TraitDeclStmt) EndPos() lexer.Position {
 	return a.Location.End
 }
 
+type ImplMethod struct {
+	IsPrivate bool
+	FunctionDeclStmt
+}
+
 type ImplStmt struct {
 	ImplFor IdentifierExpr
-	Trait   IdentifierExpr
-	Methods map[string]FunctionDeclStmt
+	Trait   Node
+	Methods map[string]ImplMethod
 	Location
 }
 

@@ -37,6 +37,16 @@ let distance := @Distance{
 
 //distance.max = 9; // error - private prop
 distance.min = 1;
+impl Distance {
+    fn get_max() -> int {
+        print("Max: ", this.max);
+        ret this.max; // check how 'this' is not giving error
+    }
+}
+
+let max := distance.get_max();
+
+/*
 
 trait Drawable {
     fn draw();
@@ -58,3 +68,4 @@ impl Drawable for Distance {
         //print(", max: ", this.max, ", min: ", this.min);
     }
 }
+*/

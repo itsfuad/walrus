@@ -27,7 +27,7 @@ A tiny simple programming language made for simplicity. It borrows syntax from '
             - [x] Property access
             - [x] Property assignment
             - [x] Private property deny access
-            - [x] Struct embedding
+            - [x] Implement for struct
         - [x] Builtins (int, float, bool, string)
         - [x] Function
     - [x] [Increment/Decrement](#incrementdecrement)
@@ -45,7 +45,6 @@ A tiny simple programming language made for simplicity. It borrows syntax from '
         - [x] for [start] in [range] 
     - [x] [Traits](#traits)
         - [x] Implement
-        - [x] Implement for struct
     - [ ] Generics
 - [x] Analyzer
     - [x] Everything in parser except - 
@@ -126,29 +125,6 @@ let p := @Person {
 
 let name := p.name; // name = "John"
 let age := p.age; // Error: Cannot access private property
-```
-
-## Struct embedding
-```rust
-type Person struct{
-    name: str;
-    age: int;
-}
-
-type Employee struct{
-    embed Person; // Embedding Person struct with 'embed' keyword
-    salary: float;
-}
-
-let e := @Employee {
-    name: "John", // Accessing name from Person
-    age: 20,
-    salary: 1000.0
-};
-
-let name := e.name; // name = "John"
-let age := e.age; // age = 20
-let salary := e.salary; // salary = 1000.0
 ```
 
 ## Conditionals
