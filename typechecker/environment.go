@@ -9,19 +9,19 @@ import (
 type VALUE_TYPE string
 
 const (
-	INT_TYPE      	VALUE_TYPE = builtins.INT
-	FLOAT_TYPE    	VALUE_TYPE = builtins.FLOAT
-	CHAR_TYPE     	VALUE_TYPE = builtins.BYTE
-	STRING_TYPE   	VALUE_TYPE = builtins.STRING
-	BOOLEAN_TYPE  	VALUE_TYPE = builtins.BOOL
-	NULL_TYPE     	VALUE_TYPE = builtins.NULL
-	VOID_TYPE     	VALUE_TYPE = builtins.VOID
-	FUNCTION_TYPE 	VALUE_TYPE = builtins.FUNCTION
-	STRUCT_TYPE   	VALUE_TYPE = builtins.STRUCT
-	TRAIT_TYPE		VALUE_TYPE = builtins.TRAIT
-	ARRAY_TYPE    	VALUE_TYPE = builtins.ARRAY
-	BLOCK_TYPE    	VALUE_TYPE = "block"
-	RETURN_TYPE   	VALUE_TYPE = "return"
+	INT_TYPE          VALUE_TYPE = builtins.INT
+	FLOAT_TYPE        VALUE_TYPE = builtins.FLOAT
+	CHAR_TYPE         VALUE_TYPE = builtins.BYTE
+	STRING_TYPE       VALUE_TYPE = builtins.STRING
+	BOOLEAN_TYPE      VALUE_TYPE = builtins.BOOL
+	NULL_TYPE         VALUE_TYPE = builtins.NULL
+	VOID_TYPE         VALUE_TYPE = builtins.VOID
+	FUNCTION_TYPE     VALUE_TYPE = builtins.FUNCTION
+	STRUCT_TYPE       VALUE_TYPE = builtins.STRUCT
+	INTERFACE_TYPE    VALUE_TYPE = builtins.INTERFACE
+	ARRAY_TYPE        VALUE_TYPE = builtins.ARRAY
+	BLOCK_TYPE        VALUE_TYPE = "block"
+	RETURN_TYPE       VALUE_TYPE = "return"
 	USER_DEFINED_TYPE VALUE_TYPE = "user_defined"
 )
 
@@ -86,7 +86,7 @@ func (t Void) DType() VALUE_TYPE {
 }
 
 type FnParam struct {
-	Name string
+	Name       string
 	IsOptional bool
 	//DefaultValueType ValueTypeInterface
 	Type ValueTypeInterface
@@ -129,10 +129,10 @@ type StructMethod struct {
 }
 
 type Struct struct {
-	DataType   		VALUE_TYPE
-	StructName 		string
-	Elements   		map[string]StructProperty
-	Methods			map[string]StructMethod
+	DataType   VALUE_TYPE
+	StructName string
+	Elements   map[string]StructProperty
+	Methods    map[string]StructMethod
 }
 
 func (t Struct) DType() VALUE_TYPE {
@@ -176,13 +176,13 @@ func (t Block) DType() VALUE_TYPE {
 	return t.DataType
 }
 
-type Trait struct {
-	DataType VALUE_TYPE
-	TraitName string
-	Methods   map[string]Fn
+type Interface struct {
+	DataType      VALUE_TYPE
+	InterfaceName string
+	Methods       map[string]Fn
 }
 
-func (t Trait) DType() VALUE_TYPE {
+func (t Interface) DType() VALUE_TYPE {
 	return t.DataType
 }
 
@@ -196,28 +196,28 @@ const (
 )
 
 type TypeEnvironment struct {
-	parent    	*TypeEnvironment
-	scopeType 	SCOPE_TYPE
-	scopeName 	string
-	variables 	map[string]ValueTypeInterface
-	constants 	map[string]bool
-	isOptional 	map[string]bool
-	types    	map[string]ValueTypeInterface
-	traits  	map[string]Trait
-	filePath  	string
+	parent     *TypeEnvironment
+	scopeType  SCOPE_TYPE
+	scopeName  string
+	variables  map[string]ValueTypeInterface
+	constants  map[string]bool
+	isOptional map[string]bool
+	types      map[string]ValueTypeInterface
+	interfaces map[string]Interface
+	filePath   string
 }
 
 func NewTypeENV(parent *TypeEnvironment, scope SCOPE_TYPE, scopeName string, filePath string) *TypeEnvironment {
 	return &TypeEnvironment{
-		parent:    parent,
-		scopeType: scope,
-		scopeName: scopeName,
-		filePath:  filePath,
-		variables: make(map[string]ValueTypeInterface),
-		constants: make(map[string]bool),
+		parent:     parent,
+		scopeType:  scope,
+		scopeName:  scopeName,
+		filePath:   filePath,
+		variables:  make(map[string]ValueTypeInterface),
+		constants:  make(map[string]bool),
 		isOptional: make(map[string]bool),
-		types:     make(map[string]ValueTypeInterface),
-		traits:    make(map[string]Trait),
+		types:      make(map[string]ValueTypeInterface),
+		interfaces: make(map[string]Interface),
 	}
 }
 
@@ -232,6 +232,7 @@ func (t *TypeEnvironment) ResolveFunctionEnv() (*TypeEnvironment, error) {
 }
 
 func (t *TypeEnvironment) ResolveVar(name string) (*TypeEnvironment, error) {
+
 	if t.isDeclared(name) {
 		return t, nil
 	}
@@ -245,25 +246,25 @@ func (t *TypeEnvironment) ResolveVar(name string) (*TypeEnvironment, error) {
 	return t.parent.ResolveVar(name)
 }
 
-func (t *TypeEnvironment) ResolveType(name string) (*TypeEnvironment, error) {
+func (t *TypeEnvironment) ResolveType(name string) (ValueTypeInterface, *TypeEnvironment, error) {
 	if _, ok := t.types[name]; ok {
-		return t, nil
+		return t.types[name].(UserDefined).TypeDef, t, nil
 	}
 	if t.parent == nil {
-		return nil, fmt.Errorf("type '%s' is not defined", name)
+		return nil, nil, fmt.Errorf("'%s' is not declared", name)
 	}
 	return t.parent.ResolveType(name)
 }
 
-func (t *TypeEnvironment) ResolveStruct(name string) (*TypeEnvironment, error) {
-	value, err := t.ResolveType(name)
+func (t *TypeEnvironment) ResolveStruct(name string) (Struct, error) {
+	value, _, err := t.ResolveType(name)
 	if err != nil {
-		return nil, err
+		return Struct{}, err
 	}
-	if _, ok := value.types[name].(UserDefined).TypeDef.(Struct); !ok {
-		return nil, fmt.Errorf("'%s' is not a struct", name)
+	if _, ok := value.(Struct); !ok {
+		return Struct{}, fmt.Errorf("'%s' is not a struct", name)
 	}
-	return value, nil
+	return value.(Struct), nil
 }
 
 func (t *TypeEnvironment) DeclareVar(name string, typeVar ValueTypeInterface, isConst bool, isOptional bool) error {
@@ -280,10 +281,11 @@ func (t *TypeEnvironment) DeclareVar(name string, typeVar ValueTypeInterface, is
 }
 
 func (t *TypeEnvironment) DeclareType(name string, typeType ValueTypeInterface) error {
-	if scope, err := t.ResolveType(name); err == nil && scope == t {
+	if _, scope, err := t.ResolveType(name); err == nil && scope == t {
 		return err
 	}
 	t.types[name] = typeType
+	fmt.Printf("Declared type %s, %T\n", name, typeType)
 	return nil
 }
 
@@ -294,22 +296,28 @@ func (t *TypeEnvironment) isDeclared(name string) bool {
 	return false
 }
 
-func (t *TypeEnvironment) DeclareTrait(name string, trait Trait) error {
-	if _, ok := t.traits[name]; ok {
-		return fmt.Errorf("trait '%s' is already declared", name)
+func (t *TypeEnvironment) DeclareInterface(name string, interfaceType Interface) error {
+
+	//should be declared only on the global scope and once
+	if t.scopeType != GLOBAL_SCOPE {
+		return fmt.Errorf("interface '%s' should be declared in the global scope", name)
 	}
 
-	t.traits[name] = trait
+	// if it is already declared
+	if _, ok := t.interfaces[name]; ok {
+		return fmt.Errorf("interface '%s' is already declared", name)
+	}
+
+	t.interfaces[name] = interfaceType
+
+	fmt.Printf("Declared interface %s\n", name)
 
 	return nil
 }
 
-func (t *TypeEnvironment) ResolveTrait(name string) (*TypeEnvironment, error) {
-	if _, ok := t.traits[name]; ok {
-		return t, nil
+func (t *TypeEnvironment) ResolveInterface(name string) (Interface, TypeEnvironment, error) {
+	if _, ok := t.interfaces[name]; !ok {
+		return Interface{}, *t, fmt.Errorf("interface '%s' is not defined", name)
 	}
-	if t.parent == nil {
-		return nil, fmt.Errorf("trait '%s' is not defined", name)
-	}
-	return t.parent.ResolveTrait(name)
+	return t.interfaces[name], *t, nil
 }

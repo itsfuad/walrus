@@ -51,7 +51,7 @@ func evaluateArrayAccess(array ast.ArrayIndexAccess, env *TypeEnvironment) Value
 //
 // Returns:
 // - ValueTypeInterface: The type of the array, which includes the data type and the type of the array elements.
-func evaluateArrayExpr(array ast.ArrayExpr, env *TypeEnvironment) ValueTypeInterface {
+func evaluateArrayExpr(array ast.ArrayLiteral, env *TypeEnvironment) ValueTypeInterface {
 	var expectedType ValueTypeInterface
 	for i, value := range array.Values {
 		v := CheckAST(value, env)

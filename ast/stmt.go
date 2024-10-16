@@ -84,7 +84,7 @@ func (a IfStmt) EndPos() lexer.Position {
 }
 
 type ForStmt struct {
-	Start	  Node
+	Start     Node
 	Condition Node
 	Increment Node
 	Block     BlockStmt
@@ -102,7 +102,7 @@ func (a ForStmt) EndPos() lexer.Position {
 }
 
 type ForEachStmt struct {
-	Key 	 Node
+	Key      Node
 	Value    Node
 	Iterable Node
 	Block    BlockStmt
@@ -143,7 +143,7 @@ func (a FunctionParam) EndPos() lexer.Position {
 
 type FunctionDeclStmt struct {
 	Identifier IdentifierExpr
-	FunctionExpr
+	FunctionLiteral
 }
 
 func (a FunctionDeclStmt) INode() {
@@ -175,26 +175,26 @@ func (a ReturnStmt) EndPos() lexer.Position {
 	return a.Location.End
 }
 
-type TraitMethod struct {
+type InterfaceMethod struct {
 	Identifier IdentifierExpr
 	FunctionType
 }
 
-type TraitDeclStmt struct {
-	Trait   IdentifierExpr
-	Methods map[string]TraitMethod
+type InterfaceDeclStmt struct {
+	Interface IdentifierExpr
+	Methods   map[string]InterfaceMethod
 	Location
 }
 
-func (a TraitDeclStmt) INode() {
+func (a InterfaceDeclStmt) INode() {
 	//empty method implements Node interface
 }
 
-func (a TraitDeclStmt) StartPos() lexer.Position {
+func (a InterfaceDeclStmt) StartPos() lexer.Position {
 	return a.Location.Start
 }
 
-func (a TraitDeclStmt) EndPos() lexer.Position {
+func (a InterfaceDeclStmt) EndPos() lexer.Position {
 	return a.Location.End
 }
 
@@ -205,7 +205,6 @@ type ImplMethod struct {
 
 type ImplStmt struct {
 	ImplFor IdentifierExpr
-	Trait   Node
 	Methods map[string]ImplMethod
 	Location
 }

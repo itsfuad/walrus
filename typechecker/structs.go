@@ -10,14 +10,12 @@ func checkStructLiteral(structLit ast.StructLiteral, env *TypeEnvironment) Value
 
 	sName := structLit.Identifier
 	//check if defined
-	scope, err := env.ResolveType(sName.Name)
+	udType, _, err := env.ResolveType(sName.Name)
 	if err != nil {
 		errgen.MakeError(env.filePath, sName.StartPos().Line, sName.EndPos().Line, sName.StartPos().Column, sName.EndPos().Column, err.Error()).Display()
 	}
 
-	udType := scope.types[sName.Name].(UserDefined)
-
-	structType, ok := udType.TypeDef.(Struct)
+	structType, ok := udType.(Struct)
 	if !ok {
 		errgen.MakeError(env.filePath, sName.StartPos().Line, sName.EndPos().Line, sName.StartPos().Column, sName.EndPos().Column, fmt.Sprintf("'%s' is not a struct", sName.Name)).Display()
 	}
@@ -42,14 +40,23 @@ func checkStructLiteral(structLit ast.StructLiteral, env *TypeEnvironment) Value
 		}
 	}
 
-	return Struct{
-		DataType:   STRUCT_TYPE,
-		StructName: sName.Name,
-		Elements:   structType.Elements,
+	return UserDefined{
+		DataType:  	USER_DEFINED_TYPE,
+		TypeDef:   	Struct{
+			DataType:   STRUCT_TYPE,
+			StructName: sName.Name,
+			Elements:   structType.Elements,
+		},
 	}
 }
 
 func checkPropertyAccess(expr ast.StructPropertyAccessExpr, env *TypeEnvironment) ValueTypeInterface {
+
+	fmt.Printf("Checking property access\n")
+	//show both the object and the property
+	fmt.Printf("Object: %v\n", expr.Object)
+	fmt.Printf("Property: %v\n", expr.Property)
+
 	object := CheckAST(expr.Object, env)
 	prop := expr.Property
 
@@ -58,26 +65,21 @@ func checkPropertyAccess(expr ast.StructPropertyAccessExpr, env *TypeEnvironment
 	start := expr.Object.StartPos().Column
 	end := expr.Object.EndPos().Column
 
-	// Ensure the object is a struct
-	val, ok := object.(Struct)
-	if !ok {
-		errgen.MakeError(env.filePath, lineStart, lineEnd, start, end, "not an object").Display()
-		return nil
-	}
-
+	typeName := string(getTypename(object))
 	// Resolve the struct type from the environment
-	scope, err := env.ResolveType(val.StructName)
+	udType, _, err := env.ResolveType(typeName)
 	if err != nil {
 		errgen.MakeError(env.filePath, lineStart, lineEnd, start, end, err.Error()).Display()
 		return nil
 	}
 
+
 	// Get the struct definition
-	structDef := scope.types[val.StructName].(UserDefined).TypeDef.(Struct)
+	structDef := udType.(Struct)
 
 	// First check if the property exists in the struct's elements (fields)
 	if valType, ok := structDef.Elements[prop.Name]; ok {
-		if valType.IsPrivate {
+		if expr.Object.(ast.IdentifierExpr).Name != "self" && valType.IsPrivate {
 			errgen.MakeError(
 				env.filePath, 
 				prop.Start.Line, 
@@ -112,7 +114,7 @@ func checkPropertyAccess(expr ast.StructPropertyAccessExpr, env *TypeEnvironment
 		prop.End.Line, 
 		prop.Start.Column, 
 		prop.End.Column,
-		fmt.Sprintf("property or method '%s' does not exist on type '%s'", prop.Name, val.StructName,
+		fmt.Sprintf("property or method '%s' does not exist on type '%s'", prop.Name, typeName,
 	)).Display()
 
 	return nil

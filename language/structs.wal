@@ -37,35 +37,31 @@ let distance := @Distance{
 
 //distance.max = 9; // error - private prop
 distance.min = 1;
-impl Distance {
-    fn get_max() -> int {
-        print("Max: ", this.max);
-        ret this.max; // check how 'this' is not giving error
+
+interface IShape {
+    fn area() -> float;
+    fn perimeter() -> float;
+};
+
+type Circle struct {
+    radius: float,
+};
+
+type Rectangle struct {
+    width: float,
+    height: float,
+};
+
+impl Circle {
+    fn area() -> float {
+        ret 3.14;
     }
-}
 
-let max := distance.get_max();
-
-/*
-
-trait Drawable {
-    fn draw();
-    fn update();
-}
-
-impl Drawable for Point {
-    fn draw() {
-        //print("Point: x: ", this.x, ", y: ", this.y);
+    fn perimeter() -> float {
+        ret 2 * 3.14;
     }
-}
+};
 
-impl Drawable for Distance {
-    fn draw() {
-        //print("Distance: start: ");
-        this.start.draw();
-        //print(", end: ");
-        this.end.draw();
-        //print(", max: ", this.max, ", min: ", this.min);
-    }
-}
-*/
+type INT int;
+
+let i : INT = 1;

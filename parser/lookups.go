@@ -97,10 +97,10 @@ func bindLookupHandlers() {
 	stmt(lexer.CONST_TOKEN, parseVarDeclStmt)        // constant declaration
 	stmt(lexer.TYPE_TOKEN, parseUserDefinedTypeStmt) // user defined type
 
-	stmt(lexer.IF_TOKEN, parseIfStmt)              // if statement
-	stmt(lexer.FOR_TOKEN, parseForStmt)            // for statement
+	stmt(lexer.IF_TOKEN, parseIfStmt)           // if statement
+	stmt(lexer.FOR_TOKEN, parseForStmt)         // for statement
 	stmt(lexer.FUNCTION, parseFunctionDeclStmt) // function declaration
-	stmt(lexer.RETURN_TOKEN, parseReturnStmt)      // return statement
+	stmt(lexer.RETURN_TOKEN, parseReturnStmt)   // return statement
 
 	//Unary
 	nud(lexer.MINUS_TOKEN, parseUnaryExpr) // unary minus : -a
@@ -113,6 +113,8 @@ func bindLookupHandlers() {
 	led(lexer.PLUS_PLUS_TOKEN, UNARY_BP, parsePostfixExpr)   // a++
 	led(lexer.MINUS_MINUS_TOKEN, UNARY_BP, parsePostfixExpr) // a--
 
-	stmt(lexer.TRAIT, parseTraitDeclStmt)     // trait declaration
-	stmt(lexer.IMPLEMENT_TOKEN, parseImplementStmt) // implement statement
+	//interface keyword
+	nud(lexer.INTERFACE_TOKEN, parseInterfaceStmt)
+	//implement keyword
+	nud(lexer.IMPLEMENT_TOKEN, parseImplementStmt)
 }

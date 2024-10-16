@@ -208,18 +208,18 @@ func (a VarAssignmentExpr) EndPos() lexer.Position {
 	return a.Location.End
 }
 
-type ArrayExpr struct {
+type ArrayLiteral struct {
 	Values []Node
 	Location
 }
 
-func (a ArrayExpr) INode() {
+func (a ArrayLiteral) INode() {
 	//empty method implements Node interface
 }
-func (a ArrayExpr) StartPos() lexer.Position {
+func (a ArrayLiteral) StartPos() lexer.Position {
 	return a.Location.Start
 }
-func (a ArrayExpr) EndPos() lexer.Position {
+func (a ArrayLiteral) EndPos() lexer.Position {
 	return a.Location.End
 }
 
@@ -287,21 +287,21 @@ func (a FunctionCallExpr) EndPos() lexer.Position {
 	return a.Location.End
 }
 
-type FunctionExpr struct {
+type FunctionLiteral struct {
 	Params     []FunctionParam
 	Body       BlockStmt
 	ReturnType DataType
 	Location
 }
 
-func (a FunctionExpr) INode() {
+func (a FunctionLiteral) INode() {
 	//empty method implements Node interface
 }
 
-func (a FunctionExpr) StartPos() lexer.Position {
+func (a FunctionLiteral) StartPos() lexer.Position {
 	return a.Location.Start
 }
 
-func (a FunctionExpr) EndPos() lexer.Position {
+func (a FunctionLiteral) EndPos() lexer.Position {
 	return a.Location.End
 }

@@ -46,7 +46,7 @@ func checkVariableAssignment(node ast.VarAssignmentExpr, env *TypeEnvironment) V
 	}
 	scope.variables[varName] = provided
 
-	fmt.Printf("Assigned variable %s of type %s\n", varName, provided.DType())
+	fmt.Printf("Assigned variable %s of type %T\n", varName, provided)
 
 	return provided
 }
@@ -61,7 +61,7 @@ func checkVariableDeclaration(node ast.VarDeclStmt, env *TypeEnvironment) ValueT
 		expectedTypeInterface = handleExplicitType(node.ExplicitType, env)
 	} else {
 		typ := CheckAST(node.Value, env)
-		fmt.Printf("Auto detected type %s\n", typ.DType())
+		fmt.Printf("Auto detected type %T, %s\n", typ, typ.DType())
 		expectedTypeInterface = typ
 	}
 

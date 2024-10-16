@@ -52,23 +52,23 @@ func CheckAST(node ast.Node, env *TypeEnvironment) ValueTypeInterface {
 		return checkUnaryExpr(t, env)
 	case ast.IncrementalInterface:
 		return checkIncrementalExpr(t, env)
-	case ast.ArrayExpr:
+	case ast.ArrayLiteral:
 		return evaluateArrayExpr(t, env)
 	case ast.ArrayIndexAccess:
 		return evaluateArrayAccess(t, env)
 	case ast.TypeDeclStmt:
 		return checkTypeDeclaration(t, env)
+	case ast.InterfaceDeclStmt:
+		return checkInterfaceDeclaration(t, env)
+	case ast.ImplStmt:
+		return checkImplStmt(t, env)
 	case ast.StructLiteral:
 		return checkStructLiteral(t, env)
 	case ast.StructPropertyAccessExpr:
 		return checkPropertyAccess(t, env)
-	case ast.TraitDeclStmt:
-		return checkTraitDeclaration(t, env)
-	case ast.ImplStmt:
-		return checkImplStmt(t, env)
 	case ast.FunctionDeclStmt:
 		return checkFunctionDeclStmt(t, env)
-	case ast.FunctionExpr:
+	case ast.FunctionLiteral:
 		return checkFunctionExpr(t, env)
 	case ast.FunctionCallExpr:
 		return checkFunctionCall(t, env)

@@ -6,12 +6,12 @@ import (
 	"walrus/errgen"
 )
 
-func checkFunctionExpr(funcNode ast.FunctionExpr, env *TypeEnvironment) ValueTypeInterface {
+func checkFunctionExpr(funcNode ast.FunctionLiteral, env *TypeEnvironment) ValueTypeInterface {
 	name := fmt.Sprintf("_FN_%s", RandStringRunes(10))
-	return analyzeFuntion(funcNode, name, env)
+	return AnalyzeFuntion(funcNode, name, env)
 }
 
-func analyzeFuntion(funcNode ast.FunctionExpr, name string, env *TypeEnvironment) Fn {
+func AnalyzeFuntion(funcNode ast.FunctionLiteral, name string, env *TypeEnvironment) Fn {
 
 	fnEnv := NewTypeENV(env, FUNCTION_SCOPE, name, env.filePath)
 
@@ -28,7 +28,10 @@ func analyzeFuntion(funcNode ast.FunctionExpr, name string, env *TypeEnvironment
 	}
 
 	//declare the function
-	env.DeclareVar(name, fn, true, false)
+	err := env.DeclareVar(name, fn, true, false)
+	if err != nil {
+		errgen.MakeError(env.filePath, funcNode.Start.Line, funcNode.End.Line, funcNode.Start.Column, funcNode.End.Column, err.Error()).Display()
+	}
 
 	//check the function body
 	for _, stmt := range funcNode.Body.Contents {
@@ -56,7 +59,12 @@ func checkParamaters(params []ast.FunctionParam, fnEnv *TypeEnvironment) []FnPar
 			MatchTypes(paramType, defaultValue, fnEnv.filePath, param.DefaultValue.StartPos().Line, param.DefaultValue.EndPos().Line, param.DefaultValue.StartPos().Column, param.DefaultValue.EndPos().Column)
 		}
 
-		fnEnv.DeclareVar(param.Identifier.Name, paramType, false, param.IsOptional)
+		err := fnEnv.DeclareVar(param.Identifier.Name, paramType, false, param.IsOptional)
+		if err != nil {
+			errgen.MakeError(fnEnv.filePath, param.Identifier.Start.Line, param.Identifier.End.Line, param.Identifier.Start.Column, param.Identifier.End.Column, err.Error()).Display()
+		}
+
+		fmt.Printf("Declared parameter %s of type %s\n", param.Identifier.Name, paramType.DType())
 
 		parameters = append(parameters, FnParam{
 			Name:       param.Identifier.Name,
@@ -125,7 +133,7 @@ func checkFunctionDeclStmt(funcNode ast.FunctionDeclStmt, env *TypeEnvironment) 
 		errgen.MakeError(env.filePath, funcNode.Identifier.Start.Line, funcNode.Identifier.End.Line, funcNode.Identifier.Start.Column, funcNode.Identifier.End.Column, fmt.Sprintf("Function %s is already declared", funcName)).Display()
 	}
 
-	return analyzeFuntion(funcNode.FunctionExpr, funcName, env)
+	return AnalyzeFuntion(funcNode.FunctionLiteral, funcName, env)
 }
 
 func getFunctionReturnValue(env *TypeEnvironment, returnNode ast.Node) ValueTypeInterface {

@@ -57,14 +57,14 @@ func makeTypesInterface(typ VALUE_TYPE, env *TypeEnvironment) (ValueTypeInterfac
 		}, nil
 	default:
 		//search for the type
-		e, err := env.ResolveType(string(typ))
+		udType, _, err := env.ResolveType(string(typ))
 		if err != nil {
 			return nil, err
 		}
 
 		return UserDefined{
-			DataType: typ,
-			TypeDef:  e.types[string(typ)],
+			DataType: 	typ,
+			TypeDef: 	udType,
 		}, nil
 	}
 }

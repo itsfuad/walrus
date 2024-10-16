@@ -27,7 +27,7 @@ A tiny simple programming language made for simplicity. It borrows syntax from '
             - [x] Property access
             - [x] Property assignment
             - [x] Private property deny access
-            - [x] Implement for struct
+            - [ ] Implement for struct
         - [x] Builtins (int, float, bool, string)
         - [x] Function
     - [x] [Increment/Decrement](#incrementdecrement)
@@ -43,12 +43,12 @@ A tiny simple programming language made for simplicity. It borrows syntax from '
         - [x] for [condition]
         - [x] for [start] [condition] [end]
         - [x] for [start] in [range] 
-    - [x] [Traits](#traits)
-        - [x] Implement
+    - [x] [Interaface](#interface)
     - [ ] Generics
 - [x] Analyzer
     - [x] Everything in parser except - 
         - [ ] For loop
+        - [ ] Interface
         - [ ] Implement
 - [ ] Codegen
 
@@ -220,50 +220,18 @@ for let i := 0; i < 10; i++ {
 }
 ```
 
-## Traits
-Traits are shared behavior that can be implemented by different types. Traits are similar to interfaces in other languages.
+## Interface
+Interfaces are a way to define a contract that a type must implement. It is a way to achieve polymorphism in the language.
 ```rust
-
-type Circle struct {
-    radius: float;
-}
-
-type Square struct {
-    side: float;
-}
-
-trait Shape {
+interface Shape {
     fn area() -> float;
 }
 
-impl Shape for Circle {
-    fn area() -> float {
-        return 3.14 * this.radius * this.radius;
-    }
-}
-
-impl Shape for Square {
-    fn area() -> float {
-        return this.side * this.side;
-    }
-}
-
-let c := @Circle {
-    radius: 10.0
-};
-
-let s := @Square {
-    side: 10.0
-};
-
-print(c.area()); // 314.0
-print(s.area()); // 100.0
-
 ```
 
-## Implementing a trait for a struct
+## Implementing a interface for a struct
 ```rust
-trait Printable {
+interface Printable {
     fn print();
 }
 
@@ -272,7 +240,7 @@ type Person struct {
     age: int;
 }
 
-impl Printable for Person {
+impl Person {
     fn print() {
         print("Name: ", this.name, " Age: ", this.age);
     }
@@ -283,14 +251,8 @@ let p := @Person {
     age: 20
 };
 
-p.print(); // Name: John Age: 20
-
-// Implementing a trait for a struct
-impl Person {
-    fn greet() {
-        print("Hello, ", this.name);
-    }
+fn printPerson(p: Printable) {
+    p.print();
 }
 
-p.greet(); // Hello, John
 ```

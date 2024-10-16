@@ -235,14 +235,14 @@ func parseForStmt(p *Parser) ast.Node {
 			p.advance() // eat the in token
 			// value of the identifier
 			value := parseExpr(p, ASSIGNMENT_BP)
-			
+
 			block := parseBlock(p)
 
 			return ast.ForEachStmt{
-				Key:  nil,
-				Value: idententifierExpr,
+				Key:      nil,
+				Value:    idententifierExpr,
 				Iterable: value,
-				Block: block,
+				Block:    block,
 				Location: ast.Location{
 					Start: start,
 					End:   block.End,
@@ -269,10 +269,10 @@ func parseForStmt(p *Parser) ast.Node {
 			block := parseBlock(p)
 
 			return ast.ForEachStmt{
-				Key:  key,
-				Value: value,
+				Key:      key,
+				Value:    value,
 				Iterable: iterable,
-				Block: block,
+				Block:    block,
 				Location: ast.Location{
 					Start: start,
 					End:   block.End,
@@ -374,7 +374,7 @@ func parseLambdaFunction(p *Parser) ast.Node {
 
 	block := parseBlock(p)
 
-	return ast.FunctionExpr{
+	return ast.FunctionLiteral{
 		Params:     params,
 		ReturnType: returnType,
 		Body:       block,
@@ -417,7 +417,7 @@ func parseFunctionDeclStmt(p *Parser) ast.Node {
 				End:   nameToken.End,
 			},
 		},
-		FunctionExpr: ast.FunctionExpr{
+		FunctionLiteral: ast.FunctionLiteral{
 			Params:     params,
 			ReturnType: returnType,
 			Body:       block,
@@ -536,110 +536,14 @@ func parseReturnStmt(p *Parser) ast.Node {
 	}
 }
 
-// parseImplementStmt parses an implementation statement in the source code.
-// The syntax for the implementation statement can be one of the following:
-// - impl A, B, C for T { ... }
-// - impl A for T { ... }
-// - impl T { ... }
-//
-// It expects the parser to be positioned at the start of the 'impl' keyword.
-//
-// Parameters:
-// - p: A pointer to the Parser instance.
-//
-// Returns:
-// - An ast.Node representing the parsed implementation statement.
-func parseImplementStmt(p *Parser) ast.Node {
+func parseInterfaceStmt(p *Parser) ast.Node {
+	start := p.advance().Start // eat impl token
 
-	start := p.advance().Start // eat implement token
-
-	// syntax: impl A, B, C for T { ... } or impl A for T { ... } or impl T { ... }
-	var implFor ast.IdentifierExpr
-	var trait ast.Node
-
-	//parse the trait
-	implForIdentifier := p.expect(lexer.IDENTIFIER_TOKEN)
-	implFor = ast.IdentifierExpr{
-		Name: implForIdentifier.Value,
-		Location: ast.Location{
-			Start: implForIdentifier.Start,
-			End:   implForIdentifier.End,
-		},
-	}
-
-	if p.currentTokenKind() != lexer.OPEN_CURLY {
-		p.expect(lexer.FOR_TOKEN)
-		identifier := p.expect(lexer.IDENTIFIER_TOKEN)
-		trait = implFor
-		implFor = ast.IdentifierExpr{
-			Name: identifier.Value,
-			Location: ast.Location{
-				Start: identifier.Start,
-				End:   identifier.End,
-			},
-		}
-	}
-
-	//parse the type
-	p.expect(lexer.OPEN_CURLY)
-
-	methods := make(map[string]ast.ImplMethod, 0)
-
-	for p.hasToken() && p.currentTokenKind() != lexer.CLOSE_CURLY {
-		isPrivate := false
-
-		if p.currentTokenKind() == lexer.PRIVATE_TOKEN {
-			if trait != nil {
-				errgen.MakeError(p.FilePath, p.currentToken().Start.Line, p.currentToken().End.Line, p.currentToken().Start.Column, p.currentToken().End.Column, "trait methods cannot be private").Display()
-			}
-			isPrivate = true
-			p.advance()
-		}
-
-		method := parseFunctionDeclStmt(p).(ast.FunctionDeclStmt)
-		methods[method.Identifier.Name] = ast.ImplMethod{
-			FunctionDeclStmt: method,
-			IsPrivate: isPrivate,
-		}
-	}
-
-	end := p.expect(lexer.CLOSE_CURLY).End
-
-	return ast.ImplStmt{
-		ImplFor: implFor,
-		Trait:   trait,
-		Methods: methods,
-		Location: ast.Location{
-			Start: start,
-			End:   end,
-		},
-	}
-}
-
-// parseTraitDeclStmt parses a trait declaration statement from the provided parser.
-// It expects the following structure:
-//
-//	trait <identifier> {
-//	    function <method_name>(<parameters>) -> <return_type>;
-//	    ...
-//	}
-//
-// The function returns an ast.Node representing the trait declaration statement.
-//
-// Parameters:
-// - p: A pointer to the Parser instance.
-//
-// Returns:
-// - ast.Node: The parsed trait declaration statement node.
-func parseTraitDeclStmt(p *Parser) ast.Node {
-
-	start := p.advance().Start // eat trait token
-
-	trait := p.expect(lexer.IDENTIFIER_TOKEN)
+	interfaceName := p.expect(lexer.IDENTIFIER_TOKEN)
 
 	p.expect(lexer.OPEN_CURLY)
 
-	methods := make(map[string]ast.TraitMethod)
+	methods := make(map[string]ast.InterfaceMethod)
 
 	for p.hasToken() && p.currentTokenKind() != lexer.CLOSE_CURLY {
 
@@ -658,7 +562,7 @@ func parseTraitDeclStmt(p *Parser) ast.Node {
 			errgen.MakeError(p.FilePath, name.Start.Line, name.End.Line, name.Start.Column, name.End.Column, msg).Display()
 		}
 
-		methods[name.Value] = ast.TraitMethod{
+		methods[name.Value] = ast.InterfaceMethod{
 			Identifier: ast.IdentifierExpr{
 				Name: name.Value,
 				Location: ast.Location{
@@ -684,12 +588,82 @@ func parseTraitDeclStmt(p *Parser) ast.Node {
 
 	end := p.expect(lexer.CLOSE_CURLY).End
 
-	return ast.TraitDeclStmt{
-		Trait: ast.IdentifierExpr{
-			Name: trait.Value,
+	return ast.InterfaceDeclStmt{
+		Interface: ast.IdentifierExpr{
+			Name: interfaceName.Value,
 			Location: ast.Location{
-				Start: trait.Start,
-				End:   trait.End,
+				Start: interfaceName.Start,
+				End:   interfaceName.End,
+			},
+		},
+		Methods: methods,
+		Location: ast.Location{
+			Start: start,
+			End:   end,
+		},
+	}
+}
+
+func parseImplementStmt(p *Parser) ast.Node {
+
+	start := p.advance().Start // eat impl token
+
+	typeName := p.expect(lexer.IDENTIFIER_TOKEN)
+
+	p.expect(lexer.OPEN_CURLY)
+
+	methods := make(map[string]ast.ImplMethod)
+
+	for p.hasToken() && p.currentTokenKind() != lexer.CLOSE_CURLY {
+
+		IsPrivate := false
+
+		if p.currentTokenKind() == lexer.PRIVATE_TOKEN {
+			IsPrivate = true
+			p.advance()
+		}	
+
+		p.expect(lexer.FUNCTION)
+
+		fnName := p.expect(lexer.IDENTIFIER_TOKEN)
+
+		params, ret := parseFunctionSignature(p)	
+
+		body := parseBlock(p)
+		
+		method := ast.ImplMethod{
+			IsPrivate: IsPrivate,
+			FunctionDeclStmt: ast.FunctionDeclStmt{
+				Identifier: ast.IdentifierExpr{
+					Name: fnName.Value,
+					Location: ast.Location{
+						Start: fnName.Start,
+						End:   fnName.End,
+					},
+				},
+				FunctionLiteral: ast.FunctionLiteral{
+					Params:    params,
+					ReturnType: ret,
+					Body: 	   body,
+					Location: ast.Location{
+						Start: fnName.Start,
+						End:   body.End,
+					},
+				},
+			},
+		}
+
+		methods[fnName.Value] = method
+	}
+
+	end := p.expect(lexer.CLOSE_CURLY).End
+
+	return ast.ImplStmt{
+		ImplFor: ast.IdentifierExpr{
+			Name: typeName.Value,
+			Location: ast.Location{
+				Start: typeName.Start,
+				End:   typeName.End,
 			},
 		},
 		Methods: methods,

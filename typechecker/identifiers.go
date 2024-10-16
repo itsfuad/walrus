@@ -17,6 +17,6 @@ func checkIdentifier(node ast.IdentifierExpr, env *TypeEnvironment) ValueTypeInt
 	if val, ok := scope.variables[name]; ok {
 		return val
 	}
-	errgen.MakeError(env.filePath, node.StartPos().Line, node.EndPos().Line, node.StartPos().Column, node.EndPos().Column, "failed to check type").Display()
+	errgen.MakeError(env.filePath, node.StartPos().Line, node.EndPos().Line, node.StartPos().Column, node.EndPos().Column, "failed to check type. not found in environment").Display()
 	return nil
 }

@@ -192,7 +192,7 @@ func parseArrayExpr(p *Parser) ast.Node {
 
 	end := p.expect(lexer.CLOSE_BRACKET).End
 
-	return ast.ArrayExpr{
+	return ast.ArrayLiteral{
 		Values: values,
 		Location: ast.Location{
 			Start: start,
