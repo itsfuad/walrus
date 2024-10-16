@@ -87,7 +87,7 @@ func TestResolveType(t *testing.T) {
 	structType := Struct{DataType: STRUCT_TYPE, StructName: "MyStruct"}
 	env.DeclareType("MyStruct", structType)
 
-	_, scope, err := env.ResolveType("MyStruct")
+	scope, err := env.ResolveType("MyStruct")
 	if err != nil {
 		t.Fatalf(EXPECTED_NO_ERROR, err)
 	}
@@ -96,7 +96,7 @@ func TestResolveType(t *testing.T) {
 		t.Errorf("Expected scope to be the same as env")
 	}
 
-	_, _, err = env.ResolveType("UnknownType")
+	_, err = env.ResolveType("UnknownType")
 	if err == nil {
 		t.Fatalf("EXPECTED_ERROR")
 	}

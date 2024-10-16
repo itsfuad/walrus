@@ -37,7 +37,7 @@ func checkTypeDeclaration(node ast.TypeDeclStmt, env *TypeEnvironment) ValueType
 		val = typ
 	}
 
-	typeVal := UserDefined {
+	typeVal := UserDefined{
 		DataType: USER_DEFINED_TYPE,
 		TypeDef:  val,
 	}
@@ -77,13 +77,19 @@ func checkFunctionSignature(name string, method ast.FunctionType, env *TypeEnvir
 
 func checkImplStmt(implStmt ast.ImplStmt, env *TypeEnvironment) ValueTypeInterface {
 	// Resolve the type to implement
-	udType, _, err := env.ResolveType(implStmt.ImplFor.Name)
+	env, err := env.ResolveType(implStmt.ImplFor.Name)
 	if err != nil {
 		errgen.MakeError(env.filePath, implStmt.Start.Line, implStmt.End.Line, implStmt.Start.Column, implStmt.End.Column, err.Error()).Display()
 		return nil
 	}
 
-	implForType := udType.(Struct)
+	// type must be a struct
+	if env.types[implStmt.ImplFor.Name].(UserDefined).TypeDef.DType() != STRUCT_TYPE {
+		errgen.MakeError(env.filePath, implStmt.Start.Line, implStmt.End.Line, implStmt.Start.Column, implStmt.End.Column, "can only implement for structs").Display()
+		return nil
+	}
+
+	implForType := env.types[implStmt.ImplFor.Name].(UserDefined).TypeDef.(Struct)
 
 	fmt.Printf("Implementing for type %s\n", getTypename(implForType))
 
@@ -104,7 +110,10 @@ func checkImplStmt(implStmt ast.ImplStmt, env *TypeEnvironment) ValueTypeInterfa
 	}
 
 	//update the struct in the environment
-	env.types[implStmt.ImplFor.Name] = implForType
+	env.types[implStmt.ImplFor.Name] = UserDefined{
+		DataType: USER_DEFINED_TYPE,
+		TypeDef:  implForType,
+	}
 
 	return implForType
 }

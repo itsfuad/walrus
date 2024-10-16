@@ -246,25 +246,26 @@ func (t *TypeEnvironment) ResolveVar(name string) (*TypeEnvironment, error) {
 	return t.parent.ResolveVar(name)
 }
 
-func (t *TypeEnvironment) ResolveType(name string) (ValueTypeInterface, *TypeEnvironment, error) {
+func (t *TypeEnvironment) ResolveType(name string) (*TypeEnvironment, error) {
 	if _, ok := t.types[name]; ok {
-		return t.types[name].(UserDefined).TypeDef, t, nil
+		return t, nil
 	}
 	if t.parent == nil {
-		return nil, nil, fmt.Errorf("'%s' is not declared", name)
+		return nil, fmt.Errorf("'%s' is not declared", name)
 	}
 	return t.parent.ResolveType(name)
 }
 
 func (t *TypeEnvironment) ResolveStruct(name string) (Struct, error) {
-	value, _, err := t.ResolveType(name)
+	env, err := t.ResolveType(name)
 	if err != nil {
 		return Struct{}, err
 	}
-	if _, ok := value.(Struct); !ok {
+	if val, ok := env.types[name].(UserDefined).TypeDef.(Struct); !ok {
 		return Struct{}, fmt.Errorf("'%s' is not a struct", name)
+	} else {
+		return val, nil
 	}
-	return value.(Struct), nil
 }
 
 func (t *TypeEnvironment) DeclareVar(name string, typeVar ValueTypeInterface, isConst bool, isOptional bool) error {
@@ -281,7 +282,7 @@ func (t *TypeEnvironment) DeclareVar(name string, typeVar ValueTypeInterface, is
 }
 
 func (t *TypeEnvironment) DeclareType(name string, typeType ValueTypeInterface) error {
-	if _, scope, err := t.ResolveType(name); err == nil && scope == t {
+	if scope, err := t.ResolveType(name); err == nil && scope == t {
 		return err
 	}
 	t.types[name] = typeType

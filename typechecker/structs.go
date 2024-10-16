@@ -10,12 +10,12 @@ func checkStructLiteral(structLit ast.StructLiteral, env *TypeEnvironment) Value
 
 	sName := structLit.Identifier
 	//check if defined
-	udType, _, err := env.ResolveType(sName.Name)
+	env, err := env.ResolveType(sName.Name)
 	if err != nil {
 		errgen.MakeError(env.filePath, sName.StartPos().Line, sName.EndPos().Line, sName.StartPos().Column, sName.EndPos().Column, err.Error()).Display()
 	}
 
-	structType, ok := udType.(Struct)
+	structType, ok := env.types[sName.Name].(UserDefined).TypeDef.(Struct)
 	if !ok {
 		errgen.MakeError(env.filePath, sName.StartPos().Line, sName.EndPos().Line, sName.StartPos().Column, sName.EndPos().Column, fmt.Sprintf("'%s' is not a struct", sName.Name)).Display()
 	}
@@ -67,7 +67,7 @@ func checkPropertyAccess(expr ast.StructPropertyAccessExpr, env *TypeEnvironment
 
 	typeName := string(getTypename(object))
 	// Resolve the struct type from the environment
-	udType, _, err := env.ResolveType(typeName)
+	env, err := env.ResolveType(typeName)
 	if err != nil {
 		errgen.MakeError(env.filePath, lineStart, lineEnd, start, end, err.Error()).Display()
 		return nil
@@ -75,7 +75,7 @@ func checkPropertyAccess(expr ast.StructPropertyAccessExpr, env *TypeEnvironment
 
 
 	// Get the struct definition
-	structDef := udType.(Struct)
+	structDef := env.types[typeName].(UserDefined).TypeDef.(Struct)
 
 	// First check if the property exists in the struct's elements (fields)
 	if valType, ok := structDef.Elements[prop.Name]; ok {

@@ -65,3 +65,7 @@ impl Circle {
 type INT int;
 
 let i : INT = 1;
+
+let circle := @Circle{ radius: 10.0 };
+
+let area := circle.area();
