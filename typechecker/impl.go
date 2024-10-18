@@ -17,8 +17,6 @@ func checkMethodsImplementations(expected, provided ValueTypeInterface, filePath
 		errgen.MakeError(filePath, lineStart, lineEnd, colStart, colEnd, "type must be a struct").Display()
 	}
 
-	fmt.Printf("All methods: %v\n", structType.Methods)
-
 	for name, method := range expectedMethods {
 		//check if the method is implemented
 		if _, ok := structType.Methods[name]; !ok {

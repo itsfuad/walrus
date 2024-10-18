@@ -27,9 +27,13 @@ A tiny simple programming language made for simplicity. It borrows syntax from '
             - [x] Property access
             - [x] Property assignment
             - [x] Private property deny access
-            - [ ] Implement for struct
+            - [x] Implement for struct
         - [x] Builtins (int, float, bool, string)
         - [x] Function
+        - [ ] Interface
+            - [x] Define
+            - [x] Implement
+            - [ ] Use 
     - [x] [Increment/Decrement](#incrementdecrement)
         - [x] Prefix
         - [x] Postfix

@@ -71,14 +71,13 @@ func checkPropertyAccess(expr ast.StructPropertyAccessExpr, env *TypeEnvironment
 	typeName := string(valueTypeInterfaceToString(object))
 	// Resolve the struct type from the environment
 	fmt.Printf("Resolving type %s\n", typeName)
+
 	structEnv, err := env.ResolveType(typeName)
 	if err != nil {
 		errgen.MakeError(env.filePath, lineStart, lineEnd, start, end, err.Error()).Display()
-		return nil
 	}
 
-	// Get the struct definition
-	structDef := structEnv.types[typeName].(UserDefined).TypeDef.(Struct)
+	structDef := object.(Struct)
 
 	// First check if the property exists in the struct's elements (fields)
 	if valType, ok := structDef.Elements[prop.Name]; ok {
