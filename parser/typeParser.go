@@ -20,7 +20,7 @@ func typeNUD(kind lexer.TOKEN_KIND, handler typeNUDHandler) {
 }
 
 func bindTypeLookups() {
-	typeNUD(lexer.IDENTIFIER_TOKEN, parseBuiltinType)
+	typeNUD(lexer.IDENTIFIER_TOKEN, parseDataType)
 	typeNUD(lexer.OPEN_BRACKET, parseArrayType)
 	typeNUD(lexer.FUNCTION, parseFunctionType)
 }
@@ -117,7 +117,7 @@ func getFunctionTypeSignature(p *Parser) (ast.DATA_TYPE, []ast.FunctionTypeParam
 // Parses the builtin types like int, float, bool, char, str, null.
 // If the type is not a builtin type, then it is a user defined type
 // Type must be a single token identifier
-func parseBuiltinType(p *Parser) ast.DataType {
+func parseDataType(p *Parser) ast.DataType {
 
 	identifier := p.advance()
 
@@ -264,6 +264,8 @@ func parseUDTType(p *Parser) ast.DataType {
 	switch v := p.currentToken().Value; lexer.TOKEN_KIND(v) {
 	case builtins.STRUCT:
 		return parseStructType(p)
+	case builtins.INTERFACE:
+		return parseInterfaceType(p)
 	default:
 		return parseType(p, DEFAULT_BP)
 	}
@@ -289,7 +291,7 @@ func parseUDTType(p *Parser) ast.DataType {
 // - If the struct is empty, an error is generated and displayed.
 func parseStructType(p *Parser) ast.DataType {
 
-	identifier := p.advance()
+	identifier := p.advance() // eat struct token
 
 	props := make(map[string]ast.StructPropType)
 
@@ -348,5 +350,67 @@ func parseStructType(p *Parser) ast.DataType {
 		TypeName:   ast.DATA_TYPE(builtins.STRUCT),
 		Properties: props,
 		Location:   loc,
+	}
+}
+
+
+func parseInterfaceType(p *Parser) ast.DataType {
+
+	start := p.advance().Start // eat interface token
+
+	p.expect(lexer.OPEN_CURLY)
+
+	methods := make(map[string]ast.InterfaceMethod)
+
+	for p.hasToken() && p.currentTokenKind() != lexer.CLOSE_CURLY {
+
+		start := p.expect(lexer.FUNCTION).Start
+
+		if p.currentTokenKind() != lexer.IDENTIFIER_TOKEN {
+			errgen.MakeError(p.FilePath, p.currentToken().Start.Line, p.currentToken().End.Line, p.currentToken().Start.Column, p.currentToken().End.Column, "expected method name").Display()
+		}
+
+		name := p.expect(lexer.IDENTIFIER_TOKEN)
+
+		dataType, params, returnType := getFunctionTypeSignature(p)
+
+		if _, ok := methods[name.Value]; ok {
+			msg := fmt.Sprintf("method %s already defined", name.Value)
+			errgen.MakeError(p.FilePath, name.Start.Line, name.End.Line, name.Start.Column, name.End.Column, msg).Display()
+		}
+
+		methods[name.Value] = ast.InterfaceMethod{
+			Identifier: ast.IdentifierExpr{
+				Name: name.Value,
+				Location: ast.Location{
+					Start: name.Start,
+					End:   name.End,
+				},
+			},
+			FunctionType: ast.FunctionType{
+				TypeName:   dataType,
+				Parameters: params,
+				ReturnType: returnType,
+				Location: ast.Location{
+					Start: start,
+					End:   returnType.EndPos(),
+				},
+			},
+		}
+
+		if p.currentTokenKind() != lexer.CLOSE_CURLY {
+			p.expect(lexer.SEMI_COLON_TOKEN)
+		}
+	}
+
+	end := p.expect(lexer.CLOSE_CURLY).End
+
+	return ast.InterfaceType{
+		TypeName: ast.DATA_TYPE(builtins.INTERFACE),
+		Methods: methods,
+		Location: ast.Location{
+			Start: start,
+			End:   end,
+		},
 	}
 }

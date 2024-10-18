@@ -14,7 +14,7 @@ func checkConditionBlock(block ast.BlockStmt, env *TypeEnvironment) ValueTypeInt
 
 func checkIfStmt(ifNode ast.IfStmt, env *TypeEnvironment) ValueTypeInterface {
 	//condition
-	cond := CheckAST(ifNode.Condition, env)
+	cond := GetValueType(ifNode.Condition, env)
 	if cond.DType() != BOOLEAN_TYPE {
 		errgen.MakeError(env.filePath, ifNode.Condition.StartPos().Line, ifNode.Condition.EndPos().Line, ifNode.Condition.StartPos().Column, ifNode.Condition.EndPos().Column, "Condition must be a boolean expression").Display()
 	}

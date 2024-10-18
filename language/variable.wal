@@ -26,3 +26,7 @@ b--;
 
 let something: int;
 something = 5;
+
+type TwoDArray [][]int;
+
+let twoDArray : TwoDArray = [[1, 2], [3, 4]];

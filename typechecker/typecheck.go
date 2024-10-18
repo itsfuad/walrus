@@ -15,6 +15,9 @@ func EvaluateProgram(program ast.ProgramStmt, env *TypeEnvironment) ValueTypeInt
 
 	utils.ColorPrint(utils.GREEN, "--------- passed ---------")
 
+	//print the file path
+	utils.ColorPrint(utils.ORANGE, fmt.Sprintf("File path: %s", env.filePath))
+
 	return Void{
 		DataType: VOID_TYPE,
 	}
@@ -58,8 +61,6 @@ func CheckAST(node ast.Node, env *TypeEnvironment) ValueTypeInterface {
 		return evaluateArrayAccess(t, env)
 	case ast.TypeDeclStmt:
 		return checkTypeDeclaration(t, env)
-	case ast.InterfaceDeclStmt:
-		return checkInterfaceDeclaration(t, env)
 	case ast.ImplStmt:
 		return checkImplStmt(t, env)
 	case ast.StructLiteral:

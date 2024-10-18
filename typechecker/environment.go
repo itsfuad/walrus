@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"walrus/ast"
 	"walrus/builtins"
+	"walrus/errgen"
 )
 
 type VALUE_TYPE string
@@ -150,6 +151,7 @@ func (t Array) DType() VALUE_TYPE {
 
 type UserDefined struct {
 	DataType VALUE_TYPE
+	TypeName string
 	TypeDef  ValueTypeInterface
 }
 
@@ -202,12 +204,24 @@ type TypeEnvironment struct {
 	variables  map[string]ValueTypeInterface
 	constants  map[string]bool
 	isOptional map[string]bool
+	builtins   map[string]ValueTypeInterface
 	types      map[string]ValueTypeInterface
 	interfaces map[string]Interface
 	filePath   string
 }
 
 func NewTypeENV(parent *TypeEnvironment, scope SCOPE_TYPE, scopeName string, filePath string) *TypeEnvironment {
+
+	builtins := map[string]ValueTypeInterface{
+		string(INT_TYPE):    Int{DataType: INT_TYPE},
+		string(FLOAT_TYPE):  Float{DataType: FLOAT_TYPE},
+		string(CHAR_TYPE):   Chr{DataType: CHAR_TYPE},
+		string(STRING_TYPE): Str{DataType: STRING_TYPE},
+		string(BOOLEAN_TYPE): Bool{DataType: BOOLEAN_TYPE},
+		string(NULL_TYPE):   Null{DataType: NULL_TYPE},
+		string(VOID_TYPE):   Void{DataType: VOID_TYPE},
+	}
+
 	return &TypeEnvironment{
 		parent:     parent,
 		scopeType:  scope,
@@ -216,7 +230,8 @@ func NewTypeENV(parent *TypeEnvironment, scope SCOPE_TYPE, scopeName string, fil
 		variables:  make(map[string]ValueTypeInterface),
 		constants:  make(map[string]bool),
 		isOptional: make(map[string]bool),
-		types:      make(map[string]ValueTypeInterface),
+		builtins:   builtins,
+		types:  	make(map[string]ValueTypeInterface),
 		interfaces: make(map[string]Interface),
 	}
 }
@@ -251,21 +266,19 @@ func (t *TypeEnvironment) ResolveType(name string) (*TypeEnvironment, error) {
 		return t, nil
 	}
 	if t.parent == nil {
-		return nil, fmt.Errorf("'%s' is not declared", name)
+		return nil, fmt.Errorf("type '%s' is not declared in this scope", name)
 	}
 	return t.parent.ResolveType(name)
 }
 
-func (t *TypeEnvironment) ResolveStruct(name string) (Struct, error) {
-	env, err := t.ResolveType(name)
-	if err != nil {
-		return Struct{}, err
+func (t *TypeEnvironment) GetTypeFromEnv(name string) (ValueTypeInterface, error) {
+	if _, ok := t.builtins[name]; ok {
+		return t.builtins[name], nil
 	}
-	if val, ok := env.types[name].(UserDefined).TypeDef.(Struct); !ok {
-		return Struct{}, fmt.Errorf("'%s' is not a struct", name)
-	} else {
-		return val, nil
+	if _, ok := t.types[name]; ok {
+		return t.types[name].(UserDefined).TypeDef, nil
 	}
+	return nil, fmt.Errorf("'%s' is not declared in this scope", name)
 }
 
 func (t *TypeEnvironment) DeclareVar(name string, typeVar ValueTypeInterface, isConst bool, isOptional bool) error {
@@ -297,28 +310,30 @@ func (t *TypeEnvironment) isDeclared(name string) bool {
 	return false
 }
 
-func (t *TypeEnvironment) DeclareInterface(name string, interfaceType Interface) error {
+func GetValueType(value ast.Node, t *TypeEnvironment) ValueTypeInterface {
 
-	//should be declared only on the global scope and once
-	if t.scopeType != GLOBAL_SCOPE {
-		return fmt.Errorf("interface '%s' should be declared in the global scope", name)
+	typ := CheckAST(value, t)
+
+	typ, err := getValueTypeInterface(typ, t)
+	if err != nil {
+		errgen.MakeError(t.filePath, value.StartPos().Line, value.EndPos().Line, value.StartPos().Column, value.EndPos().Column, err.Error()).Display()
+		return nil
 	}
 
-	// if it is already declared
-	if _, ok := t.interfaces[name]; ok {
-		return fmt.Errorf("interface '%s' is already declared", name)
-	}
-
-	t.interfaces[name] = interfaceType
-
-	fmt.Printf("Declared interface %s\n", name)
-
-	return nil
+	return typ
 }
 
-func (t *TypeEnvironment) ResolveInterface(name string) (Interface, TypeEnvironment, error) {
-	if _, ok := t.interfaces[name]; !ok {
-		return Interface{}, *t, fmt.Errorf("interface '%s' is not defined", name)
+func getValueTypeInterface(typ ValueTypeInterface, env *TypeEnvironment) (ValueTypeInterface, error) {
+	switch t := typ.(type) {
+	case UserDefined:
+		//return getValueTypeInterface(t.TypeDef, env)
+		//find the type in the env
+		if val, err := env.GetTypeFromEnv(t.TypeName); err == nil {
+			return val, nil
+		} else {
+			return nil, err
+		}
+	default:
+		return t, nil
 	}
-	return t.interfaces[name], *t, nil
 }

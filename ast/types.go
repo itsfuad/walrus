@@ -152,6 +152,29 @@ func (a StructType) EndPos() lexer.Position {
 	return a.Location.End
 }
 
+type InterfaceMethod struct {
+	Identifier IdentifierExpr
+	FunctionType
+}
+
+type InterfaceType struct {
+	TypeName 	DATA_TYPE
+	Methods   	map[string]InterfaceMethod
+	Location
+}
+
+func (a InterfaceType) Type() DATA_TYPE {
+	return a.TypeName
+}
+
+func (a InterfaceType) StartPos() lexer.Position {
+	return a.Location.Start
+}
+
+func (a InterfaceType) EndPos() lexer.Position {
+	return a.Location.End
+}
+
 type FunctionTypeParam struct {
 	Identifier 	IdentifierExpr
 	Type       	DataType

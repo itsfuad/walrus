@@ -11,9 +11,8 @@ func checkVariableAssignment(node ast.VarAssignmentExpr, env *TypeEnvironment) V
 	Assignee := node.Assignee
 	valueToAssign := node.Value
 
-	//varToAssign := node.Identifier
-	expected := CheckAST(Assignee, env)
-	provided := CheckAST(valueToAssign, env)
+	expected := GetValueType(Assignee, env)
+	provided := GetValueType(valueToAssign, env)
 
 	MatchTypes(expected, provided, env.filePath, valueToAssign.StartPos().Line, valueToAssign.EndPos().Line, valueToAssign.StartPos().Column, valueToAssign.EndPos().Column)
 
@@ -55,19 +54,21 @@ func checkVariableDeclaration(node ast.VarDeclStmt, env *TypeEnvironment) ValueT
 
 	varToDecl := node.Variable
 
+	fmt.Printf("Declaring variable %s\n", varToDecl.Name)
+
 	var expectedTypeInterface ValueTypeInterface
 
 	if node.ExplicitType != nil {
-		expectedTypeInterface = handleExplicitType(node.ExplicitType, env)
+		expectedTypeInterface = EvaluateTypeName(node.ExplicitType, env)
 	} else {
-		typ := CheckAST(node.Value, env)
-		fmt.Printf("Auto detected type %T, %s\n", typ, typ.DType())
-		expectedTypeInterface = typ
+		expectedTypeInterface = GetValueType(node.Value, env)
+		//handleExplicitType(typestr, env)
+		fmt.Printf("Auto detected type %T, %s\n", expectedTypeInterface, expectedTypeInterface.DType())
 	}
 
 	if node.Value != nil && node.ExplicitType != nil {
-		fmt.Printf("Explicit type provided, but value is also provided. Expected type %s\n", expectedTypeInterface.DType())
-		providedValue := CheckAST(node.Value, env)
+		//providedValue := CheckAST(node.Value, env)
+		providedValue := GetValueType(node.Value, env)
 		MatchTypes(expectedTypeInterface, providedValue, env.filePath, node.Value.StartPos().Line, node.Value.EndPos().Line, node.Value.StartPos().Column, node.Value.EndPos().Column)
 	}
 
@@ -81,7 +82,6 @@ func checkVariableDeclaration(node ast.VarDeclStmt, env *TypeEnvironment) ValueT
 	} else {
 		fmt.Printf("Declared variable %s of type %s\n", varToDecl.Name, expectedTypeInterface.DType())
 	}
-
 
 	return Void{
 		DataType: VOID_TYPE,

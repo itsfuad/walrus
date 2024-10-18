@@ -10,12 +10,12 @@ func checkStructLiteral(structLit ast.StructLiteral, env *TypeEnvironment) Value
 
 	sName := structLit.Identifier
 	//check if defined
-	env, err := env.ResolveType(sName.Name)
+	structEnv, err := env.ResolveType(sName.Name)
 	if err != nil {
 		errgen.MakeError(env.filePath, sName.StartPos().Line, sName.EndPos().Line, sName.StartPos().Column, sName.EndPos().Column, err.Error()).Display()
 	}
 
-	structType, ok := env.types[sName.Name].(UserDefined).TypeDef.(Struct)
+	structType, ok := structEnv.types[sName.Name].(UserDefined).TypeDef.(Struct)
 	if !ok {
 		errgen.MakeError(env.filePath, sName.StartPos().Line, sName.EndPos().Line, sName.StartPos().Column, sName.EndPos().Column, fmt.Sprintf("'%s' is not a struct", sName.Name)).Display()
 	}
@@ -25,9 +25,10 @@ func checkStructLiteral(structLit ast.StructLiteral, env *TypeEnvironment) Value
 	for propName, propValue := range structLit.Properties {
 		//if prop exist
 		if elem, ok := structType.Elements[propName]; !ok {
-			errgen.MakeError(env.filePath, propValue.StartPos().Line, propValue.EndPos().Line, propValue.StartPos().Column, propValue.EndPos().Column, fmt.Sprintf("property '%s' does not exist on type '%s'", propName, sName.Name)).Display()
+			errgen.MakeError(structEnv.filePath, propValue.StartPos().Line, propValue.EndPos().Line, propValue.StartPos().Column, propValue.EndPos().Column, fmt.Sprintf("property '%s' does not exist on type '%s'", propName, sName.Name)).Display()
 		} else {
-			MatchTypes(elem.Type, CheckAST(propValue, env), env.filePath, propValue.StartPos().Line, propValue.EndPos().Line, propValue.StartPos().Column, propValue.EndPos().Column)
+			gotType := GetValueType(propValue, structEnv)
+			MatchTypes(elem.Type, gotType, structEnv.filePath, propValue.StartPos().Line, propValue.EndPos().Line, propValue.StartPos().Column, propValue.EndPos().Column)
 		}
 	}
 
@@ -36,13 +37,14 @@ func checkStructLiteral(structLit ast.StructLiteral, env *TypeEnvironment) Value
 	//now check all from defined type
 	for propName := range structType.Elements {
 		if _, ok := structLit.Properties[propName]; !ok {
-			errgen.MakeError(env.filePath, structLit.StartPos().Line, structLit.EndPos().Line, structLit.StartPos().Column, structLit.EndPos().Column, fmt.Sprintf("property '%s' is missing from type '%s'", propName, sName.Name)).AddHint(hint, errgen.TEXT_HINT).Display()
+			errgen.MakeError(structEnv.filePath, structLit.StartPos().Line, structLit.EndPos().Line, structLit.StartPos().Column, structLit.EndPos().Column, fmt.Sprintf("property '%s' is missing from type '%s'", propName, sName.Name)).AddHint(hint, errgen.TEXT_HINT).Display()
 		}
 	}
 
 	return UserDefined{
-		DataType:  	USER_DEFINED_TYPE,
-		TypeDef:   	Struct{
+		DataType: USER_DEFINED_TYPE,
+		TypeName: sName.Name,
+		TypeDef: Struct{
 			DataType:   STRUCT_TYPE,
 			StructName: sName.Name,
 			Elements:   structType.Elements,
@@ -57,7 +59,8 @@ func checkPropertyAccess(expr ast.StructPropertyAccessExpr, env *TypeEnvironment
 	fmt.Printf("Object: %v\n", expr.Object)
 	fmt.Printf("Property: %v\n", expr.Property)
 
-	object := CheckAST(expr.Object, env)
+	object := GetValueType(expr.Object, env)
+
 	prop := expr.Property
 
 	lineStart := expr.Object.StartPos().Line
@@ -65,29 +68,28 @@ func checkPropertyAccess(expr ast.StructPropertyAccessExpr, env *TypeEnvironment
 	start := expr.Object.StartPos().Column
 	end := expr.Object.EndPos().Column
 
-	typeName := string(getTypename(object))
+	typeName := string(valueTypeInterfaceToString(object))
 	// Resolve the struct type from the environment
-	env, err := env.ResolveType(typeName)
+	fmt.Printf("Resolving type %s\n", typeName)
+	structEnv, err := env.ResolveType(typeName)
 	if err != nil {
 		errgen.MakeError(env.filePath, lineStart, lineEnd, start, end, err.Error()).Display()
 		return nil
 	}
 
-
 	// Get the struct definition
-	structDef := env.types[typeName].(UserDefined).TypeDef.(Struct)
+	structDef := structEnv.types[typeName].(UserDefined).TypeDef.(Struct)
 
 	// First check if the property exists in the struct's elements (fields)
 	if valType, ok := structDef.Elements[prop.Name]; ok {
 		if expr.Object.(ast.IdentifierExpr).Name != "self" && valType.IsPrivate {
 			errgen.MakeError(
-				env.filePath, 
-				prop.Start.Line, 
-				prop.End.Line, 
-				prop.Start.Column, 
+				structEnv.filePath,
+				prop.Start.Line,
+				prop.End.Line,
+				prop.Start.Column,
 				prop.End.Column,
-				fmt.Sprintf("cannot access private property '%s'", prop.Name,
-			)).Display()
+				fmt.Sprintf("cannot access private property '%s'", prop.Name)).Display()
 		}
 		return valType.Type
 	}
@@ -96,26 +98,43 @@ func checkPropertyAccess(expr ast.StructPropertyAccessExpr, env *TypeEnvironment
 	if method, ok := structDef.Methods[prop.Name]; ok {
 		if method.IsPrivate {
 			errgen.MakeError(
-				env.filePath, 
-				prop.Start.Line, 
-				prop.End.Line, 
-				prop.Start.Column, 
+				structEnv.filePath,
+				prop.Start.Line,
+				prop.End.Line,
+				prop.Start.Column,
 				prop.End.Column,
-				fmt.Sprintf("cannot access private method '%s'", prop.Name,
-			)).Display()
+				fmt.Sprintf("cannot access private method '%s'", prop.Name)).Display()
 		}
 		return method
 	}
 
 	// If neither property nor method is found, raise an error
 	errgen.MakeError(
-		env.filePath, 
-		prop.Start.Line, 
-		prop.End.Line, 
-		prop.Start.Column, 
+		structEnv.filePath,
+		prop.Start.Line,
+		prop.End.Line,
+		prop.Start.Column,
 		prop.End.Column,
-		fmt.Sprintf("property or method '%s' does not exist on type '%s'", prop.Name, typeName,
-	)).Display()
+		fmt.Sprintf("property or method '%s' does not exist on type '%s'", prop.Name, typeName)).Display()
 
 	return nil
+}
+
+func checkStructTypeDecl(name string, structType ast.StructType, env *TypeEnvironment) Struct {
+	props := map[string]StructProperty{}
+	for propname, propval := range structType.Properties {
+		propType := EvaluateTypeName(propval.PropType, env)
+		property := StructProperty{
+			IsPrivate: propval.IsPrivate,
+			Type:      propType,
+		}
+		props[propname] = property
+	}
+
+	return Struct{
+		DataType:   STRUCT_TYPE,
+		StructName: name,
+		Elements:   props,
+		Methods:    map[string]StructMethod{},
+	}
 }

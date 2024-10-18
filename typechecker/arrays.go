@@ -22,7 +22,7 @@ import (
 // If both checks pass, the function returns the type of the elements contained in the array.
 func evaluateArrayAccess(array ast.ArrayIndexAccess, env *TypeEnvironment) ValueTypeInterface {
 	//Array must be evaluated to an array value
-	arrType := CheckAST(array.Arrayvalue, env)
+	arrType := GetValueType(array.Arrayvalue, env)
 	if _, ok := arrType.(Array); !ok {
 		lineStart := array.Arrayvalue.StartPos().Line
 		lineEnd := array.Arrayvalue.EndPos().Line
@@ -31,7 +31,7 @@ func evaluateArrayAccess(array ast.ArrayIndexAccess, env *TypeEnvironment) Value
 		errgen.MakeError(env.filePath, lineStart, lineEnd, start, end, fmt.Sprintf("cannot access index of type %s", arrType.DType())).AddHint("type must be an array", errgen.TEXT_HINT).Display()
 	}
 	//index must be evaluated to int
-	indexType := CheckAST(array.Index, env)
+	indexType := GetValueType(array.Index, env)
 	if _, ok := indexType.(Int); !ok {
 		lineStart := array.Index.StartPos().Line
 		lineEnd := array.Index.EndPos().Line
@@ -54,7 +54,7 @@ func evaluateArrayAccess(array ast.ArrayIndexAccess, env *TypeEnvironment) Value
 func evaluateArrayExpr(array ast.ArrayLiteral, env *TypeEnvironment) ValueTypeInterface {
 	var expectedType ValueTypeInterface
 	for i, value := range array.Values {
-		v := CheckAST(value, env)
+		v := GetValueType(value, env)
 		if i == 0 {
 			expectedType = v
 		}

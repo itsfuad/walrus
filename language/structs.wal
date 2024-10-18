@@ -38,7 +38,7 @@ let distance := @Distance{
 //distance.max = 9; // error - private prop
 distance.min = 1;
 
-interface IShape {
+type IShape interface {
     fn area() -> float;
     fn perimeter() -> float;
 };
@@ -69,3 +69,7 @@ let i : INT = 1;
 let circle := @Circle{ radius: 10.0 };
 
 let area := circle.area();
+
+let shape : IShape = circle;
+
+//let area2 := shape.area();

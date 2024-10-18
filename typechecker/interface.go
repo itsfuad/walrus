@@ -2,12 +2,9 @@ package typechecker
 
 import (
 	"walrus/ast"
-	"walrus/errgen"
 )
 
-func checkInterfaceDeclaration(interfaceNode ast.InterfaceDeclStmt, env *TypeEnvironment) ValueTypeInterface {
-
-	interfaceName := interfaceNode.Interface.Name
+func checkInterfaceTypeDecl(interfaceName string, interfaceNode ast.InterfaceType, env *TypeEnvironment) Interface {
 
 	methods := make(map[string]Fn)
 
@@ -19,9 +16,9 @@ func checkInterfaceDeclaration(interfaceNode ast.InterfaceDeclStmt, env *TypeEnv
 
 		for _, param := range method.Parameters {
 			param := FnParam{
-				Name: param.Identifier.Name,
+				Name:       param.Identifier.Name,
 				IsOptional: param.IsOptional,
-				Type: EvaluateTypeName(param.Type, fnEnv),
+				Type:       EvaluateTypeName(param.Type, fnEnv),
 			}
 			params = append(params, param)
 		}
@@ -29,25 +26,18 @@ func checkInterfaceDeclaration(interfaceNode ast.InterfaceDeclStmt, env *TypeEnv
 		returns := EvaluateTypeName(method.ReturnType, fnEnv)
 
 		method := Fn{
-			DataType: FUNCTION_TYPE,
-			Params:   params,
-			Returns:  returns,
+			DataType:      FUNCTION_TYPE,
+			Params:        params,
+			Returns:       returns,
 			FunctionScope: *fnEnv,
 		}
 
 		methods[name] = method
 	}
 
-	interfaceValue := Interface{
+	return Interface{
 		DataType:      INTERFACE_TYPE,
 		InterfaceName: interfaceName,
 		Methods:       methods,
 	}
-
-	err := env.DeclareInterface(interfaceName, interfaceValue)
-	if err != nil {
-		errgen.MakeError(env.filePath, interfaceNode.Start.Line, interfaceNode.End.Line, interfaceNode.Start.Column, interfaceNode.End.Column, err.Error()).Display()
-	}
-
-	return interfaceValue
 }

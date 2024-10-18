@@ -65,8 +65,8 @@ func (p *Parser) expect(expectedKind lexer.TOKEN_KIND) lexer.Token {
 	return p.expectError(expectedKind, nil)
 }
 
-func (p *Parser) expectSemicolon() lexer.Token {
-	return p.expectError(lexer.SEMI_COLON_TOKEN, fmt.Errorf("unexpected token '%s'", p.currentTokenKind()))
+type I interface {
+	Display()
 }
 
 func parseNode(p *Parser) ast.Node {
@@ -80,7 +80,7 @@ func parseNode(p *Parser) ast.Node {
 	// if not a statement, then it must be an expression
 	expr := parseExpr(p, DEFAULT_BP)
 
-	p.expectSemicolon()
+	p.expect(lexer.SEMI_COLON_TOKEN)
 
 	return expr
 }

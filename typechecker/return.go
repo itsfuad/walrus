@@ -12,7 +12,7 @@ func checkReturnStmt(returnNode ast.ReturnStmt, env *TypeEnvironment) ValueTypeI
 	}
 
 	//check if the return type matches the function return type
-	returnType := CheckAST(returnNode.Value, env)
+	returnType := GetValueType(returnNode.Value, env)
 
 	fn := getFunctionReturnValue(env, returnNode)
 

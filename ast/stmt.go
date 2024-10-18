@@ -175,29 +175,6 @@ func (a ReturnStmt) EndPos() lexer.Position {
 	return a.Location.End
 }
 
-type InterfaceMethod struct {
-	Identifier IdentifierExpr
-	FunctionType
-}
-
-type InterfaceDeclStmt struct {
-	Interface IdentifierExpr
-	Methods   map[string]InterfaceMethod
-	Location
-}
-
-func (a InterfaceDeclStmt) INode() {
-	//empty method implements Node interface
-}
-
-func (a InterfaceDeclStmt) StartPos() lexer.Position {
-	return a.Location.Start
-}
-
-func (a InterfaceDeclStmt) EndPos() lexer.Position {
-	return a.Location.End
-}
-
 type ImplMethod struct {
 	IsPrivate bool
 	FunctionDeclStmt

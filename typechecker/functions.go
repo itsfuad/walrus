@@ -6,6 +6,7 @@ import (
 	"walrus/errgen"
 )
 
+
 func checkFunctionExpr(funcNode ast.FunctionLiteral, env *TypeEnvironment) ValueTypeInterface {
 	name := fmt.Sprintf("_FN_%s", RandStringRunes(10))
 	return AnalyzeFuntion(funcNode, name, env)
@@ -55,7 +56,7 @@ func checkParamaters(params []ast.FunctionParam, fnEnv *TypeEnvironment) []FnPar
 
 		if param.IsOptional {
 			//default value type
-			defaultValue := CheckAST(param.DefaultValue, fnEnv)
+			defaultValue := GetValueType(param.DefaultValue, fnEnv)
 			MatchTypes(paramType, defaultValue, fnEnv.filePath, param.DefaultValue.StartPos().Line, param.DefaultValue.EndPos().Line, param.DefaultValue.StartPos().Column, param.DefaultValue.EndPos().Column)
 		}
 
@@ -77,7 +78,7 @@ func checkParamaters(params []ast.FunctionParam, fnEnv *TypeEnvironment) []FnPar
 
 func checkFunctionCall(callNode ast.FunctionCallExpr, env *TypeEnvironment) ValueTypeInterface {
 	//check if the function is declared
-	caller := CheckAST(callNode.Caller, env)
+	caller := GetValueType(callNode.Caller, env)
 	fn, err := userDefinedToFn(caller)
 
 	if err != nil {
@@ -103,7 +104,7 @@ func checkFunctionCall(callNode ast.FunctionCallExpr, env *TypeEnvironment) Valu
 
 	//check if the arguments match the parameters
 	for i := 0; i < len(callNode.Arguments); i++ {
-		arg := CheckAST(callNode.Arguments[i], env)
+		arg := GetValueType(callNode.Arguments[i], env)
 		MatchTypes(fnParams[i].Type, arg, env.filePath, callNode.Arguments[i].StartPos().Line, callNode.Arguments[i].EndPos().Line, callNode.Arguments[i].StartPos().Column, callNode.Arguments[i].EndPos().Column)
 	}
 
