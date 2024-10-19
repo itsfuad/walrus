@@ -124,16 +124,25 @@ type StructProperty struct {
 	Type      ValueTypeInterface
 }
 
+func (t StructProperty) DType() VALUE_TYPE {
+	return t.Type.DType()
+}
+
 type StructMethod struct {
 	IsPrivate bool
 	Fn
 }
 
+func (t StructMethod) DType() VALUE_TYPE {
+	return t.DataType
+}
+
 type Struct struct {
 	DataType   VALUE_TYPE
 	StructName string
-	Elements   map[string]StructProperty
-	Methods    map[string]StructMethod
+	StructScope TypeEnvironment
+	//Elements   map[string]StructProperty
+	//Methods    map[string]StructMethod
 }
 
 func (t Struct) DType() VALUE_TYPE {
@@ -193,6 +202,7 @@ type SCOPE_TYPE int
 const (
 	GLOBAL_SCOPE SCOPE_TYPE = iota
 	FUNCTION_SCOPE
+	STRUCT_SCOPE
 	CONDITIONAL_SCOPE
 	LOOP_SCOPE
 )
@@ -234,6 +244,16 @@ func NewTypeENV(parent *TypeEnvironment, scope SCOPE_TYPE, scopeName string, fil
 		types:  	make(map[string]ValueTypeInterface),
 		interfaces: make(map[string]Interface),
 	}
+}
+
+func (t *TypeEnvironment) IsInStructScope() bool {
+	if t.scopeType == STRUCT_SCOPE {
+		return true
+	}
+	if t.parent == nil {
+		return false
+	}
+	return t.parent.IsInStructScope()
 }
 
 func (t *TypeEnvironment) ResolveFunctionEnv() (*TypeEnvironment, error) {

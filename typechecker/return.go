@@ -1,6 +1,7 @@
 package typechecker
 
 import (
+	"fmt"
 	"walrus/ast"
 	"walrus/errgen"
 )
@@ -14,9 +15,12 @@ func checkReturnStmt(returnNode ast.ReturnStmt, env *TypeEnvironment) ValueTypeI
 	//check if the return type matches the function return type
 	returnType := GetValueType(returnNode.Value, env)
 
-	fn := getFunctionReturnValue(env, returnNode)
+	fnReturns := getFunctionReturnValue(env, returnNode)
 
-	MatchTypes(fn, returnType, env.filePath, returnNode.Start.Line, returnNode.End.Line, returnNode.Start.Column, returnNode.End.Column)
+	err := MatchTypes(fnReturns, returnType, env.filePath, returnNode.Start.Line, returnNode.End.Line, returnNode.Start.Column, returnNode.End.Column)
+	if err != nil {
+		errgen.MakeError(env.filePath, returnNode.StartPos().Line, returnNode.EndPos().Line, returnNode.StartPos().Column, returnNode.EndPos().Column, fmt.Sprintf("cannot return '%s' from this scope. function '%s' expects return type '%s'", valueTypeInterfaceToString(returnType), env.scopeName, valueTypeInterfaceToString(fnReturns))).Display()
+	}
 
 	return ReturnType{
 		DataType:   RETURN_TYPE,

@@ -33,12 +33,12 @@ func stringToValueTypeInterface(typ VALUE_TYPE, env *TypeEnvironment) (ValueType
 	}
 
 	//search for the type
-	typeEnv, err := env.ResolveType(string(typ))
+	declaredEnv, err := env.ResolveType(string(typ))
 	if err != nil {
 		return nil, err
 	}
 
-	return typeEnv.types[string(typ)].(UserDefined).TypeDef, nil
+	return declaredEnv.types[string(typ)].(UserDefined).TypeDef, nil
 }
 
 func valueTypeInterfaceToString(typeName ValueTypeInterface) VALUE_TYPE {
@@ -77,22 +77,19 @@ func valueTypeInterfaceToString(typeName ValueTypeInterface) VALUE_TYPE {
 }
 
 
-func MatchTypes(expected, provided ValueTypeInterface, filePath string, lineStart, lineEnd, colStart, colEnd int) {
+func MatchTypes(expected, provided ValueTypeInterface, filePath string, lineStart, lineEnd, colStart, colEnd int) (error) {
 
 	expectedType := valueTypeInterfaceToString(expected)
 	gotType := valueTypeInterfaceToString(provided)
 
-	fmt.Printf("Expected: %s, Got: %s\n", expectedType, gotType)
-	fmt.Printf("Expected: %T, Got: %T\n", expected, provided)
-
-
 	if expectedType != gotType {
 		if expected.DType() == INTERFACE_TYPE {
-			checkMethodsImplementations(expected, provided, filePath, lineStart, lineEnd, colStart, colEnd)
-			return
+			//checkMethodsImplementations(expected, provided, filePath, lineStart, lineEnd, colStart, colEnd)
+			return nil
 		}
-		errgen.MakeError(filePath, lineStart, lineEnd, colStart, colEnd, fmt.Sprintf("typecheck:cannot assign type '%s' to type '%s'", gotType, expectedType)).Display()
+		return fmt.Errorf("expected %s, got %s", expectedType, gotType)
 	}
+	return nil
 }
 
 func IsLValue(node ast.Node) bool {

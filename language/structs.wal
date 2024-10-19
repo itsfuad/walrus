@@ -10,7 +10,9 @@ type Point struct{
 
 let point : Point;
 
-point = @Point{ x: 13, y: 23 };
+point = @Point{ x: 13, y: 37 };
+
+point.y = 10;
 
 //point.id;
 
@@ -44,7 +46,7 @@ type IShape interface {
 };
 
 type Circle struct {
-    radius: float,
+    priv radius: float,
 };
 
 type Rectangle struct {
@@ -52,13 +54,15 @@ type Rectangle struct {
     height: float,
 };
 
+
 impl Circle {
     fn area() -> float {
-        ret 3.14;
+        let r := radius;
+        ret radius;
     }
 
     fn perimeter() -> float {
-        ret 2 * 3.14;
+        ret 2.0 * 3.14159 * this.radius;
     }
 };
 
@@ -68,8 +72,12 @@ let i : INT = 1;
 
 let circle := @Circle{ radius: 10.0 };
 
+let perimeterOfCircle := circle.perimeter();
+
+/*
 let area := circle.area();
 
 let shape : IShape = circle;
 
 //let area2 := shape.area();
+*/

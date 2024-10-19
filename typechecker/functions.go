@@ -6,7 +6,6 @@ import (
 	"walrus/errgen"
 )
 
-
 func checkFunctionExpr(funcNode ast.FunctionLiteral, env *TypeEnvironment) ValueTypeInterface {
 	name := fmt.Sprintf("_FN_%s", RandStringRunes(10))
 	return AnalyzeFuntion(funcNode, name, env)
@@ -16,7 +15,7 @@ func AnalyzeFuntion(funcNode ast.FunctionLiteral, name string, env *TypeEnvironm
 
 	fnEnv := NewTypeENV(env, FUNCTION_SCOPE, name, env.filePath)
 
-	parameters := checkParamaters(funcNode.Params, fnEnv)
+	parameters := checkandDeclareParamaters(funcNode.Params, fnEnv)
 
 	//check return type
 	returnType := EvaluateTypeName(funcNode.ReturnType, fnEnv)
@@ -42,7 +41,7 @@ func AnalyzeFuntion(funcNode ast.FunctionLiteral, name string, env *TypeEnvironm
 	return fn
 }
 
-func checkParamaters(params []ast.FunctionParam, fnEnv *TypeEnvironment) []FnParam {
+func checkandDeclareParamaters(params []ast.FunctionParam, fnEnv *TypeEnvironment) []FnParam {
 
 	var parameters []FnParam
 
@@ -57,7 +56,10 @@ func checkParamaters(params []ast.FunctionParam, fnEnv *TypeEnvironment) []FnPar
 		if param.IsOptional {
 			//default value type
 			defaultValue := GetValueType(param.DefaultValue, fnEnv)
-			MatchTypes(paramType, defaultValue, fnEnv.filePath, param.DefaultValue.StartPos().Line, param.DefaultValue.EndPos().Line, param.DefaultValue.StartPos().Column, param.DefaultValue.EndPos().Column)
+			err := MatchTypes(paramType, defaultValue, fnEnv.filePath, param.DefaultValue.StartPos().Line, param.DefaultValue.EndPos().Line, param.DefaultValue.StartPos().Column, param.DefaultValue.EndPos().Column)
+			if err != nil {
+				errgen.MakeError(fnEnv.filePath, param.DefaultValue.StartPos().Line, param.DefaultValue.EndPos().Line, param.DefaultValue.StartPos().Column, param.DefaultValue.EndPos().Column, err.Error()).Display()
+			}
 		}
 
 		err := fnEnv.DeclareVar(param.Identifier.Name, paramType, false, param.IsOptional)
@@ -105,7 +107,10 @@ func checkFunctionCall(callNode ast.FunctionCallExpr, env *TypeEnvironment) Valu
 	//check if the arguments match the parameters
 	for i := 0; i < len(callNode.Arguments); i++ {
 		arg := GetValueType(callNode.Arguments[i], env)
-		MatchTypes(fnParams[i].Type, arg, env.filePath, callNode.Arguments[i].StartPos().Line, callNode.Arguments[i].EndPos().Line, callNode.Arguments[i].StartPos().Column, callNode.Arguments[i].EndPos().Column)
+		err := MatchTypes(fnParams[i].Type, arg, env.filePath, callNode.Arguments[i].StartPos().Line, callNode.Arguments[i].EndPos().Line, callNode.Arguments[i].StartPos().Column, callNode.Arguments[i].EndPos().Column)
+		if err != nil {
+			errgen.MakeError(env.filePath, callNode.Arguments[i].StartPos().Line, callNode.Arguments[i].EndPos().Line, callNode.Arguments[i].StartPos().Column, callNode.Arguments[i].EndPos().Column, err.Error()).Display()
+		}
 	}
 
 	return fn.Returns
@@ -144,6 +149,14 @@ func getFunctionReturnValue(env *TypeEnvironment, returnNode ast.Node) ValueType
 	}
 
 	fnName := funcParent.scopeName
-	fn := funcParent.parent.variables[fnName].(Fn)
-	return fn.Returns
+	//fn := funcParent.parent.variables[fnName].(Fn)
+	switch fn := funcParent.parent.variables[fnName].(type) {
+	case Fn:
+		return fn.Returns
+	case StructMethod:
+		return fn.Fn.Returns
+	default:
+		errgen.MakeError(env.filePath, returnNode.StartPos().Line, returnNode.EndPos().Line, returnNode.StartPos().Column, returnNode.EndPos().Column, fmt.Sprintf("'%s' is not a function", fnName)).Display()
+		return nil
+	}
 }
