@@ -84,7 +84,7 @@ func MatchTypes(expected, provided ValueTypeInterface, filePath string, lineStar
 
 	if expectedType != gotType {
 		if expected.DType() == INTERFACE_TYPE {
-			//checkMethodsImplementations(expected, provided, filePath, lineStart, lineEnd, colStart, colEnd)
+			checkMethodsImplementations(expected, provided, filePath, lineStart, lineEnd, colStart, colEnd)
 			return nil
 		}
 		return fmt.Errorf("expected %s, got %s", expectedType, gotType)

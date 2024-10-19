@@ -96,19 +96,20 @@ func checkPropertyAccess(expr ast.StructPropertyAccessExpr, env *TypeEnvironment
 		errgen.MakeError(env.filePath, lineStart, lineEnd, start, end, err.Error()).Display()
 	}
 
+
+	var structEnv TypeEnvironment
+
 	//get the struct's environment
-	structEnv := declaredEnv.types[typeName].(UserDefined).TypeDef.(Struct).StructScope
+	switch t := declaredEnv.types[typeName].(UserDefined).TypeDef.(type) {
+	case Struct:
+		structEnv = t.StructScope
+	case Interface:
+		//prop must be a method
+		return t.Methods[prop.Name]
+	}
 
 	// Check if the property exists on the struct
 	if property, ok := structEnv.variables[prop.Name]; ok {
-		/*
-		if property.(StructProperty).IsPrivate {
-			//check the scope we are in
-			if env.scopeType != STRUCT_SCOPE {
-				errgen.MakeError(structEnv.filePath, prop.Start.Line, prop.End.Line, prop.Start.Column, prop.End.Column, fmt.Sprintf("cannot access private property '%s' from outside the struct's scope", prop.Name)).Display()
-			}
-		}
-		*/
 		isPrivate := false;
 		switch t := property.(type) {
 			case StructMethod:

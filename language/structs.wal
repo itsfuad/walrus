@@ -74,10 +74,7 @@ let circle := @Circle{ radius: 10.0 };
 
 let perimeterOfCircle := circle.perimeter();
 
-/*
 let area := circle.area();
 
 let shape : IShape = circle;
-
-//let area2 := shape.area();
-*/
+let area2 := shape.area();
