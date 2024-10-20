@@ -224,8 +224,8 @@ func (a ArrayLiteral) EndPos() lexer.Position {
 }
 
 type ArrayIndexAccess struct {
-	Index      Node
-	Arrayvalue Node
+	Index Node
+	Array Node
 	Location
 }
 

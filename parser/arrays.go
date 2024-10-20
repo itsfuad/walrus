@@ -58,8 +58,8 @@ func parseArrayAccess(p *Parser, left ast.Node, bp BINDING_POWER) ast.Node {
 	index := parseExpr(p, bp)
 	end := p.expect(lexer.CLOSE_BRACKET).End
 	return ast.ArrayIndexAccess{
-		Arrayvalue: left,
-		Index:      index,
+		Array: left,
+		Index: index,
 		Location: ast.Location{
 			Start: left.StartPos(),
 			End:   end,

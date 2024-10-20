@@ -68,8 +68,8 @@ func valueTypeInterfaceToString(typeName ValueTypeInterface) VALUE_TYPE {
 			ReturnStr = " -> " + ReturnStr
 		}
 		return VALUE_TYPE(fmt.Sprintf("fn(%s)%s", ParamStrs, ReturnStr))
-	case UserDefined:
-		return valueTypeInterfaceToString(t.TypeDef)
+	//case UserDefined:
+	//	return valueTypeInterfaceToString(t.TypeDef)
 	default:
 		fmt.Printf("Default case %T's value %v\n", t, t.DType())
 		return t.DType()
@@ -92,16 +92,26 @@ func MatchTypes(expected, provided ValueTypeInterface, filePath string, lineStar
 	return nil
 }
 
-func IsLValue(node ast.Node) bool {
+func IsAssignable(node ast.Node, env *TypeEnvironment) (error) {
+	//if not constant and is IdentifierExpr
 	switch t := node.(type) {
 	case ast.IdentifierExpr:
-		return true
+		//find the declaredEnv where the variable was declared
+		declaredEnv, err := env.ResolveVar(t.Name)
+		if err != nil {
+			return err
+		}
+		if !declaredEnv.constants[t.Name] {
+			return nil
+		} else {
+			return fmt.Errorf("identifier '%s' is constant", t.Name)
+		}
 	case ast.ArrayIndexAccess:
-		return IsLValue(t.Arrayvalue)
+		return IsAssignable(t.Array, env)
 	case ast.StructPropertyAccessExpr:
-		return IsLValue(t.Object)
+		return IsAssignable(t.Object, env)
 	default:
-		return false
+		return fmt.Errorf("assignment expression must be a valid lvalue")
 	}
 }
 
@@ -124,7 +134,7 @@ func IsNumberType(operand ValueTypeInterface) bool {
 // Returns:
 //   - A ValueTypeInterface representing the evaluated type.
 //
-// The function performs the following steps:
+// The function performs the following steps
 //  1. If the dtype is an ArrayType, it recursively evaluates the element type and returns an Array.
 //  2. If the dtype is a FunctionType, it evaluates the parameter types and return type, creates a new function scope, and returns a Fn.
 //  3. If the dtype is nil, it returns a Void type.
@@ -164,7 +174,6 @@ func EvaluateTypeName(dtype ast.DataType, env *TypeEnvironment) ValueTypeInterfa
 			DataType: VOID_TYPE,
 		}
 	default:
-		fmt.Printf("Default case value %v\n", t.Type())
 		val, err := stringToValueTypeInterface(VALUE_TYPE(t.Type()), env)
 		if err != nil {
 			errgen.MakeError(env.filePath, dtype.StartPos().Line, dtype.EndPos().Line, dtype.StartPos().Column, dtype.EndPos().Column, err.Error()).Display()

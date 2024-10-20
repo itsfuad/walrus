@@ -103,18 +103,6 @@ func parseVarDeclStmt(p *Parser) ast.Node {
 //   - ast.Node - The parsed variable assignment expression node.
 func parseVarAssignmentExpr(p *Parser, left ast.Node, bp BINDING_POWER) ast.Node {
 
-	switch left.(type) {
-	case ast.IdentifierExpr:
-		break
-	case ast.ArrayIndexAccess:
-		break
-	case ast.StructPropertyAccessExpr:
-		break
-	default:
-		errMsg := "cannot assign to a non-identifier\n"
-		errgen.MakeError(p.FilePath, left.StartPos().Line, left.EndPos().Line, left.StartPos().Column, left.EndPos().Column, errMsg).Display()
-	}
-
 	operator := p.advance()
 
 	right := parseExpr(p, bp)
