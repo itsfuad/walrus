@@ -290,7 +290,7 @@ func (t *TypeEnvironment) ResolveType(name string) (*TypeEnvironment, error) {
 	}
 	return t.parent.ResolveType(name)
 }
-
+/*
 func (t *TypeEnvironment) GetTypeFromEnv(name string) (ValueTypeInterface, error) {
 	if _, ok := t.builtins[name]; ok {
 		return t.builtins[name], nil
@@ -299,6 +299,20 @@ func (t *TypeEnvironment) GetTypeFromEnv(name string) (ValueTypeInterface, error
 		return t.types[name].(UserDefined).TypeDef, nil
 	}
 	return nil, fmt.Errorf("'%s' is not declared in this scope", name)
+}
+*/
+// instead, find all the upper scopes and check if the type is declared in any of them
+func (t *TypeEnvironment) GetTypeFromEnv(name string) (ValueTypeInterface, error) {
+	if val, ok := t.builtins[name]; ok {
+		return val, nil
+	}
+	if val, ok := t.types[name]; ok {
+		return val.(UserDefined).TypeDef, nil
+	}
+	if t.parent == nil {
+		return nil, fmt.Errorf("'%s' is not declared in this scope", name)
+	}
+	return t.parent.GetTypeFromEnv(name)
 }
 
 func (t *TypeEnvironment) DeclareVar(name string, typeVar ValueTypeInterface, isConst bool, isOptional bool) error {
@@ -348,6 +362,7 @@ func getValueTypeInterface(typ ValueTypeInterface, env *TypeEnvironment) (ValueT
 	case UserDefined:
 		//return getValueTypeInterface(t.TypeDef, env)
 		//find the type in the env
+		fmt.Printf("UserDefined type %s\n", t.TypeName)
 		if val, err := env.GetTypeFromEnv(t.TypeName); err == nil {
 			return val, nil
 		} else {
