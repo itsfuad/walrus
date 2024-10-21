@@ -93,7 +93,6 @@ func checkVariableDeclaration(node ast.VarDeclStmt, env *TypeEnvironment) ValueT
 		fmt.Printf("Declared variable %s of type %s\n", varToDecl.Name, expectedTypeInterface.DType())
 	}
 
-	return Void{
-		DataType: VOID_TYPE,
-	}
+	//return the type of the variable
+	return expectedTypeInterface
 }

@@ -2,8 +2,8 @@ package parser
 
 import (
 	"walrus/ast"
-	"walrus/lexer"
 	"walrus/errgen"
+	"walrus/lexer"
 )
 
 // parseForStmt parses a 'for' statement in the source code.
@@ -26,7 +26,7 @@ func parseForStmt(p *Parser) ast.Node {
 		// infinite loop
 		block := parseBlock(p)
 		return ast.ForStmt{
-			Start:     nil,
+			Init:      nil,
 			Condition: nil,
 			Increment: nil,
 			Block:     block,
@@ -63,7 +63,7 @@ func parseForStmt(p *Parser) ast.Node {
 			block := parseBlock(p)
 
 			return ast.ForStmt{
-				Start: ast.VarDeclStmt{
+				Init: ast.VarDeclStmt{
 					Variable:     idententifierExpr,
 					Value:        value,
 					ExplicitType: nil,
@@ -135,7 +135,7 @@ func parseForStmt(p *Parser) ast.Node {
 			condition := parseExpr(p, ASSIGNMENT_BP)
 			block := parseBlock(p)
 			return ast.ForStmt{
-				Start: ast.IdentifierExpr{
+				Init: ast.IdentifierExpr{
 					Name: identifier.Value,
 					Location: ast.Location{
 						Start: identifier.Start,
