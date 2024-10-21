@@ -30,10 +30,10 @@ A tiny simple programming language made for simplicity. It borrows syntax from '
             - [x] Implement for struct
         - [x] Builtins (int, float, bool, string)
         - [x] Function
-        - [ ] Interface
+        - [x] Interface
             - [x] Define
             - [x] Implement
-            - [ ] Use 
+            - [x] Use 
     - [x] [Increment/Decrement](#incrementdecrement)
         - [x] Prefix
         - [x] Postfix
