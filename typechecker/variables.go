@@ -11,6 +11,10 @@ func checkVariableAssignment(node ast.VarAssignmentExpr, env *TypeEnvironment) V
 	Assignee := node.Assignee
 	valueToAssign := node.Value
 
+	if err := IsAssignable(Assignee, env); err != nil {
+		errgen.MakeError(env.filePath, Assignee.StartPos().Line, Assignee.EndPos().Line, Assignee.StartPos().Column, Assignee.EndPos().Column, err.Error()).Display()
+	}
+
 	expected := GetValueType(Assignee, env)
 	provided := GetValueType(valueToAssign, env)
 
@@ -18,37 +22,6 @@ func checkVariableAssignment(node ast.VarAssignmentExpr, env *TypeEnvironment) V
 	if err != nil {
 		errgen.MakeError(env.filePath, valueToAssign.StartPos().Line, valueToAssign.EndPos().Line, valueToAssign.StartPos().Column, valueToAssign.EndPos().Column, err.Error()).Display()
 	}
-
-	var varName string
-
-	if !IsLValue(Assignee) {
-		errgen.MakeError(env.filePath, Assignee.StartPos().Line, Assignee.EndPos().Line, Assignee.StartPos().Column, Assignee.EndPos().Column, "invalid assignment expression. the assignee must be a lvalue").AddHint("lvalue is something that has a memory address\nFor example: variables.\nso you cannot assign values something which does not exist in memory as an independent identifier.", errgen.TEXT_HINT).Display()
-	}
-
-	switch assignee := Assignee.(type) {
-	case ast.IdentifierExpr:
-		varName = assignee.Name
-	case ast.ArrayIndexAccess:
-		return nil
-	case ast.StructPropertyAccessExpr:
-		return nil
-	default:
-		panic("cannot assign to this type")
-	}
-
-	//get the stored type
-	declaredEnv, err := env.ResolveVar(varName)
-	if err != nil {
-		errgen.MakeError(env.filePath, valueToAssign.StartPos().Line, valueToAssign.EndPos().Line, valueToAssign.StartPos().Column, valueToAssign.EndPos().Column, err.Error()).Display()
-	}
-
-	//if constant
-	if declaredEnv.constants[varName] {
-		errgen.MakeError(env.filePath, valueToAssign.StartPos().Line, valueToAssign.EndPos().Line, valueToAssign.StartPos().Column, valueToAssign.EndPos().Column, fmt.Sprintf("'%s' is constant", varName)).AddHint("cannot assign value to constant variables", errgen.TEXT_HINT).Display()
-	}
-	declaredEnv.variables[varName] = provided
-
-	fmt.Printf("Assigned variable %s of type %T\n", varName, provided)
 
 	return provided
 }
@@ -63,6 +36,7 @@ func checkVariableDeclaration(node ast.VarDeclStmt, env *TypeEnvironment) ValueT
 
 	if node.ExplicitType != nil {
 		expectedTypeInterface = EvaluateTypeName(node.ExplicitType, env)
+		fmt.Printf("Explicit type %T, %s\n", expectedTypeInterface, expectedTypeInterface.DType())
 	} else {
 		expectedTypeInterface = GetValueType(node.Value, env)
 		//handleExplicitType(typestr, env)

@@ -54,18 +54,17 @@ func checkImplStmt(implStmt ast.ImplStmt, env *TypeEnvironment) ValueTypeInterfa
 	}
 
 	// check if the type to implement exists
-	structDeclaredEnv, err := env.GetTypeFromEnv(implStmt.ImplFor.Name)
+	structValue, err := env.GetTypeFromEnv(implStmt.ImplFor.Name)
 	if err != nil {
 		errgen.MakeError(env.filePath, implStmt.Start.Line, implStmt.End.Line, implStmt.Start.Column, implStmt.End.Column, err.Error()).Display()
 	}
 
 	// type must be a struct
-	if structDeclaredEnv.DType() != STRUCT_TYPE {
-		errgen.MakeError(env.filePath, implStmt.Start.Line, implStmt.End.Line, implStmt.Start.Column, implStmt.End.Column, "can only implement for structs").Display()
-		return nil
+	implForType, ok := structValue.(Struct)
+	if !ok {
+		//fmt.Printf("Type %v\n", structValue)
+		errgen.MakeError(env.filePath, implStmt.Start.Line, implStmt.End.Line, implStmt.Start.Column, implStmt.End.Column, "type must be a struct").Display()
 	}
-
-	implForType := structDeclaredEnv.(Struct)
 
 	fmt.Printf("Implementing for type %s\n", valueTypeInterfaceToString(implForType))
 

@@ -22,12 +22,12 @@ import (
 // If both checks pass, the function returns the type of the elements contained in the array.
 func evaluateArrayAccess(array ast.ArrayIndexAccess, env *TypeEnvironment) ValueTypeInterface {
 	//Array must be evaluated to an array value
-	arrType := GetValueType(array.Arrayvalue, env)
+	arrType := GetValueType(array.Array, env)
 	if _, ok := arrType.(Array); !ok {
-		lineStart := array.Arrayvalue.StartPos().Line
-		lineEnd := array.Arrayvalue.EndPos().Line
-		start := array.Arrayvalue.StartPos().Column
-		end := array.Arrayvalue.EndPos().Column
+		lineStart := array.Array.StartPos().Line
+		lineEnd := array.Array.EndPos().Line
+		start := array.Array.StartPos().Column
+		end := array.Array.EndPos().Column
 		errgen.MakeError(env.filePath, lineStart, lineEnd, start, end, fmt.Sprintf("cannot access index of type %s", arrType.DType())).AddHint("type must be an array", errgen.TEXT_HINT).Display()
 	}
 	//index must be evaluated to int
