@@ -78,3 +78,13 @@ let area := circle.area();
 
 let shape : IShape = circle;
 let area2 := shape.area();
+
+distance.min = 2;
+
+fn getPoint() -> Point {
+    ret @Point{ x: 1, y: 2 };
+}
+
+// getPoint = 0; // error
+
+//getPoint().y = 4; // error

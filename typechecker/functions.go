@@ -8,10 +8,10 @@ import (
 
 func checkFunctionExpr(funcNode ast.FunctionLiteral, env *TypeEnvironment) ValueTypeInterface {
 	name := fmt.Sprintf("_FN_%s", RandStringRunes(10))
-	return AnalyzeFuntion(funcNode, name, env)
+	return CheckAndDeclareFunction(funcNode, name, env)
 }
 
-func AnalyzeFuntion(funcNode ast.FunctionLiteral, name string, env *TypeEnvironment) Fn {
+func CheckAndDeclareFunction(funcNode ast.FunctionLiteral, name string, env *TypeEnvironment) Fn {
 
 	fnEnv := NewTypeENV(env, FUNCTION_SCOPE, name, env.filePath)
 
@@ -139,7 +139,7 @@ func checkFunctionDeclStmt(funcNode ast.FunctionDeclStmt, env *TypeEnvironment) 
 		errgen.MakeError(env.filePath, funcNode.Identifier.Start.Line, funcNode.Identifier.End.Line, funcNode.Identifier.Start.Column, funcNode.Identifier.End.Column, fmt.Sprintf("Function %s is already declared", funcName)).Display()
 	}
 
-	return AnalyzeFuntion(funcNode.FunctionLiteral, funcName, env)
+	return CheckAndDeclareFunction(funcNode.FunctionLiteral, funcName, env)
 }
 
 func getFunctionReturnValue(env *TypeEnvironment, returnNode ast.Node) ValueTypeInterface {
