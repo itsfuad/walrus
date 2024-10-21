@@ -20,11 +20,15 @@ func checkMethodsImplementations(expected, provided ValueTypeInterface, filePath
 		// check if method is present in the struct's variables and is a function
 		methodVal, ok := structType.StructScope.variables[name]
 		if !ok {
-			errgen.MakeError(filePath, lineStart, lineEnd, colStart, colEnd, fmt.Sprintf("method '%s' not implemented for interface '%s' on struct '%s'", name, expected.(Interface).InterfaceName, provided.(Struct).StructName)).Display()
+			errgen.MakeError(filePath, lineStart, lineEnd, colStart, colEnd,
+				fmt.Sprintf("method '%s' not found in struct '%s' (expected implementation for interface '%s')", 
+				name, provided.(Struct).StructName, expected.(Interface).InterfaceName)).Display()
 		}
 		methodFn, ok := methodVal.(StructMethod)
 		if !ok {
-			errgen.MakeError(filePath, lineStart, lineEnd, colStart, colEnd, fmt.Sprintf("method '%s' not implemented for interface '%s' on struct '%s'", name, expected.(Interface).InterfaceName, provided.(Struct).StructName)).Display()
+			errgen.MakeError(filePath, lineStart, lineEnd, colStart, colEnd,
+				fmt.Sprintf("'%s' in struct '%s' is not a valid method (expected implementation for interface '%s')", 
+				name, provided.(Struct).StructName, expected.(Interface).InterfaceName)).Display()
 		}
 
 		// check the return type and parameters

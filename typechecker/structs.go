@@ -124,7 +124,7 @@ func checkPropertyAccess(expr ast.StructPropertyAccessExpr, env *TypeEnvironment
 			fmt.Printf("Scope type: %d, name: %s\n", env.scopeType, env.scopeName)
 			//check the scope we are in
 			if !env.IsInStructScope() {
-				errgen.MakeError(structEnv.filePath, prop.Start.Line, prop.End.Line, prop.Start.Column, prop.End.Column, fmt.Sprintf("cannot access private property '%s' from outside the struct's scope", prop.Name)).Display()
+				errgen.MakeError(structEnv.filePath, prop.Start.Line, prop.End.Line, prop.Start.Column, prop.End.Column, fmt.Sprintf("cannot access private property '%s' from outside of the struct's scope", prop.Name)).Display()
 			}
 		}
 

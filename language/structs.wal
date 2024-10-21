@@ -62,7 +62,7 @@ impl Circle {
     }
 
     fn perimeter() -> float {
-        ret 2.0 * 3.14159 * this.radius;
+        ret 2.0 * 3.14159 * radius;
     }
 };
 
@@ -71,6 +71,7 @@ type INT int;
 let i : INT = 1;
 
 let circle := @Circle{ radius: 10.0 };
+let rectangle := @Rectangle{ width: 10.0, height: 20.0 };
 
 let perimeterOfCircle := circle.perimeter();
 
@@ -88,3 +89,22 @@ fn getPoint() -> Point {
 // getPoint = 0; // error
 
 //getPoint().y = 4; // error
+
+impl Rectangle {
+    fn area() -> float {
+        ret width * height;
+    }
+
+    fn perimeter() -> float {
+        ret 2.0 * (width + height);
+    }
+};
+
+fn DrawShape(shape: IShape) {
+    //shape.radius; // error
+    let area := shape.area();
+    let perimeter := shape.perimeter();
+}
+
+DrawShape(circle);
+DrawShape(rectangle);

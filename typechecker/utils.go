@@ -24,7 +24,7 @@ func RandStringRunes(n int) string {
 	return string(b)
 }
 
-// generate interfaces from the type enum
+
 func stringToValueTypeInterface(typ VALUE_TYPE, env *TypeEnvironment) (ValueTypeInterface, error) {
 
 	builtin, ok := env.builtins[string(typ)]
@@ -41,6 +41,19 @@ func stringToValueTypeInterface(typ VALUE_TYPE, env *TypeEnvironment) (ValueType
 	return declaredEnv.types[string(typ)].(UserDefined).TypeDef, nil
 }
 
+
+// valueTypeInterfaceToString converts a ValueTypeInterface to a string representation of VALUE_TYPE.
+// It handles different types such as Array, Struct, Interface, and Fn by recursively converting
+// their components to strings and formatting them appropriately.
+//
+// Parameters:
+// - typeName: A ValueTypeInterface representing the type to be converted.
+//
+// Returns:
+// - VALUE_TYPE: A string representation of the given ValueTypeInterface.
+//
+// Note: The function currently has a commented-out case for UserDefined types and a default case
+// that prints the type and value of unhandled cases.
 func valueTypeInterfaceToString(typeName ValueTypeInterface) VALUE_TYPE {
 	switch t := typeName.(type) {
 	case Array:
@@ -76,7 +89,22 @@ func valueTypeInterfaceToString(typeName ValueTypeInterface) VALUE_TYPE {
 	}
 }
 
-
+// MatchTypes compares the expected and provided ValueTypeInterface types.
+// If the types do not match, it returns an error indicating the mismatch.
+// If the expected type is an interface, it checks the method implementations
+// of the provided type against the expected type.
+//
+// Parameters:
+//   - expected: The expected ValueTypeInterface type.
+//   - provided: The provided ValueTypeInterface type.
+//   - filePath: The file path where the type check is being performed.
+//   - lineStart: The starting line number of the type check.
+//   - lineEnd: The ending line number of the type check.
+//   - colStart: The starting column number of the type check.
+//   - colEnd: The ending column number of the type check.
+//
+// Returns:
+//   - error: An error if the types do not match, otherwise nil.
 func MatchTypes(expected, provided ValueTypeInterface, filePath string, lineStart, lineEnd, colStart, colEnd int) (error) {
 
 	expectedType := valueTypeInterfaceToString(expected)
