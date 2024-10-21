@@ -84,7 +84,7 @@ func (a IfStmt) EndPos() lexer.Position {
 }
 
 type ForStmt struct {
-	Start     Node
+	Init      Node
 	Condition Node
 	Increment Node
 	Block     BlockStmt

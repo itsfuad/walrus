@@ -75,6 +75,8 @@ func CheckAST(node ast.Node, env *TypeEnvironment) ValueTypeInterface {
 		return checkFunctionCall(t, env)
 	case ast.IfStmt:
 		return checkIfStmt(t, env)
+	case ast.ForStmt:
+		return checkForStmt(t, env)
 	case ast.ReturnStmt:
 		return checkReturnStmt(t, env)
 	}

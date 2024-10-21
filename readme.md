@@ -48,12 +48,13 @@ A tiny simple programming language made for simplicity. It borrows syntax from '
         - [x] for [start] [condition] [end]
         - [x] for [start] in [range] 
     - [x] [Interaface](#interface)
+    - [ ] Imports
+    - [ ] Packages
+    - [ ] Modules
     - [ ] Generics
 - [x] Analyzer
     - [x] Everything in parser except - 
         - [ ] For loop
-        - [ ] Interface
-        - [ ] Implement
 - [ ] Codegen
 
 # Example
