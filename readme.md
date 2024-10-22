@@ -168,7 +168,7 @@ let sum := adder(10, 20); // sum = 30
 
 // function with closure
 fn add(a: int) -> fn(int) -> int {
-    return fn(b: int) -> int {
+    ret fn(b: int) -> int {
         ret a + b;
     };
 }
@@ -193,7 +193,7 @@ let c := @Circle {
 };
 
 let f: FnType = fn(a: int, b: int) -> int {
-    return a + b;
+    ret a + b;
 };
 
 let w: WrapperInt = 10;
