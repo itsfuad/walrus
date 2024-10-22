@@ -149,14 +149,14 @@ if a > b {
 ## Functions
 ```rust
 fn add(a: int, b: int) -> int {
-    return a + b;
+    ret a + b;
 }
 
 let sum := add(10, 20); // sum = 30
 
 // function with optional parameters
 fn add(a: int, b: int, c?: int = 0) -> int {
-    return a + b + c;
+    ret a + b + c;
 }
 
 let sum := add(10, 20); // sum = 30
@@ -169,7 +169,7 @@ let sum := adder(10, 20); // sum = 30
 // function with closure
 fn add(a: int) -> fn(int) -> int {
     return fn(b: int) -> int {
-        return a + b;
+        ret a + b;
     };
 }
 
