@@ -184,9 +184,9 @@ type Circle struct {
     radius: float;
 }
 
-type FnType = fn(int, int) -> int;
+type FnType fn(a: int, b: int) -> int;
 
-type WrapperInt = int;
+type WrapperInt int;
 
 let c := @Circle {
     radius: 10.0
@@ -228,7 +228,7 @@ for let i := 0; i < 10; i++ {
 ## Interface
 Interfaces are a way to define a contract that a type must implement. It is a way to achieve polymorphism in the language.
 ```rust
-interface Shape {
+type Shape interface {
     fn area() -> float;
 }
 
@@ -236,7 +236,7 @@ interface Shape {
 
 ## Implementing a interface for a struct
 ```rust
-interface Printable {
+type Printable interface {
     fn print();
 }
 
