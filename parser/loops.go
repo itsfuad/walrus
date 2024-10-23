@@ -135,13 +135,7 @@ func parseForStmt(p *Parser) ast.Node {
 			condition := parseExpr(p, ASSIGNMENT_BP)
 			block := parseBlock(p)
 			return ast.ForStmt{
-				Init: ast.IdentifierExpr{
-					Name: identifier.Value,
-					Location: ast.Location{
-						Start: identifier.Start,
-						End:   identifier.End,
-					},
-				},
+				Init: nil,
 				Condition: condition,
 				Increment: nil,
 				Block:     block,

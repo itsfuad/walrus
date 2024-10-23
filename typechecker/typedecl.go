@@ -30,9 +30,7 @@ func checkTypeDeclaration(node ast.TypeDeclStmt, env *TypeEnvironment) ValueType
 		}
 		val = arr
 	case nil:
-		val = Void{
-			DataType: VOID_TYPE,
-		}
+		val = NewVoid()
 	default:
 		typ, err := stringToValueTypeInterface(VALUE_TYPE(t.Type()), env)
 		if err != nil {

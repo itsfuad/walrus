@@ -18,9 +18,7 @@ func EvaluateProgram(program ast.ProgramStmt, env *TypeEnvironment) ValueTypeInt
 	//print the file path
 	utils.ColorPrint(utils.ORANGE, fmt.Sprintf("File path: %s", env.filePath))
 
-	return Void{
-		DataType: VOID_TYPE,
-	}
+	return NewVoid()
 }
 
 func CheckAST(node ast.Node, env *TypeEnvironment) ValueTypeInterface {

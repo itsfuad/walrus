@@ -198,9 +198,7 @@ func EvaluateTypeName(dtype ast.DataType, env *TypeEnvironment) ValueTypeInterfa
 			FunctionScope: *scope,
 		}
 	case nil:
-		return Void{
-			DataType: VOID_TYPE,
-		}
+		return NewVoid()
 	default:
 		val, err := stringToValueTypeInterface(VALUE_TYPE(t.Type()), env)
 		if err != nil {
