@@ -141,8 +141,6 @@ type Struct struct {
 	DataType   VALUE_TYPE
 	StructName string
 	StructScope TypeEnvironment
-	//Elements   map[string]StructProperty
-	//Methods    map[string]StructMethod
 }
 
 func (t Struct) DType() VALUE_TYPE {
@@ -195,6 +193,35 @@ type Interface struct {
 
 func (t Interface) DType() VALUE_TYPE {
 	return t.DataType
+}
+
+//helper type initialization functions
+func NewInt() Int {
+	return Int{DataType: INT_TYPE}
+}
+
+func NewFloat() Float {
+	return Float{DataType: FLOAT_TYPE}
+}
+
+func NewChr() Chr {
+	return Chr{DataType: CHAR_TYPE}
+}
+
+func NewStr() Str {
+	return Str{DataType: STRING_TYPE}
+}
+
+func NewBool() Bool {
+	return Bool{DataType: BOOLEAN_TYPE}
+}
+
+func NewNull() Null {
+	return Null{DataType: NULL_TYPE}
+}
+
+func NewVoid() Void {
+	return Void{DataType: VOID_TYPE}
 }
 
 type SCOPE_TYPE int

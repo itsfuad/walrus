@@ -111,5 +111,5 @@ func checkImplStmt(implStmt ast.ImplStmt, env *TypeEnvironment) ValueTypeInterfa
 
 	}
 
-	return nil
+	return NewVoid()
 }

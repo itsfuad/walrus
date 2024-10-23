@@ -31,5 +31,5 @@ func checkIfStmt(ifNode ast.IfStmt, env *TypeEnvironment) ValueTypeInterface {
 		}
 	}
 
-	return nil
+	return NewVoid()
 }

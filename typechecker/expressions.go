@@ -98,9 +98,7 @@ func checkComparison(node ast.BinaryExpr, left ValueTypeInterface, right ValueTy
 
 	op := node.Operator
 
-	boolean := Bool{
-		DataType: BOOLEAN_TYPE,
-	}
+	boolean := NewBool()
 
 	if op.Kind == lexer.DOUBLE_EQUAL_TOKEN || op.Kind == lexer.NOT_EQUAL_TOKEN {
 		// ( ==, != ) allow every type
