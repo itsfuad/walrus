@@ -149,14 +149,14 @@ if a > b {
 ## Functions
 ```rust
 fn add(a: int, b: int) -> int {
-    return a + b;
+    ret a + b;
 }
 
 let sum := add(10, 20); // sum = 30
 
 // function with optional parameters
 fn add(a: int, b: int, c?: int = 0) -> int {
-    return a + b + c;
+    ret a + b + c;
 }
 
 let sum := add(10, 20); // sum = 30
@@ -168,8 +168,8 @@ let sum := adder(10, 20); // sum = 30
 
 // function with closure
 fn add(a: int) -> fn(int) -> int {
-    return fn(b: int) -> int {
-        return a + b;
+    ret fn(b: int) -> int {
+        ret a + b;
     };
 }
 
@@ -184,16 +184,16 @@ type Circle struct {
     radius: float;
 }
 
-type FnType = fn(int, int) -> int;
+type FnType fn(a: int, b: int) -> int;
 
-type WrapperInt = int;
+type WrapperInt int;
 
 let c := @Circle {
     radius: 10.0
 };
 
 let f: FnType = fn(a: int, b: int) -> int {
-    return a + b;
+    ret a + b;
 };
 
 let w: WrapperInt = 10;
@@ -228,7 +228,7 @@ for let i := 0; i < 10; i++ {
 ## Interface
 Interfaces are a way to define a contract that a type must implement. It is a way to achieve polymorphism in the language.
 ```rust
-interface Shape {
+type Shape interface {
     fn area() -> float;
 }
 
@@ -236,7 +236,7 @@ interface Shape {
 
 ## Implementing a interface for a struct
 ```rust
-interface Printable {
+type Printable interface {
     fn print();
 }
 
