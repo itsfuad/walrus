@@ -1,14 +1,15 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
-	"strings"
-	"encoding/json"
 	"path/filepath"
+	"strings"
+	"walrus/errgen"
 	"walrus/lexer"
-	"walrus/typechecker"
 	parseMachine "walrus/parser"
+	"walrus/typechecker"
 )
 
 func main() {
@@ -44,4 +45,5 @@ func main() {
 	tc.DeclareVar("false", typechecker.Bool{DataType: typechecker.BOOLEAN_TYPE}, true, false)
 	tc.DeclareVar("PI", typechecker.Float{DataType: typechecker.FLOAT_TYPE}, true, false)
 	typechecker.CheckAST(tree, tc)
+	errgen.DisplayErrors()
 }

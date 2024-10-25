@@ -114,5 +114,5 @@ func bindLookupHandlers() {
 	led(lexer.MINUS_MINUS_TOKEN, UNARY_BP, parsePostfixExpr) // a--
 
 	//implement keyword
-	nud(lexer.IMPLEMENT_TOKEN, parseImplementStmt)
+	stmt(lexer.IMPLEMENT_TOKEN, parseImplementStmt)
 }

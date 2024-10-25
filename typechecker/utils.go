@@ -24,7 +24,6 @@ func RandStringRunes(n int) string {
 	return string(b)
 }
 
-
 func stringToValueTypeInterface(typ VALUE_TYPE, env *TypeEnvironment) (ValueTypeInterface, error) {
 
 	builtin, ok := env.builtins[string(typ)]
@@ -40,7 +39,6 @@ func stringToValueTypeInterface(typ VALUE_TYPE, env *TypeEnvironment) (ValueType
 
 	return declaredEnv.types[string(typ)].(UserDefined).TypeDef, nil
 }
-
 
 // valueTypeInterfaceToString converts a ValueTypeInterface to a string representation of VALUE_TYPE.
 // It handles different types such as Array, Struct, Interface, and Fn by recursively converting
@@ -105,7 +103,7 @@ func valueTypeInterfaceToString(typeName ValueTypeInterface) VALUE_TYPE {
 //
 // Returns:
 //   - error: An error if the types do not match, otherwise nil.
-func MatchTypes(expected, provided ValueTypeInterface, filePath string, lineStart, lineEnd, colStart, colEnd int) (error) {
+func MatchTypes(expected, provided ValueTypeInterface, filePath string, lineStart, lineEnd, colStart, colEnd int) error {
 
 	expectedType := valueTypeInterfaceToString(expected)
 	gotType := valueTypeInterfaceToString(provided)
@@ -120,7 +118,7 @@ func MatchTypes(expected, provided ValueTypeInterface, filePath string, lineStar
 	return nil
 }
 
-func IsAssignable(node ast.Node, env *TypeEnvironment) (error) {
+func IsAssignable(node ast.Node, env *TypeEnvironment) error {
 	//if not constant and is IdentifierExpr
 	switch t := node.(type) {
 	case ast.IdentifierExpr:
@@ -181,9 +179,9 @@ func EvaluateTypeName(dtype ast.DataType, env *TypeEnvironment) ValueTypeInterfa
 		for _, param := range t.Parameters {
 			paramType := EvaluateTypeName(param.Type, env)
 			params = append(params, FnParam{
-				Name: 		param.Identifier.Name,
+				Name:       param.Identifier.Name,
 				IsOptional: param.IsOptional,
-				Type: 		paramType,
+				Type:       paramType,
 			})
 		}
 
@@ -202,7 +200,8 @@ func EvaluateTypeName(dtype ast.DataType, env *TypeEnvironment) ValueTypeInterfa
 	default:
 		val, err := stringToValueTypeInterface(VALUE_TYPE(t.Type()), env)
 		if err != nil {
-			errgen.MakeError(env.filePath, dtype.StartPos().Line, dtype.EndPos().Line, dtype.StartPos().Column, dtype.EndPos().Column, err.Error()).Display()
+			//errgen.MakeError(env.filePath, dtype.StartPos().Line, dtype.EndPos().Line, dtype.StartPos().Column, dtype.EndPos().Column, err.Error()).DisplayWithPanic()
+			errgen.AddError(env.filePath, dtype.StartPos().Line, dtype.EndPos().Line, dtype.StartPos().Column, dtype.EndPos().Column, err.Error())
 		}
 		return val
 	}

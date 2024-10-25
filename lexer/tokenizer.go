@@ -154,8 +154,9 @@ func identifierHandler(lex *Lexer, regex *regexp.Regexp) {
 // Depending on the type, it pushes the appropriate token (FLOAT or INT) to the lexer's token stack.
 //
 // Parameters:
-//   lex - A pointer to the Lexer instance.
-//   regex - A compiled regular expression used to find numeric matches in the lexer's input.
+//
+//	lex - A pointer to the Lexer instance.
+//	regex - A compiled regular expression used to find numeric matches in the lexer's input.
 func numberHandler(lex *Lexer, regex *regexp.Regexp) {
 	match := regex.FindString(lex.remainder())
 	start := lex.Position
@@ -173,8 +174,9 @@ func numberHandler(lex *Lexer, regex *regexp.Regexp) {
 // It excludes the quotes from the matched string, updates the lexer's position, and pushes a new token.
 //
 // Parameters:
-//   lex   - A pointer to the Lexer instance.
-//   regex - A regular expression used to find the string literal in the lexer's remainder.
+//
+//	lex   - A pointer to the Lexer instance.
+//	regex - A regular expression used to find the string literal in the lexer's remainder.
 func stringHandler(lex *Lexer, regex *regexp.Regexp) {
 	match := regex.FindString(lex.remainder())
 	//exclude the quotes
@@ -191,8 +193,9 @@ func stringHandler(lex *Lexer, regex *regexp.Regexp) {
 // with the character literal's value and its position in the input.
 //
 // Parameters:
-//   lex - The Lexer instance that contains the input and current position.
-//   regex - The regular expression used to match the character literal.
+//
+//	lex - The Lexer instance that contains the input and current position.
+//	regex - The regular expression used to match the character literal.
 func characterHandler(lex *Lexer, regex *regexp.Regexp) {
 	match := regex.FindString(lex.remainder())
 	//exclude the quotes
@@ -232,7 +235,7 @@ func Tokenize(filename string, debug bool) []Token {
 
 		if !matched {
 			errStr := fmt.Sprintf("lexer:unexpected character: '%c'", lex.at())
-			errgen.MakeError(filename, lex.Position.Line, lex.Position.Line, lex.Position.Column, lex.Position.Column, errStr).Display()
+			errgen.MakeError(filename, lex.Position.Line, lex.Position.Line, lex.Position.Column, lex.Position.Column, errStr).DisplayWithPanic()
 			return nil
 		}
 	}
