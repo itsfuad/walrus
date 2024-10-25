@@ -1,10 +1,10 @@
 package parser
 
 import (
-	"walrus/ast"
-	"walrus/lexer"
-	"walrus/errgen"
 	"errors"
+	"walrus/ast"
+	"walrus/errgen"
+	"walrus/lexer"
 )
 
 // parseLambdaFunction parses a lambda function expression from the input and returns an AST node representing the function.
@@ -111,7 +111,7 @@ func parseFunctionSignature(p *Parser) ([]ast.FunctionParam, ast.DataType) {
 		currentToken := p.currentToken()
 
 		if currentToken.Kind != lexer.COLON_TOKEN && currentToken.Kind != lexer.OPTIONAL_TOKEN {
-			errgen.MakeError(p.FilePath, currentToken.Start.Line, currentToken.End.Line, currentToken.Start.Column, currentToken.End.Column, "expected : or ?:").Display()
+			errgen.MakeError(p.FilePath, currentToken.Start.Line, currentToken.End.Line, currentToken.Start.Column, currentToken.End.Column, "expected : or ?:").DisplayWithPanic()
 		}
 
 		p.advance()
@@ -155,7 +155,6 @@ func parseFunctionSignature(p *Parser) ([]ast.FunctionParam, ast.DataType) {
 
 	return params, returnType
 }
-
 
 // parseCallExpr parses a function call expression in the source code.
 // It expects the current token to be an open parenthesis and will parse

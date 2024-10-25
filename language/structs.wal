@@ -64,7 +64,7 @@ impl Circle {
     fn perimeter() -> float {
         ret 2.0 * 3.14159 * radius;
     }
-};
+}
 
 type INT int;
 
@@ -98,7 +98,7 @@ impl Rectangle {
     fn perimeter() -> float {
         ret 2.0 * (width + height);
     }
-};
+}
 
 fn DrawShape(shape: IShape) {
     //shape.radius; // error

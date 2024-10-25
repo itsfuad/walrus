@@ -55,6 +55,7 @@ A tiny simple programming language made for simplicity. It borrows syntax from '
 - [x] Analyzer
     - [x] Everything in parser except - 
         - [ ] For loop
+- [x] Rich multi error reporting system
 - [ ] Codegen
 
 # Example

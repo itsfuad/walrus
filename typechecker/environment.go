@@ -138,8 +138,8 @@ func (t StructMethod) DType() VALUE_TYPE {
 }
 
 type Struct struct {
-	DataType   VALUE_TYPE
-	StructName string
+	DataType    VALUE_TYPE
+	StructName  string
 	StructScope TypeEnvironment
 }
 
@@ -195,7 +195,7 @@ func (t Interface) DType() VALUE_TYPE {
 	return t.DataType
 }
 
-//helper type initialization functions
+// helper type initialization functions
 func NewInt() Int {
 	return Int{DataType: INT_TYPE}
 }
@@ -250,13 +250,13 @@ type TypeEnvironment struct {
 func NewTypeENV(parent *TypeEnvironment, scope SCOPE_TYPE, scopeName string, filePath string) *TypeEnvironment {
 
 	builtins := map[string]ValueTypeInterface{
-		string(INT_TYPE):    Int{DataType: INT_TYPE},
-		string(FLOAT_TYPE):  Float{DataType: FLOAT_TYPE},
-		string(CHAR_TYPE):   Chr{DataType: CHAR_TYPE},
-		string(STRING_TYPE): Str{DataType: STRING_TYPE},
+		string(INT_TYPE):     Int{DataType: INT_TYPE},
+		string(FLOAT_TYPE):   Float{DataType: FLOAT_TYPE},
+		string(CHAR_TYPE):    Chr{DataType: CHAR_TYPE},
+		string(STRING_TYPE):  Str{DataType: STRING_TYPE},
 		string(BOOLEAN_TYPE): Bool{DataType: BOOLEAN_TYPE},
-		string(NULL_TYPE):   Null{DataType: NULL_TYPE},
-		string(VOID_TYPE):   Void{DataType: VOID_TYPE},
+		string(NULL_TYPE):    Null{DataType: NULL_TYPE},
+		string(VOID_TYPE):    Void{DataType: VOID_TYPE},
 	}
 
 	return &TypeEnvironment{
@@ -268,7 +268,7 @@ func NewTypeENV(parent *TypeEnvironment, scope SCOPE_TYPE, scopeName string, fil
 		constants:  make(map[string]bool),
 		isOptional: make(map[string]bool),
 		builtins:   builtins,
-		types:  	make(map[string]ValueTypeInterface),
+		types:      make(map[string]ValueTypeInterface),
 		interfaces: make(map[string]Interface),
 	}
 }
@@ -317,6 +317,7 @@ func (t *TypeEnvironment) ResolveType(name string) (*TypeEnvironment, error) {
 	}
 	return t.parent.ResolveType(name)
 }
+
 /*
 func (t *TypeEnvironment) GetTypeFromEnv(name string) (ValueTypeInterface, error) {
 	if _, ok := t.builtins[name]; ok {
@@ -377,7 +378,8 @@ func GetValueType(value ast.Node, t *TypeEnvironment) ValueTypeInterface {
 
 	typ, err := getValueTypeInterface(typ, t)
 	if err != nil {
-		errgen.MakeError(t.filePath, value.StartPos().Line, value.EndPos().Line, value.StartPos().Column, value.EndPos().Column, err.Error()).Display()
+		//errgen.MakeError(t.filePath, value.StartPos().Line, value.EndPos().Line, value.StartPos().Column, value.EndPos().Column, err.Error()).DisplayWithPanic()
+		errgen.AddError(t.filePath, value.StartPos().Line, value.EndPos().Line, value.StartPos().Column, value.EndPos().Column, err.Error())
 		return nil
 	}
 

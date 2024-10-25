@@ -135,7 +135,7 @@ func parseForStmt(p *Parser) ast.Node {
 			condition := parseExpr(p, ASSIGNMENT_BP)
 			block := parseBlock(p)
 			return ast.ForStmt{
-				Init: nil,
+				Init:      nil,
 				Condition: condition,
 				Increment: nil,
 				Block:     block,
@@ -149,7 +149,7 @@ func parseForStmt(p *Parser) ast.Node {
 	} else {
 		//error
 		//msg := "invalid for loop syntax"
-		errgen.MakeError(p.FilePath, start.Line, start.Line, start.Column, start.Column, "invalid for loop syntax").Display()
+		errgen.MakeError(p.FilePath, start.Line, start.Line, start.Column, start.Column, "invalid for loop syntax").DisplayWithPanic()
 		return nil
 	}
 }

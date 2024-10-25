@@ -28,7 +28,8 @@ func evaluateArrayAccess(array ast.ArrayIndexAccess, env *TypeEnvironment) Value
 		lineEnd := array.Array.EndPos().Line
 		start := array.Array.StartPos().Column
 		end := array.Array.EndPos().Column
-		errgen.MakeError(env.filePath, lineStart, lineEnd, start, end, fmt.Sprintf("cannot access index of type %s", arrType.DType())).AddHint("type must be an array", errgen.TEXT_HINT).Display()
+		//errgen.MakeError(env.filePath, lineStart, lineEnd, start, end, fmt.Sprintf("cannot access index of type %s", arrType.DType())).AddHint("type must be an array", errgen.TEXT_HINT).DisplayWithPanic()
+		errgen.AddError(env.filePath, lineStart, lineEnd, start, end, fmt.Sprintf("cannot access index of type %s", arrType.DType())).AddHint("type must be an array", errgen.TEXT_HINT)
 	}
 	//index must be evaluated to int
 	indexType := GetValueType(array.Index, env)
@@ -37,7 +38,8 @@ func evaluateArrayAccess(array ast.ArrayIndexAccess, env *TypeEnvironment) Value
 		lineEnd := array.Index.EndPos().Line
 		start := array.Index.StartPos().Column
 		end := array.Index.EndPos().Column
-		errgen.MakeError(env.filePath, lineStart, lineEnd, start, end, fmt.Sprintf("cannot use index of type %s", indexType.DType())).AddHint("index must be valid integer", errgen.TEXT_HINT).Display()
+		//errgen.MakeError(env.filePath, lineStart, lineEnd, start, end, fmt.Sprintf("cannot use index of type %s", indexType.DType())).AddHint("index must be valid integer", errgen.TEXT_HINT).DisplayWithPanic()
+		errgen.AddError(env.filePath, lineStart, lineEnd, start, end, fmt.Sprintf("cannot use index of type %s", indexType.DType())).AddHint("index must be valid integer", errgen.TEXT_HINT)
 	}
 	return arrType.(Array).ArrayType
 }
@@ -61,7 +63,8 @@ func evaluateArrayExpr(array ast.ArrayLiteral, env *TypeEnvironment) ValueTypeIn
 		//check every type is same or not
 		err := MatchTypes(expectedType, v, env.filePath, array.Start.Line, array.End.Line, array.Values[i].StartPos().Column, array.Values[i].EndPos().Column)
 		if err != nil {
-			errgen.MakeError(env.filePath, array.Start.Line, array.End.Line, array.Values[i].StartPos().Column, array.Values[i].EndPos().Column, err.Error()).Display()
+			//errgen.MakeError(env.filePath, array.Start.Line, array.End.Line, array.Values[i].StartPos().Column, array.Values[i].EndPos().Column, err.Error()).DisplayWithPanic()
+			errgen.AddError(env.filePath, array.Start.Line, array.End.Line, array.Values[i].StartPos().Column, array.Values[i].EndPos().Column, err.Error())
 		}
 	}
 
