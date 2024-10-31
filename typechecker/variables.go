@@ -21,9 +21,9 @@ func checkVariableAssignment(node ast.VarAssignmentExpr, env *TypeEnvironment) V
 	Assignee := node.Assignee
 	valueToAssign := node.Value
 
-	if err := IsAssignable(Assignee, env); err != nil {
-		//errgen.MakeError(env.filePath, Assignee.StartPos().Line, Assignee.EndPos().Line, Assignee.StartPos().Column, Assignee.EndPos().Column, err.Error()).DisplayWithPanic()
-		errgen.AddError(env.filePath, Assignee.StartPos().Line, Assignee.EndPos().Line, Assignee.StartPos().Column, Assignee.EndPos().Column, err.Error())
+	if err := CheckLValue(Assignee, env); err != nil {
+		errgen.MakeError(env.filePath, Assignee.StartPos().Line, Assignee.EndPos().Line, Assignee.StartPos().Column, Assignee.EndPos().Column, "cannot assign to " + err.Error()).DisplayWithPanic()
+		//errgen.AddError(env.filePath, Assignee.StartPos().Line, Assignee.EndPos().Line, Assignee.StartPos().Column, Assignee.EndPos().Column, err.Error())
 	}
 
 	expectedType := GetValueType(Assignee, env)
@@ -68,12 +68,15 @@ func checkVariableDeclaration(node ast.VarDeclStmt, env *TypeEnvironment) ValueT
 
 	if node.ExplicitType != nil {
 		expectedTypeInterface = EvaluateTypeName(node.ExplicitType, env)
-		fmt.Printf("Explicit type %T, %s\n", expectedTypeInterface, expectedTypeInterface.DType())
+		fmt.Printf("Explicit type %T\n", expectedTypeInterface)
+		fmt.Printf("Explicit type name %s\n", expectedTypeInterface.DType())
 	} else {
 		expectedTypeInterface = GetValueType(node.Value, env)
 		//handleExplicitType(typestr, env)
 		fmt.Printf("Auto detected type %T, %s\n", expectedTypeInterface, expectedTypeInterface.DType())
 	}
+	
+	fmt.Printf("Value %v\n", node.Value)
 
 	if node.Value != nil && node.ExplicitType != nil {
 		//providedValue := CheckAST(node.Value, env)

@@ -10,7 +10,7 @@ fn sayHello(a: str){
 
 let someBool := a > 5;
 
-fn large(u: int) -> int {
+fn large(u: i32) -> i32 {
     let a := 1;
     let b := 2;
     if a > b {
@@ -30,40 +30,40 @@ fn large(u: int) -> int {
 let b := 3;
 b = large(6);
 
-const f := fn () -> int {
+const f := fn () -> i32 {
     ret 5;
 };
 
 let c := f();
 
-type Int int;
+type Int i32;
 
 let typedInt: Int = 5;
 
-type FN fn (a: int, b?: float) -> int;
+type FN fn (a: i32, b?: f32) -> i32;
 
-fn testFn(param1: int, param2: FN) -> int {
+fn testFn(param1: i32, param2: FN) -> i32 {
     ret param2(param1, 5.7);
 }
 
-testFn(4, fn (a: int, b?: float = 10.0) -> int {
+testFn(4, fn (a: i32, b?: f32 = 10.0) -> i32 {
     ret a + b;
 });
 
-fn testFn2(param1: int, param2: fn (a: int, b: float) -> int) -> int {
+fn testFn2(param1: i32, param2: fn (a: i32, b: f32) -> i32) -> i32 {
     ret param2(param1, 5.0);
 }
 
-testFn2(4, fn (a: int, b: float) -> int {
+testFn2(4, fn (a: i32, b: f32) -> i32 {
     ret a + 5;
 });
 
-fn add(a: int, b?: int = 9) -> int {
+fn add(a: i32, b?: i32 = 9) -> i32 {
     ret a + b;
 }
 
-fn closure(a: int) -> fn (b: int) -> int {
-    ret fn (b: int) -> int {
+fn closure(a: i32) -> fn (b: i32) -> i32 {
+    ret fn (b: i32) -> i32 {
         ret a + b;
     };
 }

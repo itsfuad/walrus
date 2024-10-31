@@ -3,17 +3,17 @@
 let a := 78;
 
 type Point struct{
-    x: int,
-    y: int
+    x: i32,
+    y: i32
 };
 
-type Int int;
+type Int i32;
 
 let x : Int = 3;
 
 let point : Point = @Point{ x: 2, y: 4 };
 
-type Array []int;
+type Array []i32;
 
 let arr : Array = [1,2,3];
 

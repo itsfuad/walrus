@@ -1,15 +1,16 @@
 
 
-let arr := [1,2,3];
+let arr := [1,2,3.9];
 
 let arr2 := [[1,4], [4,7], arr, [4]];
 
 let arp := 20;
 
-let p : int;
+let p : i32;
 p = arr2[arp][2];
 
 const x := 10;
+
 //p = 2.4; //error
 
 //x = 28; //error

@@ -24,6 +24,24 @@ func checkIncrementalExpr(node ast.IncrementalInterface, env *TypeEnvironment) V
 	return typeVal
 }
 
+func checkTypeCast(node ast.TypeCastExpr, env *TypeEnvironment) ValueTypeInterface {
+
+	originalType := GetValueType(node.Expression, env)
+	toCast := EvaluateTypeName(node.ToCast, env)
+
+	if originalType.DType() == toCast.DType() {
+		return originalType
+	}
+
+	if IsNumberType(originalType) && IsNumberType(toCast) {
+		return toCast
+	}
+
+	errgen.AddError(env.filePath, node.Start.Line, node.End.Line, node.Start.Column, node.End.Column, fmt.Sprintf("cannot cast '%s' to '%s'", originalType.DType(), toCast.DType()))
+
+	return originalType
+}
+
 func checkUnaryExpr(node ast.UnaryExpr, env *TypeEnvironment) ValueTypeInterface {
 	op := node.Operator
 	arg := node.Argument
@@ -67,13 +85,13 @@ func checkBinaryExpr(node ast.BinaryExpr, env *TypeEnvironment) ValueTypeInterfa
 		return checkAdditionAndConcat(node, left, right, env)
 	case lexer.MINUS_TOKEN, lexer.MUL_TOKEN, lexer.DIV_TOKEN, lexer.MOD_TOKEN, lexer.EXP_TOKEN:
 		//must have to be numeric type on both side
-		if leftType != builtins.INT && leftType != builtins.FLOAT {
+		if leftType != builtins.INT32 && leftType != builtins.FLOAT32 {
 			errMsg = "cannot perform numeric operation. left hand side expression must be evaluated to a numeric type"
 			errLineStart = node.Left.StartPos().Line
 			errLineEnd = node.Left.EndPos().Line
 			errStart = node.Left.StartPos().Column
 			errEnd = node.Left.EndPos().Column
-		} else if rightType != builtins.INT && rightType != builtins.FLOAT {
+		} else if rightType != builtins.INT32 && rightType != builtins.FLOAT32 {
 			errMsg = "cannot perform numeric operation. right hand side expression must be evaluated to a numeric type"
 			errLineStart = node.Right.StartPos().Line
 			errLineEnd = node.Right.EndPos().Line
@@ -133,9 +151,9 @@ func checkAdditionAndConcat(node ast.BinaryExpr, left ValueTypeInterface, right 
 	var errLineStart, errLineEnd, errStart, errEnd int
 	var errMsg string
 	//only string concat, int and floats are allowed.
-	if leftType == builtins.INT || leftType == builtins.FLOAT {
+	if leftType == builtins.INT32 || leftType == builtins.FLOAT32 {
 		//right has to be int or float
-		if rightType != builtins.INT && rightType != builtins.FLOAT {
+		if rightType != builtins.INT32 && rightType != builtins.FLOAT32 {
 			errMsg = "cannot perform numeric operation. right hand side expression must be evaluated to a numeric type"
 			errLineStart = node.Right.StartPos().Line
 			errLineEnd = node.Right.EndPos().Line

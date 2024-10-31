@@ -45,7 +45,7 @@ func TestTokenize(t *testing.T) {
 			name:  "Number literal",
 			input: "123",
 			expected: []Token{
-				NewToken(INT, "123", Position{Line: 1, Column: 1, Index: 0}, Position{Line: 1, Column: 4, Index: 3}),
+				NewToken(INT32, "123", Position{Line: 1, Column: 1, Index: 0}, Position{Line: 1, Column: 4, Index: 3}),
 				NewToken(EOF_TOKEN, "eof", Position{Line: 1, Column: 4, Index: 3}, Position{Line: 1, Column: 4, Index: 3}),
 			},
 		},

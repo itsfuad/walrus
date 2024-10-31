@@ -1,11 +1,11 @@
 
 type ID struct {
-    priv id: int
+    priv id: i32
 };
 
 type Point struct{
-    priv x: int,
-    y: int,
+    priv x: i32,
+    y: i32,
 };
 
 let point : Point;
@@ -19,8 +19,8 @@ point.y = 10;
 type Distance struct {
     start: Point,
     end: Point,
-    priv max: int,
-    min: int,
+    priv max: i32,
+    min: i32,
 };
 
 let a := 0;
@@ -41,32 +41,32 @@ let distance := @Distance{
 distance.min = 1;
 
 type IShape interface {
-    fn area() -> float;
-    fn perimeter() -> float;
+    fn area() -> f32;
+    fn perimeter() -> f32;
 };
 
 type Circle struct {
-    priv radius: float,
+    priv radius: f32,
 };
 
 type Rectangle struct {
-    width: float,
-    height: float,
+    width: f32,
+    height: f32,
 };
 
 
 impl Circle {
-    fn area() -> float {
+    fn area() -> f32 {
         let r := radius;
         ret radius;
     }
 
-    fn perimeter() -> float {
+    fn perimeter() -> f32 {
         ret 2.0 * 3.14159 * radius;
     }
 }
 
-type INT int;
+type INT i32;
 
 let i : INT = 1;
 
@@ -91,11 +91,11 @@ fn getPoint() -> Point {
 //getPoint().y = 4; // error
 
 impl Rectangle {
-    fn area() -> float {
+    fn area() -> f32 {
         ret width * height;
     }
 
-    fn perimeter() -> float {
+    fn perimeter() -> f32 {
         ret 2.0 * (width + height);
     }
 }

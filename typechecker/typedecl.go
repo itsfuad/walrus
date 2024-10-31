@@ -32,7 +32,7 @@ func checkTypeDeclaration(node ast.TypeDeclStmt, env *TypeEnvironment) ValueType
 	case nil:
 		val = NewVoid()
 	default:
-		typ, err := stringToValueTypeInterface(VALUE_TYPE(t.Type()), env)
+		typ, err := stringToValueTypeInterface(builtins.VALUE_TYPE(t.Type()), env)
 		if err != nil {
 			//errgen.MakeError(env.filePath, t.StartPos().Line, t.EndPos().Line, t.StartPos().Column, t.EndPos().Column, err.Error()).DisplayWithPanic()
 			errgen.AddError(env.filePath, t.StartPos().Line, t.EndPos().Line, t.StartPos().Column, t.EndPos().Column, err.Error())

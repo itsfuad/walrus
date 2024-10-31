@@ -1,6 +1,7 @@
 package typechecker
 
 import (
+	"errors"
 	"fmt"
 	"math/rand"
 	"time"
@@ -24,7 +25,7 @@ func RandStringRunes(n int) string {
 	return string(b)
 }
 
-func stringToValueTypeInterface(typ VALUE_TYPE, env *TypeEnvironment) (ValueTypeInterface, error) {
+func stringToValueTypeInterface(typ builtins.VALUE_TYPE, env *TypeEnvironment) (ValueTypeInterface, error) {
 
 	builtin, ok := env.builtins[string(typ)]
 	if ok {
@@ -40,7 +41,7 @@ func stringToValueTypeInterface(typ VALUE_TYPE, env *TypeEnvironment) (ValueType
 	return declaredEnv.types[string(typ)].(UserDefined).TypeDef, nil
 }
 
-// valueTypeInterfaceToString converts a ValueTypeInterface to a string representation of VALUE_TYPE.
+// valueTypeInterfaceToString converts a ValueTypeInterface to a string representation of builtins.VALUE_TYPE.
 // It handles different types such as Array, Struct, Interface, and Fn by recursively converting
 // their components to strings and formatting them appropriately.
 //
@@ -48,18 +49,18 @@ func stringToValueTypeInterface(typ VALUE_TYPE, env *TypeEnvironment) (ValueType
 // - typeName: A ValueTypeInterface representing the type to be converted.
 //
 // Returns:
-// - VALUE_TYPE: A string representation of the given ValueTypeInterface.
+// - builtins.VALUE_TYPE: A string representation of the given ValueTypeInterface.
 //
 // Note: The function currently has a commented-out case for UserDefined types and a default case
 // that prints the type and value of unhandled cases.
-func valueTypeInterfaceToString(typeName ValueTypeInterface) VALUE_TYPE {
+func valueTypeInterfaceToString(typeName ValueTypeInterface) builtins.VALUE_TYPE {
 	switch t := typeName.(type) {
 	case Array:
 		return "[]" + valueTypeInterfaceToString(t.ArrayType)
 	case Struct:
-		return VALUE_TYPE(t.StructName)
+		return builtins.VALUE_TYPE(t.StructName)
 	case Interface:
-		return VALUE_TYPE(t.InterfaceName)
+		return builtins.VALUE_TYPE(t.InterfaceName)
 	case Fn:
 		ParamStrs := ""
 		for i, param := range t.Params {
@@ -78,7 +79,7 @@ func valueTypeInterfaceToString(typeName ValueTypeInterface) VALUE_TYPE {
 		if ReturnStr != "" {
 			ReturnStr = " -> " + ReturnStr
 		}
-		return VALUE_TYPE(fmt.Sprintf("fn(%s)%s", ParamStrs, ReturnStr))
+		return builtins.VALUE_TYPE(fmt.Sprintf("fn(%s)%s", ParamStrs, ReturnStr))
 	//case UserDefined:
 	//	return valueTypeInterfaceToString(t.TypeDef)
 	default:
@@ -118,10 +119,18 @@ func MatchTypes(expected, provided ValueTypeInterface, filePath string, lineStar
 	return nil
 }
 
-func IsAssignable(node ast.Node, env *TypeEnvironment) error {
+func CheckLValue(node ast.Node, env *TypeEnvironment) error {
 	//if not constant and is IdentifierExpr
 	switch t := node.(type) {
 	case ast.IdentifierExpr:
+		if _, ok := env.builtins[t.Name]; ok {
+			return errors.New("keyword")
+		}
+
+		if _, ok := env.types[t.Name]; ok {
+			return errors.New("type")
+		}
+
 		//find the declaredEnv where the variable was declared
 		declaredEnv, err := env.ResolveVar(t.Name)
 		if err != nil {
@@ -130,14 +139,14 @@ func IsAssignable(node ast.Node, env *TypeEnvironment) error {
 		if !declaredEnv.constants[t.Name] {
 			return nil
 		} else {
-			return fmt.Errorf("identifier '%s' is constant", t.Name)
+			return errors.New("constant")
 		}
 	case ast.ArrayIndexAccess:
-		return IsAssignable(t.Array, env)
+		return CheckLValue(t.Array, env)
 	case ast.StructPropertyAccessExpr:
-		return IsAssignable(t.Object, env)
+		return CheckLValue(t.Object, env)
 	default:
-		return fmt.Errorf("assignment expression must be a valid lvalue")
+		return fmt.Errorf("invalid lvalue")
 	}
 }
 
@@ -198,10 +207,13 @@ func EvaluateTypeName(dtype ast.DataType, env *TypeEnvironment) ValueTypeInterfa
 	case nil:
 		return NewVoid()
 	default:
-		val, err := stringToValueTypeInterface(VALUE_TYPE(t.Type()), env)
+		val, err := stringToValueTypeInterface(builtins.VALUE_TYPE(t.Type()), env)
 		if err != nil {
 			//errgen.MakeError(env.filePath, dtype.StartPos().Line, dtype.EndPos().Line, dtype.StartPos().Column, dtype.EndPos().Column, err.Error()).DisplayWithPanic()
 			errgen.AddError(env.filePath, dtype.StartPos().Line, dtype.EndPos().Line, dtype.StartPos().Column, dtype.EndPos().Column, err.Error())
+		}
+		if val == nil {
+			errgen.DisplayErrors()
 		}
 		return val
 	}

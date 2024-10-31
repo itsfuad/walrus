@@ -740,7 +740,7 @@
             "patterns": [
                 {
                     "comment": "numeric types",
-                    "match": "(?<![A-Za-z])(int|float|str|byte)\\b",
+                    "match": "(?<![A-Za-z])(i8|i16|i32|i64|u8|u16|u32|u64|f32|f64|str|byte|as)\\b",
                     "captures": {
                         "1": {
                             "name": "keyword.other.wal"

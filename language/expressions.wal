@@ -1,10 +1,19 @@
 
 
-let a : int = 10; //10
+let a : i32 = 10; //10
 let b := a * (34 - 18);
 let c := a * 34 - 12; //12
-let d := a - 34 * 18;
+let d : i32 = a - 3.1416 * 18 as i32;
 
 let e := "hello" + 2; // ok
 let logic := a > b;
 //e = "hello" - 2; // error
+
+let int32 : i32 = 10; //10
+let int64 : i64 = 10 as i64; //10
+let float32 := 3 as f32; //12
+
+let char : byte = 'a';
+
+let name : str = "hello";
+let strIndexedChar := name[0];
