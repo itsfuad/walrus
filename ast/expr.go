@@ -21,6 +21,8 @@ func (a IdentifierExpr) EndPos() lexer.Position {
 //Literals or Raw values like: 1,2,3,4.6, "hello world", 'a' ...etc
 type IntegerLiteralExpr struct {
 	Value string
+	BitSize uint8
+	IsSigned bool
 	Location
 }
 
@@ -36,6 +38,7 @@ func (a IntegerLiteralExpr) EndPos() lexer.Position {
 
 type FloatLiteralExpr struct {
 	Value string
+	BitSize uint8
 	Location
 }
 
@@ -122,6 +125,23 @@ func (a UnaryExpr) StartPos() lexer.Position {
 	return a.Location.Start
 }
 func (a UnaryExpr) EndPos() lexer.Position {
+	return a.Location.End
+}
+
+type TypeCastExpr struct {
+	Expression Node
+	ToCast     DataType
+	Location
+}
+
+func (a TypeCastExpr) INode() {
+	//empty method implements Node interface
+}
+func (a TypeCastExpr) StartPos() lexer.Position {
+	return a.Location.Start
+}
+
+func (a TypeCastExpr) EndPos() lexer.Position {
 	return a.Location.End
 }
 

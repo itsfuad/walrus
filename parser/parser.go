@@ -3,6 +3,7 @@ package parser
 import (
 	"fmt"
 	"walrus/ast"
+	"walrus/builtins"
 	"walrus/errgen"
 	"walrus/lexer"
 )
@@ -18,7 +19,7 @@ func (p *Parser) currentToken() lexer.Token {
 	return p.tokens[p.index]
 }
 
-func (p *Parser) currentTokenKind() lexer.TOKEN_KIND {
+func (p *Parser) currentTokenKind() builtins.TOKEN_KIND {
 	return p.currentToken().Kind
 }
 
@@ -29,7 +30,7 @@ func (p *Parser) nextToken() lexer.Token {
 	return lexer.Token{Kind: lexer.EOF_TOKEN}
 }
 
-func (p *Parser) nextTokenKind() lexer.TOKEN_KIND {
+func (p *Parser) nextTokenKind() builtins.TOKEN_KIND {
 	return p.nextToken().Kind
 }
 
@@ -43,7 +44,7 @@ func (p *Parser) advance() lexer.Token {
 	return token
 }
 
-func (p *Parser) expectError(expectedKind lexer.TOKEN_KIND, err error) lexer.Token {
+func (p *Parser) expectError(expectedKind builtins.TOKEN_KIND, err error) lexer.Token {
 	token := p.currentToken()
 	kind := token.Kind
 
@@ -54,14 +55,19 @@ func (p *Parser) expectError(expectedKind lexer.TOKEN_KIND, err error) lexer.Tok
 		if err != nil {
 			errgen.MakeError(p.FilePath, start.Line, end.Line, start.Column, end.Column, err.Error()).DisplayWithPanic()
 		} else {
-			msg := fmt.Sprintf("parser:expected '%s' but got '%s'", expectedKind, kind)
+			msg := "parser:error: "
+			if lexer.IsKeyword(token.Value) {
+				msg += fmt.Sprintf("unexpected keyword '%s' found. expected '%s'", token.Value, expectedKind)
+			} else {
+				msg += fmt.Sprintf("unexpected token '%s' found. expected '%s'", token.Value, expectedKind)
+			}
 			errgen.MakeError(p.FilePath, start.Line, end.Line, start.Column, end.Column, msg).DisplayWithPanic()
 		}
 	}
 	return p.advance()
 }
 
-func (p *Parser) expect(expectedKind lexer.TOKEN_KIND) lexer.Token {
+func (p *Parser) expect(expectedKind builtins.TOKEN_KIND) lexer.Token {
 	return p.expectError(expectedKind, nil)
 }
 

@@ -14,8 +14,8 @@ import (
 
 func main() {
 	fmt.Println("Hello world!")
-	filePath := "language/loops.wal"
-	tokens := lexer.Tokenize(filePath, false)
+	filePath := "language/expressions.wal"
+	tokens := lexer.Tokenize(filePath, true)
 	parser := parseMachine.NewParser(filePath, tokens)
 	tree := parser.Parse()
 
@@ -43,7 +43,7 @@ func main() {
 	tc.DeclareVar("null", typechecker.Null{DataType: typechecker.NULL_TYPE}, true, false)
 	tc.DeclareVar("true", typechecker.Bool{DataType: typechecker.BOOLEAN_TYPE}, true, false)
 	tc.DeclareVar("false", typechecker.Bool{DataType: typechecker.BOOLEAN_TYPE}, true, false)
-	tc.DeclareVar("PI", typechecker.Float{DataType: typechecker.FLOAT_TYPE}, true, false)
+	tc.DeclareVar("PI", typechecker.Float{DataType: typechecker.FLOAT32_TYPE}, true, false)
 	typechecker.CheckAST(tree, tc)
 	errgen.DisplayErrors()
 }

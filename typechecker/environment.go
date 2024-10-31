@@ -7,82 +7,82 @@ import (
 	"walrus/errgen"
 )
 
-type VALUE_TYPE string
-
 const (
-	INT_TYPE          VALUE_TYPE = builtins.INT
-	FLOAT_TYPE        VALUE_TYPE = builtins.FLOAT
-	CHAR_TYPE         VALUE_TYPE = builtins.BYTE
-	STRING_TYPE       VALUE_TYPE = builtins.STRING
-	BOOLEAN_TYPE      VALUE_TYPE = builtins.BOOL
-	NULL_TYPE         VALUE_TYPE = builtins.NULL
-	VOID_TYPE         VALUE_TYPE = builtins.VOID
-	FUNCTION_TYPE     VALUE_TYPE = builtins.FUNCTION
-	STRUCT_TYPE       VALUE_TYPE = builtins.STRUCT
-	INTERFACE_TYPE    VALUE_TYPE = builtins.INTERFACE
-	ARRAY_TYPE        VALUE_TYPE = builtins.ARRAY
-	BLOCK_TYPE        VALUE_TYPE = "block"
-	RETURN_TYPE       VALUE_TYPE = "return"
-	USER_DEFINED_TYPE VALUE_TYPE = "user_defined"
+	INT8_TYPE         builtins.VALUE_TYPE = builtins.INT8
+	INT16_TYPE        builtins.VALUE_TYPE = builtins.INT16
+	INT32_TYPE        builtins.VALUE_TYPE = builtins.INT32
+	INT64_TYPE        builtins.VALUE_TYPE = builtins.INT64
+	FLOAT32_TYPE      builtins.VALUE_TYPE = builtins.FLOAT32
+	FLOAT64_TYPE      builtins.VALUE_TYPE = builtins.FLOAT64
+	UINT8_TYPE        builtins.VALUE_TYPE = builtins.UINT8
+	UINT16_TYPE       builtins.VALUE_TYPE = builtins.UINT16
+	UINT32_TYPE       builtins.VALUE_TYPE = builtins.UINT32
+	UINT64_TYPE       builtins.VALUE_TYPE = builtins.UINT64
+	STRING_TYPE       builtins.VALUE_TYPE = builtins.STRING
+	BOOLEAN_TYPE      builtins.VALUE_TYPE = builtins.BOOL
+	NULL_TYPE         builtins.VALUE_TYPE = builtins.NULL
+	VOID_TYPE         builtins.VALUE_TYPE = builtins.VOID
+	FUNCTION_TYPE     builtins.VALUE_TYPE = builtins.FUNCTION
+	STRUCT_TYPE       builtins.VALUE_TYPE = builtins.STRUCT
+	INTERFACE_TYPE    builtins.VALUE_TYPE = builtins.INTERFACE
+	ARRAY_TYPE        builtins.VALUE_TYPE = builtins.ARRAY
+	BLOCK_TYPE        builtins.VALUE_TYPE = "block"
+	RETURN_TYPE       builtins.VALUE_TYPE = "return"
+	USER_DEFINED_TYPE builtins.VALUE_TYPE = "user_defined"
 )
 
 type ValueTypeInterface interface {
-	DType() VALUE_TYPE
+	DType() builtins.VALUE_TYPE
 }
 
 type Int struct {
-	DataType VALUE_TYPE
+	DataType builtins.VALUE_TYPE
+	BitSize  uint8
+	IsSigned bool
 }
 
-func (t Int) DType() VALUE_TYPE {
+func (t Int) DType() builtins.VALUE_TYPE {
 	return t.DataType
 }
 
 type Float struct {
-	DataType VALUE_TYPE
+	DataType builtins.VALUE_TYPE
+	BitSize  uint8
 }
 
-func (t Float) DType() VALUE_TYPE {
-	return t.DataType
-}
-
-type Chr struct {
-	DataType VALUE_TYPE
-}
-
-func (t Chr) DType() VALUE_TYPE {
+func (t Float) DType() builtins.VALUE_TYPE {
 	return t.DataType
 }
 
 type Str struct {
-	DataType VALUE_TYPE
+	DataType builtins.VALUE_TYPE
 }
 
-func (t Str) DType() VALUE_TYPE {
+func (t Str) DType() builtins.VALUE_TYPE {
 	return t.DataType
 }
 
 type Bool struct {
-	DataType VALUE_TYPE
+	DataType builtins.VALUE_TYPE
 }
 
-func (t Bool) DType() VALUE_TYPE {
+func (t Bool) DType() builtins.VALUE_TYPE {
 	return t.DataType
 }
 
 type Null struct {
-	DataType VALUE_TYPE
+	DataType builtins.VALUE_TYPE
 }
 
-func (t Null) DType() VALUE_TYPE {
+func (t Null) DType() builtins.VALUE_TYPE {
 	return t.DataType
 }
 
 type Void struct {
-	DataType VALUE_TYPE
+	DataType builtins.VALUE_TYPE
 }
 
-func (t Void) DType() VALUE_TYPE {
+func (t Void) DType() builtins.VALUE_TYPE {
 	return t.DataType
 }
 
@@ -94,28 +94,28 @@ type FnParam struct {
 }
 
 type Fn struct {
-	DataType      VALUE_TYPE
+	DataType      builtins.VALUE_TYPE
 	Params        []FnParam
 	Returns       ValueTypeInterface
 	FunctionScope TypeEnvironment
 }
 
-func (t Fn) DType() VALUE_TYPE {
+func (t Fn) DType() builtins.VALUE_TYPE {
 	return t.DataType
 }
 
 type ConditionBranch struct {
-	DataType VALUE_TYPE
+	DataType builtins.VALUE_TYPE
 	Next     ValueTypeInterface
 	Returns  ValueTypeInterface
 }
 
 type ConditionStmt struct {
-	DataType VALUE_TYPE
+	DataType builtins.VALUE_TYPE
 	Branches []ConditionBranch
 }
 
-func (t ConditionStmt) DType() VALUE_TYPE {
+func (t ConditionStmt) DType() builtins.VALUE_TYPE {
 	return t.DataType
 }
 
@@ -124,7 +124,7 @@ type StructProperty struct {
 	Type      ValueTypeInterface
 }
 
-func (t StructProperty) DType() VALUE_TYPE {
+func (t StructProperty) DType() builtins.VALUE_TYPE {
 	return t.Type.DType()
 }
 
@@ -133,79 +133,92 @@ type StructMethod struct {
 	Fn
 }
 
-func (t StructMethod) DType() VALUE_TYPE {
+func (t StructMethod) DType() builtins.VALUE_TYPE {
 	return t.DataType
 }
 
 type Struct struct {
-	DataType    VALUE_TYPE
+	DataType    builtins.VALUE_TYPE
 	StructName  string
 	StructScope TypeEnvironment
 }
 
-func (t Struct) DType() VALUE_TYPE {
+func (t Struct) DType() builtins.VALUE_TYPE {
 	return t.DataType
 }
 
 type Array struct {
-	DataType  VALUE_TYPE
+	DataType  builtins.VALUE_TYPE
 	ArrayType ValueTypeInterface
 }
 
-func (t Array) DType() VALUE_TYPE {
+func (t Array) DType() builtins.VALUE_TYPE {
 	return t.DataType
 }
 
 type UserDefined struct {
-	DataType VALUE_TYPE
+	DataType builtins.VALUE_TYPE
 	TypeName string
 	TypeDef  ValueTypeInterface
 }
 
-func (t UserDefined) DType() VALUE_TYPE {
+func (t UserDefined) DType() builtins.VALUE_TYPE {
 	return t.DataType
 }
 
 type ReturnType struct {
-	DataType   VALUE_TYPE
+	DataType   builtins.VALUE_TYPE
 	Expression ValueTypeInterface
 }
 
-func (t ReturnType) DType() VALUE_TYPE {
+func (t ReturnType) DType() builtins.VALUE_TYPE {
 	return t.DataType
 }
 
 type Block struct {
-	DataType VALUE_TYPE
+	DataType builtins.VALUE_TYPE
 	Returns  ValueTypeInterface
 	Node     ast.Node
 }
 
-func (t Block) DType() VALUE_TYPE {
+func (t Block) DType() builtins.VALUE_TYPE {
 	return t.DataType
 }
 
 type Interface struct {
-	DataType      VALUE_TYPE
+	DataType      builtins.VALUE_TYPE
 	InterfaceName string
 	Methods       map[string]Fn
 }
 
-func (t Interface) DType() VALUE_TYPE {
+func (t Interface) DType() builtins.VALUE_TYPE {
 	return t.DataType
 }
 
+func makeNumericType(isInt bool, bitSize uint8, isSigned bool) builtins.VALUE_TYPE {
+	rawDataType := ""
+	if isInt {
+		if isSigned {
+			rawDataType = "i"
+		} else {
+			rawDataType = "u"
+		}
+	} else {
+		rawDataType = "f"
+	}
+
+	rawDataType += fmt.Sprintf("%d", bitSize)
+
+	return builtins.VALUE_TYPE(rawDataType)
+}
+
 // helper type initialization functions
-func NewInt() Int {
-	return Int{DataType: INT_TYPE}
+func NewInt(bitSize uint8, isSigned bool) Int {
+	return Int{DataType: makeNumericType(true, bitSize, isSigned), BitSize: bitSize, IsSigned: isSigned}
 }
 
-func NewFloat() Float {
-	return Float{DataType: FLOAT_TYPE}
-}
-
-func NewChr() Chr {
-	return Chr{DataType: CHAR_TYPE}
+func NewFloat(bitSize uint8) Float {
+	return Float{DataType: makeNumericType(false, bitSize, false), BitSize: bitSize}
 }
 
 func NewStr() Str {
@@ -250,13 +263,21 @@ type TypeEnvironment struct {
 func NewTypeENV(parent *TypeEnvironment, scope SCOPE_TYPE, scopeName string, filePath string) *TypeEnvironment {
 
 	builtins := map[string]ValueTypeInterface{
-		string(INT_TYPE):     Int{DataType: INT_TYPE},
-		string(FLOAT_TYPE):   Float{DataType: FLOAT_TYPE},
-		string(CHAR_TYPE):    Chr{DataType: CHAR_TYPE},
-		string(STRING_TYPE):  Str{DataType: STRING_TYPE},
-		string(BOOLEAN_TYPE): Bool{DataType: BOOLEAN_TYPE},
-		string(NULL_TYPE):    Null{DataType: NULL_TYPE},
-		string(VOID_TYPE):    Void{DataType: VOID_TYPE},
+		string(INT8_TYPE):    	Int{DataType: INT8_TYPE, BitSize: 8, IsSigned: true},
+		string(INT16_TYPE):   	Int{DataType: INT16_TYPE, BitSize: 16, IsSigned: true},
+		string(INT32_TYPE):   	Int{DataType: INT32_TYPE, BitSize: 32, IsSigned: true},
+		string(INT64_TYPE):   	Int{DataType: INT64_TYPE, BitSize: 64, IsSigned: true},
+		string(FLOAT32_TYPE): 	Float{DataType: FLOAT32_TYPE, BitSize: 32},
+		string(FLOAT64_TYPE): 	Float{DataType: FLOAT64_TYPE, BitSize: 64},
+		string(UINT8_TYPE):   	Int{DataType: UINT8_TYPE, BitSize: 8, IsSigned: false},
+		string(UINT16_TYPE):  	Int{DataType: UINT16_TYPE, BitSize: 16, IsSigned: false},
+		string(UINT32_TYPE):  	Int{DataType: UINT32_TYPE, BitSize: 32, IsSigned: false},
+		string(UINT64_TYPE):  	Int{DataType: UINT64_TYPE, BitSize: 64, IsSigned: false},
+		"byte": 			 	Int{DataType: UINT8_TYPE, BitSize: 8, IsSigned: false},
+		string(STRING_TYPE):  	Str{DataType: STRING_TYPE},
+		string(BOOLEAN_TYPE): 	Bool{DataType: BOOLEAN_TYPE},
+		string(NULL_TYPE):    	Null{DataType: NULL_TYPE},
+		string(VOID_TYPE):    	Void{DataType: VOID_TYPE},
 	}
 
 	return &TypeEnvironment{
@@ -302,7 +323,7 @@ func (t *TypeEnvironment) ResolveVar(name string) (*TypeEnvironment, error) {
 	//check on the parent then
 	if t.parent == nil {
 		//no where is declared
-		return nil, fmt.Errorf("'%s' is not declared in this scope", name)
+		return nil, fmt.Errorf("'%s' was not declared in this scope", name)
 	}
 
 	return t.parent.ResolveVar(name)
@@ -313,7 +334,7 @@ func (t *TypeEnvironment) ResolveType(name string) (*TypeEnvironment, error) {
 		return t, nil
 	}
 	if t.parent == nil {
-		return nil, fmt.Errorf("type '%s' is not declared in this scope", name)
+		return nil, fmt.Errorf("type '%s' was not declared in this scope", name)
 	}
 	return t.parent.ResolveType(name)
 }
@@ -338,12 +359,22 @@ func (t *TypeEnvironment) GetTypeFromEnv(name string) (ValueTypeInterface, error
 		return val.(UserDefined).TypeDef, nil
 	}
 	if t.parent == nil {
-		return nil, fmt.Errorf("'%s' is not declared in this scope", name)
+		return nil, fmt.Errorf("'%s' was not declared in this scope", name)
 	}
 	return t.parent.GetTypeFromEnv(name)
 }
 
 func (t *TypeEnvironment) DeclareVar(name string, typeVar ValueTypeInterface, isConst bool, isOptional bool) error {
+
+	//if is keyward, return nil
+	if _, ok := t.builtins[name]; ok {
+		return fmt.Errorf("cannot declare variable with keyword '%s'", name)
+	}
+
+	if _, ok := t.types[name]; ok {
+		return fmt.Errorf("cannot declare variable with type '%s'", name)
+	}
+
 	//should not be declared
 	if scope, err := t.ResolveVar(name); err == nil && scope == t {
 		return fmt.Errorf("'%s' is already declared in this scope", name)
@@ -357,6 +388,12 @@ func (t *TypeEnvironment) DeclareVar(name string, typeVar ValueTypeInterface, is
 }
 
 func (t *TypeEnvironment) DeclareType(name string, typeType ValueTypeInterface) error {
+
+	//if is keyward, return nil
+	if _, ok := t.builtins[name]; ok {
+		return fmt.Errorf("cannot declare type with keyword '%s'", name)
+	}
+
 	if scope, err := t.ResolveType(name); err == nil && scope == t {
 		return err
 	}

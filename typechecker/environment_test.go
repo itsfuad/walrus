@@ -5,8 +5,8 @@ import (
 )
 
 const (
-	FILE = "/path/to/file"
-	EXPECTED_ERROR = "Expected error, got nil"
+	FILE              = "/path/to/file"
+	EXPECTED_ERROR    = "Expected error, got nil"
 	EXPECTED_NO_ERROR = "Expected no error, got %v"
 )
 
@@ -28,7 +28,7 @@ func TestNewTypeENV(t *testing.T) {
 
 func TestDeclareVar(t *testing.T) {
 	env := NewTypeENV(nil, GLOBAL_SCOPE, "global", FILE)
-	intType := Int{DataType: INT_TYPE}
+	intType := Int{DataType: INT32_TYPE}
 
 	err := env.DeclareVar("x", intType, false, false)
 	if err != nil {
@@ -50,7 +50,7 @@ func TestDeclareVar(t *testing.T) {
 
 func TestResolveVar(t *testing.T) {
 	env := NewTypeENV(nil, GLOBAL_SCOPE, "global", FILE)
-	intType := Int{DataType: INT_TYPE}
+	intType := Int{DataType: INT32_TYPE}
 	env.DeclareVar("x", intType, false, false)
 
 	scope, err := env.ResolveVar("x")

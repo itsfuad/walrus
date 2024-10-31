@@ -2,15 +2,19 @@ package parser
 
 import (
 	"walrus/ast"
+	"walrus/builtins"
 	"walrus/lexer"
 )
 
 type BINDING_POWER int
 
+
+//higher the binding power, higher the precedence
 const (
 	DEFAULT_BP BINDING_POWER = iota
 	COMMA_BP
 	ASSIGNMENT_BP
+	CASTING_BP
 	LOGICAL_BP
 	RELATIONAL_BP
 	ADDITIVE_BP
@@ -25,12 +29,12 @@ type NUDHandler func(p *Parser) ast.Node
 type STMTHandler func(p *Parser) ast.Node
 type LEDHandler func(p *Parser, left ast.Node, bp BINDING_POWER) ast.Node
 
-var NUDLookup = map[lexer.TOKEN_KIND]NUDHandler{}
-var STMTLookup = map[lexer.TOKEN_KIND]STMTHandler{}
-var LEDLookup = map[lexer.TOKEN_KIND]LEDHandler{}
-var BPLookup = map[lexer.TOKEN_KIND]BINDING_POWER{}
+var NUDLookup = map[builtins.TOKEN_KIND]NUDHandler{}
+var STMTLookup = map[builtins.TOKEN_KIND]STMTHandler{}
+var LEDLookup = map[builtins.TOKEN_KIND]LEDHandler{}
+var BPLookup = map[builtins.TOKEN_KIND]BINDING_POWER{}
 
-func GetBP(token lexer.TOKEN_KIND) BINDING_POWER {
+func GetBP(token builtins.TOKEN_KIND) BINDING_POWER {
 	if bp, ok := BPLookup[token]; ok {
 		return bp
 	} else {
@@ -38,16 +42,16 @@ func GetBP(token lexer.TOKEN_KIND) BINDING_POWER {
 	}
 }
 
-func led(tokenKind lexer.TOKEN_KIND, bp BINDING_POWER, handler LEDHandler) {
+func led(tokenKind builtins.TOKEN_KIND, bp BINDING_POWER, handler LEDHandler) {
 	BPLookup[tokenKind] = bp
 	LEDLookup[tokenKind] = handler
 }
 
-func nud(tokenKind lexer.TOKEN_KIND, handler NUDHandler) {
+func nud(tokenKind builtins.TOKEN_KIND, handler NUDHandler) {
 	NUDLookup[tokenKind] = handler
 }
 
-func stmt(tokenKind lexer.TOKEN_KIND, handler STMTHandler) {
+func stmt(tokenKind builtins.TOKEN_KIND, handler STMTHandler) {
 	STMTLookup[tokenKind] = handler
 }
 
@@ -83,11 +87,20 @@ func bindLookupHandlers() {
 	led(lexer.GREATER_EQUAL_TOKEN, RELATIONAL_BP, parseBinaryExpr)
 	led(lexer.GREATER_TOKEN, RELATIONAL_BP, parseBinaryExpr)
 
+	led(lexer.AS_TOKEN, CASTING_BP, parseTypeCastExpr)
+
 	nud(lexer.IDENTIFIER_TOKEN, parsePrimaryExpr) // identifier
-	nud(lexer.INT, parsePrimaryExpr)              // int literal
-	nud(lexer.FLOAT, parsePrimaryExpr)            // float literal
+	nud(lexer.INT8, parsePrimaryExpr)              // int literal, 8 bit
+	nud(lexer.INT16, parsePrimaryExpr)              // int literal, 16 bit
+	nud(lexer.INT32, parsePrimaryExpr)              // int literal, 32 bit
+	nud(lexer.INT64, parsePrimaryExpr)              // int literal, 64 bit
+	nud(lexer.FLOAT32, parsePrimaryExpr)            // float literal
+	nud(lexer.FLOAT64, parsePrimaryExpr)            // float literal, 64 bit
+	nud(lexer.UINT8, parsePrimaryExpr)              // uint literal, 8 bit
+	nud(lexer.UINT16, parsePrimaryExpr)             // uint literal, 16 bit
+	nud(lexer.UINT32, parsePrimaryExpr)             // uint literal, 32 bit
+	nud(lexer.UINT64, parsePrimaryExpr)             // uint literal, 64 bit
 	nud(lexer.STR, parsePrimaryExpr)              // string literal
-	nud(lexer.BYTE, parsePrimaryExpr)             // byte literal
 	nud(lexer.NULL, parsePrimaryExpr)             // null literal
 	nud(lexer.OPEN_BRACKET, parseArrayExpr)       // array literal [1,2,3]
 	nud(lexer.OPEN_PAREN, parseGroupingExpr)      // grouping expression a + (b+c)

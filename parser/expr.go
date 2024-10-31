@@ -3,6 +3,7 @@ package parser
 import (
 	"fmt"
 	"walrus/ast"
+	"walrus/builtins"
 	"walrus/errgen"
 	"walrus/lexer"
 )
@@ -69,25 +70,23 @@ func parsePrimaryExpr(p *Parser) ast.Node {
 	}
 
 	switch primaryToken.Kind {
-	case lexer.INT:
+	case lexer.INT8, lexer.INT16, lexer.INT32, lexer.INT64, lexer.UINT8, lexer.UINT16, lexer.UINT32, lexer.UINT64:
 		return ast.IntegerLiteralExpr{
-			Value:    rawValue,
-			Location: loc,
+			Value:    	rawValue,
+			BitSize: 	builtins.GetBitSize(builtins.DATA_TYPE(primaryToken.Kind)),
+			IsSigned: 	builtins.IsSigned(builtins.DATA_TYPE(primaryToken.Kind)),
+			Location: 	loc,
 		}
-	case lexer.FLOAT:
+	case lexer.FLOAT32, lexer.FLOAT64:
 
 		return ast.FloatLiteralExpr{
 			Value:    rawValue,
+			BitSize:  builtins.GetBitSize(builtins.DATA_TYPE(primaryToken.Kind)),
 			Location: loc,
 		}
 
 	case lexer.STR:
 		return ast.StringLiteralExpr{
-			Value:    rawValue,
-			Location: loc,
-		}
-	case lexer.BYTE:
-		return ast.CharLiteralExpr{
 			Value:    rawValue,
 			Location: loc,
 		}
@@ -242,6 +241,22 @@ func parseBinaryExpr(p *Parser, left ast.Node, bp BINDING_POWER) ast.Node {
 		Location: ast.Location{
 			Start: left.StartPos(),
 			End:   right.EndPos(),
+		},
+	}
+}
+
+
+func parseTypeCastExpr(p *Parser, left ast.Node, bp BINDING_POWER) ast.Node {
+	start := left.StartPos()
+	p.expect(lexer.AS_TOKEN)
+	castType := parseType(p, bp)
+
+	return ast.TypeCastExpr{
+		Expression: left,
+		ToCast:   castType,
+		Location: ast.Location{
+			Start: start,
+			End:   castType.EndPos(),
 		},
 	}
 }

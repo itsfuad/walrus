@@ -2,7 +2,7 @@
   "name": "walrus",
   "displayName": "Walrus",
   "description": "Walrus Language Support",
-  "version": "1.0.7",
+  "version": "1.0.9",
   "icon": "icon.png",
   "publisher": "Walrus",
   "activationEvents": [],
