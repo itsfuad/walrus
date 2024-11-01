@@ -28,6 +28,7 @@ func parseUserDefinedTypeStmt(p *Parser) ast.Node {
 	if strings.ToUpper(typeName.Value[:1]) != typeName.Value[:1] {
 		errgen.AddError(p.FilePath, typeName.Start.Line, typeName.End.Line, typeName.Start.Column, typeName.End.Column, "user defined types should start with capital letter").AddHint(fmt.Sprintf("type %s%s [your type]", strings.ToUpper(typeName.Value[:1]), typeName.Value[1:]), errgen.TEXT_HINT).DisplayWithPanic()
 	}
+	
 
 	udType := parseUDTType(p)
 

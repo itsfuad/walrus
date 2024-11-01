@@ -14,10 +14,6 @@ func checkIdentifier(node ast.IdentifierExpr, env *TypeEnvironment) ValueTypeInt
 		errgen.AddError(env.filePath, node.StartPos().Line, node.EndPos().Line, node.StartPos().Column, node.EndPos().Column, "cannot use type as value").DisplayWithPanic()
 	}
 
-	if _, ok := env.builtins[name]; ok {
-		errgen.AddError(env.filePath, node.StartPos().Line, node.EndPos().Line, node.StartPos().Column, node.EndPos().Column, "cannot use builtin as value").DisplayWithPanic()
-	}
-
 	//find the declaredEnv where the variable was declared
 	declaredEnv, err := env.ResolveVar(name)
 	if err != nil {

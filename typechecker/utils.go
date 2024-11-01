@@ -27,18 +27,45 @@ func RandStringRunes(n int) string {
 
 func stringToValueTypeInterface(typ builtins.VALUE_TYPE, env *TypeEnvironment) (ValueTypeInterface, error) {
 
-	builtin, ok := env.builtins[string(typ)]
-	if ok {
-		return builtin, nil
+	switch typ {
+	case builtins.INT8:
+		return NewInt(8, true), nil
+	case builtins.INT16:
+		return NewInt(16, true), nil
+	case builtins.INT32:
+		return NewInt(32, true), nil
+	case builtins.INT64:
+		return NewInt(64, true), nil
+	case builtins.UINT8:
+		return NewInt(8, false), nil
+	case builtins.UINT16:
+		return NewInt(16, false), nil
+	case builtins.UINT32:
+		return NewInt(32, false), nil
+	case builtins.UINT64:
+		return NewInt(64, false), nil
+	case builtins.FLOAT32:
+		return NewFloat(32), nil
+	case builtins.FLOAT64:
+		return NewFloat(64), nil
+	case builtins.STRING:
+		return NewStr(), nil
+	case builtins.BYTE:
+		return NewInt(8, false), nil
+	case builtins.BOOL:
+		return NewBool(), nil
+	case builtins.NULL:
+		return NewNull(), nil
+	case builtins.VOID:
+		return NewVoid(), nil
+	default:
+		//search for the type
+		declaredEnv, err := env.ResolveType(string(typ))
+		if err != nil {
+			return nil, err
+		}
+		return declaredEnv.types[string(typ)].(UserDefined).TypeDef, nil
 	}
-
-	//search for the type
-	declaredEnv, err := env.ResolveType(string(typ))
-	if err != nil {
-		return nil, err
-	}
-
-	return declaredEnv.types[string(typ)].(UserDefined).TypeDef, nil
 }
 
 // valueTypeInterfaceToString converts a ValueTypeInterface to a string representation of builtins.VALUE_TYPE.
@@ -123,9 +150,6 @@ func CheckLValue(node ast.Node, env *TypeEnvironment) error {
 	//if not constant and is IdentifierExpr
 	switch t := node.(type) {
 	case ast.IdentifierExpr:
-		if _, ok := env.builtins[t.Name]; ok {
-			return errors.New("keyword")
-		}
 
 		if _, ok := env.types[t.Name]; ok {
 			return errors.New("type")

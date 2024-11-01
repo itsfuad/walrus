@@ -46,9 +46,9 @@ func parseForStmt(p *Parser) ast.Node {
 		// check if there is a semicolon
 		if p.currentTokenKind() != lexer.OPEN_CURLY {
 			fmt.Printf("Current token: %v\n", p.currentTokenKind())
-			cond = parseNode(p)
+			cond = parseExpr(p, DEFAULT_BP)
 			p.expect(lexer.SEMI_COLON_TOKEN)
-			incr = parseNode(p)
+			incr = parseExpr(p, DEFAULT_BP)
 		} else {
 			// condition-only loop
 			cond = init
