@@ -11,11 +11,11 @@ import (
 type typeNUDHandler func(p *Parser) ast.DataType
 type typeLEDHandler func(p *Parser, left ast.DataType, bp BINDING_POWER) ast.DataType
 
-var bpTypeLookups = map[lexer.TOKEN_KIND]BINDING_POWER{}
-var typeNUDLookup = map[lexer.TOKEN_KIND]typeNUDHandler{}
-var typeLEDLookup = map[lexer.TOKEN_KIND]typeLEDHandler{}
+var bpTypeLookups = map[builtins.TOKEN_KIND]BINDING_POWER{}
+var typeNUDLookup = map[builtins.TOKEN_KIND]typeNUDHandler{}
+var typeLEDLookup = map[builtins.TOKEN_KIND]typeLEDHandler{}
 
-func typeNUD(kind lexer.TOKEN_KIND, handler typeNUDHandler) {
+func typeNUD(kind builtins.TOKEN_KIND, handler typeNUDHandler) {
 	typeNUDLookup[kind] = handler
 }
 
@@ -37,10 +37,10 @@ func parseFunctionType(p *Parser) ast.DataType {
 	}
 
 	return ast.FunctionType{
-		TypeName: typeName,
+		TypeName:   typeName,
 		Parameters: params,
 		ReturnType: returnType,
-		Location: loc,
+		Location:   loc,
 	}
 }
 
@@ -51,7 +51,7 @@ Returns
  - []ast.FunctionTypeParam : The parameters of the function type
  - ast.DataType : The return type of the function type
 */
-func getFunctionTypeSignature(p *Parser) (ast.DATA_TYPE, []ast.FunctionTypeParam, ast.DataType) {
+func getFunctionTypeSignature(p *Parser) (builtins.DATA_TYPE, []ast.FunctionTypeParam, ast.DataType) {
 	p.expect(lexer.OPEN_PAREN)
 	var params []ast.FunctionTypeParam
 	for p.hasToken() && p.currentTokenKind() != lexer.CLOSE_PAREN {
@@ -59,18 +59,18 @@ func getFunctionTypeSignature(p *Parser) (ast.DATA_TYPE, []ast.FunctionTypeParam
 		//if exists, then it is a duplicate
 		for _, param := range params {
 			if param.Identifier.Name == iden.Value {
-				errgen.MakeError(p.FilePath, iden.Start.Line, iden.End.Line, iden.Start.Column, iden.End.Column, fmt.Sprintf("parameter '%s' already defined", iden.Value)).Display()
+				errgen.MakeError(p.FilePath, iden.Start.Line, iden.End.Line, iden.Start.Column, iden.End.Column, fmt.Sprintf("parameter '%s' already defined", iden.Value)).DisplayWithPanic()
 			}
 		}
 
 		curentToken := p.currentToken()
 
 		if curentToken.Kind != lexer.COLON_TOKEN && curentToken.Kind != lexer.OPTIONAL_TOKEN {
-			errgen.MakeError(p.FilePath, curentToken.Start.Line, curentToken.End.Line, curentToken.Start.Column, curentToken.End.Column, "expected : or ?:").Display()
+			errgen.MakeError(p.FilePath, curentToken.Start.Line, curentToken.End.Line, curentToken.Start.Column, curentToken.End.Column, "expected : or ?:").DisplayWithPanic()
 		}
 
 		isOptional := p.advance().Kind == lexer.OPTIONAL_TOKEN
-		
+
 		typeName := parseType(p, DEFAULT_BP)
 
 		params = append(params, ast.FunctionTypeParam{
@@ -81,7 +81,7 @@ func getFunctionTypeSignature(p *Parser) (ast.DATA_TYPE, []ast.FunctionTypeParam
 					End:   iden.End,
 				},
 			},
-			Type: typeName,
+			Type:       typeName,
 			IsOptional: isOptional,
 			Location: ast.Location{
 				Start: iden.Start,
@@ -103,7 +103,7 @@ func getFunctionTypeSignature(p *Parser) (ast.DATA_TYPE, []ast.FunctionTypeParam
 		returnType = parseType(p, DEFAULT_BP)
 	} else {
 		returnType = ast.VoidType{
-			TypeName: ast.DATA_TYPE(builtins.VOID),
+			TypeName: builtins.DATA_TYPE(builtins.VOID),
 			Location: ast.Location{
 				Start: p.currentToken().Start,
 				End:   p.currentToken().End,
@@ -111,7 +111,7 @@ func getFunctionTypeSignature(p *Parser) (ast.DATA_TYPE, []ast.FunctionTypeParam
 		}
 	}
 
-	return ast.DATA_TYPE(builtins.FUNCTION), params, returnType
+	return builtins.DATA_TYPE(builtins.FUNCTION), params, returnType
 }
 
 // Parses the builtin types like int, float, bool, char, str, null.
@@ -125,7 +125,7 @@ func parseDataType(p *Parser) ast.DataType {
 	case lexer.IDENTIFIER_TOKEN:
 		break
 	default:
-		errgen.MakeError(p.FilePath, identifier.Start.Line, identifier.End.Line, identifier.Start.Column, identifier.End.Column, "invalid data type").Display()
+		errgen.MakeError(p.FilePath, identifier.Start.Line, identifier.End.Line, identifier.Start.Column, identifier.End.Column, "invalid data type").DisplayWithPanic()
 	}
 
 	value := identifier.Value
@@ -135,40 +135,38 @@ func parseDataType(p *Parser) ast.DataType {
 		End:   identifier.End,
 	}
 
-	switch v := value; lexer.TOKEN_KIND(v) {
-	case lexer.INT:
+	switch v := value; builtins.TOKEN_KIND(v) {
+	case lexer.INT8, lexer.INT16, lexer.INT32, lexer.INT64, lexer.UINT8, lexer.UINT16, lexer.UINT32, lexer.UINT64:
 		return ast.IntegerType{
-			TypeName: ast.DATA_TYPE(v),
+			TypeName: builtins.DATA_TYPE(v),
+			BitSize:  builtins.GetBitSize(builtins.DATA_TYPE(v)),
+			IsSigned: builtins.IsSigned(builtins.DATA_TYPE(v)),
 			Location: loc,
 		}
-	case lexer.FLOAT:
+	case lexer.FLOAT32, lexer.FLOAT64:
 		return ast.FloatType{
-			TypeName: ast.DATA_TYPE(v),
+			TypeName: builtins.DATA_TYPE(v),
+			BitSize: builtins.GetBitSize(builtins.DATA_TYPE(v)),
 			Location: loc,
 		}
 	case lexer.STR:
 		return ast.StringType{
-			TypeName: ast.DATA_TYPE(v),
-			Location: loc,
-		}
-	case lexer.BYTE:
-		return ast.CharType{
-			TypeName: ast.DATA_TYPE(v),
+			TypeName: builtins.DATA_TYPE(v),
 			Location: loc,
 		}
 	case lexer.BOOL:
 		return ast.BooleanType{
-			TypeName: ast.DATA_TYPE(v),
+			TypeName: builtins.DATA_TYPE(v),
 			Location: loc,
 		}
 	case lexer.NULL:
 		return ast.NullType{
-			TypeName: ast.DATA_TYPE(v),
+			TypeName: builtins.DATA_TYPE(v),
 			Location: loc,
 		}
 	default:
 		return ast.UserDefinedType{
-			TypeName: ast.DATA_TYPE(v),
+			TypeName: builtins.DATA_TYPE(v),
 			Location: loc,
 		}
 	}
@@ -193,7 +191,7 @@ func parseArrayType(p *Parser) ast.DataType {
 	elemType := parseType(p, DEFAULT_BP)
 
 	return ast.ArrayType{
-		TypeName:  ast.DATA_TYPE(builtins.ARRAY),
+		TypeName:  builtins.DATA_TYPE(builtins.ARRAY),
 		ArrayType: elemType,
 		Location: ast.Location{
 			Start: elemType.StartPos(),
@@ -228,7 +226,7 @@ func parseType(p *Parser, bp BINDING_POWER) ast.DataType {
 		err.AddHint("Use primitive types like ", errgen.TEXT_HINT)
 		err.AddHint("int, float, bool, char, str", errgen.CODE_HINT)
 		err.AddHint(" or arrays of them", errgen.TEXT_HINT)
-		err.Display()
+		err.DisplayWithPanic()
 		return nil
 	}
 
@@ -261,7 +259,7 @@ Example:
 	};
 */
 func parseUDTType(p *Parser) ast.DataType {
-	switch v := p.currentToken().Value; lexer.TOKEN_KIND(v) {
+	switch v := p.currentToken().Value; builtins.TOKEN_KIND(v) {
 	case builtins.STRUCT:
 		return parseStructType(p)
 	case builtins.INTERFACE:
@@ -305,11 +303,11 @@ func parseStructType(p *Parser) ast.DataType {
 			isPrivate = true
 			p.advance()
 		}
-		
+
 		iden := p.expect(lexer.IDENTIFIER_TOKEN)
 
 		if _, ok := props[iden.Value]; ok {
-			errgen.MakeError(p.FilePath, iden.Start.Line, iden.End.Line, iden.Start.Column, iden.End.Column, fmt.Sprintf("property '%s' already defined", iden.Value)).Display()
+			errgen.MakeError(p.FilePath, iden.Start.Line, iden.End.Line, iden.Start.Column, iden.End.Column, fmt.Sprintf("property '%s' already defined", iden.Value)).DisplayWithPanic()
 		}
 
 		idenExpr := ast.IdentifierExpr{
@@ -319,9 +317,9 @@ func parseStructType(p *Parser) ast.DataType {
 				End:   iden.End,
 			},
 		}
-		
+
 		p.expect(lexer.COLON_TOKEN)
-		
+
 		typeName := parseType(p, DEFAULT_BP)
 
 		props[iden.Value] = ast.StructPropType{
@@ -343,16 +341,15 @@ func parseStructType(p *Parser) ast.DataType {
 	}
 
 	if len(props) == 0 {
-		errgen.MakeError(p.FilePath, identifier.Start.Line, identifier.End.Line, identifier.Start.Column, identifier.End.Column, "struct is empty").Display()
+		errgen.MakeError(p.FilePath, identifier.Start.Line, identifier.End.Line, identifier.Start.Column, identifier.End.Column, "struct is empty").DisplayWithPanic()
 	}
 
 	return ast.StructType{
-		TypeName:   ast.DATA_TYPE(builtins.STRUCT),
+		TypeName:   builtins.DATA_TYPE(builtins.STRUCT),
 		Properties: props,
 		Location:   loc,
 	}
 }
-
 
 func parseInterfaceType(p *Parser) ast.DataType {
 
@@ -367,7 +364,7 @@ func parseInterfaceType(p *Parser) ast.DataType {
 		start := p.expect(lexer.FUNCTION).Start
 
 		if p.currentTokenKind() != lexer.IDENTIFIER_TOKEN {
-			errgen.MakeError(p.FilePath, p.currentToken().Start.Line, p.currentToken().End.Line, p.currentToken().Start.Column, p.currentToken().End.Column, "expected method name").Display()
+			errgen.MakeError(p.FilePath, p.currentToken().Start.Line, p.currentToken().End.Line, p.currentToken().Start.Column, p.currentToken().End.Column, "expected method name").DisplayWithPanic()
 		}
 
 		name := p.expect(lexer.IDENTIFIER_TOKEN)
@@ -376,7 +373,7 @@ func parseInterfaceType(p *Parser) ast.DataType {
 
 		if _, ok := methods[name.Value]; ok {
 			msg := fmt.Sprintf("method %s already defined", name.Value)
-			errgen.MakeError(p.FilePath, name.Start.Line, name.End.Line, name.Start.Column, name.End.Column, msg).Display()
+			errgen.MakeError(p.FilePath, name.Start.Line, name.End.Line, name.Start.Column, name.End.Column, msg).DisplayWithPanic()
 		}
 
 		methods[name.Value] = ast.InterfaceMethod{
@@ -406,8 +403,8 @@ func parseInterfaceType(p *Parser) ast.DataType {
 	end := p.expect(lexer.CLOSE_CURLY).End
 
 	return ast.InterfaceType{
-		TypeName: ast.DATA_TYPE(builtins.INTERFACE),
-		Methods: methods,
+		TypeName: builtins.DATA_TYPE(builtins.INTERFACE),
+		Methods:  methods,
 		Location: ast.Location{
 			Start: start,
 			End:   end,

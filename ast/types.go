@@ -1,21 +1,24 @@
 package ast
 
-import "walrus/lexer"
-
-type DATA_TYPE string
+import (
+	"walrus/builtins"
+	"walrus/lexer"
+)
 
 type DataType interface {
-	Type() DATA_TYPE
+	Type() builtins.DATA_TYPE
 	StartPos() lexer.Position
 	EndPos() lexer.Position
 }
 
 type IntegerType struct {
-	TypeName DATA_TYPE
+	TypeName builtins.DATA_TYPE
+	BitSize  uint8
+	IsSigned bool
 	Location
 }
 
-func (a IntegerType) Type() DATA_TYPE {
+func (a IntegerType) Type() builtins.DATA_TYPE {
 	return a.TypeName
 }
 func (a IntegerType) StartPos() lexer.Position {
@@ -26,11 +29,12 @@ func (a IntegerType) EndPos() lexer.Position {
 }
 
 type FloatType struct {
-	TypeName DATA_TYPE
+	TypeName builtins.DATA_TYPE
+	BitSize  uint8
 	Location
 }
 
-func (a FloatType) Type() DATA_TYPE {
+func (a FloatType) Type() builtins.DATA_TYPE {
 	return a.TypeName
 }
 func (a FloatType) StartPos() lexer.Position {
@@ -41,11 +45,11 @@ func (a FloatType) EndPos() lexer.Position {
 }
 
 type StringType struct {
-	TypeName DATA_TYPE
+	TypeName builtins.DATA_TYPE
 	Location
 }
 
-func (a StringType) Type() DATA_TYPE {
+func (a StringType) Type() builtins.DATA_TYPE {
 	return a.TypeName
 }
 func (a StringType) StartPos() lexer.Position {
@@ -55,27 +59,12 @@ func (a StringType) EndPos() lexer.Position {
 	return a.Location.End
 }
 
-type CharType struct {
-	TypeName DATA_TYPE
-	Location
-}
-
-func (a CharType) Type() DATA_TYPE {
-	return a.TypeName
-}
-func (a CharType) StartPos() lexer.Position {
-	return a.Location.Start
-}
-func (a CharType) EndPos() lexer.Position {
-	return a.Location.End
-}
-
 type BooleanType struct {
-	TypeName DATA_TYPE
+	TypeName builtins.DATA_TYPE
 	Location
 }
 
-func (a BooleanType) Type() DATA_TYPE {
+func (a BooleanType) Type() builtins.DATA_TYPE {
 	return a.TypeName
 }
 func (a BooleanType) StartPos() lexer.Position {
@@ -86,11 +75,11 @@ func (a BooleanType) EndPos() lexer.Position {
 }
 
 type NullType struct {
-	TypeName DATA_TYPE
+	TypeName builtins.DATA_TYPE
 	Location
 }
 
-func (a NullType) Type() DATA_TYPE {
+func (a NullType) Type() builtins.DATA_TYPE {
 	return a.TypeName
 }
 func (a NullType) StartPos() lexer.Position {
@@ -101,11 +90,11 @@ func (a NullType) EndPos() lexer.Position {
 }
 
 type VoidType struct {
-	TypeName DATA_TYPE
+	TypeName builtins.DATA_TYPE
 	Location
 }
 
-func (a VoidType) Type() DATA_TYPE {
+func (a VoidType) Type() builtins.DATA_TYPE {
 	return a.TypeName
 }
 func (a VoidType) StartPos() lexer.Position {
@@ -116,12 +105,12 @@ func (a VoidType) EndPos() lexer.Position {
 }
 
 type ArrayType struct {
-	TypeName  DATA_TYPE
+	TypeName  builtins.DATA_TYPE
 	ArrayType DataType
 	Location
 }
 
-func (a ArrayType) Type() DATA_TYPE {
+func (a ArrayType) Type() builtins.DATA_TYPE {
 	return a.TypeName
 }
 func (a ArrayType) StartPos() lexer.Position {
@@ -132,17 +121,18 @@ func (a ArrayType) EndPos() lexer.Position {
 }
 
 type StructPropType struct {
-	Prop		IdentifierExpr
-	PropType	DataType
-	IsPrivate	bool
+	Prop      IdentifierExpr
+	PropType  DataType
+	IsPrivate bool
 }
 
 type StructType struct {
-	TypeName 	DATA_TYPE
-	Properties	map[string]StructPropType
+	TypeName   builtins.DATA_TYPE
+	Properties map[string]StructPropType
 	Location
 }
-func (a StructType) Type() DATA_TYPE {
+
+func (a StructType) Type() builtins.DATA_TYPE {
 	return a.TypeName
 }
 func (a StructType) StartPos() lexer.Position {
@@ -158,12 +148,12 @@ type InterfaceMethod struct {
 }
 
 type InterfaceType struct {
-	TypeName 	DATA_TYPE
-	Methods   	map[string]InterfaceMethod
+	TypeName builtins.DATA_TYPE
+	Methods  map[string]InterfaceMethod
 	Location
 }
 
-func (a InterfaceType) Type() DATA_TYPE {
+func (a InterfaceType) Type() builtins.DATA_TYPE {
 	return a.TypeName
 }
 
@@ -176,19 +166,20 @@ func (a InterfaceType) EndPos() lexer.Position {
 }
 
 type FunctionTypeParam struct {
-	Identifier 	IdentifierExpr
-	Type       	DataType
-	IsOptional	bool
+	Identifier IdentifierExpr
+	Type       DataType
+	IsOptional bool
 	Location
 }
 
 type FunctionType struct {
-	TypeName       	DATA_TYPE
-	Parameters 		[]FunctionTypeParam
-	ReturnType 		DataType
+	TypeName   builtins.DATA_TYPE
+	Parameters []FunctionTypeParam
+	ReturnType DataType
 	Location
 }
-func (a FunctionType) Type() DATA_TYPE {
+
+func (a FunctionType) Type() builtins.DATA_TYPE {
 	return a.TypeName
 }
 func (a FunctionType) StartPos() lexer.Position {
@@ -199,10 +190,11 @@ func (a FunctionType) EndPos() lexer.Position {
 }
 
 type UserDefinedType struct {
-	TypeName	DATA_TYPE
+	TypeName builtins.DATA_TYPE
 	Location
 }
-func (a UserDefinedType) Type() DATA_TYPE {
+
+func (a UserDefinedType) Type() builtins.DATA_TYPE {
 	return a.TypeName
 }
 func (a UserDefinedType) StartPos() lexer.Position {

@@ -1,6 +1,7 @@
 package typechecker
 
 import (
+	"errors"
 	"fmt"
 	"math/rand"
 	"time"
@@ -24,8 +25,7 @@ func RandStringRunes(n int) string {
 	return string(b)
 }
 
-// generate interfaces from the type enum
-func stringToValueTypeInterface(typ VALUE_TYPE, env *TypeEnvironment) (ValueTypeInterface, error) {
+func stringToValueTypeInterface(typ builtins.VALUE_TYPE, env *TypeEnvironment) (ValueTypeInterface, error) {
 
 	builtin, ok := env.builtins[string(typ)]
 	if ok {
@@ -41,14 +41,26 @@ func stringToValueTypeInterface(typ VALUE_TYPE, env *TypeEnvironment) (ValueType
 	return declaredEnv.types[string(typ)].(UserDefined).TypeDef, nil
 }
 
-func valueTypeInterfaceToString(typeName ValueTypeInterface) VALUE_TYPE {
+// valueTypeInterfaceToString converts a ValueTypeInterface to a string representation of builtins.VALUE_TYPE.
+// It handles different types such as Array, Struct, Interface, and Fn by recursively converting
+// their components to strings and formatting them appropriately.
+//
+// Parameters:
+// - typeName: A ValueTypeInterface representing the type to be converted.
+//
+// Returns:
+// - builtins.VALUE_TYPE: A string representation of the given ValueTypeInterface.
+//
+// Note: The function currently has a commented-out case for UserDefined types and a default case
+// that prints the type and value of unhandled cases.
+func valueTypeInterfaceToString(typeName ValueTypeInterface) builtins.VALUE_TYPE {
 	switch t := typeName.(type) {
 	case Array:
 		return "[]" + valueTypeInterfaceToString(t.ArrayType)
 	case Struct:
-		return VALUE_TYPE(t.StructName)
+		return builtins.VALUE_TYPE(t.StructName)
 	case Interface:
-		return VALUE_TYPE(t.InterfaceName)
+		return builtins.VALUE_TYPE(t.InterfaceName)
 	case Fn:
 		ParamStrs := ""
 		for i, param := range t.Params {
@@ -67,7 +79,7 @@ func valueTypeInterfaceToString(typeName ValueTypeInterface) VALUE_TYPE {
 		if ReturnStr != "" {
 			ReturnStr = " -> " + ReturnStr
 		}
-		return VALUE_TYPE(fmt.Sprintf("fn(%s)%s", ParamStrs, ReturnStr))
+		return builtins.VALUE_TYPE(fmt.Sprintf("fn(%s)%s", ParamStrs, ReturnStr))
 	//case UserDefined:
 	//	return valueTypeInterfaceToString(t.TypeDef)
 	default:
@@ -76,8 +88,23 @@ func valueTypeInterfaceToString(typeName ValueTypeInterface) VALUE_TYPE {
 	}
 }
 
-
-func MatchTypes(expected, provided ValueTypeInterface, filePath string, lineStart, lineEnd, colStart, colEnd int) (error) {
+// MatchTypes compares the expected and provided ValueTypeInterface types.
+// If the types do not match, it returns an error indicating the mismatch.
+// If the expected type is an interface, it checks the method implementations
+// of the provided type against the expected type.
+//
+// Parameters:
+//   - expected: The expected ValueTypeInterface type.
+//   - provided: The provided ValueTypeInterface type.
+//   - filePath: The file path where the type check is being performed.
+//   - lineStart: The starting line number of the type check.
+//   - lineEnd: The ending line number of the type check.
+//   - colStart: The starting column number of the type check.
+//   - colEnd: The ending column number of the type check.
+//
+// Returns:
+//   - error: An error if the types do not match, otherwise nil.
+func MatchTypes(expected, provided ValueTypeInterface, filePath string, lineStart, lineEnd, colStart, colEnd int) error {
 
 	expectedType := valueTypeInterfaceToString(expected)
 	gotType := valueTypeInterfaceToString(provided)
@@ -92,10 +119,18 @@ func MatchTypes(expected, provided ValueTypeInterface, filePath string, lineStar
 	return nil
 }
 
-func IsAssignable(node ast.Node, env *TypeEnvironment) (error) {
+func CheckLValue(node ast.Node, env *TypeEnvironment) error {
 	//if not constant and is IdentifierExpr
 	switch t := node.(type) {
 	case ast.IdentifierExpr:
+		if _, ok := env.builtins[t.Name]; ok {
+			return errors.New("keyword")
+		}
+
+		if _, ok := env.types[t.Name]; ok {
+			return errors.New("type")
+		}
+
 		//find the declaredEnv where the variable was declared
 		declaredEnv, err := env.ResolveVar(t.Name)
 		if err != nil {
@@ -104,14 +139,14 @@ func IsAssignable(node ast.Node, env *TypeEnvironment) (error) {
 		if !declaredEnv.constants[t.Name] {
 			return nil
 		} else {
-			return fmt.Errorf("identifier '%s' is constant", t.Name)
+			return errors.New("constant")
 		}
 	case ast.ArrayIndexAccess:
-		return IsAssignable(t.Array, env)
+		return CheckLValue(t.Array, env)
 	case ast.StructPropertyAccessExpr:
-		return IsAssignable(t.Object, env)
+		return CheckLValue(t.Object, env)
 	default:
-		return fmt.Errorf("assignment expression must be a valid lvalue")
+		return fmt.Errorf("invalid lvalue")
 	}
 }
 
@@ -153,9 +188,9 @@ func EvaluateTypeName(dtype ast.DataType, env *TypeEnvironment) ValueTypeInterfa
 		for _, param := range t.Parameters {
 			paramType := EvaluateTypeName(param.Type, env)
 			params = append(params, FnParam{
-				Name: 		param.Identifier.Name,
+				Name:       param.Identifier.Name,
 				IsOptional: param.IsOptional,
-				Type: 		paramType,
+				Type:       paramType,
 			})
 		}
 
@@ -170,13 +205,15 @@ func EvaluateTypeName(dtype ast.DataType, env *TypeEnvironment) ValueTypeInterfa
 			FunctionScope: *scope,
 		}
 	case nil:
-		return Void{
-			DataType: VOID_TYPE,
-		}
+		return NewVoid()
 	default:
-		val, err := stringToValueTypeInterface(VALUE_TYPE(t.Type()), env)
+		val, err := stringToValueTypeInterface(builtins.VALUE_TYPE(t.Type()), env)
 		if err != nil {
-			errgen.MakeError(env.filePath, dtype.StartPos().Line, dtype.EndPos().Line, dtype.StartPos().Column, dtype.EndPos().Column, err.Error()).Display()
+			//errgen.MakeError(env.filePath, dtype.StartPos().Line, dtype.EndPos().Line, dtype.StartPos().Column, dtype.EndPos().Column, err.Error()).DisplayWithPanic()
+			errgen.AddError(env.filePath, dtype.StartPos().Line, dtype.EndPos().Line, dtype.StartPos().Column, dtype.EndPos().Column, err.Error())
+		}
+		if val == nil {
+			errgen.DisplayErrors()
 		}
 		return val
 	}

@@ -3,7 +3,7 @@
 let a := 12;
 let b := 3;
 
-let c: int;
+let c: i32;
 
 c = 20;
 

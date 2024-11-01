@@ -3,10 +3,9 @@ package parser
 import (
 	"fmt"
 	"walrus/ast"
-	"walrus/lexer"
 	"walrus/errgen"
+	"walrus/lexer"
 )
-
 
 // parseStructLiteral parses a struct literal from the input tokens.
 // It expects the following sequence of tokens:
@@ -56,7 +55,7 @@ func parseStructLiteral(p *Parser) ast.Node {
 		val := parseExpr(p, DEFAULT_BP)
 
 		if _, ok := props[iden.Value]; ok {
-			errgen.MakeError(p.FilePath, iden.Start.Line, iden.End.Line, iden.Start.Column, iden.End.Column, fmt.Sprintf("property '%s' was previously assigned", iden.Value)).Display()
+			errgen.MakeError(p.FilePath, iden.Start.Line, iden.End.Line, iden.Start.Column, iden.End.Column, fmt.Sprintf("property '%s' was previously assigned", iden.Value)).DisplayWithPanic()
 		}
 
 		props[iden.Value] = val

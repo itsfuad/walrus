@@ -6,10 +6,11 @@ A tiny simple programming language made for simplicity. It borrows syntax from '
     - [x] [Variable declare](#variable-declare-and-assign)
     - [x] [Variable assign](#variable-assign)
     - [x] [Expressions](#expressions)
-        - [x] Unary (int, float, bool) `- !`
+        - [x] Unary (32, f32, bool) `- !`
         - [x] Additive `+ -`
         - [x] Multiplicative `* / % ^`
         - [x] Grouping `( )`
+        - [x] Type cast `as`
     - [x] [Array](#array)
         - [x] Array indexing
     - [x] [Conditionals](#conditionals)
@@ -28,12 +29,12 @@ A tiny simple programming language made for simplicity. It borrows syntax from '
             - [x] Property assignment
             - [x] Private property deny access
             - [x] Implement for struct
-        - [x] Builtins (int, float, bool, string)
+        - [x] Builtins (32, f32, bool, string)
         - [x] Function
-        - [ ] Interface
+        - [x] Interface
             - [x] Define
             - [x] Implement
-            - [ ] Use 
+            - [x] Use 
     - [x] [Increment/Decrement](#incrementdecrement)
         - [x] Prefix
         - [x] Postfix
@@ -48,12 +49,14 @@ A tiny simple programming language made for simplicity. It borrows syntax from '
         - [x] for [start] [condition] [end]
         - [x] for [start] in [range] 
     - [x] [Interaface](#interface)
+    - [ ] Imports
+    - [ ] Packages
+    - [ ] Modules
     - [ ] Generics
 - [x] Analyzer
     - [x] Everything in parser except - 
         - [ ] For loop
-        - [ ] Interface
-        - [ ] Implement
+- [x] Rich multi error reporting system
 - [ ] Codegen
 
 # Example
@@ -61,12 +64,14 @@ A tiny simple programming language made for simplicity. It borrows syntax from '
 ## Variable declare and assign
 ```rust
 // Declare a variable with let or const keyword
-let a := 10; // The variable is mutable and its type is inferred from the value e.g. int
-const pi := 3.14; // constant variable with type float
+let a := 10; // The variable is mutable and its type is inferred from the value e.g. 32
+const pi := 3.14; // constant variable with type f32
 
 // Declare a variable with type
-let b: int = 20; // The variable is mutable and its type is int
-const c: float = 3.14; // constant variable with type float
+let b: 32 = 20; // The variable is mutable and its type is 32
+const c: f32 = 3.14; // constant variable with type f32
+
+let unsigned: u32 = 10; // Unsigned integer of 32 bits
 ```
 
 ## Variable assign
@@ -88,6 +93,19 @@ let h := -a; // h = -10
 let i := !true; // i = false
 ```
 
+## Grouping
+```rust
+let a := 10;
+let b := 20;
+let c := (a + b) * 2; // c = 60
+```
+
+## Type cast
+```rust
+let a := 10;
+let b := a as f32; // b = 10.0 as float32
+```
+
 ## Array
 ```rust
 let a := [1, 2, 3, 4, 5]; // Array of integers. One dimensional array
@@ -104,7 +122,7 @@ c[0][0] = 10; // c = [[10, 2], [3, 4], [5, 6]]
 ```rust
 type Person struct{
     name: str;
-    age: int;
+    age: 32;
 }
 
 //Assign the type with @Name syntax. So we can distinguish between type and variable.
@@ -147,15 +165,15 @@ if a > b {
 
 ## Functions
 ```rust
-fn add(a: int, b: int) -> int {
-    return a + b;
+fn add(a: 32, b: 32) -> 32 {
+    ret a + b;
 }
 
 let sum := add(10, 20); // sum = 30
 
 // function with optional parameters
-fn add(a: int, b: int, c?: int = 0) -> int {
-    return a + b + c;
+fn add(a: 32, b: 32, c?: 32 = 0) -> 32 {
+    ret a + b + c;
 }
 
 let sum := add(10, 20); // sum = 30
@@ -166,9 +184,9 @@ let adder := add;
 let sum := adder(10, 20); // sum = 30
 
 // function with closure
-fn add(a: int) -> fn(int) -> int {
-    return fn(b: int) -> int {
-        return a + b;
+fn add(a: 32) -> fn(32) -> 32 {
+    ret fn(b: 32) -> 32 {
+        ret a + b;
     };
 }
 
@@ -180,19 +198,19 @@ let sum := adder(20); // sum = 30
 types are user defined data types. They can be structs, or a function signature or a wrapper around a built-in type.
 ```rust
 type Circle struct {
-    radius: float;
+    radius: f32;
 }
 
-type FnType = fn(int, int) -> int;
+type FnType fn(a: 32, b: 32) -> 32;
 
-type WrapperInt = int;
+type WrapperInt 32;
 
 let c := @Circle {
     radius: 10.0
 };
 
-let f: FnType = fn(a: int, b: int) -> int {
-    return a + b;
+let f: FnType = fn(a: 32, b: 32) -> 32 {
+    ret a + b;
 };
 
 let w: WrapperInt = 10;
@@ -227,21 +245,21 @@ for let i := 0; i < 10; i++ {
 ## Interface
 Interfaces are a way to define a contract that a type must implement. It is a way to achieve polymorphism in the language.
 ```rust
-interface Shape {
-    fn area() -> float;
+type Shape interface {
+    fn area() -> f32;
 }
 
 ```
 
 ## Implementing a interface for a struct
 ```rust
-interface Printable {
+type Printable interface {
     fn print();
 }
 
 type Person struct {
     name: str;
-    age: int;
+    age: 32;
 }
 
 impl Person {

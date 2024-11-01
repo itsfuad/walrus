@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"fmt"
 	"walrus/ast"
 	"walrus/lexer"
 )
@@ -23,7 +24,7 @@ func parseArrayExpr(p *Parser) ast.Node {
 	var values []ast.Node
 
 	for p.currentTokenKind() != lexer.CLOSE_BRACKET {
-		value := parseExpr(p, PRIMARY_BP)
+		value := parseExpr(p, DEFAULT_BP)
 		values = append(values, value)
 		if p.currentTokenKind() != lexer.CLOSE_BRACKET {
 			p.expect(lexer.COMMA_TOKEN)
@@ -55,7 +56,8 @@ func parseArrayExpr(p *Parser) ast.Node {
 // - An ast.Node representing the array index access.
 func parseArrayAccess(p *Parser, left ast.Node, bp BINDING_POWER) ast.Node {
 	p.expect(lexer.OPEN_BRACKET)
-	index := parseExpr(p, bp)
+	index := parseExpr(p, DEFAULT_BP)
+	fmt.Printf("Index: %v\n", index)
 	end := p.expect(lexer.CLOSE_BRACKET).End
 	return ast.ArrayIndexAccess{
 		Array: left,

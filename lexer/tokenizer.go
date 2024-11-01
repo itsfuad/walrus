@@ -5,6 +5,7 @@ import (
 	"os"
 	"regexp"
 	"strings"
+	"walrus/builtins"
 	"walrus/errgen"
 )
 
@@ -115,7 +116,7 @@ func createLexer(filePath *string) *Lexer {
 //
 // Returns:
 // - A regexHandler function that processes the token and updates the lexer state.
-func defaultHandler(kind TOKEN_KIND, value string) regexHandler {
+func defaultHandler(kind builtins.TOKEN_KIND, value string) regexHandler {
 
 	return func(lex *Lexer, _ *regexp.Regexp) {
 
@@ -142,7 +143,7 @@ func identifierHandler(lex *Lexer, regex *regexp.Regexp) {
 	lex.advance(identifier)
 	end := lex.Position
 	if IsKeyword(identifier) {
-		lex.push((NewToken(TOKEN_KIND(identifier), identifier, start, end)))
+		lex.push((NewToken(builtins.TOKEN_KIND(identifier), identifier, start, end)))
 	} else {
 		lex.push(NewToken(IDENTIFIER_TOKEN, identifier, start, end))
 	}
@@ -154,8 +155,9 @@ func identifierHandler(lex *Lexer, regex *regexp.Regexp) {
 // Depending on the type, it pushes the appropriate token (FLOAT or INT) to the lexer's token stack.
 //
 // Parameters:
-//   lex - A pointer to the Lexer instance.
-//   regex - A compiled regular expression used to find numeric matches in the lexer's input.
+//
+//	lex - A pointer to the Lexer instance.
+//	regex - A compiled regular expression used to find numeric matches in the lexer's input.
 func numberHandler(lex *Lexer, regex *regexp.Regexp) {
 	match := regex.FindString(lex.remainder())
 	start := lex.Position
@@ -163,9 +165,9 @@ func numberHandler(lex *Lexer, regex *regexp.Regexp) {
 	end := lex.Position
 	//find the number is a float or an integer
 	if strings.Contains(match, ".") {
-		lex.push(NewToken(FLOAT, match, start, end))
+		lex.push(NewToken(FLOAT32, match, start, end))
 	} else {
-		lex.push(NewToken(INT, match, start, end))
+		lex.push(NewToken(INT32, match, start, end))
 	}
 }
 
@@ -173,8 +175,9 @@ func numberHandler(lex *Lexer, regex *regexp.Regexp) {
 // It excludes the quotes from the matched string, updates the lexer's position, and pushes a new token.
 //
 // Parameters:
-//   lex   - A pointer to the Lexer instance.
-//   regex - A regular expression used to find the string literal in the lexer's remainder.
+//
+//	lex   - A pointer to the Lexer instance.
+//	regex - A regular expression used to find the string literal in the lexer's remainder.
 func stringHandler(lex *Lexer, regex *regexp.Regexp) {
 	match := regex.FindString(lex.remainder())
 	//exclude the quotes
@@ -191,8 +194,9 @@ func stringHandler(lex *Lexer, regex *regexp.Regexp) {
 // with the character literal's value and its position in the input.
 //
 // Parameters:
-//   lex - The Lexer instance that contains the input and current position.
-//   regex - The regular expression used to match the character literal.
+//
+//	lex - The Lexer instance that contains the input and current position.
+//	regex - The regular expression used to match the character literal.
 func characterHandler(lex *Lexer, regex *regexp.Regexp) {
 	match := regex.FindString(lex.remainder())
 	//exclude the quotes
@@ -200,7 +204,7 @@ func characterHandler(lex *Lexer, regex *regexp.Regexp) {
 	start := lex.Position
 	lex.advance(match)
 	end := lex.Position
-	lex.push(NewToken(BYTE, characterLiteral, start, end))
+	lex.push(NewToken(UINT8, characterLiteral, start, end))
 }
 
 // skipHandler processes a token that should be skipped by the lexer.
@@ -232,7 +236,7 @@ func Tokenize(filename string, debug bool) []Token {
 
 		if !matched {
 			errStr := fmt.Sprintf("lexer:unexpected character: '%c'", lex.at())
-			errgen.MakeError(filename, lex.Position.Line, lex.Position.Line, lex.Position.Column, lex.Position.Column, errStr).Display()
+			errgen.MakeError(filename, lex.Position.Line, lex.Position.Line, lex.Position.Column, lex.Position.Column, errStr).DisplayWithPanic()
 			return nil
 		}
 	}

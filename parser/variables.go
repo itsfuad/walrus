@@ -2,8 +2,8 @@ package parser
 
 import (
 	"walrus/ast"
-	"walrus/lexer"
 	"walrus/errgen"
+	"walrus/lexer"
 )
 
 // parseVarDeclStmt parses a variable declaration statement in the source code.
@@ -47,7 +47,7 @@ func parseVarDeclStmt(p *Parser) ast.Node {
 		explicitType = parseType(p, DEFAULT_BP)
 	} else if assignmentToken.Kind != lexer.WALRUS_TOKEN {
 		msg := "Invalid variable declaration syntax"
-		errgen.MakeError(p.FilePath, assignmentToken.Start.Line, assignmentToken.End.Line, assignmentToken.Start.Column, assignmentToken.End.Column, msg).AddHint("Maybe you want to use : or := instead of =", errgen.TEXT_HINT).Display()
+		errgen.MakeError(p.FilePath, assignmentToken.Start.Line, assignmentToken.End.Line, assignmentToken.Start.Column, assignmentToken.End.Column, msg).AddHint("Maybe you want to use : or := instead of =", errgen.TEXT_HINT).DisplayWithPanic()
 	}
 
 	if p.currentTokenKind() != lexer.SEMI_COLON_TOKEN {
@@ -61,10 +61,10 @@ func parseVarDeclStmt(p *Parser) ast.Node {
 	//if const, we must have a value
 	if isConst && value == nil {
 		msg := "constants must have value when declared"
-		errgen.MakeError(p.FilePath, p.currentToken().Start.Line, p.currentToken().End.Line, p.currentToken().Start.Column, p.currentToken().End.Column, msg).Display()
+		errgen.MakeError(p.FilePath, p.currentToken().Start.Line, p.currentToken().End.Line, p.currentToken().Start.Column, p.currentToken().End.Column, msg).DisplayWithPanic()
 	}
 
-	end := 	p.expect(lexer.SEMI_COLON_TOKEN).End
+	end := p.expect(lexer.SEMI_COLON_TOKEN).End
 
 	node := ast.VarDeclStmt{
 		Variable: ast.IdentifierExpr{
@@ -85,7 +85,6 @@ func parseVarDeclStmt(p *Parser) ast.Node {
 
 	return node
 }
-
 
 // parseVarAssignmentExpr parses a variable assignment expression in the source code.
 // It takes a parser instance, the left-hand side node, and the binding power as arguments.
