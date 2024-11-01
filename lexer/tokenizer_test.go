@@ -53,33 +53,39 @@ func TestTokenize(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			// Create a temporary file with the input content
-			tmpfile, err := os.CreateTemp("", "testfile")
-			if err != nil {
-				t.Fatal(err)
-			}
+			tmpfile := createTempFile(t, tt.input)
 			defer os.Remove(tmpfile.Name())
 
-			if _, err := tmpfile.Write([]byte(tt.input)); err != nil {
-				t.Fatal(err)
-			}
-			if err := tmpfile.Close(); err != nil {
-				t.Fatal(err)
-			}
-
-			// Tokenize the file
 			tokens := Tokenize(tmpfile.Name(), false)
-
-			// Compare the tokens with the expected tokens
-			if len(tokens) != len(tt.expected) {
-				t.Fatalf("expected %d tokens, got %d", len(tt.expected), len(tokens))
-			}
-
-			for i, token := range tokens {
-				if token.Kind != tt.expected[i].Kind || token.Value != tt.expected[i].Value {
-					t.Errorf("expected token %v, got %v", tt.expected[i], token)
-				}
-			}
+			compareTokens(t, tokens, tt.expected)
 		})
+	}
+}
+
+func createTempFile(t *testing.T, content string) *os.File {
+	tmpfile, err := os.CreateTemp("", "testfile")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if _, err := tmpfile.Write([]byte(content)); err != nil {
+		t.Fatal(err)
+	}
+	if err := tmpfile.Close(); err != nil {
+		t.Fatal(err)
+	}
+
+	return tmpfile
+}
+
+func compareTokens(t *testing.T, tokens, expected []Token) {
+	if len(tokens) != len(expected) {
+		t.Fatalf("expected %d tokens, got %d", len(expected), len(tokens))
+	}
+
+	for i, token := range tokens {
+		if token.Kind != expected[i].Kind || token.Value != expected[i].Value {
+			t.Errorf("expected token %v, got %v", expected[i], token)
+		}
 	}
 }

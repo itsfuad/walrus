@@ -5,6 +5,11 @@ import (
 	"testing"
 )
 
+const (
+	filename = "testfile.go"
+	errorMsg = "test error"
+)
+
 func TestMakeError(t *testing.T) {
 	tests := []struct {
 		filePath  string
@@ -16,35 +21,35 @@ func TestMakeError(t *testing.T) {
 		expected  *WalrusError
 	}{
 		{
-			filePath:  "testfile.go",
+			filePath:  filename,
 			lineStart: 10,
 			lineEnd:   10,
 			colStart:  5,
 			colEnd:    15,
-			errMsg:    "test error",
+			errMsg:    errorMsg,
 			expected: &WalrusError{
-				filePath:  "testfile.go",
+				filePath:  filename,
 				lineStart: 10,
 				lineEnd:   10,
 				colStart:  5,
 				colEnd:    15,
-				err:       errors.New("test error"),
+				err:       errors.New(errorMsg),
 			},
 		},
 		{
-			filePath:  "testfile.go",
+			filePath:  filename,
 			lineStart: -1,
 			lineEnd:   -1,
 			colStart:  -1,
 			colEnd:    -1,
-			errMsg:    "test error",
+			errMsg:    errorMsg,
 			expected: &WalrusError{
-				filePath:  "testfile.go",
+				filePath:  filename,
 				lineStart: 1,
 				lineEnd:   1,
 				colStart:  1,
 				colEnd:    1,
-				err:       errors.New("test error"),
+				err:       errors.New(errorMsg),
 			},
 		},
 	}
