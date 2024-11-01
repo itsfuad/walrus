@@ -132,12 +132,8 @@ func DisplayErrors() {
 		utils.ColorPrint(utils.GREEN, "------- No errors --------\n")
 		return
 	}
-
-	showFileName := globalErrors[0].filePath
-
-	for index, err := range globalErrors {
-		PrintError(&err, showFileName != err.filePath || index == 0)
-		showFileName = err.filePath
+	for _, err := range globalErrors {
+		PrintError(&err, true)
 	}
 	utils.ColorPrint(utils.BOLD_RED, fmt.Sprintf("%d error(s) found\n", len(globalErrors)))
 	os.Exit(-1)

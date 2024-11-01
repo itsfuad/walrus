@@ -19,6 +19,7 @@ const (
 	UINT32_TYPE       builtins.VALUE_TYPE = builtins.UINT32
 	UINT64_TYPE       builtins.VALUE_TYPE = builtins.UINT64
 	STRING_TYPE       builtins.VALUE_TYPE = builtins.STRING
+	BYTE_TYPE         builtins.VALUE_TYPE = builtins.BYTE
 	BOOLEAN_TYPE      builtins.VALUE_TYPE = builtins.BOOL
 	NULL_TYPE         builtins.VALUE_TYPE = builtins.NULL
 	VOID_TYPE         builtins.VALUE_TYPE = builtins.VOID
@@ -254,32 +255,12 @@ type TypeEnvironment struct {
 	variables  map[string]ValueTypeInterface
 	constants  map[string]bool
 	isOptional map[string]bool
-	builtins   map[string]ValueTypeInterface
 	types      map[string]ValueTypeInterface
 	interfaces map[string]Interface
 	filePath   string
 }
 
 func NewTypeENV(parent *TypeEnvironment, scope SCOPE_TYPE, scopeName string, filePath string) *TypeEnvironment {
-
-	builtins := map[string]ValueTypeInterface{
-		string(INT8_TYPE):    Int{DataType: INT8_TYPE, BitSize: 8, IsSigned: true},
-		string(INT16_TYPE):   Int{DataType: INT16_TYPE, BitSize: 16, IsSigned: true},
-		string(INT32_TYPE):   Int{DataType: INT32_TYPE, BitSize: 32, IsSigned: true},
-		string(INT64_TYPE):   Int{DataType: INT64_TYPE, BitSize: 64, IsSigned: true},
-		string(FLOAT32_TYPE): Float{DataType: FLOAT32_TYPE, BitSize: 32},
-		string(FLOAT64_TYPE): Float{DataType: FLOAT64_TYPE, BitSize: 64},
-		string(UINT8_TYPE):   Int{DataType: UINT8_TYPE, BitSize: 8, IsSigned: false},
-		string(UINT16_TYPE):  Int{DataType: UINT16_TYPE, BitSize: 16, IsSigned: false},
-		string(UINT32_TYPE):  Int{DataType: UINT32_TYPE, BitSize: 32, IsSigned: false},
-		string(UINT64_TYPE):  Int{DataType: UINT64_TYPE, BitSize: 64, IsSigned: false},
-		"byte":               Int{DataType: UINT8_TYPE, BitSize: 8, IsSigned: false},
-		string(STRING_TYPE):  Str{DataType: STRING_TYPE},
-		string(BOOLEAN_TYPE): Bool{DataType: BOOLEAN_TYPE},
-		string(NULL_TYPE):    Null{DataType: NULL_TYPE},
-		string(VOID_TYPE):    Void{DataType: VOID_TYPE},
-	}
-
 	return &TypeEnvironment{
 		parent:     parent,
 		scopeType:  scope,
@@ -288,7 +269,6 @@ func NewTypeENV(parent *TypeEnvironment, scope SCOPE_TYPE, scopeName string, fil
 		variables:  make(map[string]ValueTypeInterface),
 		constants:  make(map[string]bool),
 		isOptional: make(map[string]bool),
-		builtins:   builtins,
 		types:      make(map[string]ValueTypeInterface),
 		interfaces: make(map[string]Interface),
 	}
@@ -339,22 +319,8 @@ func (t *TypeEnvironment) ResolveType(name string) (*TypeEnvironment, error) {
 	return t.parent.ResolveType(name)
 }
 
-/*
-func (t *TypeEnvironment) GetTypeFromEnv(name string) (ValueTypeInterface, error) {
-	if _, ok := t.builtins[name]; ok {
-		return t.builtins[name], nil
-	}
-	if _, ok := t.types[name]; ok {
-		return t.types[name].(UserDefined).TypeDef, nil
-	}
-	return nil, fmt.Errorf("'%s' is not declared in this scope", name)
-}
-*/
 // instead, find all the upper scopes and check if the type is declared in any of them
 func (t *TypeEnvironment) GetTypeFromEnv(name string) (ValueTypeInterface, error) {
-	if val, ok := t.builtins[name]; ok {
-		return val, nil
-	}
 	if val, ok := t.types[name]; ok {
 		return val.(UserDefined).TypeDef, nil
 	}
@@ -365,11 +331,6 @@ func (t *TypeEnvironment) GetTypeFromEnv(name string) (ValueTypeInterface, error
 }
 
 func (t *TypeEnvironment) DeclareVar(name string, typeVar ValueTypeInterface, isConst bool, isOptional bool) error {
-
-	//if is keyward, return nil
-	if _, ok := t.builtins[name]; ok {
-		return fmt.Errorf("cannot declare variable with keyword '%s'", name)
-	}
 
 	if _, ok := t.types[name]; ok {
 		return fmt.Errorf("cannot declare variable with type '%s'", name)
@@ -388,11 +349,6 @@ func (t *TypeEnvironment) DeclareVar(name string, typeVar ValueTypeInterface, is
 }
 
 func (t *TypeEnvironment) DeclareType(name string, typeType ValueTypeInterface) error {
-
-	//if is keyward, return nil
-	if _, ok := t.builtins[name]; ok {
-		return fmt.Errorf("cannot declare type with keyword '%s'", name)
-	}
 
 	if scope, err := t.ResolveType(name); err == nil && scope == t {
 		return err

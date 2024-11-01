@@ -32,6 +32,7 @@ const (
 	FLOAT32         builtins.TOKEN_KIND = builtins.FLOAT32
 	FLOAT64         builtins.TOKEN_KIND = builtins.FLOAT64
 	STR             builtins.TOKEN_KIND = builtins.STRING
+	BYTE            builtins.TOKEN_KIND = builtins.BYTE
 	BOOL            builtins.TOKEN_KIND = builtins.BOOL
 	NULL            builtins.TOKEN_KIND = builtins.NULL
 	STRUCT          builtins.TOKEN_KIND = builtins.STRUCT

@@ -8,15 +8,15 @@ import (
 )
 
 func EvaluateProgram(program ast.ProgramStmt, env *TypeEnvironment) ValueTypeInterface {
-	utils.ColorPrint(utils.ORANGE, "### Evaluating program ###")
+	utils.ColorPrint(utils.ORANGE, "### Evaluating program ###\n")
 	for _, item := range program.Contents {
 		CheckAST(item, env)
 	}
 
-	utils.ColorPrint(utils.GREEN, "--------- passed ---------")
+	utils.ColorPrint(utils.GREEN, "--------- passed ---------\n")
 
 	//print the file path
-	utils.ColorPrint(utils.ORANGE, fmt.Sprintf("File path: %s", env.filePath))
+	utils.ColorPrint(utils.ORANGE, fmt.Sprintf("File path: %s\n", env.filePath))
 
 	return NewVoid()
 }

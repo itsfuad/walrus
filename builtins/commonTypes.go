@@ -18,6 +18,7 @@ const (
 	FLOAT32   = "f32"
 	FLOAT64   = "f64"
 	STRING    = "str"
+	BYTE	  = "byte"
 	BOOL      = "bool"
 	NULL      = "null"
 	FUNCTION  = "fn"
@@ -33,7 +34,7 @@ type Searchable interface {
 
 func GetBitSize[T Searchable](kind T) uint8 {
 	switch kind {
-	case INT8, UINT8:
+	case INT8, UINT8, BYTE:
 		return 8
 	case INT16, UINT16:
 		return 16
@@ -57,7 +58,7 @@ func IsSigned[T Searchable](kind T) bool {
 
 func IsUnsigned[T Searchable](kind T) bool {
 	switch kind {
-	case UINT8, UINT16, UINT32, UINT64:
+	case UINT8, UINT16, UINT32, UINT64, BYTE:
 		return true
 	default:
 		return false
