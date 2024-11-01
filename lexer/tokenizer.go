@@ -236,7 +236,7 @@ func Tokenize(filename string, debug bool) []Token {
 
 		if !matched {
 			errStr := fmt.Sprintf("lexer:unexpected character: '%c'", lex.at())
-			errgen.MakeError(filename, lex.Position.Line, lex.Position.Line, lex.Position.Column, lex.Position.Column, errStr).DisplayWithPanic()
+			errgen.AddError(filename, lex.Position.Line, lex.Position.Line, lex.Position.Column, lex.Position.Column, errStr).DisplayWithPanic()
 			return nil
 		}
 	}

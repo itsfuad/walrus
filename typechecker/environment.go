@@ -263,21 +263,21 @@ type TypeEnvironment struct {
 func NewTypeENV(parent *TypeEnvironment, scope SCOPE_TYPE, scopeName string, filePath string) *TypeEnvironment {
 
 	builtins := map[string]ValueTypeInterface{
-		string(INT8_TYPE):    	Int{DataType: INT8_TYPE, BitSize: 8, IsSigned: true},
-		string(INT16_TYPE):   	Int{DataType: INT16_TYPE, BitSize: 16, IsSigned: true},
-		string(INT32_TYPE):   	Int{DataType: INT32_TYPE, BitSize: 32, IsSigned: true},
-		string(INT64_TYPE):   	Int{DataType: INT64_TYPE, BitSize: 64, IsSigned: true},
-		string(FLOAT32_TYPE): 	Float{DataType: FLOAT32_TYPE, BitSize: 32},
-		string(FLOAT64_TYPE): 	Float{DataType: FLOAT64_TYPE, BitSize: 64},
-		string(UINT8_TYPE):   	Int{DataType: UINT8_TYPE, BitSize: 8, IsSigned: false},
-		string(UINT16_TYPE):  	Int{DataType: UINT16_TYPE, BitSize: 16, IsSigned: false},
-		string(UINT32_TYPE):  	Int{DataType: UINT32_TYPE, BitSize: 32, IsSigned: false},
-		string(UINT64_TYPE):  	Int{DataType: UINT64_TYPE, BitSize: 64, IsSigned: false},
-		"byte": 			 	Int{DataType: UINT8_TYPE, BitSize: 8, IsSigned: false},
-		string(STRING_TYPE):  	Str{DataType: STRING_TYPE},
-		string(BOOLEAN_TYPE): 	Bool{DataType: BOOLEAN_TYPE},
-		string(NULL_TYPE):    	Null{DataType: NULL_TYPE},
-		string(VOID_TYPE):    	Void{DataType: VOID_TYPE},
+		string(INT8_TYPE):    Int{DataType: INT8_TYPE, BitSize: 8, IsSigned: true},
+		string(INT16_TYPE):   Int{DataType: INT16_TYPE, BitSize: 16, IsSigned: true},
+		string(INT32_TYPE):   Int{DataType: INT32_TYPE, BitSize: 32, IsSigned: true},
+		string(INT64_TYPE):   Int{DataType: INT64_TYPE, BitSize: 64, IsSigned: true},
+		string(FLOAT32_TYPE): Float{DataType: FLOAT32_TYPE, BitSize: 32},
+		string(FLOAT64_TYPE): Float{DataType: FLOAT64_TYPE, BitSize: 64},
+		string(UINT8_TYPE):   Int{DataType: UINT8_TYPE, BitSize: 8, IsSigned: false},
+		string(UINT16_TYPE):  Int{DataType: UINT16_TYPE, BitSize: 16, IsSigned: false},
+		string(UINT32_TYPE):  Int{DataType: UINT32_TYPE, BitSize: 32, IsSigned: false},
+		string(UINT64_TYPE):  Int{DataType: UINT64_TYPE, BitSize: 64, IsSigned: false},
+		"byte":               Int{DataType: UINT8_TYPE, BitSize: 8, IsSigned: false},
+		string(STRING_TYPE):  Str{DataType: STRING_TYPE},
+		string(BOOLEAN_TYPE): Bool{DataType: BOOLEAN_TYPE},
+		string(NULL_TYPE):    Null{DataType: NULL_TYPE},
+		string(VOID_TYPE):    Void{DataType: VOID_TYPE},
 	}
 
 	return &TypeEnvironment{
@@ -415,7 +415,7 @@ func GetValueType(value ast.Node, t *TypeEnvironment) ValueTypeInterface {
 
 	typ, err := getValueTypeInterface(typ, t)
 	if err != nil {
-		//errgen.MakeError(t.filePath, value.StartPos().Line, value.EndPos().Line, value.StartPos().Column, value.EndPos().Column, err.Error()).DisplayWithPanic()
+		//errgen.AddError(t.filePath, value.StartPos().Line, value.EndPos().Line, value.StartPos().Column, value.EndPos().Column, err.Error()).DisplayWithPanic()
 		errgen.AddError(t.filePath, value.StartPos().Line, value.EndPos().Line, value.StartPos().Column, value.EndPos().Column, err.Error())
 		return nil
 	}

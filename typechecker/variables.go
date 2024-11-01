@@ -22,7 +22,7 @@ func checkVariableAssignment(node ast.VarAssignmentExpr, env *TypeEnvironment) V
 	valueToAssign := node.Value
 
 	if err := CheckLValue(Assignee, env); err != nil {
-		errgen.MakeError(env.filePath, Assignee.StartPos().Line, Assignee.EndPos().Line, Assignee.StartPos().Column, Assignee.EndPos().Column, "cannot assign to " + err.Error()).DisplayWithPanic()
+		errgen.AddError(env.filePath, Assignee.StartPos().Line, Assignee.EndPos().Line, Assignee.StartPos().Column, Assignee.EndPos().Column, "cannot assign to "+err.Error()).DisplayWithPanic()
 		//errgen.AddError(env.filePath, Assignee.StartPos().Line, Assignee.EndPos().Line, Assignee.StartPos().Column, Assignee.EndPos().Column, err.Error())
 	}
 
@@ -31,7 +31,7 @@ func checkVariableAssignment(node ast.VarAssignmentExpr, env *TypeEnvironment) V
 
 	err := MatchTypes(expectedType, providedType, env.filePath, valueToAssign.StartPos().Line, valueToAssign.EndPos().Line, valueToAssign.StartPos().Column, valueToAssign.EndPos().Column)
 	if err != nil {
-		//errgen.MakeError(env.filePath, valueToAssign.StartPos().Line, valueToAssign.EndPos().Line, valueToAssign.StartPos().Column, valueToAssign.EndPos().Column, err.Error()).DisplayWithPanic()
+		//errgen.AddError(env.filePath, valueToAssign.StartPos().Line, valueToAssign.EndPos().Line, valueToAssign.StartPos().Column, valueToAssign.EndPos().Column, err.Error()).DisplayWithPanic()
 		errgen.AddError(env.filePath, valueToAssign.StartPos().Line, valueToAssign.EndPos().Line, valueToAssign.StartPos().Column, valueToAssign.EndPos().Column, err.Error())
 	}
 
@@ -75,7 +75,7 @@ func checkVariableDeclaration(node ast.VarDeclStmt, env *TypeEnvironment) ValueT
 		//handleExplicitType(typestr, env)
 		fmt.Printf("Auto detected type %T, %s\n", expectedTypeInterface, expectedTypeInterface.DType())
 	}
-	
+
 	fmt.Printf("Value %v\n", node.Value)
 
 	if node.Value != nil && node.ExplicitType != nil {
@@ -83,14 +83,14 @@ func checkVariableDeclaration(node ast.VarDeclStmt, env *TypeEnvironment) ValueT
 		providedValue := GetValueType(node.Value, env)
 		err := MatchTypes(expectedTypeInterface, providedValue, env.filePath, node.Value.StartPos().Line, node.Value.EndPos().Line, node.Value.StartPos().Column, node.Value.EndPos().Column)
 		if err != nil {
-			//errgen.MakeError(env.filePath, node.Value.StartPos().Line, node.Value.EndPos().Line, node.Value.StartPos().Column, node.Value.EndPos().Column, err.Error()).DisplayWithPanic()
+			//errgen.AddError(env.filePath, node.Value.StartPos().Line, node.Value.EndPos().Line, node.Value.StartPos().Column, node.Value.EndPos().Column, err.Error()).DisplayWithPanic()
 			errgen.AddError(env.filePath, node.Value.StartPos().Line, node.Value.EndPos().Line, node.Value.StartPos().Column, node.Value.EndPos().Column, err.Error())
 		}
 	}
 
 	err := env.DeclareVar(varToDecl.Name, expectedTypeInterface, node.IsConst, false)
 	if err != nil {
-		//errgen.MakeError(env.filePath, node.Variable.StartPos().Line, node.Variable.EndPos().Line, node.Variable.StartPos().Column, node.Variable.EndPos().Column, err.Error()).DisplayWithPanic()
+		//errgen.AddError(env.filePath, node.Variable.StartPos().Line, node.Variable.EndPos().Line, node.Variable.StartPos().Column, node.Variable.EndPos().Column, err.Error()).DisplayWithPanic()
 		errgen.AddError(env.filePath, node.Variable.StartPos().Line, node.Variable.EndPos().Line, node.Variable.StartPos().Column, node.Variable.EndPos().Column, err.Error())
 	}
 

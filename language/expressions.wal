@@ -7,13 +7,34 @@ let d : i32 = a - 3.1416 * 18 as i32;
 
 let e := "hello" + 2; // ok
 let logic := a > b;
-//e = "hello" - 2; // error
+e = "hello" - 2; // error
 
 let int32 : i32 = 10; //10
 let int64 : i64 = 10 as i64; //10
 let float32 := 3 as f32; //12
 
 let char : byte = 'a';
+let char2 := "hi" as byte; // error
 
 let name : str = "hello";
 let strIndexedChar := name[0];
+
+init + 4 - 2; // error
+
+let i1 := 10;
+
+for {
+    // infinite loop
+    // break logic
+}
+
+for i1 > 0 {
+    // do something
+    --i1;
+}
+
+//array := 0..10; // expected [0,1,2,3,4,5,6,7,8,9,10] //Not implemented yet
+
+for let i2 := 0; i2 < 10; i2++ {
+    // do something
+}

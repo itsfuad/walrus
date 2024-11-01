@@ -31,16 +31,19 @@ type WalrusError struct {
 }
 
 func (e *WalrusError) DisplayWithPanic() {
-	PrintError(e)
-	panic("")
+	DisplayErrors()
 }
 
-func PrintError(e *WalrusError) {
+func PrintError(e *WalrusError, showFileName bool) {
 	fileData, err := os.ReadFile(e.filePath)
 	if err != nil {
 		panic(err)
 	}
-	utils.ColorPrint(utils.GREY, fmt.Sprintf("\nIn file: %s:%d:%d\n", e.filePath, e.lineStart, e.colStart))
+
+	if showFileName {
+		utils.ColorPrint(utils.BLUE, fmt.Sprintf("\nIn file: %s:%d:%d\n", e.filePath, e.lineStart, e.colStart))
+	}
+
 	lines := strings.Split(string(fileData), "\n")
 	line := lines[e.lineStart-1]
 	hLen := 0
@@ -53,19 +56,22 @@ func PrintError(e *WalrusError) {
 	if hLen < 0 {
 		hLen = 0
 	}
+
+	lineNumber := fmt.Sprintf("%d | ", e.lineStart)
+	utils.ColorPrint(utils.GREY, lineNumber)
 	fmt.Println(line)
-	underLine := fmt.Sprintf("%s^%s", strings.Repeat(" ", e.colStart-1), strings.Repeat("~", hLen))
+	underLine := fmt.Sprintf("%s^%s\n", strings.Repeat(" ", (e.colStart-1) + len(lineNumber)), strings.Repeat("~", hLen))
 
 	utils.ColorPrint(utils.RED, underLine)
-	utils.ColorPrint(utils.RED, e.err.Error())
+	utils.ColorPrint(utils.RED, e.err.Error() + "\n")
 	for i, hint := range e.hints {
 		if i == 0 {
-			utils.ColorPrint(utils.GREEN, "Hint:")
+			utils.ColorPrint(utils.GREEN, "\nHint:")
 		}
 		if hint.hintType == TEXT_HINT {
-			utils.ColorPrint(utils.YELLOW, hint.message)
+			utils.ColorPrint(utils.YELLOW, hint.message + "\n")
 		} else {
-			utils.ColorPrint(utils.ORANGE, hint.message)
+			utils.ColorPrint(utils.ORANGE, hint.message + "\n")
 		}
 	}
 }
@@ -84,7 +90,7 @@ func (e *WalrusError) AddHint(msg string, htype HINT) *WalrusError {
 	return e
 }
 
-func MakeError(filePath string, lineStart, lineEnd int, colStart, colEnd int, err string) *WalrusError {
+func makeError(filePath string, lineStart, lineEnd int, colStart, colEnd int, errMsg string) *WalrusError {
 	if lineStart < 1 {
 		lineStart = 1
 	}
@@ -97,35 +103,41 @@ func MakeError(filePath string, lineStart, lineEnd int, colStart, colEnd int, er
 	if colEnd < 1 {
 		colEnd = 1
 	}
-	return &WalrusError{
+
+	err := &WalrusError{
 		filePath:  filePath,
 		lineStart: lineStart,
 		lineEnd:   lineEnd,
 		colStart:  colStart,
 		colEnd:    colEnd,
-		err:       errors.New(err),
+		err:       errors.New(errMsg),
 	}
+
+	globalErrors = append(globalErrors, *err)
+
+	return err
 }
 
 var globalErrors = make([]WalrusError, 0)
 
 // make an errorlist to add all errors and display later
 func AddError(filePath string, lineStart, lineEnd int, colStart, colEnd int, err string) *WalrusError {
-	errItem := MakeError(filePath, lineStart, lineEnd, colStart, colEnd, err)
-	globalErrors = append(globalErrors, *errItem)
+	errItem := makeError(filePath, lineStart, lineEnd, colStart, colEnd, err)
 	utils.ColorPrint(utils.YELLOW, fmt.Sprintf("Error added. %d errors available\n", len(globalErrors)))
 	return errItem
 }
 
 func DisplayErrors() {
 	if len(globalErrors) == 0 {
-		utils.ColorPrint(utils.GREEN, "------- No errors --------")
+		utils.ColorPrint(utils.GREEN, "------- No errors --------\n")
 		return
 	}
 
-	
-	for _, err := range globalErrors {
-		PrintError(&err)
+	showFileName := globalErrors[0].filePath
+
+	for index, err := range globalErrors {
+		PrintError(&err, showFileName != err.filePath || index == 0)
+		showFileName = err.filePath
 	}
 	utils.ColorPrint(utils.BOLD_RED, fmt.Sprintf("%d error(s) found\n", len(globalErrors)))
 	os.Exit(-1)
