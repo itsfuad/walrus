@@ -21,14 +21,24 @@ import (
 //
 // If both checks pass, the function returns the type of the elements contained in the array.
 func evaluateArrayAccess(array ast.ArrayIndexAccess, env *TypeEnvironment) ValueTypeInterface {
+
+	var retval ValueTypeInterface
 	//Array must be evaluated to an array value
 	arrType := GetValueType(array.Array, env)
-	if _, ok := arrType.(Array); !ok {
-		lineStart := array.Array.StartPos().Line
-		lineEnd := array.Array.EndPos().Line
-		start := array.Array.StartPos().Column
-		end := array.Array.EndPos().Column
-		errgen.MakeError(env.filePath, lineStart, lineEnd, start, end, fmt.Sprintf("cannot access index of type %s", arrType.DType())).AddHint("type must be an array", errgen.TEXT_HINT).Display()
+	arr, ok1 := arrType.(Array)
+	if !ok1 {
+		_, ok2 := arrType.(Str)
+		if !ok2 {
+			lineStart := array.Array.StartPos().Line
+			lineEnd := array.Array.EndPos().Line
+			start := array.Array.StartPos().Column
+			end := array.Array.EndPos().Column
+			errgen.MakeError(env.filePath, lineStart, lineEnd, start, end, fmt.Sprintf("cannot access index of type %s", arrType.DType())).AddHint("type must be an array", errgen.TEXT_HINT).DisplayWithPanic()
+			//errgen.AddError(env.filePath, lineStart, lineEnd, start, end, fmt.Sprintf("cannot access index of type %s", arrType.DType())).AddHint("type must be an array", errgen.TEXT_HINT)
+		}
+		retval = NewInt(8, false)
+	} else {
+		retval = arr.ArrayType
 	}
 	//index must be evaluated to int
 	indexType := GetValueType(array.Index, env)
@@ -37,9 +47,11 @@ func evaluateArrayAccess(array ast.ArrayIndexAccess, env *TypeEnvironment) Value
 		lineEnd := array.Index.EndPos().Line
 		start := array.Index.StartPos().Column
 		end := array.Index.EndPos().Column
-		errgen.MakeError(env.filePath, lineStart, lineEnd, start, end, fmt.Sprintf("cannot use index of type %s", indexType.DType())).AddHint("index must be valid integer", errgen.TEXT_HINT).Display()
+		//errgen.MakeError(env.filePath, lineStart, lineEnd, start, end, fmt.Sprintf("cannot use index of type %s", indexType.DType())).AddHint("index must be valid integer", errgen.TEXT_HINT).DisplayWithPanic()
+		errgen.AddError(env.filePath, lineStart, lineEnd, start, end, fmt.Sprintf("cannot use index of type %s", indexType.DType())).AddHint("index must be valid integer", errgen.TEXT_HINT)
 	}
-	return arrType.(Array).ArrayType
+	
+	return retval
 }
 
 // evaluateArrayExpr evaluates an array expression within a given type environment.
@@ -61,7 +73,8 @@ func evaluateArrayExpr(array ast.ArrayLiteral, env *TypeEnvironment) ValueTypeIn
 		//check every type is same or not
 		err := MatchTypes(expectedType, v, env.filePath, array.Start.Line, array.End.Line, array.Values[i].StartPos().Column, array.Values[i].EndPos().Column)
 		if err != nil {
-			errgen.MakeError(env.filePath, array.Start.Line, array.End.Line, array.Values[i].StartPos().Column, array.Values[i].EndPos().Column, err.Error()).Display()
+			//errgen.MakeError(env.filePath, array.Start.Line, array.End.Line, array.Values[i].StartPos().Column, array.Values[i].EndPos().Column, err.Error()).DisplayWithPanic()
+			errgen.AddError(env.filePath, array.Start.Line, array.End.Line, array.Values[i].StartPos().Column, array.Values[i].EndPos().Column, err.Error())
 		}
 	}
 

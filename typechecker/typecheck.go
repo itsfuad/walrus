@@ -29,24 +29,18 @@ func CheckAST(node ast.Node, env *TypeEnvironment) ValueTypeInterface {
 		return checkVariableDeclaration(t, env)
 	case ast.VarAssignmentExpr:
 		return checkVariableAssignment(t, env)
+	case ast.TypeCastExpr:
+		return checkTypeCast(t, env)
 	case ast.IdentifierExpr:
 		return checkIdentifier(t, env)
 	case ast.IntegerLiteralExpr:
-		return Int{
-			DataType: INT_TYPE,
-		}
+		return NewInt(t.BitSize, t.IsSigned)
 	case ast.FloatLiteralExpr:
-		return Float{
-			DataType: FLOAT_TYPE,
-		}
+		return NewFloat(t.BitSize)
 	case ast.StringLiteralExpr:
-		return Str{
-			DataType: STRING_TYPE,
-		}
+		return NewStr()
 	case ast.CharLiteralExpr:
-		return Chr{
-			DataType: CHAR_TYPE,
-		}
+		return NewInt(8, false)
 	case ast.BinaryExpr:
 		return checkBinaryExpr(t, env)
 	case ast.UnaryExpr:
@@ -78,6 +72,6 @@ func CheckAST(node ast.Node, env *TypeEnvironment) ValueTypeInterface {
 	case ast.ReturnStmt:
 		return checkReturnStmt(t, env)
 	}
-	errgen.MakeError(env.filePath, node.StartPos().Line, node.EndPos().Line, node.StartPos().Column, node.EndPos().Column, fmt.Sprintf("<%T> node is not implemented yet to check", node)).Display()
+	errgen.MakeError(env.filePath, node.StartPos().Line, node.EndPos().Line, node.StartPos().Column, node.EndPos().Column, fmt.Sprintf("<%T> node is not implemented yet to check", node)).DisplayWithPanic()
 	return nil
 }

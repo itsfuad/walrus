@@ -3,6 +3,7 @@ package parser
 import (
 	"testing"
 	"walrus/ast"
+	"walrus/builtins"
 	"walrus/lexer"
 )
 
@@ -11,7 +12,7 @@ func TestGetBP(t *testing.T) {
 	BPLookup[lexer.PLUS_TOKEN] = ADDITIVE_BP
 
 	tests := []struct {
-		token lexer.TOKEN_KIND
+		token builtins.TOKEN_KIND
 		want  BINDING_POWER
 	}{
 		{lexer.PLUS_TOKEN, ADDITIVE_BP},

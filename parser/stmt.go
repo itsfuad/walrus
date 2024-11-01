@@ -8,7 +8,6 @@ import (
 	"walrus/lexer"
 )
 
-
 // parseUserDefinedTypeStmt parses a user-defined type statement in the source code.
 // It expects the 'type' keyword followed by an identifier that starts with a capital letter.
 // If the identifier does not start with a capital letter, an error is generated with a hint.
@@ -27,7 +26,7 @@ func parseUserDefinedTypeStmt(p *Parser) ast.Node {
 	typeName := p.expect(lexer.IDENTIFIER_TOKEN)
 
 	if strings.ToUpper(typeName.Value[:1]) != typeName.Value[:1] {
-		errgen.MakeError(p.FilePath, typeName.Start.Line, typeName.End.Line, typeName.Start.Column, typeName.End.Column, "user defined types should start with capital letter").AddHint(fmt.Sprintf("type %s%s [your type]", strings.ToUpper(typeName.Value[:1]), typeName.Value[1:]), errgen.TEXT_HINT).Display()
+		errgen.MakeError(p.FilePath, typeName.Start.Line, typeName.End.Line, typeName.Start.Column, typeName.End.Column, "user defined types should start with capital letter").AddHint(fmt.Sprintf("type %s%s [your type]", strings.ToUpper(typeName.Value[:1]), typeName.Value[1:]), errgen.TEXT_HINT).DisplayWithPanic()
 	}
 
 	udType := parseUDTType(p)
@@ -95,7 +94,7 @@ func parseReturnStmt(p *Parser) ast.Node {
 		value = parseExpr(p, ASSIGNMENT_BP)
 	}
 
-	end := 	p.expect(lexer.SEMI_COLON_TOKEN).End
+	end := p.expect(lexer.SEMI_COLON_TOKEN).End
 
 	return ast.ReturnStmt{
 		Value: value,

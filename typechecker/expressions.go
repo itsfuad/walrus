@@ -14,12 +14,32 @@ func checkIncrementalExpr(node ast.IncrementalInterface, env *TypeEnvironment) V
 	// the argument must be an identifier evaluated to a number
 	typeVal := GetValueType(arg, env)
 	if !IsNumberType(typeVal) {
-		errgen.MakeError(env.filePath, arg.StartPos().Line, arg.EndPos().Line, arg.StartPos().Column, arg.EndPos().Column, "invalid prefix operation with non-numeric type").Display()
+		//errgen.MakeError(env.filePath, arg.StartPos().Line, arg.EndPos().Line, arg.StartPos().Column, arg.EndPos().Column, "invalid prefix operation with non-numeric type").DisplayWithPanic()
+		errgen.AddError(env.filePath, arg.StartPos().Line, arg.EndPos().Line, arg.StartPos().Column, arg.EndPos().Column, "invalid prefix operation with non-numeric type")
 	}
 	if op.Kind != lexer.PLUS_PLUS_TOKEN && op.Kind != lexer.MINUS_MINUS_TOKEN {
-		errgen.MakeError(env.filePath, op.Start.Line, op.End.Line, op.Start.Column, op.End.Column, "invalid prefix operation").Display()
+		//errgen.MakeError(env.filePath, op.Start.Line, op.End.Line, op.Start.Column, op.End.Column, "invalid prefix operation").DisplayWithPanic()
+		errgen.AddError(env.filePath, op.Start.Line, op.End.Line, op.Start.Column, op.End.Column, "invalid prefix operation")
 	}
 	return typeVal
+}
+
+func checkTypeCast(node ast.TypeCastExpr, env *TypeEnvironment) ValueTypeInterface {
+
+	originalType := GetValueType(node.Expression, env)
+	toCast := EvaluateTypeName(node.ToCast, env)
+
+	if originalType.DType() == toCast.DType() {
+		return originalType
+	}
+
+	if IsNumberType(originalType) && IsNumberType(toCast) {
+		return toCast
+	}
+
+	errgen.AddError(env.filePath, node.Start.Line, node.End.Line, node.Start.Column, node.End.Column, fmt.Sprintf("cannot cast '%s' to '%s'", originalType.DType(), toCast.DType()))
+
+	return originalType
 }
 
 func checkUnaryExpr(node ast.UnaryExpr, env *TypeEnvironment) ValueTypeInterface {
@@ -32,14 +52,17 @@ func checkUnaryExpr(node ast.UnaryExpr, env *TypeEnvironment) ValueTypeInterface
 	case Int, Float:
 		//allow - only
 		if op.Kind != lexer.MINUS_TOKEN {
-			errgen.MakeError(env.filePath, op.Start.Line, op.End.Line, op.Start.Column, op.End.Column, "invalid unary operation with numeric types").Display()
+			//errgen.MakeError(env.filePath, op.Start.Line, op.End.Line, op.Start.Column, op.End.Column, "invalid unary operation with numeric types").DisplayWithPanic()
+			errgen.AddError(env.filePath, op.Start.Line, op.End.Line, op.Start.Column, op.End.Column, "invalid unary operation with numeric types")
 		}
 	case Bool:
 		if op.Kind != lexer.NOT_TOKEN {
-			errgen.MakeError(env.filePath, op.Start.Line, op.End.Line, op.Start.Column, op.End.Column, "invalid unary operation with boolean types").Display()
+			//errgen.MakeError(env.filePath, op.Start.Line, op.End.Line, op.Start.Column, op.End.Column, "invalid unary operation with boolean types").DisplayWithPanic()
+			errgen.AddError(env.filePath, op.Start.Line, op.End.Line, op.Start.Column, op.End.Column, "invalid unary operation with boolean types")
 		}
 	default:
-		errgen.MakeError(env.filePath, op.Start.Line, op.End.Line, op.Start.Column, op.End.Column, fmt.Sprintf("this unary operation is not supported with %s types", t.DType())).Display()
+		//errgen.MakeError(env.filePath, op.Start.Line, op.End.Line, op.Start.Column, op.End.Column, fmt.Sprintf("this unary operation is not supported with %s types", t.DType())).DisplayWithPanic()
+		errgen.AddError(env.filePath, op.Start.Line, op.End.Line, op.Start.Column, op.End.Column, fmt.Sprintf("this unary operation is not supported with %s types", t.DType()))
 	}
 
 	return typeVal
@@ -62,14 +85,14 @@ func checkBinaryExpr(node ast.BinaryExpr, env *TypeEnvironment) ValueTypeInterfa
 		return checkAdditionAndConcat(node, left, right, env)
 	case lexer.MINUS_TOKEN, lexer.MUL_TOKEN, lexer.DIV_TOKEN, lexer.MOD_TOKEN, lexer.EXP_TOKEN:
 		//must have to be numeric type on both side
-		if leftType != builtins.INT && leftType != builtins.FLOAT {
-			errMsg = "left hand side expression must be evaluated to a numeric type"
+		if leftType != builtins.INT32 && leftType != builtins.FLOAT32 {
+			errMsg = "cannot perform numeric operation. left hand side expression must be evaluated to a numeric type"
 			errLineStart = node.Left.StartPos().Line
 			errLineEnd = node.Left.EndPos().Line
 			errStart = node.Left.StartPos().Column
 			errEnd = node.Left.EndPos().Column
-		} else if rightType != builtins.INT && rightType != builtins.FLOAT {
-			errMsg = "right hand side expression must be evaluated to a numeric type"
+		} else if rightType != builtins.INT32 && rightType != builtins.FLOAT32 {
+			errMsg = "cannot perform numeric operation. right hand side expression must be evaluated to a numeric type"
 			errLineStart = node.Right.StartPos().Line
 			errLineEnd = node.Right.EndPos().Line
 			errStart = node.Right.StartPos().Column
@@ -87,8 +110,9 @@ func checkBinaryExpr(node ast.BinaryExpr, env *TypeEnvironment) ValueTypeInterfa
 		errEnd = op.End.Column
 	}
 
-	errgen.MakeError(env.filePath, errLineStart, errLineEnd, errStart, errEnd, errMsg).Display()
-	return nil
+	//errgen.MakeError(env.filePath, errLineStart, errLineEnd, errStart, errEnd, errMsg).DisplayWithPanic()
+	errgen.AddError(env.filePath, errLineStart, errLineEnd, errStart, errEnd, errMsg)
+	return left
 }
 
 func checkComparison(node ast.BinaryExpr, left ValueTypeInterface, right ValueTypeInterface, env *TypeEnvironment) ValueTypeInterface {
@@ -114,8 +138,9 @@ func checkComparison(node ast.BinaryExpr, left ValueTypeInterface, right ValueTy
 		}
 	}
 	errMsg := fmt.Sprintf("invalid compare operation between '%s' and '%s'", leftType, rightType)
-	errgen.MakeError(env.filePath, node.Start.Line, node.End.Line, node.Start.Column, node.End.Column, errMsg).Display()
-	return nil
+	//errgen.MakeError(env.filePath, node.Start.Line, node.End.Line, node.Start.Column, node.End.Column, errMsg).DisplayWithPanic()
+	errgen.AddError(env.filePath, node.Start.Line, node.End.Line, node.Start.Column, node.End.Column, errMsg)
+	return left
 }
 
 func checkAdditionAndConcat(node ast.BinaryExpr, left ValueTypeInterface, right ValueTypeInterface, env *TypeEnvironment) ValueTypeInterface {
@@ -126,10 +151,10 @@ func checkAdditionAndConcat(node ast.BinaryExpr, left ValueTypeInterface, right 
 	var errLineStart, errLineEnd, errStart, errEnd int
 	var errMsg string
 	//only string concat, int and floats are allowed.
-	if leftType == builtins.INT || leftType == builtins.FLOAT {
+	if leftType == builtins.INT32 || leftType == builtins.FLOAT32 {
 		//right has to be int or float
-		if rightType != builtins.INT && rightType != builtins.FLOAT {
-			errMsg = "right hand side expression must be evaluated to a numeric type"
+		if rightType != builtins.INT32 && rightType != builtins.FLOAT32 {
+			errMsg = "cannot perform numeric operation. right hand side expression must be evaluated to a numeric type"
 			errLineStart = node.Right.StartPos().Line
 			errLineEnd = node.Right.EndPos().Line
 			errStart = node.Right.StartPos().Column
@@ -149,6 +174,7 @@ func checkAdditionAndConcat(node ast.BinaryExpr, left ValueTypeInterface, right 
 		errEnd = node.EndPos().Column
 	}
 
-	errgen.MakeError(env.filePath, errLineStart, errLineEnd, errStart, errEnd, errMsg).Display()
-	return nil
+	//errgen.MakeError(env.filePath, errLineStart, errLineEnd, errStart, errEnd, errMsg).DisplayWithPanic()
+	errgen.AddError(env.filePath, errLineStart, errLineEnd, errStart, errEnd, errMsg)
+	return left
 }
