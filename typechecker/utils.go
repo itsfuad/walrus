@@ -209,7 +209,7 @@ func EvaluateTypeName(dtype ast.DataType, env *TypeEnvironment) ValueTypeInterfa
 	default:
 		val, err := stringToValueTypeInterface(builtins.VALUE_TYPE(t.Type()), env)
 		if err != nil {
-			//errgen.MakeError(env.filePath, dtype.StartPos().Line, dtype.EndPos().Line, dtype.StartPos().Column, dtype.EndPos().Column, err.Error()).DisplayWithPanic()
+			//errgen.AddError(env.filePath, dtype.StartPos().Line, dtype.EndPos().Line, dtype.StartPos().Column, dtype.EndPos().Column, err.Error()).DisplayWithPanic()
 			errgen.AddError(env.filePath, dtype.StartPos().Line, dtype.EndPos().Line, dtype.StartPos().Column, dtype.EndPos().Column, err.Error())
 		}
 		if val == nil {

@@ -55,7 +55,7 @@ func TestMakeError(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		result := MakeError(tt.filePath, tt.lineStart, tt.lineEnd, tt.colStart, tt.colEnd, tt.errMsg)
+		result := makeError(tt.filePath, tt.lineStart, tt.lineEnd, tt.colStart, tt.colEnd, tt.errMsg)
 		if result.filePath != tt.expected.filePath ||
 			result.lineStart != tt.expected.lineStart ||
 			result.lineEnd != tt.expected.lineEnd ||

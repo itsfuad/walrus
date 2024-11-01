@@ -13,6 +13,7 @@ const (
 	IF_TOKEN         builtins.TOKEN_KIND = "if"
 	ELSE_TOKEN       builtins.TOKEN_KIND = "else"
 	FOR_TOKEN        builtins.TOKEN_KIND = "for"
+	FOREACH_TOKEN    builtins.TOKEN_KIND = "foreach"
 	IDENTIFIER_TOKEN builtins.TOKEN_KIND = "identifier"
 	PRIVATE_TOKEN    builtins.TOKEN_KIND = "priv"
 	IMPLEMENT_TOKEN  builtins.TOKEN_KIND = "impl"
@@ -85,6 +86,7 @@ var keyWordsMap map[string]builtins.TOKEN_KIND = map[string]builtins.TOKEN_KIND{
 	"if":        	IF_TOKEN,
 	"else":      	ELSE_TOKEN,
 	"for":       	FOR_TOKEN,
+	"foreach":   	FOREACH_TOKEN,
 	"type":      	TYPE_TOKEN,
 	"priv":      	PRIVATE_TOKEN,
 	"interface": 	INTERFACE_TOKEN,

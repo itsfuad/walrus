@@ -111,6 +111,7 @@ func bindLookupHandlers() {
 
 	stmt(lexer.IF_TOKEN, parseIfStmt)           // if statement
 	stmt(lexer.FOR_TOKEN, parseForStmt)         // for statement
+	stmt(lexer.FOREACH_TOKEN, parseForStmt) // foreach statement
 	stmt(lexer.FUNCTION, parseFunctionDeclStmt) // function declaration
 	stmt(lexer.RETURN_TOKEN, parseReturnStmt)   // return statement
 

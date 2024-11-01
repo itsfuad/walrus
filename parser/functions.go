@@ -111,7 +111,7 @@ func parseFunctionSignature(p *Parser) ([]ast.FunctionParam, ast.DataType) {
 		currentToken := p.currentToken()
 
 		if currentToken.Kind != lexer.COLON_TOKEN && currentToken.Kind != lexer.OPTIONAL_TOKEN {
-			errgen.MakeError(p.FilePath, currentToken.Start.Line, currentToken.End.Line, currentToken.Start.Column, currentToken.End.Column, "expected : or ?:").DisplayWithPanic()
+			errgen.AddError(p.FilePath, currentToken.Start.Line, currentToken.End.Line, currentToken.Start.Column, currentToken.End.Column, "expected : or ?:").DisplayWithPanic()
 		}
 
 		p.advance()
