@@ -14,7 +14,7 @@ import (
 
 func main() {
 	fmt.Println("Hello world!")
-	filePath := "language/expressions.wal"
+	filePath := "language/arrayAccess.wal"
 	tokens := lexer.Tokenize(filePath, true)
 	parser := parseMachine.NewParser(filePath, tokens)
 	tree := parser.Parse()
@@ -40,10 +40,10 @@ func main() {
 	file.Close()
 
 	tc := typechecker.NewTypeENV(nil, typechecker.GLOBAL_SCOPE, "global", filePath)
-	tc.DeclareVar("null", typechecker.Null{DataType: typechecker.NULL_TYPE}, true, false)
-	tc.DeclareVar("true", typechecker.Bool{DataType: typechecker.BOOLEAN_TYPE}, true, false)
-	tc.DeclareVar("false", typechecker.Bool{DataType: typechecker.BOOLEAN_TYPE}, true, false)
-	tc.DeclareVar("PI", typechecker.Float{DataType: typechecker.FLOAT32_TYPE}, true, false)
+	tc.DeclareVar("null", typechecker.NewNull(), true, false)
+	tc.DeclareVar("true", typechecker.NewBool(), true, false)
+	tc.DeclareVar("false", typechecker.NewBool(), true, false)
+	tc.DeclareVar("PI", typechecker.NewFloat(32), true, false)
 	typechecker.CheckAST(tree, tc)
 	errgen.DisplayErrors()
 }

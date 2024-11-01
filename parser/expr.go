@@ -12,7 +12,11 @@ import (
 // It first parses the NUD (Null Denotation) of the expression,
 // then continues to parse the LED (Left Denotation) of the expression
 // until the binding power of the current token is less than or equal to the given binding power.
+//
 // The parsed expression is returned as an ast.Node.
+//
+// bp parameter is the limit.
+// parser will go down the BINDING_POWER table until it reaches the limit.
 func parseExpr(p *Parser, bp BINDING_POWER) ast.Node {
 
 	// Fist parse the NUD
