@@ -9,7 +9,6 @@ import (
 type BINDING_POWER int
 
 
-//higher the binding power, higher the precedence
 const (
 	DEFAULT_BP BINDING_POWER = iota
 	COMMA_BP
@@ -21,8 +20,8 @@ const (
 	MULTIPLICATIVE_BP
 	UNARY_BP
 	CALL_BP
-	MEMBER_BP
 	PRIMARY_BP
+	MEMBER_BP
 )
 
 type NUDHandler func(p *Parser) ast.Node
