@@ -24,7 +24,7 @@ func parseImplementStmt(p *Parser) ast.Node {
 			p.advance()
 		}
 
-		p.expect(lexer.FUNCTION)
+		p.expect(lexer.FUNCTION_TOKEN)
 
 		fnName := p.expect(lexer.IDENTIFIER_TOKEN)
 

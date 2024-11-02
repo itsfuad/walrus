@@ -22,7 +22,21 @@ func typeNUD(kind builtins.TOKEN_KIND, handler typeNUDHandler) {
 func bindTypeLookups() {
 	typeNUD(lexer.IDENTIFIER_TOKEN, parseDataType)
 	typeNUD(lexer.OPEN_BRACKET, parseArrayType)
-	typeNUD(lexer.FUNCTION, parseFunctionType)
+	typeNUD(lexer.FUNCTION_TOKEN, parseFunctionType)
+	typeNUD(lexer.MAP_TOKEN, parseMapType)
+}
+
+func parseMapType(p *Parser) ast.DataType {
+
+	token := p.expect(lexer.MAP_TOKEN)
+
+	return ast.MapType{
+		TypeName: builtins.DATA_TYPE(builtins.MAP),
+		Location: ast.Location{
+			Start: token.Start,
+			End:   token.End,
+		},
+	}
 }
 
 func parseFunctionType(p *Parser) ast.DataType {
@@ -136,30 +150,30 @@ func parseDataType(p *Parser) ast.DataType {
 	}
 
 	switch v := value; builtins.TOKEN_KIND(v) {
-	case lexer.INT8, lexer.INT16, lexer.INT32, lexer.INT64, lexer.UINT8, lexer.UINT16, lexer.UINT32, lexer.UINT64:
+	case lexer.INT8_TOKEN, lexer.INT16_TOKEN, lexer.INT32_TOKEN, lexer.INT64_TOKEN, lexer.UINT8_TOKEN, lexer.UINT16_TOKEN, lexer.UINT32_TOKEN, lexer.UINT64_TOKEN:
 		return ast.IntegerType{
 			TypeName: builtins.DATA_TYPE(v),
 			BitSize:  builtins.GetBitSize(builtins.DATA_TYPE(v)),
 			IsSigned: builtins.IsSigned(builtins.DATA_TYPE(v)),
 			Location: loc,
 		}
-	case lexer.FLOAT32, lexer.FLOAT64:
+	case lexer.FLOAT32_TOKEN, lexer.FLOAT64_TOKEN:
 		return ast.FloatType{
 			TypeName: builtins.DATA_TYPE(v),
 			BitSize:  builtins.GetBitSize(builtins.DATA_TYPE(v)),
 			Location: loc,
 		}
-	case lexer.STR:
+	case lexer.STR_TOKEN:
 		return ast.StringType{
 			TypeName: builtins.DATA_TYPE(v),
 			Location: loc,
 		}
-	case lexer.BOOL:
+	case lexer.BOOL_TOKEN:
 		return ast.BooleanType{
 			TypeName: builtins.DATA_TYPE(v),
 			Location: loc,
 		}
-	case lexer.NULL:
+	case lexer.NULL_TOKEN:
 		return ast.NullType{
 			TypeName: builtins.DATA_TYPE(v),
 			Location: loc,
@@ -219,7 +233,7 @@ func parseType(p *Parser, bp BINDING_POWER) ast.DataType {
 
 	if !exists {
 		//panic(fmt.Sprintf("TYPE NUD handler expected for token %s\n", tokenKind))
-		err := errgen.AddError(p.FilePath, p.currentToken().Start.Line, p.currentToken().End.Line, p.currentToken().Start.Column, p.currentToken().End.Column, fmt.Sprintf("Unexpected token %s\n", tokenKind))
+		err := errgen.AddError(p.FilePath, p.currentToken().Start.Line, p.currentToken().End.Line, p.currentToken().Start.Column, p.currentToken().End.Column, fmt.Sprintf("type '%s' is not defined\n", tokenKind))
 		err.AddHint("Follow ", errgen.TEXT_HINT)
 		err.AddHint("let x := 10", errgen.CODE_HINT)
 		err.AddHint(" syntax or", errgen.TEXT_HINT)
@@ -361,7 +375,7 @@ func parseInterfaceType(p *Parser) ast.DataType {
 
 	for p.hasToken() && p.currentTokenKind() != lexer.CLOSE_CURLY {
 
-		start := p.expect(lexer.FUNCTION).Start
+		start := p.expect(lexer.FUNCTION_TOKEN).Start
 
 		if p.currentTokenKind() != lexer.IDENTIFIER_TOKEN {
 			errgen.AddError(p.FilePath, p.currentToken().Start.Line, p.currentToken().End.Line, p.currentToken().Start.Column, p.currentToken().End.Column, "expected method name").DisplayWithPanic()

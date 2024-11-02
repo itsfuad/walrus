@@ -36,7 +36,7 @@ func parseExpr(p *Parser, bp BINDING_POWER) ast.Node {
 		errgen.AddError(p.FilePath, p.currentToken().Start.Line, p.currentToken().End.Line, p.currentToken().Start.Column, p.currentToken().End.Column, msg).DisplayWithPanic()
 	}
 
-	left := nudFunction(p)
+	expr := nudFunction(p)
 
 	for GetBP(p.currentTokenKind()) > bp {
 
@@ -49,10 +49,10 @@ func parseExpr(p *Parser, bp BINDING_POWER) ast.Node {
 			errgen.AddError(p.FilePath, p.currentToken().Start.Line, p.currentToken().End.Line, p.currentToken().Start.Column, p.currentToken().End.Column, msg).DisplayWithPanic()
 		}
 
-		left = ledFunction(p, left, GetBP(p.currentTokenKind()))
+		expr = ledFunction(p, expr, GetBP(p.currentTokenKind()))
 	}
 
-	return left
+	return expr
 }
 
 // parsePrimaryExpr parses a primary expression in the input stream.
@@ -74,14 +74,14 @@ func parsePrimaryExpr(p *Parser) ast.Node {
 	}
 
 	switch primaryToken.Kind {
-	case lexer.INT8, lexer.INT16, lexer.INT32, lexer.INT64, lexer.UINT8, lexer.UINT16, lexer.UINT32, lexer.UINT64:
+	case lexer.INT8_TOKEN, lexer.INT16_TOKEN, lexer.INT32_TOKEN, lexer.INT64_TOKEN, lexer.UINT8_TOKEN, lexer.UINT16_TOKEN, lexer.UINT32_TOKEN, lexer.UINT64_TOKEN:
 		return ast.IntegerLiteralExpr{
 			Value:    rawValue,
 			BitSize:  builtins.GetBitSize(builtins.DATA_TYPE(primaryToken.Kind)),
 			IsSigned: builtins.IsSigned(builtins.DATA_TYPE(primaryToken.Kind)),
 			Location: loc,
 		}
-	case lexer.FLOAT32, lexer.FLOAT64:
+	case lexer.FLOAT32_TOKEN, lexer.FLOAT64_TOKEN:
 
 		return ast.FloatLiteralExpr{
 			Value:    rawValue,
@@ -89,7 +89,7 @@ func parsePrimaryExpr(p *Parser) ast.Node {
 			Location: loc,
 		}
 
-	case lexer.STR:
+	case lexer.STR_TOKEN:
 		return ast.StringLiteralExpr{
 			Value:    rawValue,
 			Location: loc,

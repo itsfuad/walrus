@@ -19,25 +19,26 @@ const (
 	IMPLEMENT_TOKEN  builtins.TOKEN_KIND = "impl"
 	RETURN_TOKEN     builtins.TOKEN_KIND = "ret"
 	IN_TOKEN         builtins.TOKEN_KIND = "in"
-	AS_TOKEN		 builtins.TOKEN_KIND = "as"
+	AS_TOKEN         builtins.TOKEN_KIND = "as"
 	//data types
-	INT8            builtins.TOKEN_KIND = builtins.INT8
-	INT16           builtins.TOKEN_KIND = builtins.INT16
-	INT32           builtins.TOKEN_KIND = builtins.INT32
-	INT64           builtins.TOKEN_KIND = builtins.INT64
-	UINT8           builtins.TOKEN_KIND = builtins.UINT8
-	UINT16          builtins.TOKEN_KIND = builtins.UINT16
-	UINT32          builtins.TOKEN_KIND = builtins.UINT32
-	UINT64          builtins.TOKEN_KIND = builtins.UINT64
-	FLOAT32         builtins.TOKEN_KIND = builtins.FLOAT32
-	FLOAT64         builtins.TOKEN_KIND = builtins.FLOAT64
-	STR             builtins.TOKEN_KIND = builtins.STRING
-	BYTE            builtins.TOKEN_KIND = builtins.BYTE
-	BOOL            builtins.TOKEN_KIND = builtins.BOOL
-	NULL            builtins.TOKEN_KIND = builtins.NULL
-	STRUCT          builtins.TOKEN_KIND = builtins.STRUCT
-	FUNCTION        builtins.TOKEN_KIND = builtins.FUNCTION
+	INT8_TOKEN      builtins.TOKEN_KIND = builtins.INT8
+	INT16_TOKEN     builtins.TOKEN_KIND = builtins.INT16
+	INT32_TOKEN     builtins.TOKEN_KIND = builtins.INT32
+	INT64_TOKEN     builtins.TOKEN_KIND = builtins.INT64
+	UINT8_TOKEN     builtins.TOKEN_KIND = builtins.UINT8
+	UINT16_TOKEN    builtins.TOKEN_KIND = builtins.UINT16
+	UINT32_TOKEN    builtins.TOKEN_KIND = builtins.UINT32
+	UINT64_TOKEN    builtins.TOKEN_KIND = builtins.UINT64
+	FLOAT32_TOKEN   builtins.TOKEN_KIND = builtins.FLOAT32
+	FLOAT64_TOKEN   builtins.TOKEN_KIND = builtins.FLOAT64
+	STR_TOKEN       builtins.TOKEN_KIND = builtins.STRING
+	BYTE_TOKEN      builtins.TOKEN_KIND = builtins.BYTE
+	BOOL_TOKEN      builtins.TOKEN_KIND = builtins.BOOL
+	NULL_TOKEN      builtins.TOKEN_KIND = builtins.NULL
+	STRUCT_TOKEN    builtins.TOKEN_KIND = builtins.STRUCT
+	FUNCTION_TOKEN  builtins.TOKEN_KIND = builtins.FUNCTION
 	INTERFACE_TOKEN builtins.TOKEN_KIND = builtins.INTERFACE
+	MAP_TOKEN       builtins.TOKEN_KIND = builtins.MAP
 	//increment and decrement
 	PLUS_PLUS_TOKEN   builtins.TOKEN_KIND = "++"
 	MINUS_MINUS_TOKEN builtins.TOKEN_KIND = "--"
@@ -82,21 +83,22 @@ const (
 )
 
 var keyWordsMap map[string]builtins.TOKEN_KIND = map[string]builtins.TOKEN_KIND{
-	"let":       	LET_TOKEN,
-	"const":     	CONST_TOKEN,
-	"if":        	IF_TOKEN,
-	"else":      	ELSE_TOKEN,
-	"for":       	FOR_TOKEN,
-	"foreach":   	FOREACH_TOKEN,
-	"type":      	TYPE_TOKEN,
-	"priv":      	PRIVATE_TOKEN,
-	"interface": 	INTERFACE_TOKEN,
-	"impl":      	IMPLEMENT_TOKEN,
-	"struct":    	STRUCT,
-	"fn":        	FUNCTION,
-	"ret":       	RETURN_TOKEN,
-	"in":        	IN_TOKEN,
-	"as":		 	AS_TOKEN,
+	"let":       LET_TOKEN,
+	"const":     CONST_TOKEN,
+	"if":        IF_TOKEN,
+	"else":      ELSE_TOKEN,
+	"for":       FOR_TOKEN,
+	"foreach":   FOREACH_TOKEN,
+	"type":      TYPE_TOKEN,
+	"priv":      PRIVATE_TOKEN,
+	"interface": INTERFACE_TOKEN,
+	"impl":      IMPLEMENT_TOKEN,
+	"struct":    STRUCT_TOKEN,
+	"fn":        FUNCTION_TOKEN,
+	"map":       MAP_TOKEN,
+	"ret":       RETURN_TOKEN,
+	"in":        IN_TOKEN,
+	"as":        AS_TOKEN,
 }
 
 func IsKeyword(token string) bool {

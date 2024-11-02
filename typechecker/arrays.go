@@ -47,8 +47,7 @@ func evaluateArrayAccess(array ast.ArrayIndexAccess, env *TypeEnvironment) Value
 		lineEnd := array.Index.EndPos().Line
 		start := array.Index.StartPos().Column
 		end := array.Index.EndPos().Column
-		//errgen.AddError(env.filePath, lineStart, lineEnd, start, end, fmt.Sprintf("cannot use index of type %s", indexType.DType())).AddHint("index must be valid integer", errgen.TEXT_HINT).DisplayWithPanic()
-		errgen.AddError(env.filePath, lineStart, lineEnd, start, end, fmt.Sprintf("cannot use index of type %s", indexType.DType())).AddHint("index must be valid integer", errgen.TEXT_HINT)
+		errgen.AddError(env.filePath, lineStart, lineEnd, start, end, fmt.Sprintf("type %s cannot be used to index array", indexType.DType())).AddHint("index must be valid integer", errgen.TEXT_HINT)
 	}
 
 	return retval

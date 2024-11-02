@@ -1,7 +1,11 @@
 package parser
 
 import (
+	"encoding/json"
 	"fmt"
+	"os"
+	"path/filepath"
+	"strings"
 	"walrus/ast"
 	"walrus/builtins"
 	"walrus/errgen"
@@ -45,7 +49,7 @@ func (p *Parser) expectError(expectedKind builtins.TOKEN_KIND, err error) lexer.
 		if err != nil {
 			errgen.AddError(p.FilePath, start.Line, end.Line, start.Column, end.Column, err.Error()).DisplayWithPanic()
 		} else {
-			msg := "parser:error: "
+			msg := "error while parsing: "
 			if lexer.IsKeyword(token.Value) {
 				msg += fmt.Sprintf("unexpected keyword '%s' found. expected '%s'", token.Value, expectedKind)
 			} else {
@@ -81,7 +85,7 @@ func parseNode(p *Parser) ast.Node {
 	return expr
 }
 
-func (p *Parser) Parse() ast.Node {
+func (p *Parser) Parse(saveJson bool) ast.Node {
 
 	var contents []ast.Node
 
@@ -90,9 +94,33 @@ func (p *Parser) Parse() ast.Node {
 		contents = append(contents, stmt)
 	}
 
-	return ast.ProgramStmt{
+	program := ast.ProgramStmt{
 		Contents: contents,
 	}
+
+	if saveJson {
+		file, err := os.Create(strings.TrimSuffix(p.FilePath, filepath.Ext(p.FilePath)) + ".json")
+		if err != nil {
+			panic(err)
+		}
+	
+		//parse as string
+		astString, err := json.MarshalIndent(program, "", "  ")
+	
+		if err != nil {
+			panic(err)
+		}
+	
+		_, err = file.Write(astString)
+	
+		if err != nil {
+			panic(err)
+		}
+	
+		file.Close()
+	}
+
+	return program
 }
 
 func NewParser(filePath string, tokens []lexer.Token) *Parser {

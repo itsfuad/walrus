@@ -112,6 +112,21 @@ func (a NullLiteralExpr) EndPos() lexer.Position {
 	return a.Location.End
 }
 
+type MapLiteral struct {
+	Values map[Node]Node
+	Location
+}
+
+func (a MapLiteral) INode() {
+	//empty method implements Node interface
+}
+func (a MapLiteral) StartPos() lexer.Position {
+	return a.Location.Start
+}
+func (a MapLiteral) EndPos() lexer.Position {
+	return a.Location.End
+}
+
 type UnaryExpr struct {
 	Operator lexer.Token
 	Argument Node
