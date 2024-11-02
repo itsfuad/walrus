@@ -110,7 +110,6 @@ func valueTypeInterfaceToString(typeName ValueTypeInterface) builtins.VALUE_TYPE
 	//case UserDefined:
 	//	return valueTypeInterfaceToString(t.TypeDef)
 	default:
-		fmt.Printf("Default case %T's value %v\n", t, t.DType())
 		return t.DType()
 	}
 }

@@ -189,6 +189,28 @@ func (a FunctionType) EndPos() lexer.Position {
 	return a.Location.End
 }
 
+type MapProps struct {
+	KeyType   DataType
+	ValueType DataType
+}
+
+type MapType struct {
+	TypeName builtins.DATA_TYPE
+	Location
+}
+
+func (a MapType) Type() builtins.DATA_TYPE {
+	return a.TypeName
+}
+
+func (a MapType) StartPos() lexer.Position {
+	return a.Location.Start
+}
+
+func (a MapType) EndPos() lexer.Position {
+	return a.Location.End
+}
+
 type UserDefinedType struct {
 	TypeName builtins.DATA_TYPE
 	Location

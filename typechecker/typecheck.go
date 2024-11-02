@@ -8,7 +8,7 @@ import (
 )
 
 func EvaluateProgram(program ast.ProgramStmt, env *TypeEnvironment) ValueTypeInterface {
-	utils.ColorPrint(utils.ORANGE, "### Evaluating program ###\n")
+	utils.ColorPrint(utils.PURPLE, "### Running type checker ###\n")
 	for _, item := range program.Contents {
 		CheckAST(item, env)
 	}

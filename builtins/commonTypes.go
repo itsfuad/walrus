@@ -25,6 +25,7 @@ const (
 	STRUCT    = "struct"
 	INTERFACE = "interface"
 	ARRAY     = "array"
+	MAP		  = "map" 
 	VOID      = "void"
 )
 

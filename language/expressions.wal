@@ -2,8 +2,8 @@
 
 let a : i32 = 10; //10
 let b := a * (34 - 18);
-let c := a * 34 - 12; //12
-let d : i32 = a - 3.1416 * 18 as i32;
+let c : f32 = (a * 34 - 12) as f32; //12
+let d : i32 = a - 3.1416 * 18;
 
 let e := "hello" + 2; // ok
 let logic := a > b;
@@ -17,7 +17,7 @@ let char : byte = 'a';
 //let char2 := "hi" as byte; // error
 
 let name : str = "hello";
-let strIndexedChar := name[0];
+let strIndexedChar := name[1];
 
 //init + 4 - 2; // error
 
@@ -38,5 +38,35 @@ for i1 > 0; {
 
 for let i2 := 0; i2 < 10; i2++ {
     // do something
+}
+*/
+
+/*
+//linked list
+type Node struct {
+    value : i32,
+    next : Node,
+};
+
+type List struct {
+    head : Node
+};
+
+impl List {
+    fn add(value : i32) {
+        let node := @Node {
+            value : value,
+            next : this.head
+        };
+        this.head = node;
+    }
+
+    fn print() {
+        let node := this.head;
+        while node {
+            print(node.value);
+            node = node.next;
+        }
+    }
 }
 */
