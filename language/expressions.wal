@@ -23,6 +23,13 @@ let strIndexedChar := name[1];
 
 let i1 := 10;
 
+let myMap : map[str]i32 = map[str]i32{
+    "key1" : 1,
+    "key2" : 2,
+    "key3" : 3,
+    "key4" : 4
+};
+
 /*
 for {
     // infinite loop

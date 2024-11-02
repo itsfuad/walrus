@@ -189,13 +189,10 @@ func (a FunctionType) EndPos() lexer.Position {
 	return a.Location.End
 }
 
-type MapProps struct {
-	KeyType   DataType
-	ValueType DataType
-}
-
 type MapType struct {
 	TypeName builtins.DATA_TYPE
+	KeyType  DataType
+	ValueType DataType
 	Location
 }
 

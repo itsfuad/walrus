@@ -227,6 +227,10 @@ func EvaluateTypeName(dtype ast.DataType, env *TypeEnvironment) ValueTypeInterfa
 			Returns:       returns,
 			FunctionScope: *scope,
 		}
+	case ast.MapType:
+		keyType := EvaluateTypeName(t.KeyType, env)
+		valueType := EvaluateTypeName(t.ValueType, env)
+		return NewMap(keyType, valueType)
 	case nil:
 		return NewVoid()
 	default:

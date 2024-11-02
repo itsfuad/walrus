@@ -9,14 +9,14 @@ import (
 func parseMapLiteral(p *Parser) ast.Node {
 
 	fmt.Println("Parsing map literal")
-	
-	start := p.expect(lexer.MAP_TOKEN).Start
+
+	mapType := parseMapType(p)
 
 	//parse the opening curly brace
 	p.expect(lexer.OPEN_CURLY)
 
 	//parse the values
-	values := make(map[ast.Node]ast.Node)
+	values := make([]ast.MapProp, 0)
 
 	for p.hasToken() && p.currentTokenKind() != lexer.CLOSE_CURLY {
 		//parse the key
@@ -26,7 +26,12 @@ func parseMapLiteral(p *Parser) ast.Node {
 		//parse the value
 		value := parseExpr(p, DEFAULT_BP)
 
-		values[key] = value
+		prop := ast.MapProp{
+			Key:   key,
+			Value: value,
+		}
+
+		values = append(values, prop)
 
 		if p.currentTokenKind() == lexer.COMMA_TOKEN {
 			p.expect(lexer.COMMA_TOKEN)
@@ -36,9 +41,10 @@ func parseMapLiteral(p *Parser) ast.Node {
 	end := p.expect(lexer.CLOSE_CURLY).End
 
 	return ast.MapLiteral{
+		MapType: mapType.(ast.MapType),
 		Values: values,
 		Location: ast.Location{
-			Start: start,
+			Start: mapType.StartPos(),
 			End:   end,
 		},
 	}

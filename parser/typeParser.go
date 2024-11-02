@@ -30,8 +30,18 @@ func parseMapType(p *Parser) ast.DataType {
 
 	token := p.expect(lexer.MAP_TOKEN)
 
+	p.expect(lexer.OPEN_BRACKET)
+
+	keyType := parseType(p, DEFAULT_BP)
+
+	p.expect(lexer.CLOSE_BRACKET)
+
+	valueType := parseType(p, DEFAULT_BP)
+
 	return ast.MapType{
 		TypeName: builtins.DATA_TYPE(builtins.MAP),
+		KeyType: keyType,
+		ValueType: valueType,
 		Location: ast.Location{
 			Start: token.Start,
 			End:   token.End,
@@ -233,14 +243,7 @@ func parseType(p *Parser, bp BINDING_POWER) ast.DataType {
 
 	if !exists {
 		//panic(fmt.Sprintf("TYPE NUD handler expected for token %s\n", tokenKind))
-		err := errgen.AddError(p.FilePath, p.currentToken().Start.Line, p.currentToken().End.Line, p.currentToken().Start.Column, p.currentToken().End.Column, fmt.Sprintf("type '%s' is not defined\n", tokenKind))
-		err.AddHint("Follow ", errgen.TEXT_HINT)
-		err.AddHint("let x := 10", errgen.CODE_HINT)
-		err.AddHint(" syntax or", errgen.TEXT_HINT)
-		err.AddHint("Use primitive types like ", errgen.TEXT_HINT)
-		err.AddHint("int, float, bool, char, str", errgen.CODE_HINT)
-		err.AddHint(" or arrays of them", errgen.TEXT_HINT)
-		err.DisplayWithPanic()
+		errgen.AddError(p.FilePath, p.currentToken().Start.Line, p.currentToken().End.Line, p.currentToken().Start.Column, p.currentToken().End.Column, fmt.Sprintf("unexpected token '%s'\n", tokenKind)).DisplayWithPanic()
 		return nil
 	}
 

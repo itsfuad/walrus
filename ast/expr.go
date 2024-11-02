@@ -20,8 +20,8 @@ func (a IdentifierExpr) EndPos() lexer.Position {
 
 //Literals or Raw values like: 1,2,3,4.6, "hello world", 'a' ...etc
 type IntegerLiteralExpr struct {
-	Value string
-	BitSize uint8
+	Value    string
+	BitSize  uint8
 	IsSigned bool
 	Location
 }
@@ -37,7 +37,7 @@ func (a IntegerLiteralExpr) EndPos() lexer.Position {
 }
 
 type FloatLiteralExpr struct {
-	Value string
+	Value   string
 	BitSize uint8
 	Location
 }
@@ -112,8 +112,14 @@ func (a NullLiteralExpr) EndPos() lexer.Position {
 	return a.Location.End
 }
 
+type MapProp struct {
+	Key   Node
+	Value Node
+}
+
 type MapLiteral struct {
-	Values map[Node]Node
+	MapType
+	Values []MapProp
 	Location
 }
 
