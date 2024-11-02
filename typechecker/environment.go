@@ -8,7 +8,6 @@ import (
 )
 
 const (
-	INT8_TYPE         builtins.VALUE_TYPE = builtins.INT8
 	INT16_TYPE        builtins.VALUE_TYPE = builtins.INT16
 	INT32_TYPE        builtins.VALUE_TYPE = builtins.INT32
 	INT64_TYPE        builtins.VALUE_TYPE = builtins.INT64
@@ -27,6 +26,7 @@ const (
 	STRUCT_TYPE       builtins.VALUE_TYPE = builtins.STRUCT
 	INTERFACE_TYPE    builtins.VALUE_TYPE = builtins.INTERFACE
 	ARRAY_TYPE        builtins.VALUE_TYPE = builtins.ARRAY
+	MAP_TYPE          builtins.VALUE_TYPE = builtins.MAP
 	BLOCK_TYPE        builtins.VALUE_TYPE = "block"
 	RETURN_TYPE       builtins.VALUE_TYPE = "return"
 	USER_DEFINED_TYPE builtins.VALUE_TYPE = "user_defined"
@@ -84,6 +84,16 @@ type Void struct {
 }
 
 func (t Void) DType() builtins.VALUE_TYPE {
+	return t.DataType
+}
+
+type Map struct {
+	DataType builtins.VALUE_TYPE
+	KeyType  ValueTypeInterface
+	ValueType ValueTypeInterface
+}
+
+func (t Map) DType() builtins.VALUE_TYPE {
 	return t.DataType
 }
 
@@ -236,6 +246,10 @@ func NewNull() Null {
 
 func NewVoid() Void {
 	return Void{DataType: VOID_TYPE}
+}
+
+func NewMap(keyType ValueTypeInterface, valueType ValueTypeInterface) Map {
+	return Map{DataType: MAP_TYPE, KeyType: keyType, ValueType: valueType}
 }
 
 type SCOPE_TYPE int

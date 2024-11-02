@@ -31,6 +31,7 @@ type WalrusError struct {
 }
 
 func (e *WalrusError) DisplayWithPanic() {
+	fmt.Printf("Total hints: %d\n", len(e.hints))
 	DisplayErrors()
 }
 
@@ -64,14 +65,15 @@ func PrintError(e *WalrusError, showFileName bool) {
 
 	utils.ColorPrint(utils.RED, underLine)
 	utils.ColorPrint(utils.RED, e.err.Error() + "\n")
-	for i, hint := range e.hints {
-		if i == 0 {
-			utils.ColorPrint(utils.GREEN, "\nHint:")
-		}
-		if hint.hintType == TEXT_HINT {
-			utils.ColorPrint(utils.YELLOW, hint.message + "\n")
-		} else {
-			utils.ColorPrint(utils.ORANGE, hint.message + "\n")
+
+	if len(e.hints) > 0 {
+		utils.ColorPrint(utils.GREEN, "Hint:\n")
+		for _, hint := range e.hints {
+			if hint.hintType == TEXT_HINT {
+				utils.ColorPrint(utils.YELLOW, hint.message + "\n")
+			} else {
+				utils.ColorPrint(utils.ORANGE, hint.message + "\n")
+			}
 		}
 	}
 }
@@ -86,6 +88,8 @@ func (e *WalrusError) AddHint(msg string, htype HINT) *WalrusError {
 		message:  msg,
 		hintType: htype,
 	})
+
+	fmt.Printf("Hint added. %d hints available\n", len(e.hints))
 
 	return e
 }
@@ -113,12 +117,13 @@ func makeError(filePath string, lineStart, lineEnd int, colStart, colEnd int, er
 		err:       errors.New(errMsg),
 	}
 
-	globalErrors = append(globalErrors, *err)
+	globalErrors = append(globalErrors, err)
 
 	return err
 }
 
-var globalErrors = make([]WalrusError, 0)
+//global errors are arrays of error pointers
+var globalErrors []*WalrusError
 
 // make an errorlist to add all errors and display later
 func AddError(filePath string, lineStart, lineEnd int, colStart, colEnd int, err string) *WalrusError {
@@ -133,7 +138,7 @@ func DisplayErrors() {
 		return
 	}
 	for _, err := range globalErrors {
-		PrintError(&err, true)
+		PrintError(err, true)
 	}
 	utils.ColorPrint(utils.BOLD_RED, fmt.Sprintf("%d error(s) found\n", len(globalErrors)))
 	os.Exit(-1)
