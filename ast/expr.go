@@ -264,19 +264,19 @@ func (a ArrayLiteral) EndPos() lexer.Position {
 	return a.Location.End
 }
 
-type ArrayIndexAccess struct {
-	Index Node
-	Array Node
+type Indexable struct {
+	Index     Node
+	Container Node
 	Location
 }
 
-func (a ArrayIndexAccess) INode() {
+func (a Indexable) INode() {
 	//empty method implements Node interface
 }
-func (a ArrayIndexAccess) StartPos() lexer.Position {
+func (a Indexable) StartPos() lexer.Position {
 	return a.Location.Start
 }
-func (a ArrayIndexAccess) EndPos() lexer.Position {
+func (a Indexable) EndPos() lexer.Position {
 	return a.Location.End
 }
 

@@ -25,38 +25,36 @@ func RandStringRunes(n int) string {
 	return string(b)
 }
 
-func stringToValueTypeInterface(typ builtins.VALUE_TYPE, env *TypeEnvironment) (ValueTypeInterface, error) {
+func stringToValueTypeInterface(typ builtins.TC_TYPE, env *TypeEnvironment) (ValueTypeInterface, error) {
 
 	switch typ {
-	case builtins.INT8:
+	case INT8_TYPE:
 		return NewInt(8, true), nil
-	case builtins.INT16:
+	case INT16_TYPE:
 		return NewInt(16, true), nil
-	case builtins.INT32:
+	case INT32_TYPE:
 		return NewInt(32, true), nil
-	case builtins.INT64:
+	case INT64_TYPE:
 		return NewInt(64, true), nil
-	case builtins.UINT8:
+	case UINT8_TYPE:
 		return NewInt(8, false), nil
-	case builtins.UINT16:
+	case UINT16_TYPE:
 		return NewInt(16, false), nil
-	case builtins.UINT32:
+	case UINT32_TYPE:
 		return NewInt(32, false), nil
-	case builtins.UINT64:
+	case UINT64_TYPE:
 		return NewInt(64, false), nil
-	case builtins.FLOAT32:
-		return NewFloat(32), nil
-	case builtins.FLOAT64:
-		return NewFloat(64), nil
-	case builtins.STRING:
-		return NewStr(), nil
-	case builtins.BYTE:
+	case BYTE_TYPE:
 		return NewInt(8, false), nil
-	case builtins.BOOL:
-		return NewBool(), nil
-	case builtins.NULL:
+	case STRING_TYPE:
+		return NewStr(), nil
+	case FLOAT32_TYPE:
+		return NewFloat(32), nil
+	case FLOAT64_TYPE:
+		return NewFloat(64), nil
+	case NULL_TYPE:
 		return NewNull(), nil
-	case builtins.VOID:
+	case VOID_TYPE:
 		return NewVoid(), nil
 	default:
 		//search for the type
@@ -80,14 +78,14 @@ func stringToValueTypeInterface(typ builtins.VALUE_TYPE, env *TypeEnvironment) (
 //
 // Note: The function currently has a commented-out case for UserDefined types and a default case
 // that prints the type and value of unhandled cases.
-func valueTypeInterfaceToString(typeName ValueTypeInterface) builtins.VALUE_TYPE {
+func valueTypeInterfaceToString(typeName ValueTypeInterface) builtins.TC_TYPE {
 	switch t := typeName.(type) {
 	case Array:
 		return "[]" + valueTypeInterfaceToString(t.ArrayType)
 	case Struct:
-		return builtins.VALUE_TYPE(t.StructName)
+		return builtins.TC_TYPE(t.StructName)
 	case Interface:
-		return builtins.VALUE_TYPE(t.InterfaceName)
+		return builtins.TC_TYPE(t.InterfaceName)
 	case Fn:
 		ParamStrs := ""
 		for i, param := range t.Params {
@@ -106,9 +104,11 @@ func valueTypeInterfaceToString(typeName ValueTypeInterface) builtins.VALUE_TYPE
 		if ReturnStr != "" {
 			ReturnStr = " -> " + ReturnStr
 		}
-		return builtins.VALUE_TYPE(fmt.Sprintf("fn(%s)%s", ParamStrs, ReturnStr))
+		return builtins.TC_TYPE(fmt.Sprintf("fn(%s)%s", ParamStrs, ReturnStr))
 	//case UserDefined:
 	//	return valueTypeInterfaceToString(t.TypeDef)
+	case Map:
+		return builtins.TC_TYPE(fmt.Sprintf("map[%s]%s", valueTypeInterfaceToString(t.KeyType), valueTypeInterfaceToString(t.ValueType)))
 	default:
 		return t.DType()
 	}
@@ -130,15 +130,14 @@ func valueTypeInterfaceToString(typeName ValueTypeInterface) builtins.VALUE_TYPE
 //
 // Returns:
 //   - error: An error if the types do not match, otherwise nil.
-func MatchTypes(expected, provided ValueTypeInterface, filePath string, lineStart, lineEnd, colStart, colEnd int) error {
+func MatchTypes(expected, provided ValueTypeInterface) error {
 
 	expectedType := valueTypeInterfaceToString(expected)
 	gotType := valueTypeInterfaceToString(provided)
 
 	if expectedType != gotType {
 		if expected.DType() == INTERFACE_TYPE {
-			checkMethodsImplementations(expected, provided, filePath, lineStart, lineEnd, colStart, colEnd)
-			return nil
+			return checkMethodsImplementations(expected, provided)
 		}
 		return fmt.Errorf("expected %s, got %s", expectedType, gotType)
 	}
@@ -164,8 +163,8 @@ func CheckLValue(node ast.Node, env *TypeEnvironment) error {
 		} else {
 			return errors.New("constant")
 		}
-	case ast.ArrayIndexAccess:
-		return CheckLValue(t.Array, env)
+	case ast.Indexable:
+		return CheckLValue(t.Container, env)
 	case ast.StructPropertyAccessExpr:
 		return CheckLValue(t.Object, env)
 	default:
@@ -234,9 +233,9 @@ func EvaluateTypeName(dtype ast.DataType, env *TypeEnvironment) ValueTypeInterfa
 	case nil:
 		return NewVoid()
 	default:
-		val, err := stringToValueTypeInterface(builtins.VALUE_TYPE(t.Type()), env)
+		val, err := stringToValueTypeInterface(builtins.TC_TYPE(t.Type()), env)
 		if err != nil {
-			//errgen.AddError(env.filePath, dtype.StartPos().Line, dtype.EndPos().Line, dtype.StartPos().Column, dtype.EndPos().Column, err.Error()).DisplayWithPanic()
+
 			errgen.AddError(env.filePath, dtype.StartPos().Line, dtype.EndPos().Line, dtype.StartPos().Column, dtype.EndPos().Column, err.Error())
 		}
 		if val == nil {

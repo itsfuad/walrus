@@ -2,9 +2,9 @@ package builtins
 
 // common types
 
-type VALUE_TYPE string
+type TC_TYPE string
 type TOKEN_KIND string
-type DATA_TYPE string
+type PARSER_TYPE string
 
 const (
 	INT8      = "i8"
@@ -18,19 +18,19 @@ const (
 	FLOAT32   = "f32"
 	FLOAT64   = "f64"
 	STRING    = "str"
-	BYTE	  = "byte"
+	BYTE      = "byte"
 	BOOL      = "bool"
 	NULL      = "null"
 	FUNCTION  = "fn"
 	STRUCT    = "struct"
 	INTERFACE = "interface"
 	ARRAY     = "array"
-	MAP		  = "map" 
+	MAP       = "map"
 	VOID      = "void"
 )
 
 type Searchable interface {
-	VALUE_TYPE | DATA_TYPE
+	TC_TYPE | PARSER_TYPE
 }
 
 func GetBitSize[T Searchable](kind T) uint8 {

@@ -49,8 +49,8 @@ func CheckAST(node ast.Node, env *TypeEnvironment) ValueTypeInterface {
 		return checkIncrementalExpr(t, env)
 	case ast.ArrayLiteral:
 		return evaluateArrayExpr(t, env)
-	case ast.ArrayIndexAccess:
-		return evaluateArrayAccess(t, env)
+	case ast.Indexable:
+		return evaluateIndexableAccess(t, env)
 	case ast.TypeDeclStmt:
 		return checkTypeDeclaration(t, env)
 	case ast.ImplStmt:
@@ -59,6 +59,8 @@ func CheckAST(node ast.Node, env *TypeEnvironment) ValueTypeInterface {
 		return checkStructLiteral(t, env)
 	case ast.StructPropertyAccessExpr:
 		return checkPropertyAccess(t, env)
+	case ast.MapLiteral:
+		return checkMapLiteral(t, env)
 	case ast.FunctionDeclStmt:
 		return checkFunctionDeclStmt(t, env)
 	case ast.FunctionLiteral:

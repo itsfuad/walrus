@@ -14,11 +14,11 @@ func checkIncrementalExpr(node ast.IncrementalInterface, env *TypeEnvironment) V
 	// the argument must be an identifier evaluated to a number
 	typeVal := GetValueType(arg, env)
 	if !IsNumberType(typeVal) {
-		//errgen.AddError(env.filePath, arg.StartPos().Line, arg.EndPos().Line, arg.StartPos().Column, arg.EndPos().Column, "invalid prefix operation with non-numeric type").DisplayWithPanic()
+
 		errgen.AddError(env.filePath, arg.StartPos().Line, arg.EndPos().Line, arg.StartPos().Column, arg.EndPos().Column, "invalid prefix operation with non-numeric type")
 	}
 	if op.Kind != lexer.PLUS_PLUS_TOKEN && op.Kind != lexer.MINUS_MINUS_TOKEN {
-		//errgen.AddError(env.filePath, op.Start.Line, op.End.Line, op.Start.Column, op.End.Column, "invalid prefix operation").DisplayWithPanic()
+
 		errgen.AddError(env.filePath, op.Start.Line, op.End.Line, op.Start.Column, op.End.Column, "invalid prefix operation")
 	}
 	return typeVal
@@ -52,16 +52,16 @@ func checkUnaryExpr(node ast.UnaryExpr, env *TypeEnvironment) ValueTypeInterface
 	case Int, Float:
 		//allow - only
 		if op.Kind != lexer.MINUS_TOKEN {
-			//errgen.AddError(env.filePath, op.Start.Line, op.End.Line, op.Start.Column, op.End.Column, "invalid unary operation with numeric types").DisplayWithPanic()
+
 			errgen.AddError(env.filePath, op.Start.Line, op.End.Line, op.Start.Column, op.End.Column, "invalid unary operation with numeric types")
 		}
 	case Bool:
 		if op.Kind != lexer.NOT_TOKEN {
-			//errgen.AddError(env.filePath, op.Start.Line, op.End.Line, op.Start.Column, op.End.Column, "invalid unary operation with boolean types").DisplayWithPanic()
+
 			errgen.AddError(env.filePath, op.Start.Line, op.End.Line, op.Start.Column, op.End.Column, "invalid unary operation with boolean types")
 		}
 	default:
-		//errgen.AddError(env.filePath, op.Start.Line, op.End.Line, op.Start.Column, op.End.Column, fmt.Sprintf("this unary operation is not supported with %s types", t.DType())).DisplayWithPanic()
+
 		errgen.AddError(env.filePath, op.Start.Line, op.End.Line, op.Start.Column, op.End.Column, fmt.Sprintf("this unary operation is not supported with %s types", t.DType()))
 	}
 
@@ -110,7 +110,6 @@ func checkBinaryExpr(node ast.BinaryExpr, env *TypeEnvironment) ValueTypeInterfa
 		errEnd = op.End.Column
 	}
 
-	//errgen.AddError(env.filePath, errLineStart, errLineEnd, errStart, errEnd, errMsg).DisplayWithPanic()
 	errgen.AddError(env.filePath, errLineStart, errLineEnd, errStart, errEnd, errMsg)
 	return left
 }
@@ -138,7 +137,7 @@ func checkComparison(node ast.BinaryExpr, left ValueTypeInterface, right ValueTy
 		}
 	}
 	errMsg := fmt.Sprintf("invalid compare operation between '%s' and '%s'", leftType, rightType)
-	//errgen.AddError(env.filePath, node.Start.Line, node.End.Line, node.Start.Column, node.End.Column, errMsg).DisplayWithPanic()
+
 	errgen.AddError(env.filePath, node.Start.Line, node.End.Line, node.Start.Column, node.End.Column, errMsg)
 	return left
 }
@@ -174,7 +173,6 @@ func checkAdditionAndConcat(node ast.BinaryExpr, left ValueTypeInterface, right 
 		errEnd = node.EndPos().Column
 	}
 
-	//errgen.AddError(env.filePath, errLineStart, errLineEnd, errStart, errEnd, errMsg).DisplayWithPanic()
 	errgen.AddError(env.filePath, errLineStart, errLineEnd, errStart, errEnd, errMsg)
 	return left
 }

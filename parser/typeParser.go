@@ -39,8 +39,8 @@ func parseMapType(p *Parser) ast.DataType {
 	valueType := parseType(p, DEFAULT_BP)
 
 	return ast.MapType{
-		TypeName: builtins.DATA_TYPE(builtins.MAP),
-		KeyType: keyType,
+		TypeName:  builtins.PARSER_TYPE(builtins.MAP),
+		KeyType:   keyType,
 		ValueType: valueType,
 		Location: ast.Location{
 			Start: token.Start,
@@ -75,7 +75,7 @@ Returns
  - []ast.FunctionTypeParam : The parameters of the function type
  - ast.DataType : The return type of the function type
 */
-func getFunctionTypeSignature(p *Parser) (builtins.DATA_TYPE, []ast.FunctionTypeParam, ast.DataType) {
+func getFunctionTypeSignature(p *Parser) (builtins.PARSER_TYPE, []ast.FunctionTypeParam, ast.DataType) {
 	p.expect(lexer.OPEN_PAREN)
 	var params []ast.FunctionTypeParam
 	for p.hasToken() && p.currentTokenKind() != lexer.CLOSE_PAREN {
@@ -127,7 +127,7 @@ func getFunctionTypeSignature(p *Parser) (builtins.DATA_TYPE, []ast.FunctionType
 		returnType = parseType(p, DEFAULT_BP)
 	} else {
 		returnType = ast.VoidType{
-			TypeName: builtins.DATA_TYPE(builtins.VOID),
+			TypeName: builtins.PARSER_TYPE(builtins.VOID),
 			Location: ast.Location{
 				Start: p.currentToken().Start,
 				End:   p.currentToken().End,
@@ -135,7 +135,7 @@ func getFunctionTypeSignature(p *Parser) (builtins.DATA_TYPE, []ast.FunctionType
 		}
 	}
 
-	return builtins.DATA_TYPE(builtins.FUNCTION), params, returnType
+	return builtins.PARSER_TYPE(builtins.FUNCTION), params, returnType
 }
 
 // Parses the builtin types like int, float, bool, char, str, null.
@@ -162,35 +162,35 @@ func parseDataType(p *Parser) ast.DataType {
 	switch v := value; builtins.TOKEN_KIND(v) {
 	case lexer.INT8_TOKEN, lexer.INT16_TOKEN, lexer.INT32_TOKEN, lexer.INT64_TOKEN, lexer.UINT8_TOKEN, lexer.UINT16_TOKEN, lexer.UINT32_TOKEN, lexer.UINT64_TOKEN:
 		return ast.IntegerType{
-			TypeName: builtins.DATA_TYPE(v),
-			BitSize:  builtins.GetBitSize(builtins.DATA_TYPE(v)),
-			IsSigned: builtins.IsSigned(builtins.DATA_TYPE(v)),
+			TypeName: builtins.PARSER_TYPE(v),
+			BitSize:  builtins.GetBitSize(builtins.PARSER_TYPE(v)),
+			IsSigned: builtins.IsSigned(builtins.PARSER_TYPE(v)),
 			Location: loc,
 		}
 	case lexer.FLOAT32_TOKEN, lexer.FLOAT64_TOKEN:
 		return ast.FloatType{
-			TypeName: builtins.DATA_TYPE(v),
-			BitSize:  builtins.GetBitSize(builtins.DATA_TYPE(v)),
+			TypeName: builtins.PARSER_TYPE(v),
+			BitSize:  builtins.GetBitSize(builtins.PARSER_TYPE(v)),
 			Location: loc,
 		}
 	case lexer.STR_TOKEN:
 		return ast.StringType{
-			TypeName: builtins.DATA_TYPE(v),
+			TypeName: builtins.PARSER_TYPE(v),
 			Location: loc,
 		}
 	case lexer.BOOL_TOKEN:
 		return ast.BooleanType{
-			TypeName: builtins.DATA_TYPE(v),
+			TypeName: builtins.PARSER_TYPE(v),
 			Location: loc,
 		}
 	case lexer.NULL_TOKEN:
 		return ast.NullType{
-			TypeName: builtins.DATA_TYPE(v),
+			TypeName: builtins.PARSER_TYPE(v),
 			Location: loc,
 		}
 	default:
 		return ast.UserDefinedType{
-			TypeName: builtins.DATA_TYPE(v),
+			TypeName: builtins.PARSER_TYPE(v),
 			Location: loc,
 		}
 	}
@@ -215,7 +215,7 @@ func parseArrayType(p *Parser) ast.DataType {
 	elemType := parseType(p, DEFAULT_BP)
 
 	return ast.ArrayType{
-		TypeName:  builtins.DATA_TYPE(builtins.ARRAY),
+		TypeName:  builtins.PARSER_TYPE(builtins.ARRAY),
 		ArrayType: elemType,
 		Location: ast.Location{
 			Start: elemType.StartPos(),
@@ -362,7 +362,7 @@ func parseStructType(p *Parser) ast.DataType {
 	}
 
 	return ast.StructType{
-		TypeName:   builtins.DATA_TYPE(builtins.STRUCT),
+		TypeName:   builtins.PARSER_TYPE(builtins.STRUCT),
 		Properties: props,
 		Location:   loc,
 	}
@@ -420,7 +420,7 @@ func parseInterfaceType(p *Parser) ast.DataType {
 	end := p.expect(lexer.CLOSE_CURLY).End
 
 	return ast.InterfaceType{
-		TypeName: builtins.DATA_TYPE(builtins.INTERFACE),
+		TypeName: builtins.PARSER_TYPE(builtins.INTERFACE),
 		Methods:  methods,
 		Location: ast.Location{
 			Start: start,
