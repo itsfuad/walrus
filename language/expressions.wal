@@ -30,6 +30,8 @@ let myMap : map[str]i32 = map[str]i32{
     "key4" : 4
 };
 
+let mapValue := myMap["key1"];
+
 /*
 for {
     // infinite loop

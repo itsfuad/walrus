@@ -64,7 +64,7 @@ func bindLookupHandlers() {
 	led(lexer.MOD_EQUALS_TOKEN, ASSIGNMENT_BP, parseVarAssignmentExpr)
 	led(lexer.EXP_EQUALS_TOKEN, ASSIGNMENT_BP, parseVarAssignmentExpr)
 
-	led(lexer.OPEN_BRACKET, MEMBER_BP, parseArrayAccess)
+	led(lexer.OPEN_BRACKET, MEMBER_BP, parseIndexable)
 
 	nud(lexer.AT_TOKEN, parseStructLiteral)
 

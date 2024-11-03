@@ -23,15 +23,15 @@ func checkVariableAssignment(node ast.VarAssignmentExpr, env *TypeEnvironment) V
 
 	if err := CheckLValue(Assignee, env); err != nil {
 		errgen.AddError(env.filePath, Assignee.StartPos().Line, Assignee.EndPos().Line, Assignee.StartPos().Column, Assignee.EndPos().Column, "cannot assign to "+err.Error()).DisplayWithPanic()
-		//errgen.AddError(env.filePath, Assignee.StartPos().Line, Assignee.EndPos().Line, Assignee.StartPos().Column, Assignee.EndPos().Column, err.Error())
+
 	}
 
 	expectedType := GetValueType(Assignee, env)
 	providedType := GetValueType(valueToAssign, env)
 
-	err := MatchTypes(expectedType, providedType, env.filePath, valueToAssign.StartPos().Line, valueToAssign.EndPos().Line, valueToAssign.StartPos().Column, valueToAssign.EndPos().Column)
+	err := MatchTypes(expectedType, providedType)
 	if err != nil {
-		//errgen.AddError(env.filePath, valueToAssign.StartPos().Line, valueToAssign.EndPos().Line, valueToAssign.StartPos().Column, valueToAssign.EndPos().Column, err.Error()).DisplayWithPanic()
+
 		errgen.AddError(env.filePath, valueToAssign.StartPos().Line, valueToAssign.EndPos().Line, valueToAssign.StartPos().Column, valueToAssign.EndPos().Column, err.Error())
 	}
 
@@ -81,16 +81,15 @@ func checkVariableDeclaration(node ast.VarDeclStmt, env *TypeEnvironment) ValueT
 	if node.Value != nil && node.ExplicitType != nil {
 		//providedValue := CheckAST(node.Value, env)
 		providedValue := GetValueType(node.Value, env)
-		err := MatchTypes(expectedTypeInterface, providedValue, env.filePath, node.Value.StartPos().Line, node.Value.EndPos().Line, node.Value.StartPos().Column, node.Value.EndPos().Column)
+		err := MatchTypes(expectedTypeInterface, providedValue)
 		if err != nil {
-			//errgen.AddError(env.filePath, node.Value.StartPos().Line, node.Value.EndPos().Line, node.Value.StartPos().Column, node.Value.EndPos().Column, err.Error()).DisplayWithPanic()
+
 			errgen.AddError(env.filePath, node.Value.StartPos().Line, node.Value.EndPos().Line, node.Value.StartPos().Column, node.Value.EndPos().Column, err.Error())
 		}
 	}
-
 	err := env.DeclareVar(varToDecl.Name, expectedTypeInterface, node.IsConst, false)
 	if err != nil {
-		//errgen.AddError(env.filePath, node.Variable.StartPos().Line, node.Variable.EndPos().Line, node.Variable.StartPos().Column, node.Variable.EndPos().Column, err.Error()).DisplayWithPanic()
+
 		errgen.AddError(env.filePath, node.Variable.StartPos().Line, node.Variable.EndPos().Line, node.Variable.StartPos().Column, node.Variable.EndPos().Column, err.Error())
 	}
 

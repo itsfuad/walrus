@@ -1,7 +1,6 @@
 package parser
 
 import (
-	"fmt"
 	"walrus/ast"
 	"walrus/lexer"
 )
@@ -42,7 +41,7 @@ func parseArrayExpr(p *Parser) ast.Node {
 	}
 }
 
-// parseArrayAccess parses an array access expression from the input.
+// parseIndexable parses an array access expression from the input.
 // It expects the current token to be an opening bracket '[' and parses
 // the index expression inside the brackets. The function returns an
 // ast.ArrayIndexAccess node representing the array access.
@@ -54,14 +53,13 @@ func parseArrayExpr(p *Parser) ast.Node {
 //
 // Returns:
 // - An ast.Node representing the array index access.
-func parseArrayAccess(p *Parser, left ast.Node, bp BINDING_POWER) ast.Node {
+func parseIndexable(p *Parser, left ast.Node, bp BINDING_POWER) ast.Node {
 	p.expect(lexer.OPEN_BRACKET)
 	index := parseExpr(p, DEFAULT_BP)
-	fmt.Printf("Index: %v\n", index)
 	end := p.expect(lexer.CLOSE_BRACKET).End
-	return ast.ArrayIndexAccess{
-		Array: left,
-		Index: index,
+	return ast.Indexable{
+		Container: left,
+		Index:     index,
 		Location: ast.Location{
 			Start: left.StartPos(),
 			End:   end,

@@ -77,15 +77,15 @@ func parsePrimaryExpr(p *Parser) ast.Node {
 	case lexer.INT8_TOKEN, lexer.INT16_TOKEN, lexer.INT32_TOKEN, lexer.INT64_TOKEN, lexer.UINT8_TOKEN, lexer.UINT16_TOKEN, lexer.UINT32_TOKEN, lexer.UINT64_TOKEN:
 		return ast.IntegerLiteralExpr{
 			Value:    rawValue,
-			BitSize:  builtins.GetBitSize(builtins.DATA_TYPE(primaryToken.Kind)),
-			IsSigned: builtins.IsSigned(builtins.DATA_TYPE(primaryToken.Kind)),
+			BitSize:  builtins.GetBitSize(builtins.PARSER_TYPE(primaryToken.Kind)),
+			IsSigned: builtins.IsSigned(builtins.PARSER_TYPE(primaryToken.Kind)),
 			Location: loc,
 		}
 	case lexer.FLOAT32_TOKEN, lexer.FLOAT64_TOKEN:
 
 		return ast.FloatLiteralExpr{
 			Value:    rawValue,
-			BitSize:  builtins.GetBitSize(builtins.DATA_TYPE(primaryToken.Kind)),
+			BitSize:  builtins.GetBitSize(builtins.PARSER_TYPE(primaryToken.Kind)),
 			Location: loc,
 		}
 
