@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"fmt"
 	"walrus/ast"
 	"walrus/errgen"
 	"walrus/lexer"
@@ -20,136 +21,90 @@ import (
 // - An ast.Node representing the parsed 'for' statement.
 // - If the syntax is invalid, it generates an error and returns nil.
 func parseForStmt(p *Parser) ast.Node {
-	start := p.advance().Start // eat for token
-	//first token is either an identifier or open curly
-	if p.currentTokenKind() == lexer.OPEN_CURLY {
-		// infinite loop
-		block := parseBlock(p)
-		return ast.ForStmt{
-			Init:      nil,
-			Condition: nil,
-			Increment: nil,
-			Block:     block,
-			Location: ast.Location{
-				Start: start,
-				End:   block.End,
-			},
-		}
-	} else if p.currentTokenKind() == lexer.IDENTIFIER_TOKEN {
+	loopType := p.advance() // advance past the 'for|foreach' keyword
 
-		identifier := p.currentToken()
+	if loopType.Kind == lexer.FOR_TOKEN {
+		// empty loop is an infinite loop for {} | detection method: no expressions are present
+		// condition-only loop for condition { } | detection method: only one expression is present
+		// traditional for loop for init; condition; increment { } | detection method: three expressions are present
+		var init, cond, incr ast.Node
 
-		idententifierExpr := ast.IdentifierExpr{
-			Name: identifier.Value,
-			Location: ast.Location{
-				Start: identifier.Start,
-				End:   identifier.End,
-			},
-		}
-
-		switch p.nextTokenKind() {
-		case lexer.WALRUS_TOKEN: // for i := 0; i < 10; i++ { }
-			p.advance() // eat the identifier
-			p.advance() // eat the walrus token
-			// value of the identifier
-			value := parseExpr(p, ASSIGNMENT_BP)
-			p.expect(lexer.SEMI_COLON_TOKEN)
-			// condition
-			condition := parseExpr(p, ASSIGNMENT_BP)
-			p.expect(lexer.SEMI_COLON_TOKEN)
-			// increment
-			increment := parseExpr(p, ASSIGNMENT_BP)
-
-			block := parseBlock(p)
-
+		// check if there is an opening brace
+		if p.currentTokenKind() == lexer.OPEN_CURLY {
+			// empty loop
 			return ast.ForStmt{
-				Init: ast.VarDeclStmt{
-					Variable:     idententifierExpr,
-					Value:        value,
-					ExplicitType: nil,
-					IsConst:      false,
-					Location: ast.Location{
-						Start: identifier.Start,
-						End:   value.EndPos(),
-					},
-				},
-				Condition: condition,
-				Increment: increment,
-				Block:     block,
-				Location: ast.Location{
-					Start: start,
-					End:   block.End,
-				},
-			}
-		case lexer.IN_TOKEN: // for v in arr { }
-			p.advance() // eat the identifier
-			p.advance() // eat the in token
-			// value of the identifier
-			value := parseExpr(p, ASSIGNMENT_BP)
-
-			block := parseBlock(p)
-
-			return ast.ForEachStmt{
-				Key:      nil,
-				Value:    idententifierExpr,
-				Iterable: value,
-				Block:    block,
-				Location: ast.Location{
-					Start: start,
-					End:   block.End,
-				},
-			}
-		case lexer.COMMA_TOKEN: // for i, v in arr { }
-			p.advance() // eat the identifier
-			p.advance() // eat the comma token
-			// value of the identifier
-			key := idententifierExpr
-			value := ast.IdentifierExpr{
-				Name: p.expect(lexer.IDENTIFIER_TOKEN).Value,
-				Location: ast.Location{
-					Start: identifier.Start,
-					End:   identifier.End,
-				},
-			}
-
-			p.expect(lexer.IN_TOKEN)
-
-			// value of the identifier
-			iterable := parseExpr(p, ASSIGNMENT_BP)
-
-			block := parseBlock(p)
-
-			return ast.ForEachStmt{
-				Key:      key,
-				Value:    value,
-				Iterable: iterable,
-				Block:    block,
-				Location: ast.Location{
-					Start: start,
-					End:   block.End,
-				},
-			}
-
-		default:
-			// for i < 10 { } // condition only
-			condition := parseExpr(p, ASSIGNMENT_BP)
-			block := parseBlock(p)
-			return ast.ForStmt{
-				Init:      nil,
-				Condition: condition,
+				Init:     nil,
+				Condition: nil,
 				Increment: nil,
-				Block:     block,
-				Location: ast.Location{
-					Start: start,
-					End:   block.End,
-				},
+				Block:    parseBlock(p),
 			}
 		}
 
+		// check if there is an init expression
+		init = parseNode(p)
+
+		// check if there is a semicolon
+		if p.currentTokenKind() != lexer.OPEN_CURLY {
+			fmt.Printf("Current token: %v\n", p.currentTokenKind())
+			cond = parseExpr(p, DEFAULT_BP)
+			p.expect(lexer.SEMI_COLON_TOKEN)
+			incr = parseExpr(p, DEFAULT_BP)
+		} else {
+			// condition-only loop
+			cond = init
+			init = nil
+		}
+
+		// parse the block
+		block := parseBlock(p)
+
+		return ast.ForStmt{
+			Init:      	init,
+			Condition: 	cond,
+			Increment: 	incr,
+			Block:     	block,
+			Location: 	ast.Location{
+				Start: loopType.Start,
+				End:   block.EndPos(),
+			},
+		}
+
+	} else if loopType.Kind == lexer.FOREACH_TOKEN {
+		// for-each loop foreach v in arr { } | detection method: one identifier 'v' is present
+		// for-each loop foreach i, v in arr { } | detection method: two identifiers 'i' and 'v' are present
+		var first, second ast.Node
+		first = parseExpr(p, ASSIGNMENT_BP)
+		if p.currentTokenKind() == lexer.COMMA_TOKEN {
+			p.advance()
+			second = parseExpr(p, ASSIGNMENT_BP)
+		} else {
+			second = first
+			first = nil
+		}
+
+		p.expect(lexer.IN_TOKEN)
+
+		// parse the array expression
+		array := parseExpr(p, ASSIGNMENT_BP)
+
+		p.expect(lexer.OPEN_CURLY)
+
+		// parse the block
+		block := parseBlock(p)
+
+		return ast.ForEachStmt{
+			Key:      	first,
+			Value:     	second,
+			Iterable:   array,
+			Block:      block,
+			Location:   ast.Location{
+				Start: 	loopType.Start,
+				End:   	block.EndPos(),
+			},
+		}
 	} else {
-		//error
-		//msg := "invalid for loop syntax"
-		errgen.MakeError(p.FilePath, start.Line, start.Line, start.Column, start.Column, "invalid for loop syntax").DisplayWithPanic()
-		return nil
+		errgen.AddError(p.FilePath, loopType.Start.Line, loopType.End.Line, loopType.Start.Column, loopType.End.Column, "Expected 'for' or 'foreach' keyword").DisplayWithPanic()
 	}
+
+	return nil
 }

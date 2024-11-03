@@ -37,7 +37,7 @@ func TestTokenize(t *testing.T) {
 			name:  "String literal",
 			input: `"hello"`,
 			expected: []Token{
-				NewToken(STR, "hello", Position{Line: 1, Column: 1, Index: 0}, Position{Line: 1, Column: 8, Index: 7}),
+				NewToken(STR_TOKEN, "hello", Position{Line: 1, Column: 1, Index: 0}, Position{Line: 1, Column: 8, Index: 7}),
 				NewToken(EOF_TOKEN, "eof", Position{Line: 1, Column: 8, Index: 7}, Position{Line: 1, Column: 8, Index: 7}),
 			},
 		},
@@ -45,7 +45,7 @@ func TestTokenize(t *testing.T) {
 			name:  "Number literal",
 			input: "123",
 			expected: []Token{
-				NewToken(INT32, "123", Position{Line: 1, Column: 1, Index: 0}, Position{Line: 1, Column: 4, Index: 3}),
+				NewToken(INT32_TOKEN, "123", Position{Line: 1, Column: 1, Index: 0}, Position{Line: 1, Column: 4, Index: 3}),
 				NewToken(EOF_TOKEN, "eof", Position{Line: 1, Column: 4, Index: 3}, Position{Line: 1, Column: 4, Index: 3}),
 			},
 		},

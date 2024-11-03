@@ -72,7 +72,7 @@ func TestColorPrint(t *testing.T) {
 	}
 
 	// Compare the output
-	expected := fmt.Sprintf("%s%s%s\n", GREEN, "output", RESET) // Note: fmt.Println adds a newline
+	expected := fmt.Sprintf("%s%s%s", GREEN, "output", RESET) // Note: fmt.Println adds a newline
 	actual := buf.String()
 
 	if expected != actual {

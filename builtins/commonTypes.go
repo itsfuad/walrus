@@ -2,9 +2,9 @@ package builtins
 
 // common types
 
-type VALUE_TYPE string
+type TC_TYPE string
 type TOKEN_KIND string
-type DATA_TYPE string
+type PARSER_TYPE string
 
 const (
 	INT8      = "i8"
@@ -18,22 +18,24 @@ const (
 	FLOAT32   = "f32"
 	FLOAT64   = "f64"
 	STRING    = "str"
+	BYTE      = "byte"
 	BOOL      = "bool"
 	NULL      = "null"
 	FUNCTION  = "fn"
 	STRUCT    = "struct"
 	INTERFACE = "interface"
 	ARRAY     = "array"
+	MAP       = "map"
 	VOID      = "void"
 )
 
 type Searchable interface {
-	VALUE_TYPE | DATA_TYPE
+	TC_TYPE | PARSER_TYPE
 }
 
 func GetBitSize[T Searchable](kind T) uint8 {
 	switch kind {
-	case INT8, UINT8:
+	case INT8, UINT8, BYTE:
 		return 8
 	case INT16, UINT16:
 		return 16
@@ -57,7 +59,7 @@ func IsSigned[T Searchable](kind T) bool {
 
 func IsUnsigned[T Searchable](kind T) bool {
 	switch kind {
-	case UINT8, UINT16, UINT32, UINT64:
+	case UINT8, UINT16, UINT32, UINT64, BYTE:
 		return true
 	default:
 		return false
