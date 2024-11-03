@@ -67,18 +67,18 @@ func (a StringLiteralExpr) EndPos() lexer.Position {
 	return a.Location.End
 }
 
-type CharLiteralExpr struct {
+type ByteLiteralExpr struct {
 	Value string
 	Location
 }
 
-func (a CharLiteralExpr) INode() {
+func (a ByteLiteralExpr) INode() {
 	//empty method implements Node interface
 }
-func (a CharLiteralExpr) StartPos() lexer.Position {
+func (a ByteLiteralExpr) StartPos() lexer.Position {
 	return a.Location.Start
 }
-func (a CharLiteralExpr) EndPos() lexer.Position {
+func (a ByteLiteralExpr) EndPos() lexer.Position {
 	return a.Location.End
 }
 

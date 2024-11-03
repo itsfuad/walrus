@@ -39,7 +39,7 @@ func CheckAST(node ast.Node, env *TypeEnvironment) ValueTypeInterface {
 		return NewFloat(t.BitSize)
 	case ast.StringLiteralExpr:
 		return NewStr()
-	case ast.CharLiteralExpr:
+	case ast.ByteLiteralExpr:
 		return NewInt(8, false)
 	case ast.BinaryExpr:
 		return checkBinaryExpr(t, env)
