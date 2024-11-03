@@ -7,12 +7,12 @@ type Position struct {
 	Index  int // Index in the source code.
 }
 
-// Advance updates the Position by advancing it based on the characters in the provided string.
-// It increments the line number for newline characters and the column number for other characters.
-// The index is incremented for each character in the string.
-// 
+// Advance updates the Position by advancing it based on the bytes in the provided string.
+// It increments the line number for newline bytes and the column number for other bytes.
+// The index is incremented for each byte in the string.
+//
 // Parameters:
-// - toSkip: A string containing characters to advance the position by.
+// - toSkip: A string containing bytes to advance the position by.
 //
 // Returns:
 // - A pointer to the updated Position.

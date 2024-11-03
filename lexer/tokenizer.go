@@ -68,7 +68,7 @@ func createLexer(filePath *string) *Lexer {
 			{regexp.MustCompile(`\/\/.*`), skipHandler},                       // single line comments
 			{regexp.MustCompile(`\/\*[\s\S]*?\*\/`), skipHandler},             // multi line comments
 			{regexp.MustCompile(`"[^"]*"`), stringHandler},                    // string literals
-			{regexp.MustCompile(`'[^']'`), characterHandler},                  // character literals
+			{regexp.MustCompile(`'[^']'`), byteHandler},                       // byte literals
 			{regexp.MustCompile(`[0-9]+(?:\.[0-9]+)?`), numberHandler},        // decimal numbers
 			{regexp.MustCompile(`[a-zA-Z_][a-zA-Z0-9_]*`), identifierHandler}, // identifiers
 			{regexp.MustCompile(`\+\+`), defaultHandler(PLUS_PLUS_TOKEN, "++")},
@@ -188,23 +188,23 @@ func stringHandler(lex *Lexer, regex *regexp.Regexp) {
 	lex.push(NewToken(STR_TOKEN, stringLiteral, start, end))
 }
 
-// characterHandler processes a character literal in the lexer.
-// It uses a regular expression to find the character literal in the remaining input,
+// byteHandler processes a byte literal in the lexer.
+// It uses a regular expression to find the byte literal in the remaining input,
 // excludes the quotes from the matched string, and then creates a new BYTE token
-// with the character literal's value and its position in the input.
+// with the byte literal's value and its position in the input.
 //
 // Parameters:
 //
 //	lex - The Lexer instance that contains the input and current position.
-//	regex - The regular expression used to match the character literal.
-func characterHandler(lex *Lexer, regex *regexp.Regexp) {
+//	regex - The regular expression used to match the byte literal.
+func byteHandler(lex *Lexer, regex *regexp.Regexp) {
 	match := regex.FindString(lex.remainder())
 	//exclude the quotes
-	characterLiteral := match[1 : len(match)-1]
+	byteLiteral := match[1 : len(match)-1]
 	start := lex.Position
 	lex.advance(match)
 	end := lex.Position
-	lex.push(NewToken(UINT8_TOKEN, characterLiteral, start, end))
+	lex.push(NewToken(UINT8_TOKEN, byteLiteral, start, end))
 }
 
 // skipHandler processes a token that should be skipped by the lexer.
@@ -235,7 +235,7 @@ func Tokenize(filename string, debug bool) []Token {
 		}
 
 		if !matched {
-			errStr := fmt.Sprintf("lexer:unexpected character: '%c'", lex.at())
+			errStr := fmt.Sprintf("lexer:unexpected charecter: '%c'", lex.at())
 			errgen.AddError(filename, lex.Position.Line, lex.Position.Line, lex.Position.Column, lex.Position.Column, errStr).DisplayWithPanic()
 			return nil
 		}

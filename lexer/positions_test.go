@@ -12,13 +12,13 @@ func TestAdvance(t *testing.T) {
 		expected Position
 	}{
 		{
-			name:     "advance single character",
+			name:     "advance single byte",
 			initial:  Position{Line: 1, Column: 1, Index: 0},
 			toSkip:   "a",
 			expected: Position{Line: 1, Column: 2, Index: 1},
 		},
 		{
-			name:     "advance multiple characters",
+			name:     "advance multiple bytes",
 			initial:  Position{Line: 1, Column: 1, Index: 0},
 			toSkip:   "abc",
 			expected: Position{Line: 1, Column: 4, Index: 3},
