@@ -165,9 +165,9 @@ func numberHandler(lex *Lexer, regex *regexp.Regexp) {
 	end := lex.Position
 	//find the number is a float or an integer
 	if strings.Contains(match, ".") {
-		lex.push(NewToken(FLOAT32, match, start, end))
+		lex.push(NewToken(FLOAT32_TOKEN, match, start, end))
 	} else {
-		lex.push(NewToken(INT32, match, start, end))
+		lex.push(NewToken(INT32_TOKEN, match, start, end))
 	}
 }
 
@@ -185,7 +185,7 @@ func stringHandler(lex *Lexer, regex *regexp.Regexp) {
 	start := lex.Position
 	lex.advance(match)
 	end := lex.Position
-	lex.push(NewToken(STR, stringLiteral, start, end))
+	lex.push(NewToken(STR_TOKEN, stringLiteral, start, end))
 }
 
 // characterHandler processes a character literal in the lexer.
@@ -204,7 +204,7 @@ func characterHandler(lex *Lexer, regex *regexp.Regexp) {
 	start := lex.Position
 	lex.advance(match)
 	end := lex.Position
-	lex.push(NewToken(UINT8, characterLiteral, start, end))
+	lex.push(NewToken(UINT8_TOKEN, characterLiteral, start, end))
 }
 
 // skipHandler processes a token that should be skipped by the lexer.
@@ -236,7 +236,7 @@ func Tokenize(filename string, debug bool) []Token {
 
 		if !matched {
 			errStr := fmt.Sprintf("lexer:unexpected character: '%c'", lex.at())
-			errgen.MakeError(filename, lex.Position.Line, lex.Position.Line, lex.Position.Column, lex.Position.Column, errStr).DisplayWithPanic()
+			errgen.AddError(filename, lex.Position.Line, lex.Position.Line, lex.Position.Column, lex.Position.Column, errStr).DisplayWithPanic()
 			return nil
 		}
 	}

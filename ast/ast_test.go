@@ -11,7 +11,9 @@ type TestNode struct {
 	end   lexer.Position
 }
 
-func (t TestNode) INode() {}
+func (t TestNode) INode() {
+	// IMPLEMENT
+}
 
 func (t TestNode) StartPos() lexer.Position {
 	return t.start

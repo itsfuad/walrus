@@ -9,7 +9,7 @@ import (
 func checkReturnStmt(returnNode ast.ReturnStmt, env *TypeEnvironment) ValueTypeInterface {
 	//check if the function is declared
 	if env.scopeType != FUNCTION_SCOPE {
-		//errgen.MakeError(env.filePath, returnNode.StartPos().Line, returnNode.EndPos().Line, returnNode.StartPos().Column, returnNode.EndPos().Column, "Return statement must be inside a function").DisplayWithPanic()
+
 		errgen.AddError(env.filePath, returnNode.StartPos().Line, returnNode.EndPos().Line, returnNode.StartPos().Column, returnNode.EndPos().Column, "Return statement must be inside a function")
 	}
 
@@ -18,9 +18,9 @@ func checkReturnStmt(returnNode ast.ReturnStmt, env *TypeEnvironment) ValueTypeI
 
 	fnReturns := getFunctionReturnValue(env, returnNode)
 
-	err := MatchTypes(fnReturns, returnType, env.filePath, returnNode.Start.Line, returnNode.End.Line, returnNode.Start.Column, returnNode.End.Column)
+	err := MatchTypes(fnReturns, returnType)
 	if err != nil {
-		//errgen.MakeError(env.filePath, returnNode.StartPos().Line, returnNode.EndPos().Line, returnNode.StartPos().Column, returnNode.EndPos().Column, fmt.Sprintf("cannot return '%s' from this scope. function '%s' expects return type '%s'", valueTypeInterfaceToString(returnType), env.scopeName, valueTypeInterfaceToString(fnReturns))).DisplayWithPanic()
+
 		errgen.AddError(env.filePath, returnNode.StartPos().Line, returnNode.EndPos().Line, returnNode.StartPos().Column, returnNode.EndPos().Column, fmt.Sprintf("cannot return '%s' from this scope. function '%s' expects return type '%s'", valueTypeInterfaceToString(returnType), env.scopeName, valueTypeInterfaceToString(fnReturns)))
 	}
 

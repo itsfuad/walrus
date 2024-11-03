@@ -3,239 +3,8 @@ package typechecker
 import (
 	"fmt"
 	"walrus/ast"
-	"walrus/builtins"
 	"walrus/errgen"
 )
-
-const (
-	INT8_TYPE         builtins.VALUE_TYPE = builtins.INT8
-	INT16_TYPE        builtins.VALUE_TYPE = builtins.INT16
-	INT32_TYPE        builtins.VALUE_TYPE = builtins.INT32
-	INT64_TYPE        builtins.VALUE_TYPE = builtins.INT64
-	FLOAT32_TYPE      builtins.VALUE_TYPE = builtins.FLOAT32
-	FLOAT64_TYPE      builtins.VALUE_TYPE = builtins.FLOAT64
-	UINT8_TYPE        builtins.VALUE_TYPE = builtins.UINT8
-	UINT16_TYPE       builtins.VALUE_TYPE = builtins.UINT16
-	UINT32_TYPE       builtins.VALUE_TYPE = builtins.UINT32
-	UINT64_TYPE       builtins.VALUE_TYPE = builtins.UINT64
-	STRING_TYPE       builtins.VALUE_TYPE = builtins.STRING
-	BOOLEAN_TYPE      builtins.VALUE_TYPE = builtins.BOOL
-	NULL_TYPE         builtins.VALUE_TYPE = builtins.NULL
-	VOID_TYPE         builtins.VALUE_TYPE = builtins.VOID
-	FUNCTION_TYPE     builtins.VALUE_TYPE = builtins.FUNCTION
-	STRUCT_TYPE       builtins.VALUE_TYPE = builtins.STRUCT
-	INTERFACE_TYPE    builtins.VALUE_TYPE = builtins.INTERFACE
-	ARRAY_TYPE        builtins.VALUE_TYPE = builtins.ARRAY
-	BLOCK_TYPE        builtins.VALUE_TYPE = "block"
-	RETURN_TYPE       builtins.VALUE_TYPE = "return"
-	USER_DEFINED_TYPE builtins.VALUE_TYPE = "user_defined"
-)
-
-type ValueTypeInterface interface {
-	DType() builtins.VALUE_TYPE
-}
-
-type Int struct {
-	DataType builtins.VALUE_TYPE
-	BitSize  uint8
-	IsSigned bool
-}
-
-func (t Int) DType() builtins.VALUE_TYPE {
-	return t.DataType
-}
-
-type Float struct {
-	DataType builtins.VALUE_TYPE
-	BitSize  uint8
-}
-
-func (t Float) DType() builtins.VALUE_TYPE {
-	return t.DataType
-}
-
-type Str struct {
-	DataType builtins.VALUE_TYPE
-}
-
-func (t Str) DType() builtins.VALUE_TYPE {
-	return t.DataType
-}
-
-type Bool struct {
-	DataType builtins.VALUE_TYPE
-}
-
-func (t Bool) DType() builtins.VALUE_TYPE {
-	return t.DataType
-}
-
-type Null struct {
-	DataType builtins.VALUE_TYPE
-}
-
-func (t Null) DType() builtins.VALUE_TYPE {
-	return t.DataType
-}
-
-type Void struct {
-	DataType builtins.VALUE_TYPE
-}
-
-func (t Void) DType() builtins.VALUE_TYPE {
-	return t.DataType
-}
-
-type FnParam struct {
-	Name       string
-	IsOptional bool
-	//DefaultValueType ValueTypeInterface
-	Type ValueTypeInterface
-}
-
-type Fn struct {
-	DataType      builtins.VALUE_TYPE
-	Params        []FnParam
-	Returns       ValueTypeInterface
-	FunctionScope TypeEnvironment
-}
-
-func (t Fn) DType() builtins.VALUE_TYPE {
-	return t.DataType
-}
-
-type ConditionBranch struct {
-	DataType builtins.VALUE_TYPE
-	Next     ValueTypeInterface
-	Returns  ValueTypeInterface
-}
-
-type ConditionStmt struct {
-	DataType builtins.VALUE_TYPE
-	Branches []ConditionBranch
-}
-
-func (t ConditionStmt) DType() builtins.VALUE_TYPE {
-	return t.DataType
-}
-
-type StructProperty struct {
-	IsPrivate bool
-	Type      ValueTypeInterface
-}
-
-func (t StructProperty) DType() builtins.VALUE_TYPE {
-	return t.Type.DType()
-}
-
-type StructMethod struct {
-	IsPrivate bool
-	Fn
-}
-
-func (t StructMethod) DType() builtins.VALUE_TYPE {
-	return t.DataType
-}
-
-type Struct struct {
-	DataType    builtins.VALUE_TYPE
-	StructName  string
-	StructScope TypeEnvironment
-}
-
-func (t Struct) DType() builtins.VALUE_TYPE {
-	return t.DataType
-}
-
-type Array struct {
-	DataType  builtins.VALUE_TYPE
-	ArrayType ValueTypeInterface
-}
-
-func (t Array) DType() builtins.VALUE_TYPE {
-	return t.DataType
-}
-
-type UserDefined struct {
-	DataType builtins.VALUE_TYPE
-	TypeName string
-	TypeDef  ValueTypeInterface
-}
-
-func (t UserDefined) DType() builtins.VALUE_TYPE {
-	return t.DataType
-}
-
-type ReturnType struct {
-	DataType   builtins.VALUE_TYPE
-	Expression ValueTypeInterface
-}
-
-func (t ReturnType) DType() builtins.VALUE_TYPE {
-	return t.DataType
-}
-
-type Block struct {
-	DataType builtins.VALUE_TYPE
-	Returns  ValueTypeInterface
-	Node     ast.Node
-}
-
-func (t Block) DType() builtins.VALUE_TYPE {
-	return t.DataType
-}
-
-type Interface struct {
-	DataType      builtins.VALUE_TYPE
-	InterfaceName string
-	Methods       map[string]Fn
-}
-
-func (t Interface) DType() builtins.VALUE_TYPE {
-	return t.DataType
-}
-
-func makeNumericType(isInt bool, bitSize uint8, isSigned bool) builtins.VALUE_TYPE {
-	rawDataType := ""
-	if isInt {
-		if isSigned {
-			rawDataType = "i"
-		} else {
-			rawDataType = "u"
-		}
-	} else {
-		rawDataType = "f"
-	}
-
-	rawDataType += fmt.Sprintf("%d", bitSize)
-
-	return builtins.VALUE_TYPE(rawDataType)
-}
-
-// helper type initialization functions
-func NewInt(bitSize uint8, isSigned bool) Int {
-	return Int{DataType: makeNumericType(true, bitSize, isSigned), BitSize: bitSize, IsSigned: isSigned}
-}
-
-func NewFloat(bitSize uint8) Float {
-	return Float{DataType: makeNumericType(false, bitSize, false), BitSize: bitSize}
-}
-
-func NewStr() Str {
-	return Str{DataType: STRING_TYPE}
-}
-
-func NewBool() Bool {
-	return Bool{DataType: BOOLEAN_TYPE}
-}
-
-func NewNull() Null {
-	return Null{DataType: NULL_TYPE}
-}
-
-func NewVoid() Void {
-	return Void{DataType: VOID_TYPE}
-}
 
 type SCOPE_TYPE int
 
@@ -254,32 +23,12 @@ type TypeEnvironment struct {
 	variables  map[string]ValueTypeInterface
 	constants  map[string]bool
 	isOptional map[string]bool
-	builtins   map[string]ValueTypeInterface
 	types      map[string]ValueTypeInterface
 	interfaces map[string]Interface
 	filePath   string
 }
 
 func NewTypeENV(parent *TypeEnvironment, scope SCOPE_TYPE, scopeName string, filePath string) *TypeEnvironment {
-
-	builtins := map[string]ValueTypeInterface{
-		string(INT8_TYPE):    	Int{DataType: INT8_TYPE, BitSize: 8, IsSigned: true},
-		string(INT16_TYPE):   	Int{DataType: INT16_TYPE, BitSize: 16, IsSigned: true},
-		string(INT32_TYPE):   	Int{DataType: INT32_TYPE, BitSize: 32, IsSigned: true},
-		string(INT64_TYPE):   	Int{DataType: INT64_TYPE, BitSize: 64, IsSigned: true},
-		string(FLOAT32_TYPE): 	Float{DataType: FLOAT32_TYPE, BitSize: 32},
-		string(FLOAT64_TYPE): 	Float{DataType: FLOAT64_TYPE, BitSize: 64},
-		string(UINT8_TYPE):   	Int{DataType: UINT8_TYPE, BitSize: 8, IsSigned: false},
-		string(UINT16_TYPE):  	Int{DataType: UINT16_TYPE, BitSize: 16, IsSigned: false},
-		string(UINT32_TYPE):  	Int{DataType: UINT32_TYPE, BitSize: 32, IsSigned: false},
-		string(UINT64_TYPE):  	Int{DataType: UINT64_TYPE, BitSize: 64, IsSigned: false},
-		"byte": 			 	Int{DataType: UINT8_TYPE, BitSize: 8, IsSigned: false},
-		string(STRING_TYPE):  	Str{DataType: STRING_TYPE},
-		string(BOOLEAN_TYPE): 	Bool{DataType: BOOLEAN_TYPE},
-		string(NULL_TYPE):    	Null{DataType: NULL_TYPE},
-		string(VOID_TYPE):    	Void{DataType: VOID_TYPE},
-	}
-
 	return &TypeEnvironment{
 		parent:     parent,
 		scopeType:  scope,
@@ -288,7 +37,6 @@ func NewTypeENV(parent *TypeEnvironment, scope SCOPE_TYPE, scopeName string, fil
 		variables:  make(map[string]ValueTypeInterface),
 		constants:  make(map[string]bool),
 		isOptional: make(map[string]bool),
-		builtins:   builtins,
 		types:      make(map[string]ValueTypeInterface),
 		interfaces: make(map[string]Interface),
 	}
@@ -339,22 +87,8 @@ func (t *TypeEnvironment) ResolveType(name string) (*TypeEnvironment, error) {
 	return t.parent.ResolveType(name)
 }
 
-/*
-func (t *TypeEnvironment) GetTypeFromEnv(name string) (ValueTypeInterface, error) {
-	if _, ok := t.builtins[name]; ok {
-		return t.builtins[name], nil
-	}
-	if _, ok := t.types[name]; ok {
-		return t.types[name].(UserDefined).TypeDef, nil
-	}
-	return nil, fmt.Errorf("'%s' is not declared in this scope", name)
-}
-*/
 // instead, find all the upper scopes and check if the type is declared in any of them
 func (t *TypeEnvironment) GetTypeFromEnv(name string) (ValueTypeInterface, error) {
-	if val, ok := t.builtins[name]; ok {
-		return val, nil
-	}
 	if val, ok := t.types[name]; ok {
 		return val.(UserDefined).TypeDef, nil
 	}
@@ -365,11 +99,6 @@ func (t *TypeEnvironment) GetTypeFromEnv(name string) (ValueTypeInterface, error
 }
 
 func (t *TypeEnvironment) DeclareVar(name string, typeVar ValueTypeInterface, isConst bool, isOptional bool) error {
-
-	//if is keyward, return nil
-	if _, ok := t.builtins[name]; ok {
-		return fmt.Errorf("cannot declare variable with keyword '%s'", name)
-	}
 
 	if _, ok := t.types[name]; ok {
 		return fmt.Errorf("cannot declare variable with type '%s'", name)
@@ -388,11 +117,6 @@ func (t *TypeEnvironment) DeclareVar(name string, typeVar ValueTypeInterface, is
 }
 
 func (t *TypeEnvironment) DeclareType(name string, typeType ValueTypeInterface) error {
-
-	//if is keyward, return nil
-	if _, ok := t.builtins[name]; ok {
-		return fmt.Errorf("cannot declare type with keyword '%s'", name)
-	}
 
 	if scope, err := t.ResolveType(name); err == nil && scope == t {
 		return err
@@ -415,7 +139,7 @@ func GetValueType(value ast.Node, t *TypeEnvironment) ValueTypeInterface {
 
 	typ, err := getValueTypeInterface(typ, t)
 	if err != nil {
-		//errgen.MakeError(t.filePath, value.StartPos().Line, value.EndPos().Line, value.StartPos().Column, value.EndPos().Column, err.Error()).DisplayWithPanic()
+
 		errgen.AddError(t.filePath, value.StartPos().Line, value.EndPos().Line, value.StartPos().Column, value.EndPos().Column, err.Error())
 		return nil
 	}

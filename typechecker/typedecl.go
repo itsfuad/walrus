@@ -32,9 +32,9 @@ func checkTypeDeclaration(node ast.TypeDeclStmt, env *TypeEnvironment) ValueType
 	case nil:
 		val = NewVoid()
 	default:
-		typ, err := stringToValueTypeInterface(builtins.VALUE_TYPE(t.Type()), env)
+		typ, err := stringToValueTypeInterface(builtins.TC_TYPE(t.Type()), env)
 		if err != nil {
-			//errgen.MakeError(env.filePath, t.StartPos().Line, t.EndPos().Line, t.StartPos().Column, t.EndPos().Column, err.Error()).DisplayWithPanic()
+
 			errgen.AddError(env.filePath, t.StartPos().Line, t.EndPos().Line, t.StartPos().Column, t.EndPos().Column, err.Error())
 		}
 		val = typ
@@ -49,7 +49,7 @@ func checkTypeDeclaration(node ast.TypeDeclStmt, env *TypeEnvironment) ValueType
 	err := env.DeclareType(node.UDTypeName, typeVal)
 	if err != nil {
 		fmt.Printf("cannot declare type %s: %s\n", node.UDTypeName, err.Error())
-		//errgen.MakeError(env.filePath, node.Start.Line, node.End.Line, node.Start.Column, node.End.Column, err.Error()).DisplayWithPanic()
+
 		errgen.AddError(env.filePath, node.Start.Line, node.End.Line, node.Start.Column, node.End.Column, err.Error())
 	}
 
