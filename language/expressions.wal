@@ -32,6 +32,8 @@ let myMap : map[str]i32 = map[str]i32{
 
 let mapValue := myMap["key1"];
 
+//myMap["key1"] = 10.0; // error
+
 /*
 for {
     // infinite loop

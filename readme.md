@@ -13,6 +13,9 @@ A tiny simple programming language made for simplicity. It borrows syntax from '
         - [x] Type cast `as`
     - [x] [Array](#array)
         - [x] Array indexing
+    - [x] [Map](#map)
+        - [x] Map indexing
+        - [x] Map assignment
     - [x] [Conditionals](#conditionals)
         - [x] if
         - [x] else
@@ -116,6 +119,18 @@ a[0] = 10; // a = [10, 2, 3, 4, 5]
 let c := [[1, 2], [3, 4], [5, 6]]; // Array of arrays of integers
 let d := c[0][0]; // d = 1
 c[0][0] = 10; // c = [[10, 2], [3, 4], [5, 6]]
+```
+
+## Map
+```rust
+let myMap : map[str]i32 = map[str]i32 {
+    "a": 10,
+    "b": 20,
+    "c": 30
+};
+
+let a := myMap["a"]; // a = 10
+myMap["a"] = 20; // myMap = {"a": 20, "b": 20, "c": 30}
 ```
 
 ## Struct
