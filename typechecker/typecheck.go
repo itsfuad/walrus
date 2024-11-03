@@ -8,15 +8,15 @@ import (
 )
 
 func EvaluateProgram(program ast.ProgramStmt, env *TypeEnvironment) ValueTypeInterface {
-	utils.ColorPrint(utils.ORANGE, "### Evaluating program ###")
+	utils.ColorPrint(utils.PURPLE, "### Running type checker ###\n")
 	for _, item := range program.Contents {
 		CheckAST(item, env)
 	}
 
-	utils.ColorPrint(utils.GREEN, "--------- passed ---------")
+	utils.ColorPrint(utils.GREEN, "--------- passed ---------\n")
 
 	//print the file path
-	utils.ColorPrint(utils.ORANGE, fmt.Sprintf("File path: %s", env.filePath))
+	utils.ColorPrint(utils.ORANGE, fmt.Sprintf("File path: %s\n", env.filePath))
 
 	return NewVoid()
 }
@@ -49,8 +49,8 @@ func CheckAST(node ast.Node, env *TypeEnvironment) ValueTypeInterface {
 		return checkIncrementalExpr(t, env)
 	case ast.ArrayLiteral:
 		return evaluateArrayExpr(t, env)
-	case ast.ArrayIndexAccess:
-		return evaluateArrayAccess(t, env)
+	case ast.Indexable:
+		return evaluateIndexableAccess(t, env)
 	case ast.TypeDeclStmt:
 		return checkTypeDeclaration(t, env)
 	case ast.ImplStmt:
@@ -59,6 +59,8 @@ func CheckAST(node ast.Node, env *TypeEnvironment) ValueTypeInterface {
 		return checkStructLiteral(t, env)
 	case ast.StructPropertyAccessExpr:
 		return checkPropertyAccess(t, env)
+	case ast.MapLiteral:
+		return checkMapLiteral(t, env)
 	case ast.FunctionDeclStmt:
 		return checkFunctionDeclStmt(t, env)
 	case ast.FunctionLiteral:
@@ -72,6 +74,6 @@ func CheckAST(node ast.Node, env *TypeEnvironment) ValueTypeInterface {
 	case ast.ReturnStmt:
 		return checkReturnStmt(t, env)
 	}
-	errgen.MakeError(env.filePath, node.StartPos().Line, node.EndPos().Line, node.StartPos().Column, node.EndPos().Column, fmt.Sprintf("<%T> node is not implemented yet to check", node)).DisplayWithPanic()
+	errgen.AddError(env.filePath, node.StartPos().Line, node.EndPos().Line, node.StartPos().Column, node.EndPos().Column, fmt.Sprintf("<%T> node is not implemented yet to check", node)).DisplayWithPanic()
 	return nil
 }

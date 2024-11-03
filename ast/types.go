@@ -6,19 +6,19 @@ import (
 )
 
 type DataType interface {
-	Type() builtins.DATA_TYPE
+	Type() builtins.PARSER_TYPE
 	StartPos() lexer.Position
 	EndPos() lexer.Position
 }
 
 type IntegerType struct {
-	TypeName builtins.DATA_TYPE
+	TypeName builtins.PARSER_TYPE
 	BitSize  uint8
 	IsSigned bool
 	Location
 }
 
-func (a IntegerType) Type() builtins.DATA_TYPE {
+func (a IntegerType) Type() builtins.PARSER_TYPE {
 	return a.TypeName
 }
 func (a IntegerType) StartPos() lexer.Position {
@@ -29,12 +29,12 @@ func (a IntegerType) EndPos() lexer.Position {
 }
 
 type FloatType struct {
-	TypeName builtins.DATA_TYPE
+	TypeName builtins.PARSER_TYPE
 	BitSize  uint8
 	Location
 }
 
-func (a FloatType) Type() builtins.DATA_TYPE {
+func (a FloatType) Type() builtins.PARSER_TYPE {
 	return a.TypeName
 }
 func (a FloatType) StartPos() lexer.Position {
@@ -45,11 +45,11 @@ func (a FloatType) EndPos() lexer.Position {
 }
 
 type StringType struct {
-	TypeName builtins.DATA_TYPE
+	TypeName builtins.PARSER_TYPE
 	Location
 }
 
-func (a StringType) Type() builtins.DATA_TYPE {
+func (a StringType) Type() builtins.PARSER_TYPE {
 	return a.TypeName
 }
 func (a StringType) StartPos() lexer.Position {
@@ -60,11 +60,11 @@ func (a StringType) EndPos() lexer.Position {
 }
 
 type BooleanType struct {
-	TypeName builtins.DATA_TYPE
+	TypeName builtins.PARSER_TYPE
 	Location
 }
 
-func (a BooleanType) Type() builtins.DATA_TYPE {
+func (a BooleanType) Type() builtins.PARSER_TYPE {
 	return a.TypeName
 }
 func (a BooleanType) StartPos() lexer.Position {
@@ -75,11 +75,11 @@ func (a BooleanType) EndPos() lexer.Position {
 }
 
 type NullType struct {
-	TypeName builtins.DATA_TYPE
+	TypeName builtins.PARSER_TYPE
 	Location
 }
 
-func (a NullType) Type() builtins.DATA_TYPE {
+func (a NullType) Type() builtins.PARSER_TYPE {
 	return a.TypeName
 }
 func (a NullType) StartPos() lexer.Position {
@@ -90,11 +90,11 @@ func (a NullType) EndPos() lexer.Position {
 }
 
 type VoidType struct {
-	TypeName builtins.DATA_TYPE
+	TypeName builtins.PARSER_TYPE
 	Location
 }
 
-func (a VoidType) Type() builtins.DATA_TYPE {
+func (a VoidType) Type() builtins.PARSER_TYPE {
 	return a.TypeName
 }
 func (a VoidType) StartPos() lexer.Position {
@@ -105,12 +105,12 @@ func (a VoidType) EndPos() lexer.Position {
 }
 
 type ArrayType struct {
-	TypeName  builtins.DATA_TYPE
+	TypeName  builtins.PARSER_TYPE
 	ArrayType DataType
 	Location
 }
 
-func (a ArrayType) Type() builtins.DATA_TYPE {
+func (a ArrayType) Type() builtins.PARSER_TYPE {
 	return a.TypeName
 }
 func (a ArrayType) StartPos() lexer.Position {
@@ -127,12 +127,12 @@ type StructPropType struct {
 }
 
 type StructType struct {
-	TypeName   builtins.DATA_TYPE
+	TypeName   builtins.PARSER_TYPE
 	Properties map[string]StructPropType
 	Location
 }
 
-func (a StructType) Type() builtins.DATA_TYPE {
+func (a StructType) Type() builtins.PARSER_TYPE {
 	return a.TypeName
 }
 func (a StructType) StartPos() lexer.Position {
@@ -148,12 +148,12 @@ type InterfaceMethod struct {
 }
 
 type InterfaceType struct {
-	TypeName builtins.DATA_TYPE
+	TypeName builtins.PARSER_TYPE
 	Methods  map[string]InterfaceMethod
 	Location
 }
 
-func (a InterfaceType) Type() builtins.DATA_TYPE {
+func (a InterfaceType) Type() builtins.PARSER_TYPE {
 	return a.TypeName
 }
 
@@ -173,13 +173,13 @@ type FunctionTypeParam struct {
 }
 
 type FunctionType struct {
-	TypeName   builtins.DATA_TYPE
+	TypeName   builtins.PARSER_TYPE
 	Parameters []FunctionTypeParam
 	ReturnType DataType
 	Location
 }
 
-func (a FunctionType) Type() builtins.DATA_TYPE {
+func (a FunctionType) Type() builtins.PARSER_TYPE {
 	return a.TypeName
 }
 func (a FunctionType) StartPos() lexer.Position {
@@ -189,12 +189,31 @@ func (a FunctionType) EndPos() lexer.Position {
 	return a.Location.End
 }
 
-type UserDefinedType struct {
-	TypeName builtins.DATA_TYPE
+type MapType struct {
+	TypeName  builtins.PARSER_TYPE
+	KeyType   DataType
+	ValueType DataType
 	Location
 }
 
-func (a UserDefinedType) Type() builtins.DATA_TYPE {
+func (a MapType) Type() builtins.PARSER_TYPE {
+	return a.TypeName
+}
+
+func (a MapType) StartPos() lexer.Position {
+	return a.Location.Start
+}
+
+func (a MapType) EndPos() lexer.Position {
+	return a.Location.End
+}
+
+type UserDefinedType struct {
+	TypeName builtins.PARSER_TYPE
+	Location
+}
+
+func (a UserDefinedType) Type() builtins.PARSER_TYPE {
 	return a.TypeName
 }
 func (a UserDefinedType) StartPos() lexer.Position {

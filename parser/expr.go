@@ -33,10 +33,10 @@ func parseExpr(p *Parser, bp BINDING_POWER) ast.Node {
 		} else {
 			msg = fmt.Sprintf("parser:nud:unexpected token '%s'\n", tokenKind)
 		}
-		errgen.MakeError(p.FilePath, p.currentToken().Start.Line, p.currentToken().End.Line, p.currentToken().Start.Column, p.currentToken().End.Column, msg).DisplayWithPanic()
+		errgen.AddError(p.FilePath, p.currentToken().Start.Line, p.currentToken().End.Line, p.currentToken().Start.Column, p.currentToken().End.Column, msg).DisplayWithPanic()
 	}
 
-	left := nudFunction(p)
+	expr := nudFunction(p)
 
 	for GetBP(p.currentTokenKind()) > bp {
 
@@ -46,13 +46,13 @@ func parseExpr(p *Parser, bp BINDING_POWER) ast.Node {
 
 		if !exists {
 			msg := fmt.Sprintf("parser:led:unexpected token %s\n", tokenKind)
-			errgen.MakeError(p.FilePath, p.currentToken().Start.Line, p.currentToken().End.Line, p.currentToken().Start.Column, p.currentToken().End.Column, msg).DisplayWithPanic()
+			errgen.AddError(p.FilePath, p.currentToken().Start.Line, p.currentToken().End.Line, p.currentToken().Start.Column, p.currentToken().End.Column, msg).DisplayWithPanic()
 		}
 
-		left = ledFunction(p, left, GetBP(p.currentTokenKind()))
+		expr = ledFunction(p, expr, GetBP(p.currentTokenKind()))
 	}
 
-	return left
+	return expr
 }
 
 // parsePrimaryExpr parses a primary expression in the input stream.
@@ -74,22 +74,22 @@ func parsePrimaryExpr(p *Parser) ast.Node {
 	}
 
 	switch primaryToken.Kind {
-	case lexer.INT8, lexer.INT16, lexer.INT32, lexer.INT64, lexer.UINT8, lexer.UINT16, lexer.UINT32, lexer.UINT64:
+	case lexer.INT8_TOKEN, lexer.INT16_TOKEN, lexer.INT32_TOKEN, lexer.INT64_TOKEN, lexer.UINT8_TOKEN, lexer.UINT16_TOKEN, lexer.UINT32_TOKEN, lexer.UINT64_TOKEN:
 		return ast.IntegerLiteralExpr{
-			Value:    	rawValue,
-			BitSize: 	builtins.GetBitSize(builtins.DATA_TYPE(primaryToken.Kind)),
-			IsSigned: 	builtins.IsSigned(builtins.DATA_TYPE(primaryToken.Kind)),
-			Location: 	loc,
+			Value:    rawValue,
+			BitSize:  builtins.GetBitSize(builtins.PARSER_TYPE(primaryToken.Kind)),
+			IsSigned: builtins.IsSigned(builtins.PARSER_TYPE(primaryToken.Kind)),
+			Location: loc,
 		}
-	case lexer.FLOAT32, lexer.FLOAT64:
+	case lexer.FLOAT32_TOKEN, lexer.FLOAT64_TOKEN:
 
 		return ast.FloatLiteralExpr{
 			Value:    rawValue,
-			BitSize:  builtins.GetBitSize(builtins.DATA_TYPE(primaryToken.Kind)),
+			BitSize:  builtins.GetBitSize(builtins.PARSER_TYPE(primaryToken.Kind)),
 			Location: loc,
 		}
 
-	case lexer.STR:
+	case lexer.STR_TOKEN:
 		return ast.StringLiteralExpr{
 			Value:    rawValue,
 			Location: loc,
@@ -101,7 +101,7 @@ func parsePrimaryExpr(p *Parser) ast.Node {
 		}
 	default:
 		msg := fmt.Sprintf("Cannot create primary expression from %s\n", primaryToken.Value)
-		errgen.MakeError(p.FilePath, p.currentToken().Start.Line, p.currentToken().End.Line, p.currentToken().Start.Column, p.currentToken().End.Column, msg).DisplayWithPanic()
+		errgen.AddError(p.FilePath, p.currentToken().Start.Line, p.currentToken().End.Line, p.currentToken().Start.Column, p.currentToken().End.Column, msg).DisplayWithPanic()
 	}
 
 	return nil
@@ -140,7 +140,7 @@ func parsePostfixExpr(p *Parser, left ast.Node, bp BINDING_POWER) ast.Node {
 	start := left.StartPos()
 	// left must be an identifier
 	if _, ok := left.(ast.IdentifierExpr); !ok {
-		errgen.MakeError(p.FilePath, left.StartPos().Line, left.EndPos().Line, left.StartPos().Column, left.EndPos().Column, "only identifiers can be incremented or decremented").DisplayWithPanic()
+		errgen.AddError(p.FilePath, left.StartPos().Line, left.EndPos().Line, left.StartPos().Column, left.EndPos().Column, "only identifiers can be incremented or decremented").DisplayWithPanic()
 	}
 	operator := p.advance()
 	return ast.PostfixExpr{
@@ -206,7 +206,7 @@ func parseUnaryExpr(p *Parser) ast.Node {
 	case lexer.MINUS_TOKEN, lexer.NOT_TOKEN:
 		break
 	default:
-		errgen.MakeError(p.FilePath, operator.Start.Line, operator.End.Line, operator.Start.Column, operator.End.Column, fmt.Sprintf("invalid unary operator '%s'", operator.Value)).DisplayWithPanic()
+		errgen.AddError(p.FilePath, operator.Start.Line, operator.End.Line, operator.Start.Column, operator.End.Column, fmt.Sprintf("invalid unary operator '%s'", operator.Value)).DisplayWithPanic()
 	}
 
 	argument := parseExpr(p, UNARY_BP)
@@ -249,7 +249,6 @@ func parseBinaryExpr(p *Parser, left ast.Node, bp BINDING_POWER) ast.Node {
 	}
 }
 
-
 func parseTypeCastExpr(p *Parser, left ast.Node, bp BINDING_POWER) ast.Node {
 	start := left.StartPos()
 	p.expect(lexer.AS_TOKEN)
@@ -257,7 +256,7 @@ func parseTypeCastExpr(p *Parser, left ast.Node, bp BINDING_POWER) ast.Node {
 
 	return ast.TypeCastExpr{
 		Expression: left,
-		ToCast:   castType,
+		ToCast:     castType,
 		Location: ast.Location{
 			Start: start,
 			End:   castType.EndPos(),

@@ -36,5 +36,5 @@ func Colorize(color COLOR, text string) string {
 }
 
 func ColorPrint(color COLOR, text string) {
-	fmt.Println(Colorize(color, text))
+	fmt.Print(Colorize(color, text))
 }

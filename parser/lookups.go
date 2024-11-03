@@ -8,7 +8,6 @@ import (
 
 type BINDING_POWER int
 
-
 const (
 	DEFAULT_BP BINDING_POWER = iota
 	COMMA_BP
@@ -65,7 +64,8 @@ func bindLookupHandlers() {
 	led(lexer.MOD_EQUALS_TOKEN, ASSIGNMENT_BP, parseVarAssignmentExpr)
 	led(lexer.EXP_EQUALS_TOKEN, ASSIGNMENT_BP, parseVarAssignmentExpr)
 
-	led(lexer.OPEN_BRACKET, MEMBER_BP, parseArrayAccess)
+	led(lexer.OPEN_BRACKET, MEMBER_BP, parseIndexable)
+
 	nud(lexer.AT_TOKEN, parseStructLiteral)
 
 	led(lexer.DOT_TOKEN, MEMBER_BP, parsePropertyExpr)
@@ -88,31 +88,32 @@ func bindLookupHandlers() {
 
 	led(lexer.AS_TOKEN, CASTING_BP, parseTypeCastExpr)
 
-	nud(lexer.IDENTIFIER_TOKEN, parsePrimaryExpr) // identifier
-	nud(lexer.INT8, parsePrimaryExpr)              // int literal, 8 bit
-	nud(lexer.INT16, parsePrimaryExpr)              // int literal, 16 bit
-	nud(lexer.INT32, parsePrimaryExpr)              // int literal, 32 bit
-	nud(lexer.INT64, parsePrimaryExpr)              // int literal, 64 bit
-	nud(lexer.FLOAT32, parsePrimaryExpr)            // float literal
-	nud(lexer.FLOAT64, parsePrimaryExpr)            // float literal, 64 bit
-	nud(lexer.UINT8, parsePrimaryExpr)              // uint literal, 8 bit
-	nud(lexer.UINT16, parsePrimaryExpr)             // uint literal, 16 bit
-	nud(lexer.UINT32, parsePrimaryExpr)             // uint literal, 32 bit
-	nud(lexer.UINT64, parsePrimaryExpr)             // uint literal, 64 bit
-	nud(lexer.STR, parsePrimaryExpr)              // string literal
-	nud(lexer.NULL, parsePrimaryExpr)             // null literal
-	nud(lexer.OPEN_BRACKET, parseArrayExpr)       // array literal [1,2,3]
-	nud(lexer.OPEN_PAREN, parseGroupingExpr)      // grouping expression a + (b+c)
-	nud(lexer.FUNCTION, parseLambdaFunction)      // anonymous function
+	nud(lexer.IDENTIFIER_TOKEN, parsePrimaryExpr)  // identifier
+	nud(lexer.INT8_TOKEN, parsePrimaryExpr)        // int literal, 8 bit
+	nud(lexer.INT16_TOKEN, parsePrimaryExpr)       // int literal, 16 bit
+	nud(lexer.INT32_TOKEN, parsePrimaryExpr)       // int literal, 32 bit
+	nud(lexer.INT64_TOKEN, parsePrimaryExpr)       // int literal, 64 bit
+	nud(lexer.FLOAT32_TOKEN, parsePrimaryExpr)     // float literal
+	nud(lexer.FLOAT64_TOKEN, parsePrimaryExpr)     // float literal, 64 bit
+	nud(lexer.UINT8_TOKEN, parsePrimaryExpr)       // uint literal, 8 bit
+	nud(lexer.UINT16_TOKEN, parsePrimaryExpr)      // uint literal, 16 bit
+	nud(lexer.UINT32_TOKEN, parsePrimaryExpr)      // uint literal, 32 bit
+	nud(lexer.UINT64_TOKEN, parsePrimaryExpr)      // uint literal, 64 bit
+	nud(lexer.STR_TOKEN, parsePrimaryExpr)         // string literal
+	nud(lexer.NULL_TOKEN, parsePrimaryExpr)        // null literal
+	nud(lexer.OPEN_BRACKET, parseArrayExpr)        // array literal [1,2,3]
+	nud(lexer.OPEN_PAREN, parseGroupingExpr)       // grouping expression a + (b+c)
+	nud(lexer.FUNCTION_TOKEN, parseLambdaFunction) // anonymous function
 
 	stmt(lexer.LET_TOKEN, parseVarDeclStmt)          // variable declaration
 	stmt(lexer.CONST_TOKEN, parseVarDeclStmt)        // constant declaration
 	stmt(lexer.TYPE_TOKEN, parseUserDefinedTypeStmt) // user defined type
 
-	stmt(lexer.IF_TOKEN, parseIfStmt)           // if statement
-	stmt(lexer.FOR_TOKEN, parseForStmt)         // for statement
-	stmt(lexer.FUNCTION, parseFunctionDeclStmt) // function declaration
-	stmt(lexer.RETURN_TOKEN, parseReturnStmt)   // return statement
+	stmt(lexer.IF_TOKEN, parseIfStmt)                 // if statement
+	stmt(lexer.FOR_TOKEN, parseForStmt)               // for statement
+	stmt(lexer.FOREACH_TOKEN, parseForStmt)           // foreach statement
+	stmt(lexer.FUNCTION_TOKEN, parseFunctionDeclStmt) // function declaration
+	stmt(lexer.RETURN_TOKEN, parseReturnStmt)         // return statement
 
 	//Unary
 	nud(lexer.MINUS_TOKEN, parseUnaryExpr) // unary minus : -a
@@ -127,4 +128,6 @@ func bindLookupHandlers() {
 
 	//implement keyword
 	stmt(lexer.IMPLEMENT_TOKEN, parseImplementStmt)
+
+	nud(lexer.MAP_TOKEN, parseMapLiteral)
 }

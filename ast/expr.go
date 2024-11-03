@@ -20,8 +20,8 @@ func (a IdentifierExpr) EndPos() lexer.Position {
 
 //Literals or Raw values like: 1,2,3,4.6, "hello world", 'a' ...etc
 type IntegerLiteralExpr struct {
-	Value string
-	BitSize uint8
+	Value    string
+	BitSize  uint8
 	IsSigned bool
 	Location
 }
@@ -37,7 +37,7 @@ func (a IntegerLiteralExpr) EndPos() lexer.Position {
 }
 
 type FloatLiteralExpr struct {
-	Value string
+	Value   string
 	BitSize uint8
 	Location
 }
@@ -109,6 +109,27 @@ func (a NullLiteralExpr) StartPos() lexer.Position {
 	return a.Location.Start
 }
 func (a NullLiteralExpr) EndPos() lexer.Position {
+	return a.Location.End
+}
+
+type MapProp struct {
+	Key   Node
+	Value Node
+}
+
+type MapLiteral struct {
+	MapType
+	Values []MapProp
+	Location
+}
+
+func (a MapLiteral) INode() {
+	//empty method implements Node interface
+}
+func (a MapLiteral) StartPos() lexer.Position {
+	return a.Location.Start
+}
+func (a MapLiteral) EndPos() lexer.Position {
 	return a.Location.End
 }
 
@@ -243,19 +264,19 @@ func (a ArrayLiteral) EndPos() lexer.Position {
 	return a.Location.End
 }
 
-type ArrayIndexAccess struct {
-	Index Node
-	Array Node
+type Indexable struct {
+	Index     Node
+	Container Node
 	Location
 }
 
-func (a ArrayIndexAccess) INode() {
+func (a Indexable) INode() {
 	//empty method implements Node interface
 }
-func (a ArrayIndexAccess) StartPos() lexer.Position {
+func (a Indexable) StartPos() lexer.Position {
 	return a.Location.Start
 }
-func (a ArrayIndexAccess) EndPos() lexer.Position {
+func (a Indexable) EndPos() lexer.Position {
 	return a.Location.End
 }
 
