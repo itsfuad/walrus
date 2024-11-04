@@ -190,7 +190,8 @@ func parseDataType(p *Parser) ast.DataType {
 		}
 	default:
 		return ast.UserDefinedType{
-			TypeName: builtins.PARSER_TYPE(v),
+			TypeName: builtins.PARSER_TYPE(builtins.USER_DEFINED),
+			AliasName: value,
 			Location: loc,
 		}
 	}
@@ -370,7 +371,7 @@ func parseStructType(p *Parser) ast.DataType {
 
 func parseInterfaceType(p *Parser) ast.DataType {
 
-	start := p.advance().Start // eat interface token
+	start := p.advance().Start
 
 	p.expect(lexer.OPEN_CURLY)
 

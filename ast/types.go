@@ -210,6 +210,7 @@ func (a MapType) EndPos() lexer.Position {
 
 type UserDefinedType struct {
 	TypeName builtins.PARSER_TYPE
+	AliasName string
 	Location
 }
 

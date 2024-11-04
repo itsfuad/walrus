@@ -141,5 +141,6 @@ func DisplayErrors() {
 		PrintError(err, true)
 	}
 	utils.ColorPrint(utils.BOLD_RED, fmt.Sprintf("%d error(s) found\n", len(globalErrors)))
-	os.Exit(-1)
+	//os.Exit(-1)
+	panic("Errors found")
 }

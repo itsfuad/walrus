@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"walrus/ast"
 	"walrus/errgen"
+	"walrus/utils"
 )
 
 // checkVariableAssignment checks the assignment of a value to a variable in the given type environment.
@@ -62,28 +63,26 @@ func checkVariableDeclaration(node ast.VarDeclStmt, env *TypeEnvironment) ValueT
 
 	varToDecl := node.Variable
 
-	fmt.Printf("Declaring variable %s\n", varToDecl.Name)
+	fmt.Print("Declaring variable ")
+	utils.ColorPrint(utils.RED, varToDecl.Name + "\n")
 
 	var expectedTypeInterface ValueTypeInterface
 
 	if node.ExplicitType != nil {
 		expectedTypeInterface = EvaluateTypeName(node.ExplicitType, env)
-		fmt.Printf("Explicit type %T\n", expectedTypeInterface)
-		fmt.Printf("Explicit type name %s\n", expectedTypeInterface.DType())
+		fmt.Print("Explicit type: ")
+		utils.ColorPrint(utils.PURPLE, string(valueTypeInterfaceToString(expectedTypeInterface)) + "\n")
 	} else {
 		expectedTypeInterface = GetValueType(node.Value, env)
-		//handleExplicitType(typestr, env)
-		fmt.Printf("Auto detected type %T, %s\n", expectedTypeInterface, expectedTypeInterface.DType())
+		fmt.Print("Auto detected type: ")
+		utils.ColorPrint(utils.PURPLE, string(valueTypeInterfaceToString(expectedTypeInterface)) + "\n")
 	}
-
-	fmt.Printf("Value %v\n", node.Value)
 
 	if node.Value != nil && node.ExplicitType != nil {
 		//providedValue := CheckAST(node.Value, env)
 		providedValue := GetValueType(node.Value, env)
 		err := MatchTypes(expectedTypeInterface, providedValue)
 		if err != nil {
-
 			errgen.AddError(env.filePath, node.Value.StartPos().Line, node.Value.EndPos().Line, node.Value.StartPos().Column, node.Value.EndPos().Column, err.Error())
 		}
 	}
@@ -94,9 +93,11 @@ func checkVariableDeclaration(node ast.VarDeclStmt, env *TypeEnvironment) ValueT
 	}
 
 	if node.IsConst {
-		fmt.Printf("Declared constant variable %s of type %s\n", varToDecl.Name, expectedTypeInterface.DType())
+		fmt.Print("Declared constant variable ")
+		utils.ColorPrint(utils.RED, varToDecl.Name + "\n")
 	} else {
-		fmt.Printf("Declared variable %s of type %s\n", varToDecl.Name, expectedTypeInterface.DType())
+		fmt.Print("Declared variable ")
+		utils.ColorPrint(utils.RED, varToDecl.Name + "\n")
 	}
 
 	//return the type of the variable

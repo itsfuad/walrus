@@ -27,6 +27,7 @@ const (
 	ARRAY     = "array"
 	MAP       = "map"
 	VOID      = "void"
+	USER_DEFINED = "user_defined"
 )
 
 type Searchable interface {

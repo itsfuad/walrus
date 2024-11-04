@@ -26,7 +26,6 @@ func RandStringRunes(n int) string {
 }
 
 func stringToValueTypeInterface(typ builtins.TC_TYPE, env *TypeEnvironment) (ValueTypeInterface, error) {
-
 	switch typ {
 	case INT8_TYPE:
 		return NewInt(8, true), nil
@@ -62,7 +61,7 @@ func stringToValueTypeInterface(typ builtins.TC_TYPE, env *TypeEnvironment) (Val
 		if err != nil {
 			return nil, err
 		}
-		return declaredEnv.types[string(typ)].(UserDefined).TypeDef, nil
+		return declaredEnv.types[string(typ)], nil
 	}
 }
 
@@ -230,12 +229,21 @@ func EvaluateTypeName(dtype ast.DataType, env *TypeEnvironment) ValueTypeInterfa
 		keyType := EvaluateTypeName(t.KeyType, env)
 		valueType := EvaluateTypeName(t.ValueType, env)
 		return NewMap(keyType, valueType)
+	case ast.UserDefinedType:
+		typename := t.AliasName
+		val, err := stringToValueTypeInterface(builtins.TC_TYPE(typename), env)
+		if err != nil {
+			errgen.AddError(env.filePath, dtype.StartPos().Line, dtype.EndPos().Line, dtype.StartPos().Column, dtype.EndPos().Column, err.Error())
+		}
+		if val == nil {
+			errgen.DisplayErrors()
+		}
+		return val
 	case nil:
 		return NewVoid()
 	default:
 		val, err := stringToValueTypeInterface(builtins.TC_TYPE(t.Type()), env)
 		if err != nil {
-
 			errgen.AddError(env.filePath, dtype.StartPos().Line, dtype.EndPos().Line, dtype.StartPos().Column, dtype.EndPos().Column, err.Error())
 		}
 		if val == nil {

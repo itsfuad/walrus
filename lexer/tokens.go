@@ -39,6 +39,7 @@ const (
 	FUNCTION_TOKEN  builtins.TOKEN_KIND = builtins.FUNCTION
 	INTERFACE_TOKEN builtins.TOKEN_KIND = builtins.INTERFACE
 	MAP_TOKEN       builtins.TOKEN_KIND = builtins.MAP
+
 	//increment and decrement
 	PLUS_PLUS_TOKEN   builtins.TOKEN_KIND = "++"
 	MINUS_MINUS_TOKEN builtins.TOKEN_KIND = "--"
