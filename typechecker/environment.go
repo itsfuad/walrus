@@ -139,7 +139,6 @@ func GetValueType(value ast.Node, t *TypeEnvironment) ValueTypeInterface {
 
 	typ, err := getValueTypeInterface(typ, t)
 	if err != nil {
-
 		errgen.AddError(t.filePath, value.StartPos().Line, value.EndPos().Line, value.StartPos().Column, value.EndPos().Column, err.Error())
 		return nil
 	}

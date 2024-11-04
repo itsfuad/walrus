@@ -93,7 +93,7 @@ func checkPropertyAccess(expr ast.StructPropertyAccessExpr, env *TypeEnvironment
 	end := expr.Object.EndPos().Column
 
 	typeName := string(valueTypeInterfaceToString(object))
-	// Resolve the struct type from the environment
+
 	fmt.Printf("Resolving type %s\n", typeName)
 
 	declaredEnv, err := env.ResolveType(typeName)
@@ -137,21 +137,8 @@ func checkPropertyAccess(expr ast.StructPropertyAccessExpr, env *TypeEnvironment
 
 		return property
 	} else {
-		// If the property is not found, check if it is a method
-
 		errgen.AddError(structEnv.filePath, prop.Start.Line, prop.End.Line, prop.Start.Column, prop.End.Column, fmt.Sprintf("property '%s' does not exist on type '%s'", prop.Name, typeName))
 	}
-
-	// If neither property nor method is found, raise an error
-	/*
-		errgen.AddError(
-			declaredEnv.filePath,
-			prop.Start.Line,
-			prop.End.Line,
-			prop.Start.Column,
-			prop.End.Column,
-			fmt.Sprintf("property or method '%s' does not exist on type '%s'", prop.Name, typeName)).DisplayWithPanic()
-	*/
 
 	errgen.AddError(
 		declaredEnv.filePath,
@@ -168,7 +155,6 @@ func checkStructTypeDecl(name string, structType ast.StructType, env *TypeEnviro
 
 	structEnv := NewTypeENV(env, STRUCT_SCOPE, name, env.filePath)
 
-	//props := map[string]StructProperty{}
 	for propname, propval := range structType.Properties {
 		propType := EvaluateTypeName(propval.PropType, env)
 		property := StructProperty{

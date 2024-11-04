@@ -3,7 +3,6 @@ package typechecker
 import (
 	"fmt"
 	"walrus/ast"
-	"walrus/builtins"
 	"walrus/errgen"
 )
 
@@ -18,26 +17,10 @@ func checkTypeDeclaration(node ast.TypeDeclStmt, env *TypeEnvironment) ValueType
 	switch t := typeName.(type) {
 	case ast.StructType:
 		val = checkStructTypeDecl(node.UDTypeName, t, env)
-	case ast.FunctionType:
-		val = EvaluateTypeName(t, env)
 	case ast.InterfaceType:
 		val = checkInterfaceTypeDecl(node.UDTypeName, t, env)
-	case ast.ArrayType:
-		val = EvaluateTypeName(t.ArrayType, env)
-		arr := Array{
-			DataType:  builtins.ARRAY,
-			ArrayType: val,
-		}
-		val = arr
-	case nil:
-		val = NewVoid()
 	default:
-		typ, err := stringToValueTypeInterface(builtins.TC_TYPE(t.Type()), env)
-		if err != nil {
-
-			errgen.AddError(env.filePath, t.StartPos().Line, t.EndPos().Line, t.StartPos().Column, t.EndPos().Column, err.Error())
-		}
-		val = typ
+		val = EvaluateTypeName(typeName, env)
 	}
 
 	typeVal := UserDefined{
