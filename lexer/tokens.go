@@ -3,6 +3,7 @@ package lexer
 import (
 	"fmt"
 	"walrus/builtins"
+	"walrus/utils"
 )
 
 const (
@@ -117,10 +118,11 @@ type Token struct {
 }
 
 func (t *Token) Debug(filename string) {
+	utils.ColorPrint(utils.GREY, fmt.Sprintf("%s:%d:%d", filename, t.Start.Line, t.Start.Column))
 	if t.Value == string(t.Kind) {
-		fmt.Printf("%s:%d:%d\t '%s'\n", filename, t.Start.Line, t.Start.Column, t.Value)
+		fmt.Printf("\t '%s'\n", t.Value)
 	} else {
-		fmt.Printf("%s:%d:%d\t '%s'\t('%v')\n", filename, t.Start.Line, t.Start.Column, t.Value, t.Kind)
+		fmt.Printf("\t '%s'\t('%v')\n", t.Value, t.Kind)
 	}
 }
 

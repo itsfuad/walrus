@@ -29,10 +29,9 @@ func checkTypeDeclaration(node ast.TypeDeclStmt, env *TypeEnvironment) ValueType
 		TypeDef:  val,
 	}
 
-	err := env.DeclareType(node.UDTypeName, typeVal)
+	err := DeclareType(node.UDTypeName, typeVal)
 	if err != nil {
 		fmt.Printf("cannot declare type %s: %s\n", node.UDTypeName, err.Error())
-
 		errgen.AddError(env.filePath, node.Start.Line, node.End.Line, node.Start.Column, node.End.Column, err.Error())
 	}
 

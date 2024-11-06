@@ -25,46 +25,6 @@ func RandStringRunes(n int) string {
 	return string(b)
 }
 
-func stringToValueTypeInterface(typ builtins.TC_TYPE, env *TypeEnvironment) (ValueTypeInterface, error) {
-	switch typ {
-	case INT8_TYPE:
-		return NewInt(8, true), nil
-	case INT16_TYPE:
-		return NewInt(16, true), nil
-	case INT32_TYPE:
-		return NewInt(32, true), nil
-	case INT64_TYPE:
-		return NewInt(64, true), nil
-	case UINT8_TYPE:
-		return NewInt(8, false), nil
-	case UINT16_TYPE:
-		return NewInt(16, false), nil
-	case UINT32_TYPE:
-		return NewInt(32, false), nil
-	case UINT64_TYPE:
-		return NewInt(64, false), nil
-	case BYTE_TYPE:
-		return NewInt(8, false), nil
-	case STRING_TYPE:
-		return NewStr(), nil
-	case FLOAT32_TYPE:
-		return NewFloat(32), nil
-	case FLOAT64_TYPE:
-		return NewFloat(64), nil
-	case NULL_TYPE:
-		return NewNull(), nil
-	case VOID_TYPE:
-		return NewVoid(), nil
-	default:
-		//search for the type
-		declaredEnv, err := env.ResolveType(string(typ))
-		if err != nil {
-			return nil, err
-		}
-		return declaredEnv.types[string(typ)], nil
-	}
-}
-
 // valueTypeInterfaceToString converts a ValueTypeInterface to a string representation of builtins.VALUE_TYPE.
 // It handles different types such as Array, Struct, Interface, and Fn by recursively converting
 // their components to strings and formatting them appropriately.
@@ -147,11 +107,9 @@ func CheckLValue(node ast.Node, env *TypeEnvironment) error {
 	//if not constant and is IdentifierExpr
 	switch t := node.(type) {
 	case ast.IdentifierExpr:
-
-		if _, ok := env.types[t.Name]; ok {
+		if isTypeDefined(t.Name) {
 			return errors.New("type")
 		}
-
 		//find the declaredEnv where the variable was declared
 		declaredEnv, err := env.ResolveVar(t.Name)
 		if err != nil {
@@ -196,6 +154,7 @@ func IsNumberType(operand ValueTypeInterface) bool {
 //  3. If the dtype is nil, it returns a Void type.
 //  4. For other types, it attempts to create a ValueTypeInterface and handles any errors that occur.
 func EvaluateTypeName(dtype ast.DataType, env *TypeEnvironment) ValueTypeInterface {
+	fmt.Printf("Evaluating type %s\n", dtype.Type())
 	switch t := dtype.(type) {
 	case ast.ArrayType:
 		val := EvaluateTypeName(t.ArrayType, env)
@@ -231,7 +190,7 @@ func EvaluateTypeName(dtype ast.DataType, env *TypeEnvironment) ValueTypeInterfa
 		return NewMap(keyType, valueType)
 	case ast.UserDefinedType:
 		typename := t.AliasName
-		val, err := stringToValueTypeInterface(builtins.TC_TYPE(typename), env)
+		val, err := getTypeDefinition(typename)
 		if err != nil {
 			errgen.AddError(env.filePath, dtype.StartPos().Line, dtype.EndPos().Line, dtype.StartPos().Column, dtype.EndPos().Column, err.Error())
 		}
@@ -242,7 +201,7 @@ func EvaluateTypeName(dtype ast.DataType, env *TypeEnvironment) ValueTypeInterfa
 	case nil:
 		return NewVoid()
 	default:
-		val, err := stringToValueTypeInterface(builtins.TC_TYPE(t.Type()), env)
+		val, err := getTypeDefinition(string(t.Type()))
 		if err != nil {
 			errgen.AddError(env.filePath, dtype.StartPos().Line, dtype.EndPos().Line, dtype.StartPos().Column, dtype.EndPos().Column, err.Error())
 		}

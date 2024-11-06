@@ -10,18 +10,13 @@ func checkStructLiteral(structLit ast.StructLiteral, env *TypeEnvironment) Value
 
 	sName := structLit.Identifier
 	fmt.Printf("Checking struct literal %s\n", sName.Name)
-	//check if defined
-	declaredEnv, err := env.ResolveType(sName.Name)
+
+	Type, err := getTypeDefinition(sName.Name)
 	if err != nil {
-
-		errgen.AddError(env.filePath, sName.StartPos().Line, sName.EndPos().Line, sName.StartPos().Column, sName.EndPos().Column, err.Error())
-	}
-
-	structType, ok := declaredEnv.types[sName.Name].(UserDefined).TypeDef.(Struct)
-	if !ok {
-
 		errgen.AddError(env.filePath, sName.StartPos().Line, sName.EndPos().Line, sName.StartPos().Column, sName.EndPos().Column, fmt.Sprintf("'%s' is not a struct", sName.Name))
 	}
+
+	structType := Type.(UserDefined).TypeDef.(Struct)
 
 	// now we match the defined props with the provided props
 	for propname, propval := range structLit.Properties {
@@ -32,7 +27,7 @@ func checkStructLiteral(structLit ast.StructLiteral, env *TypeEnvironment) Value
 		}
 
 		//check if the property type matches the defined type
-		providedType := GetValueType(propval, env)
+		providedType := nodeType(propval, env)
 		expectedType := structType.StructScope.variables[propname].(StructProperty).Type
 
 		err := MatchTypes(expectedType, providedType)
@@ -81,7 +76,7 @@ func checkPropertyAccess(expr ast.StructPropertyAccessExpr, env *TypeEnvironment
 	fmt.Printf("Object: %v\n", expr.Object)
 	fmt.Printf("Property: %v\n", expr.Property)
 
-	object := GetValueType(expr.Object, env)
+	object := nodeType(expr.Object, env)
 
 	fmt.Printf("Object type: %T\n", object)
 
@@ -96,16 +91,15 @@ func checkPropertyAccess(expr ast.StructPropertyAccessExpr, env *TypeEnvironment
 
 	fmt.Printf("Resolving type %s\n", typeName)
 
-	declaredEnv, err := env.ResolveType(typeName)
+	Type, err := getTypeDefinition(typeName)
 	if err != nil {
-
 		errgen.AddError(env.filePath, lineStart, lineEnd, start, end, err.Error())
 	}
 
 	var structEnv TypeEnvironment
 
 	//get the struct's environment
-	switch t := declaredEnv.types[typeName].(UserDefined).TypeDef.(type) {
+	switch t := Type.(UserDefined).TypeDef.(type) {
 	case Struct:
 		structEnv = t.StructScope
 	case Interface:
@@ -141,7 +135,7 @@ func checkPropertyAccess(expr ast.StructPropertyAccessExpr, env *TypeEnvironment
 	}
 
 	errgen.AddError(
-		declaredEnv.filePath,
+		env.filePath,
 		prop.Start.Line,
 		prop.End.Line,
 		prop.Start.Column,

@@ -18,16 +18,16 @@ func checkMapLiteral(node ast.MapLiteral, env *TypeEnvironment) ValueTypeInterfa
 
 	//check the key value pairs
 	for _, value := range node.Values {
-		keyType := GetValueType(value.Key, env)
-		valueType := GetValueType(value.Value, env)
+		keyType := nodeType(value.Key, env)
+		valueType := nodeType(value.Value, env)
 
 		err := MatchTypes(evaluatedMapType.(Map).KeyType, keyType)
 		if err != nil {
-			errgen.AddError(env.filePath, value.Key.StartPos().Line, value.Key.EndPos().Line, value.Key.StartPos().Column, value.Key.EndPos().Column, "incorrect map key. " + err.Error())
+			errgen.AddError(env.filePath, value.Key.StartPos().Line, value.Key.EndPos().Line, value.Key.StartPos().Column, value.Key.EndPos().Column, "incorrect map key. "+err.Error())
 		}
 		err = MatchTypes(evaluatedMapType.(Map).ValueType, valueType)
 		if err != nil {
-			errgen.AddError(env.filePath, value.Value.StartPos().Line, value.Value.EndPos().Line, value.Value.StartPos().Column, value.Value.EndPos().Column,"incorrect map value. " + err.Error())
+			errgen.AddError(env.filePath, value.Value.StartPos().Line, value.Value.EndPos().Line, value.Value.StartPos().Column, value.Value.EndPos().Column, "incorrect map value. "+err.Error())
 		}
 	}
 

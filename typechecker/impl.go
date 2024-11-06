@@ -57,9 +57,8 @@ func checkImplStmt(implStmt ast.ImplStmt, env *TypeEnvironment) ValueTypeInterfa
 	}
 
 	// check if the type to implement exists
-	structValue, err := env.GetTypeFromEnv(implStmt.ImplFor.Name)
+	structValue, err := getTypeDefinition(implStmt.ImplFor.Name)
 	if err != nil {
-
 		errgen.AddError(env.filePath, implStmt.Start.Line, implStmt.End.Line, implStmt.Start.Column, implStmt.End.Column, err.Error())
 	}
 
