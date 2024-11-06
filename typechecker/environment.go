@@ -9,12 +9,30 @@ import (
 type SCOPE_TYPE int
 
 const (
-	GLOBAL_SCOPE SCOPE_TYPE = iota
+	PROGRAM_SCOPE SCOPE_TYPE = iota
+	GLOBAL_SCOPE
 	FUNCTION_SCOPE
 	STRUCT_SCOPE
 	CONDITIONAL_SCOPE
 	LOOP_SCOPE
 )
+
+var typeDefinitions = map[string]ValueTypeInterface{
+	string(INT8_TYPE):    NewInt(8, true),
+	string(INT16_TYPE):   NewInt(16, true),
+	string(INT32_TYPE):   NewInt(32, true),
+	string(INT64_TYPE):   NewInt(64, true),
+	string(UINT8_TYPE):   NewInt(8, false),
+	string(UINT16_TYPE):  NewInt(16, false),
+	string(UINT32_TYPE):  NewInt(32, false),
+	string(UINT64_TYPE):  NewInt(64, false),
+	string(BYTE_TYPE):    NewInt(8, false),
+	string(STRING_TYPE):  NewStr(),
+	string(FLOAT32_TYPE): NewFloat(32),
+	string(FLOAT64_TYPE): NewFloat(64),
+	string(NULL_TYPE):    NewNull(),
+	string(VOID_TYPE):    NewVoid(),
+}
 
 type TypeEnvironment struct {
 	parent     *TypeEnvironment
@@ -23,9 +41,17 @@ type TypeEnvironment struct {
 	variables  map[string]ValueTypeInterface
 	constants  map[string]bool
 	isOptional map[string]bool
-	types      map[string]ValueTypeInterface
 	interfaces map[string]Interface
 	filePath   string
+}
+
+func ProgramEnv(filepath string) *TypeEnvironment {
+	env := NewTypeENV(nil, PROGRAM_SCOPE, "program", filepath)
+	env.DeclareVar("true", NewBool(), true, false)
+	env.DeclareVar("false", NewBool(), true, false)
+	env.DeclareVar("null", NewNull(), true, false)
+	env.DeclareVar("PI", NewFloat(32), true, false)
+	return env
 }
 
 func NewTypeENV(parent *TypeEnvironment, scope SCOPE_TYPE, scopeName string, filePath string) *TypeEnvironment {
@@ -37,7 +63,6 @@ func NewTypeENV(parent *TypeEnvironment, scope SCOPE_TYPE, scopeName string, fil
 		variables:  make(map[string]ValueTypeInterface),
 		constants:  make(map[string]bool),
 		isOptional: make(map[string]bool),
-		types:      make(map[string]ValueTypeInterface),
 		interfaces: make(map[string]Interface),
 	}
 }
@@ -77,30 +102,9 @@ func (t *TypeEnvironment) ResolveVar(name string) (*TypeEnvironment, error) {
 	return t.parent.ResolveVar(name)
 }
 
-func (t *TypeEnvironment) ResolveType(name string) (*TypeEnvironment, error) {
-	if _, ok := t.types[name]; ok {
-		return t, nil
-	}
-	if t.parent == nil {
-		return nil, fmt.Errorf("type '%s' was not declared in this scope", name)
-	}
-	return t.parent.ResolveType(name)
-}
-
-// instead, find all the upper scopes and check if the type is declared in any of them
-func (t *TypeEnvironment) GetTypeFromEnv(name string) (ValueTypeInterface, error) {
-	if val, ok := t.types[name]; ok {
-		return val.(UserDefined).TypeDef, nil
-	}
-	if t.parent == nil {
-		return nil, fmt.Errorf("'%s' was not declared in this scope", name)
-	}
-	return t.parent.GetTypeFromEnv(name)
-}
-
 func (t *TypeEnvironment) DeclareVar(name string, typeVar ValueTypeInterface, isConst bool, isOptional bool) error {
 
-	if _, ok := t.types[name]; ok {
+	if _, ok := typeDefinitions[name]; ok {
 		return fmt.Errorf("cannot declare variable with type '%s'", name)
 	}
 
@@ -116,13 +120,11 @@ func (t *TypeEnvironment) DeclareVar(name string, typeVar ValueTypeInterface, is
 	return nil
 }
 
-func (t *TypeEnvironment) DeclareType(name string, typeType ValueTypeInterface) error {
-
-	if scope, err := t.ResolveType(name); err == nil && scope == t {
-		return err
+func DeclareType(name string, typeType ValueTypeInterface) error {
+	if _, ok := typeDefinitions[name]; ok {
+		return fmt.Errorf("type '%s' already defined", name)
 	}
-	t.types[name] = typeType
-	fmt.Printf("Declared type %s, %T\n", name, typeType)
+	typeDefinitions[name] = typeType
 	return nil
 }
 
@@ -133,11 +135,11 @@ func (t *TypeEnvironment) isDeclared(name string) bool {
 	return false
 }
 
-func GetValueType(value ast.Node, t *TypeEnvironment) ValueTypeInterface {
+func nodeType(value ast.Node, t *TypeEnvironment) ValueTypeInterface {
 
 	typ := CheckAST(value, t)
 
-	typ, err := getValueTypeInterface(typ, t)
+	typ, err := unwrapTypeInterface(typ)
 	if err != nil {
 		errgen.AddError(t.filePath, value.StartPos().Line, value.EndPos().Line, value.StartPos().Column, value.EndPos().Column, err.Error())
 		return nil
@@ -146,17 +148,24 @@ func GetValueType(value ast.Node, t *TypeEnvironment) ValueTypeInterface {
 	return typ
 }
 
-func getValueTypeInterface(typ ValueTypeInterface, env *TypeEnvironment) (ValueTypeInterface, error) {
+func getTypeDefinition(name string) (ValueTypeInterface, error) {
+	if typ, ok := typeDefinitions[name]; !ok {
+		return nil, fmt.Errorf("unknown type '%s'", name)
+	} else {
+		return typ, nil
+	}
+}
+
+func isTypeDefined(name string) bool {
+	_, ok := typeDefinitions[name]
+	return ok
+}
+
+func unwrapTypeInterface(typ ValueTypeInterface) (ValueTypeInterface, error) {
 	switch t := typ.(type) {
 	case UserDefined:
-		//return getValueTypeInterface(t.TypeDef, env)
-		//find the type in the env
 		fmt.Printf("UserDefined type %s\n", t.TypeName)
-		if val, err := env.GetTypeFromEnv(t.TypeName); err == nil {
-			return val, nil
-		} else {
-			return nil, err
-		}
+		return getTypeDefinition(t.TypeName)
 	default:
 		return t, nil
 	}

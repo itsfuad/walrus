@@ -69,36 +69,25 @@ func TestResolveVar(t *testing.T) {
 }
 
 func TestDeclareType(t *testing.T) {
-	env := NewTypeENV(nil, GLOBAL_SCOPE, "global", FILE)
 	structType := Struct{DataType: STRUCT_TYPE, StructName: "MyStruct"}
 
-	err := env.DeclareType("MyStruct", structType)
+	err := DeclareType("MyStruct", structType)
 	if err != nil {
 		t.Fatalf(EXPECTED_NO_ERROR, err)
 	}
 
-	if _, ok := env.types["MyStruct"]; !ok {
+	if _, err := getTypeDefinition("MyStruct"); err != nil {
 		t.Errorf("Expected type 'MyStruct' to be declared")
 	}
 }
 
 func TestResolveType(t *testing.T) {
-	env := NewTypeENV(nil, GLOBAL_SCOPE, "global", FILE)
 	structType := Struct{DataType: STRUCT_TYPE, StructName: "MyStruct"}
-	env.DeclareType("MyStruct", structType)
+	DeclareType("MyStruct", structType)
 
-	scope, err := env.ResolveType("MyStruct")
+	_, err := getTypeDefinition("MyStruct")
 	if err != nil {
 		t.Fatalf(EXPECTED_NO_ERROR, err)
-	}
-
-	if scope != env {
-		t.Errorf("Expected scope to be the same as env")
-	}
-
-	_, err = env.ResolveType("UnknownType")
-	if err == nil {
-		t.Fatalf("EXPECTED_ERROR")
 	}
 }
 

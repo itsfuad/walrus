@@ -10,7 +10,7 @@ func checkIdentifier(node ast.IdentifierExpr, env *TypeEnvironment) ValueTypeInt
 	name := node.Name
 
 	//identifier cannot be types or builtins
-	if _, ok := env.types[name]; ok {
+	if isTypeDefined(name) {
 		errgen.AddError(env.filePath, node.StartPos().Line, node.EndPos().Line, node.StartPos().Column, node.EndPos().Column, "cannot use type as value").DisplayWithPanic()
 	}
 
@@ -23,9 +23,8 @@ func checkIdentifier(node ast.IdentifierExpr, env *TypeEnvironment) ValueTypeInt
 	// if we found value on that scope, return the value. Else make error (though there is no change to reach the error)
 	variable := declaredEnv.variables[name]
 
-	value, err := getValueTypeInterface(variable, env)
+	value, err := unwrapTypeInterface(variable)
 	if err != nil {
-
 		errgen.AddError(env.filePath, node.StartPos().Line, node.EndPos().Line, node.StartPos().Column, node.EndPos().Column, err.Error())
 	}
 	return value

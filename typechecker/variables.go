@@ -27,8 +27,8 @@ func checkVariableAssignment(node ast.VarAssignmentExpr, env *TypeEnvironment) V
 
 	}
 
-	expectedType := GetValueType(Assignee, env)
-	providedType := GetValueType(valueToAssign, env)
+	expectedType := nodeType(Assignee, env)
+	providedType := nodeType(valueToAssign, env)
 
 	err := MatchTypes(expectedType, providedType)
 	if err != nil {
@@ -64,28 +64,31 @@ func checkVariableDeclaration(node ast.VarDeclStmt, env *TypeEnvironment) ValueT
 	varToDecl := node.Variable
 
 	fmt.Print("Declaring variable ")
-	utils.ColorPrint(utils.RED, varToDecl.Name + "\n")
+	utils.ColorPrint(utils.RED, varToDecl.Name+"\n")
 
 	var expectedTypeInterface ValueTypeInterface
+
+	// let a : int = 5;
 
 	if node.ExplicitType != nil {
 		expectedTypeInterface = EvaluateTypeName(node.ExplicitType, env)
 		fmt.Print("Explicit type: ")
-		utils.ColorPrint(utils.PURPLE, string(valueTypeInterfaceToString(expectedTypeInterface)) + "\n")
+		utils.ColorPrint(utils.PURPLE, string(valueTypeInterfaceToString(expectedTypeInterface))+"\n")
 	} else {
-		expectedTypeInterface = GetValueType(node.Value, env)
+		expectedTypeInterface = nodeType(node.Value, env)
 		fmt.Print("Auto detected type: ")
-		utils.ColorPrint(utils.PURPLE, string(valueTypeInterfaceToString(expectedTypeInterface)) + "\n")
+		utils.ColorPrint(utils.PURPLE, string(valueTypeInterfaceToString(expectedTypeInterface))+"\n")
 	}
 
 	if node.Value != nil && node.ExplicitType != nil {
 		//providedValue := CheckAST(node.Value, env)
-		providedValue := GetValueType(node.Value, env)
+		providedValue := nodeType(node.Value, env)
 		err := MatchTypes(expectedTypeInterface, providedValue)
 		if err != nil {
 			errgen.AddError(env.filePath, node.Value.StartPos().Line, node.Value.EndPos().Line, node.Value.StartPos().Column, node.Value.EndPos().Column, err.Error())
 		}
 	}
+
 	err := env.DeclareVar(varToDecl.Name, expectedTypeInterface, node.IsConst, false)
 	if err != nil {
 
@@ -94,10 +97,14 @@ func checkVariableDeclaration(node ast.VarDeclStmt, env *TypeEnvironment) ValueT
 
 	if node.IsConst {
 		fmt.Print("Declared constant variable ")
-		utils.ColorPrint(utils.RED, varToDecl.Name + "\n")
+		utils.ColorPrint(utils.RED, varToDecl.Name)
+		fmt.Print(" of type ")
+		utils.ColorPrint(utils.PURPLE, string(valueTypeInterfaceToString(expectedTypeInterface))+"\n")
 	} else {
 		fmt.Print("Declared variable ")
-		utils.ColorPrint(utils.RED, varToDecl.Name + "\n")
+		utils.ColorPrint(utils.RED, varToDecl.Name)
+		fmt.Print(" of type ")
+		utils.ColorPrint(utils.PURPLE, string(valueTypeInterfaceToString(expectedTypeInterface))+"\n")
 	}
 
 	//return the type of the variable

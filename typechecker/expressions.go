@@ -12,7 +12,7 @@ func checkIncrementalExpr(node ast.IncrementalInterface, env *TypeEnvironment) V
 	op := node.Op()
 	arg := node.Arg()
 	// the argument must be an identifier evaluated to a number
-	typeVal := GetValueType(arg, env)
+	typeVal := nodeType(arg, env)
 	if !IsNumberType(typeVal) {
 
 		errgen.AddError(env.filePath, arg.StartPos().Line, arg.EndPos().Line, arg.StartPos().Column, arg.EndPos().Column, "invalid prefix operation with non-numeric type")
@@ -26,7 +26,7 @@ func checkIncrementalExpr(node ast.IncrementalInterface, env *TypeEnvironment) V
 
 func checkTypeCast(node ast.TypeCastExpr, env *TypeEnvironment) ValueTypeInterface {
 
-	originalType := GetValueType(node.Expression, env)
+	originalType := nodeType(node.Expression, env)
 	toCast := EvaluateTypeName(node.ToCast, env)
 
 	if originalType.DType() == toCast.DType() {
@@ -46,7 +46,7 @@ func checkUnaryExpr(node ast.UnaryExpr, env *TypeEnvironment) ValueTypeInterface
 	op := node.Operator
 	arg := node.Argument
 	//evaluate argument. must be evaluated to number or boolean for ! (not)
-	typeVal := GetValueType(arg, env)
+	typeVal := nodeType(arg, env)
 
 	switch t := typeVal.(type) {
 	case Int, Float:
@@ -71,8 +71,8 @@ func checkUnaryExpr(node ast.UnaryExpr, env *TypeEnvironment) ValueTypeInterface
 func checkBinaryExpr(node ast.BinaryExpr, env *TypeEnvironment) ValueTypeInterface {
 	op := node.Operator
 
-	left := GetValueType(node.Left, env)
-	right := GetValueType(node.Right, env)
+	left := nodeType(node.Left, env)
+	right := nodeType(node.Right, env)
 
 	leftType := left.DType()
 	rightType := right.DType()

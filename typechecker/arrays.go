@@ -29,7 +29,6 @@ func evaluateIndexableAccess(indexable ast.Indexable, env *TypeEnvironment) Valu
 	}
 }
 
-
 // IndexedValueType determines the type of the value that is indexed from an indexable container.
 // It takes an indexable AST node and a type environment as input and returns the value type
 // of the indexed element or an error if the indexing operation is invalid.
@@ -50,14 +49,14 @@ func evaluateIndexableAccess(indexable ast.Indexable, env *TypeEnvironment) Valu
 // If the container type is not supported for indexing, an error is returned.
 func IndexedValueType(indexable ast.Indexable, env *TypeEnvironment) (ValueTypeInterface, error) {
 
-	container := GetValueType(indexable.Container, env)
-	index := GetValueType(indexable.Index, env)
-	
+	container := nodeType(indexable.Container, env)
+	index := nodeType(indexable.Index, env)
+
 	switch t := container.(type) {
 	case Array:
 		if !IsNumberType(index) {
 			return nil, fmt.Errorf("index must be a valid integer")
-		} 
+		}
 		return t.ArrayType, nil
 	case Str:
 		if !IsNumberType(index) {
@@ -87,7 +86,7 @@ func IndexedValueType(indexable ast.Indexable, env *TypeEnvironment) (ValueTypeI
 func evaluateArrayExpr(array ast.ArrayLiteral, env *TypeEnvironment) ValueTypeInterface {
 	var expectedType ValueTypeInterface
 	for i, value := range array.Values {
-		v := GetValueType(value, env)
+		v := nodeType(value, env)
 		if i == 0 {
 			expectedType = v
 		}

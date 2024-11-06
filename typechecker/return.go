@@ -14,7 +14,7 @@ func checkReturnStmt(returnNode ast.ReturnStmt, env *TypeEnvironment) ValueTypeI
 	}
 
 	//check if the return type matches the function return type
-	returnType := GetValueType(returnNode.Value, env)
+	returnType := nodeType(returnNode.Value, env)
 
 	fnReturns := getFunctionReturnValue(env, returnNode)
 

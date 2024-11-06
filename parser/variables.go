@@ -43,7 +43,6 @@ func parseVarDeclStmt(p *Parser) ast.Node {
 	assignmentToken := p.advance()
 
 	if assignmentToken.Kind == lexer.COLON_TOKEN {
-		// syntax is let a : <type>
 		explicitType = parseType(p, DEFAULT_BP)
 	} else if assignmentToken.Kind != lexer.WALRUS_TOKEN {
 		msg := "Invalid variable declaration syntax"
