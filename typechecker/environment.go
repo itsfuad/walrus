@@ -9,8 +9,7 @@ import (
 type SCOPE_TYPE int
 
 const (
-	PROGRAM_SCOPE SCOPE_TYPE = iota
-	GLOBAL_SCOPE
+	GLOBAL_SCOPE SCOPE_TYPE = iota
 	FUNCTION_SCOPE
 	STRUCT_SCOPE
 	CONDITIONAL_SCOPE
@@ -46,7 +45,7 @@ type TypeEnvironment struct {
 }
 
 func ProgramEnv(filepath string) *TypeEnvironment {
-	env := NewTypeENV(nil, PROGRAM_SCOPE, "program", filepath)
+	env := NewTypeENV(nil, GLOBAL_SCOPE, "global", filepath)
 	env.DeclareVar("true", NewBool(), true, false)
 	env.DeclareVar("false", NewBool(), true, false)
 	env.DeclareVar("null", NewNull(), true, false)
@@ -139,10 +138,9 @@ func nodeType(value ast.Node, t *TypeEnvironment) ValueTypeInterface {
 
 	typ := CheckAST(value, t)
 
-	typ, err := unwrapTypeInterface(typ)
+	typ, err := unwrapType(typ)
 	if err != nil {
-		errgen.AddError(t.filePath, value.StartPos().Line, value.EndPos().Line, value.StartPos().Column, value.EndPos().Column, err.Error())
-		return nil
+		errgen.AddError(t.filePath, value.StartPos().Line, value.EndPos().Line, value.StartPos().Column, value.EndPos().Column, err.Error()).DisplayWithPanic()
 	}
 
 	return typ
@@ -152,21 +150,25 @@ func getTypeDefinition(name string) (ValueTypeInterface, error) {
 	if typ, ok := typeDefinitions[name]; !ok {
 		return nil, fmt.Errorf("unknown type '%s'", name)
 	} else {
-		return typ, nil
+		switch t := typ.(type) {
+		case UserDefined:
+			return unwrapType(t.TypeDef)
+		default:
+			return typ, nil
+		}
+	}
+}
+
+func unwrapType(value ValueTypeInterface) (ValueTypeInterface, error) {
+	switch t := value.(type) {
+	case UserDefined:
+		return unwrapType(t.TypeDef)
+	default:
+		return value, nil
 	}
 }
 
 func isTypeDefined(name string) bool {
 	_, ok := typeDefinitions[name]
 	return ok
-}
-
-func unwrapTypeInterface(typ ValueTypeInterface) (ValueTypeInterface, error) {
-	switch t := typ.(type) {
-	case UserDefined:
-		fmt.Printf("UserDefined type %s\n", t.TypeName)
-		return getTypeDefinition(t.TypeName)
-	default:
-		return t, nil
-	}
 }

@@ -22,10 +22,10 @@ func checkIdentifier(node ast.IdentifierExpr, env *TypeEnvironment) ValueTypeInt
 	}
 	// if we found value on that scope, return the value. Else make error (though there is no change to reach the error)
 	variable := declaredEnv.variables[name]
-
-	value, err := unwrapTypeInterface(variable)
+	
+	value, err := unwrapType(variable)
 	if err != nil {
-		errgen.AddError(env.filePath, node.StartPos().Line, node.EndPos().Line, node.StartPos().Column, node.EndPos().Column, err.Error())
+		errgen.AddError(env.filePath, node.StartPos().Line, node.EndPos().Line, node.StartPos().Column, node.EndPos().Column, err.Error()).DisplayWithPanic()
 	}
 	return value
 }

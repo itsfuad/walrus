@@ -1,14 +1,4 @@
 
-let a := 002;
-
-fn sayHello(a: str){
-    let hello := "Hello world " + a;
-}
-
-
-//ret 0; //error
-
-let someBool := a > 5;
 
 fn large(u: i32) -> i32 {
     let a := 1;
@@ -16,14 +6,14 @@ fn large(u: i32) -> i32 {
     if a > b {
         ret 5;
     } else {
-        //ret b;
+        ret b;
         if a > b {
             ret 5;
         } else {
             ret 6;
         }
     }
-    //ret 0;
+    ret 0;
 }
 
 
@@ -38,7 +28,7 @@ let c := f();
 
 type Int i32;
 
-let typedInt: Int = 5;
+//let typedInt: Int = 5;
 
 type FN fn (a: i32, b?: f32) -> i32;
 
@@ -73,4 +63,4 @@ const addRes := add(1);
 const closureRes1 := closure(1);
 const closureRes2 := closureRes1(2);
 const closureRes3 := closure(1)(2);
-const fnval := add;
+//const fnval := add;

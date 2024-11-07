@@ -7,7 +7,7 @@ let arr2 := [[1,4], [4,7 * 5], arr, [4]];
 let arp := 20;
 
 let p : i32;
-p = arr2[arp][2];
+p = arr2[arp][PI as i32];
 
 //arr2[0][0][0]; // error - cannot access index of type i32
 
@@ -17,9 +17,11 @@ const x := 10;
 
 //x = 28; //error
 
-arr2[0][PI as i32] = 20;
+arr2[0][3.2 as i32] = 20;
 //arr2[0][1.4] = 23; //error
 
 //[12, 43][0] = 3; // error
 
-//arr2[0] = [4.3]; //error
+arr2[0] = [PI as i32]; //error
+
+//"hello" as byte; //error

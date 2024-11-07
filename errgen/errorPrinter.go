@@ -128,13 +128,13 @@ var globalErrors []*WalrusError
 // make an errorlist to add all errors and display later
 func AddError(filePath string, lineStart, lineEnd int, colStart, colEnd int, err string) *WalrusError {
 	errItem := makeError(filePath, lineStart, lineEnd, colStart, colEnd, err)
-	utils.ColorPrint(utils.YELLOW, fmt.Sprintf("Error added. %d errors available\n", len(globalErrors)))
+	utils.ColorPrint(utils.YELLOW, fmt.Sprintf("Error added on %s:%d:%d. %d errors available\n", filePath, lineStart, colStart, len(globalErrors)))
 	return errItem
 }
 
 func DisplayErrors() {
 	if len(globalErrors) == 0 {
-		utils.ColorPrint(utils.GREEN, "------- No errors --------\n")
+		utils.ColorPrint(utils.GREEN, "------- Passed --------\n")
 		return
 	}
 	for _, err := range globalErrors {

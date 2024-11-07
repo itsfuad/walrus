@@ -18,12 +18,12 @@ func checkInterfaceTypeDecl(interfaceName string, interfaceNode ast.InterfaceTyp
 			param := FnParam{
 				Name:       param.Identifier.Name,
 				IsOptional: param.IsOptional,
-				Type:       EvaluateTypeName(param.Type, fnEnv),
+				Type:       evaluateTypeName(param.Type, fnEnv),
 			}
 			params = append(params, param)
 		}
 
-		returns := EvaluateTypeName(method.ReturnType, fnEnv)
+		returns := evaluateTypeName(method.ReturnType, fnEnv)
 
 		method := Fn{
 			DataType:      FUNCTION_TYPE,

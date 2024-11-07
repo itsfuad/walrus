@@ -18,7 +18,7 @@ func checkReturnStmt(returnNode ast.ReturnStmt, env *TypeEnvironment) ValueTypeI
 
 	fnReturns := getFunctionReturnValue(env, returnNode)
 
-	err := MatchTypes(fnReturns, returnType)
+	err := matchTypes(fnReturns, returnType)
 	if err != nil {
 
 		errgen.AddError(env.filePath, returnNode.StartPos().Line, returnNode.EndPos().Line, returnNode.StartPos().Column, returnNode.EndPos().Column, fmt.Sprintf("cannot return '%s' from this scope. function '%s' expects return type '%s'", valueTypeInterfaceToString(returnType), env.scopeName, valueTypeInterfaceToString(fnReturns)))
