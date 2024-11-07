@@ -16,9 +16,8 @@ func CheckAndDeclareFunction(funcNode ast.FunctionLiteral, name string, env *Typ
 	fnEnv := NewTypeENV(env, FUNCTION_SCOPE, name, env.filePath)
 
 	parameters := checkandDeclareParamaters(funcNode.Params, fnEnv)
-
 	//check return type
-	returnType := EvaluateTypeName(funcNode.ReturnType, fnEnv)
+	returnType := evaluateTypeName(funcNode.ReturnType, fnEnv)
 
 	fn := Fn{
 		DataType:      FUNCTION_TYPE,
@@ -53,12 +52,12 @@ func checkandDeclareParamaters(params []ast.FunctionParam, fnEnv *TypeEnvironmen
 			errgen.AddError(fnEnv.filePath, param.Identifier.Start.Line, param.Identifier.End.Line, param.Identifier.Start.Column, param.Identifier.End.Column, fmt.Sprintf("Parameter %s is already declared", param.Identifier.Name))
 		}
 
-		paramType := EvaluateTypeName(param.Type, fnEnv)
+		paramType := evaluateTypeName(param.Type, fnEnv)
 
 		if param.IsOptional {
 			//default value type
 			defaultValue := nodeType(param.DefaultValue, fnEnv)
-			err := MatchTypes(paramType, defaultValue)
+			err := matchTypes(paramType, defaultValue)
 			if err != nil {
 
 				errgen.AddError(fnEnv.filePath, param.DefaultValue.StartPos().Line, param.DefaultValue.EndPos().Line, param.DefaultValue.StartPos().Column, param.DefaultValue.EndPos().Column, err.Error())
@@ -114,7 +113,7 @@ func checkFunctionCall(callNode ast.FunctionCallExpr, env *TypeEnvironment) Valu
 	//check if the arguments match the parameters
 	for i := 0; i < len(callNode.Arguments); i++ {
 		arg := nodeType(callNode.Arguments[i], env)
-		err := MatchTypes(fnParams[i].Type, arg)
+		err := matchTypes(fnParams[i].Type, arg)
 		if err != nil {
 
 			errgen.AddError(env.filePath, callNode.Arguments[i].StartPos().Line, callNode.Arguments[i].EndPos().Line, callNode.Arguments[i].StartPos().Column, callNode.Arguments[i].EndPos().Column, err.Error())

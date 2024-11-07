@@ -22,7 +22,7 @@ func checkVariableAssignment(node ast.VarAssignmentExpr, env *TypeEnvironment) V
 	Assignee := node.Assignee
 	valueToAssign := node.Value
 
-	if err := CheckLValue(Assignee, env); err != nil {
+	if err := checkLValue(Assignee, env); err != nil {
 		errgen.AddError(env.filePath, Assignee.StartPos().Line, Assignee.EndPos().Line, Assignee.StartPos().Column, Assignee.EndPos().Column, "cannot assign to "+err.Error()).DisplayWithPanic()
 
 	}
@@ -30,7 +30,7 @@ func checkVariableAssignment(node ast.VarAssignmentExpr, env *TypeEnvironment) V
 	expectedType := nodeType(Assignee, env)
 	providedType := nodeType(valueToAssign, env)
 
-	err := MatchTypes(expectedType, providedType)
+	err := matchTypes(expectedType, providedType)
 	if err != nil {
 
 		errgen.AddError(env.filePath, valueToAssign.StartPos().Line, valueToAssign.EndPos().Line, valueToAssign.StartPos().Column, valueToAssign.EndPos().Column, err.Error())
@@ -71,7 +71,7 @@ func checkVariableDeclaration(node ast.VarDeclStmt, env *TypeEnvironment) ValueT
 	// let a : int = 5;
 
 	if node.ExplicitType != nil {
-		expectedTypeInterface = EvaluateTypeName(node.ExplicitType, env)
+		expectedTypeInterface = evaluateTypeName(node.ExplicitType, env)
 		fmt.Print("Explicit type: ")
 		utils.ColorPrint(utils.PURPLE, string(valueTypeInterfaceToString(expectedTypeInterface))+"\n")
 	} else {
@@ -83,7 +83,7 @@ func checkVariableDeclaration(node ast.VarDeclStmt, env *TypeEnvironment) ValueT
 	if node.Value != nil && node.ExplicitType != nil {
 		//providedValue := CheckAST(node.Value, env)
 		providedValue := nodeType(node.Value, env)
-		err := MatchTypes(expectedTypeInterface, providedValue)
+		err := matchTypes(expectedTypeInterface, providedValue)
 		if err != nil {
 			errgen.AddError(env.filePath, node.Value.StartPos().Line, node.Value.EndPos().Line, node.Value.StartPos().Column, node.Value.EndPos().Column, err.Error())
 		}

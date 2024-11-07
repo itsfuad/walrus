@@ -20,7 +20,7 @@ func checkTypeDeclaration(node ast.TypeDeclStmt, env *TypeEnvironment) ValueType
 	case ast.InterfaceType:
 		val = checkInterfaceTypeDecl(node.UDTypeName, t, env)
 	default:
-		val = EvaluateTypeName(typeName, env)
+		val = evaluateTypeName(typeName, env)
 	}
 
 	typeVal := UserDefined{
@@ -34,6 +34,8 @@ func checkTypeDeclaration(node ast.TypeDeclStmt, env *TypeEnvironment) ValueType
 		fmt.Printf("cannot declare type %s: %s\n", node.UDTypeName, err.Error())
 		errgen.AddError(env.filePath, node.Start.Line, node.End.Line, node.Start.Column, node.End.Column, err.Error())
 	}
+
+	fmt.Printf("Type %s declared\n", node.UDTypeName)
 
 	return val
 }

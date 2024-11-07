@@ -13,7 +13,7 @@ func checkIncrementalExpr(node ast.IncrementalInterface, env *TypeEnvironment) V
 	arg := node.Arg()
 	// the argument must be an identifier evaluated to a number
 	typeVal := nodeType(arg, env)
-	if !IsNumberType(typeVal) {
+	if !isNumberType(typeVal) {
 
 		errgen.AddError(env.filePath, arg.StartPos().Line, arg.EndPos().Line, arg.StartPos().Column, arg.EndPos().Column, "invalid prefix operation with non-numeric type")
 	}
@@ -27,13 +27,13 @@ func checkIncrementalExpr(node ast.IncrementalInterface, env *TypeEnvironment) V
 func checkTypeCast(node ast.TypeCastExpr, env *TypeEnvironment) ValueTypeInterface {
 
 	originalType := nodeType(node.Expression, env)
-	toCast := EvaluateTypeName(node.ToCast, env)
+	toCast := evaluateTypeName(node.ToCast, env)
 
 	if originalType.DType() == toCast.DType() {
 		return originalType
 	}
 
-	if IsNumberType(originalType) && IsNumberType(toCast) {
+	if isNumberType(originalType) && isNumberType(toCast) {
 		return toCast
 	}
 
@@ -125,14 +125,14 @@ func checkComparison(node ast.BinaryExpr, left ValueTypeInterface, right ValueTy
 
 	if op.Kind == lexer.DOUBLE_EQUAL_TOKEN || op.Kind == lexer.NOT_EQUAL_TOKEN {
 		// ( ==, != ) allow every type
-		if IsNumberType(left) && IsNumberType(right) {
+		if isNumberType(left) && isNumberType(right) {
 			return boolean
 		} else if leftType == rightType {
 			return boolean
 		}
 	} else {
 		// ( >=, >, <=, < ) allow only numeric types
-		if IsNumberType(left) && IsNumberType(right) {
+		if isNumberType(left) && isNumberType(right) {
 			return boolean
 		}
 	}

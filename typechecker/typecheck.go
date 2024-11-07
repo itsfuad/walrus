@@ -13,8 +13,6 @@ func EvaluateProgram(program ast.ProgramStmt, env *TypeEnvironment) ValueTypeInt
 		CheckAST(item, env)
 	}
 
-	utils.ColorPrint(utils.GREEN, "--------- passed ---------\n")
-
 	//print the file path
 	utils.ColorPrint(utils.ORANGE, fmt.Sprintf("File path: %s\n", env.filePath))
 

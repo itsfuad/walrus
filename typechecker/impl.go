@@ -19,12 +19,12 @@ func checkMethodsImplementations(expected, provided ValueTypeInterface) error {
 		// check if method is present in the struct's variables and is a function
 		methodVal, ok := structType.StructScope.variables[name]
 		if !ok {
-			return fmt.Errorf("method '%s' not found in struct '%s' (expected implementation for interface '%s')",
+			return fmt.Errorf("method '%s' was not implemented on struct '%s' for interface '%s'",
 				name, provided.(Struct).StructName, expected.(Interface).InterfaceName)
 		}
 		methodFn, ok := methodVal.(StructMethod)
 		if !ok {
-			return fmt.Errorf("'%s' in struct '%s' is not a valid method (expected implementation for interface '%s')",
+			return fmt.Errorf("'%s' on struct '%s' is not a valid method for interface '%s'",
 				name, provided.(Struct).StructName, expected.(Interface).InterfaceName)
 		}
 
@@ -41,7 +41,7 @@ func checkMethodsImplementations(expected, provided ValueTypeInterface) error {
 		expectedReturn := valueTypeInterfaceToString(method.Returns)
 		providedReturn := valueTypeInterfaceToString(methodFn.Fn.Returns)
 		if expectedReturn != providedReturn {
-			return fmt.Errorf("method '%s' found for interface '%s' but return type missmatch", name, expected.(Interface).InterfaceName)
+			return fmt.Errorf("method '%s' found for interface '%s' but return type mismatched", name, expected.(Interface).InterfaceName)
 		}
 	}
 
@@ -52,14 +52,14 @@ func checkImplStmt(implStmt ast.ImplStmt, env *TypeEnvironment) ValueTypeInterfa
 
 	//scope must be global
 	if env.scopeType != GLOBAL_SCOPE {
-		errgen.AddError(env.filePath, implStmt.Start.Line, implStmt.End.Line, implStmt.Start.Column, implStmt.End.Column, "implement statement must be at global scope")
+		errgen.AddError(env.filePath, implStmt.Start.Line, implStmt.End.Line, implStmt.Start.Column, implStmt.End.Column, "implement statement must be at global scope").DisplayWithPanic()
 		return NewVoid()
 	}
 
 	// check if the type to implement exists
 	structValue, err := getTypeDefinition(implStmt.ImplFor.Name)
 	if err != nil {
-		errgen.AddError(env.filePath, implStmt.Start.Line, implStmt.End.Line, implStmt.Start.Column, implStmt.End.Column, err.Error())
+		errgen.AddError(env.filePath, implStmt.Start.Line, implStmt.End.Line, implStmt.Start.Column, implStmt.End.Column, err.Error()).DisplayWithPanic()
 	}
 
 	// type must be a struct
@@ -67,7 +67,7 @@ func checkImplStmt(implStmt ast.ImplStmt, env *TypeEnvironment) ValueTypeInterfa
 	if !ok {
 		//fmt.Printf("Type %v\n", structValue)
 
-		errgen.AddError(env.filePath, implStmt.Start.Line, implStmt.End.Line, implStmt.Start.Column, implStmt.End.Column, "only structs can be implemented")
+		errgen.AddError(env.filePath, implStmt.Start.Line, implStmt.End.Line, implStmt.Start.Column, implStmt.End.Column, "only structs can be implemented").DisplayWithPanic()
 	}
 
 	fmt.Printf("Implementing for type %s\n", valueTypeInterfaceToString(implForType))
@@ -78,7 +78,7 @@ func checkImplStmt(implStmt ast.ImplStmt, env *TypeEnvironment) ValueTypeInterfa
 		// if the method name is in the struct's elements, throw an error
 		if _, ok := implForType.StructScope.variables[name]; ok {
 
-			errgen.AddError(env.filePath, method.Start.Line, method.End.Line, method.Start.Column, method.End.Column, fmt.Sprintf("name '%s' already exists in struct", name))
+			errgen.AddError(env.filePath, method.Start.Line, method.End.Line, method.Start.Column, method.End.Column, fmt.Sprintf("name '%s' already exists in struct", name)).DisplayWithPanic()
 		}
 
 		fnEnv := NewTypeENV(&implForType.StructScope, FUNCTION_SCOPE, name, implForType.StructScope.filePath)
@@ -87,7 +87,7 @@ func checkImplStmt(implStmt ast.ImplStmt, env *TypeEnvironment) ValueTypeInterfa
 		params := checkandDeclareParamaters(method.Params, fnEnv)
 
 		//check the return type
-		returnType := EvaluateTypeName(method.ReturnType, fnEnv)
+		returnType := evaluateTypeName(method.ReturnType, fnEnv)
 
 		methodToDeclare := StructMethod{
 			IsPrivate: method.IsPrivate,
@@ -103,7 +103,7 @@ func checkImplStmt(implStmt ast.ImplStmt, env *TypeEnvironment) ValueTypeInterfa
 		err := implForType.StructScope.DeclareVar(name, methodToDeclare, false, false)
 		if err != nil {
 
-			errgen.AddError(env.filePath, method.Start.Line, method.End.Line, method.Start.Column, method.End.Column, err.Error())
+			errgen.AddError(env.filePath, method.Start.Line, method.End.Line, method.Start.Column, method.End.Column, err.Error()).DisplayWithPanic()
 		}
 
 		//check the function body

@@ -21,57 +21,40 @@ import (
 //
 // If both checks pass, the function returns the type of the elements contained in the array.
 func evaluateIndexableAccess(indexable ast.Indexable, env *TypeEnvironment) ValueTypeInterface {
-	if indexedValueType, err := IndexedValueType(indexable, env); err != nil {
-		errgen.AddError(env.filePath, indexable.Start.Line, indexable.End.Line, indexable.Start.Column, indexable.End.Column, err.Error()).DisplayWithPanic()
-		return nil
-	} else {
-		return indexedValueType
-	}
-}
-
-// IndexedValueType determines the type of the value that is indexed from an indexable container.
-// It takes an indexable AST node and a type environment as input and returns the value type
-// of the indexed element or an error if the indexing operation is invalid.
-//
-// Parameters:
-// - indexable: An AST node representing the container and the index expression.
-// - env: The type environment used to resolve types.
-//
-// Returns:
-// - ValueTypeInterface: The type of the value at the specified index.
-// - error: An error if the indexing operation is invalid.
-//
-// The function handles different container types:
-// - Array: The index must be a valid integer type.
-// - Str: The index must be a valid integer type, and the return type is an 8-bit integer.
-// - Map: The key type must not be an interface type.
-//
-// If the container type is not supported for indexing, an error is returned.
-func IndexedValueType(indexable ast.Indexable, env *TypeEnvironment) (ValueTypeInterface, error) {
-
+	
 	container := nodeType(indexable.Container, env)
 	index := nodeType(indexable.Index, env)
 
+	var indexedValueType ValueTypeInterface
+
 	switch t := container.(type) {
 	case Array:
-		if !IsNumberType(index) {
-			return nil, fmt.Errorf("index must be a valid integer")
+		if !isIntType(index) {
+			//return t.ArrayType, fmt.Errorf("index must be a valid integer")
+			errgen.AddError(env.filePath, indexable.Start.Line, indexable.End.Line, indexable.Index.StartPos().Column, indexable.Index.EndPos().Column, "index must be a valid integer")
 		}
-		return t.ArrayType, nil
+		indexedValueType = t.ArrayType
 	case Str:
-		if !IsNumberType(index) {
-			return nil, fmt.Errorf("index must be a valid integer")
+		if !isIntType(index) {
+			//fmt.Errorf("index must be a valid integer")
+			errgen.AddError(env.filePath, indexable.Start.Line, indexable.End.Line, indexable.Index.StartPos().Column, indexable.Index.EndPos().Column, "index must be a valid integer")
 		}
-		return NewInt(8, false), nil
+		return NewInt(8, false)
 	case Map:
 		//if key is interface then error
 		if t.KeyType.DType() == INTERFACE_TYPE {
-			return nil, fmt.Errorf("cannot access index of type %s", INTERFACE_TYPE)
+			//return t.ValueType, fmt.Errorf("cannot access index of type %s", INTERFACE_TYPE)
+			errgen.AddError(env.filePath, indexable.Start.Line, indexable.End.Line, indexable.Index.StartPos().Column, indexable.Index.EndPos().Column, fmt.Sprintf("cannot access index of type %s", INTERFACE_TYPE))
 		}
-		return t.ValueType, nil
+		indexedValueType = t.ValueType
 	default:
-		return nil, fmt.Errorf("cannot access index of type %s", container.DType())
+		//return nil, fmt.Errorf("cannot access index of type %s", container.DType())
+		errgen.AddError(env.filePath, indexable.Start.Line, indexable.End.Line, indexable.Container.StartPos().Column, indexable.Container.EndPos().Column, fmt.Sprintf("cannot access index of type %s", container.DType())).DisplayWithPanic()
 	}
+
+	fmt.Printf("indexedValueType: %v\n", indexedValueType)
+
+	return indexedValueType
 }
 
 // evaluateArrayExpr evaluates an array expression within a given type environment.
@@ -91,7 +74,7 @@ func evaluateArrayExpr(array ast.ArrayLiteral, env *TypeEnvironment) ValueTypeIn
 			expectedType = v
 		}
 		//check every type is same or not
-		err := MatchTypes(expectedType, v)
+		err := matchTypes(expectedType, v)
 		if err != nil {
 
 			errgen.AddError(env.filePath, array.Start.Line, array.End.Line, array.Values[i].StartPos().Column, array.Values[i].EndPos().Column, err.Error())

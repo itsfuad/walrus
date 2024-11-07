@@ -64,8 +64,8 @@ func valueTypeInterfaceToString(typeName ValueTypeInterface) builtins.TC_TYPE {
 			ReturnStr = " -> " + ReturnStr
 		}
 		return builtins.TC_TYPE(fmt.Sprintf("fn(%s)%s", ParamStrs, ReturnStr))
-	//case UserDefined:
-	//	return valueTypeInterfaceToString(t.TypeDef)
+	case UserDefined:
+		return valueTypeInterfaceToString(t.TypeDef)
 	case Map:
 		return builtins.TC_TYPE(fmt.Sprintf("map[%s]%s", valueTypeInterfaceToString(t.KeyType), valueTypeInterfaceToString(t.ValueType)))
 	default:
@@ -73,7 +73,7 @@ func valueTypeInterfaceToString(typeName ValueTypeInterface) builtins.TC_TYPE {
 	}
 }
 
-// MatchTypes compares the expected and provided ValueTypeInterface types.
+// matchTypes compares the expected and provided ValueTypeInterface types.
 // If the types do not match, it returns an error indicating the mismatch.
 // If the expected type is an interface, it checks the method implementations
 // of the provided type against the expected type.
@@ -89,7 +89,7 @@ func valueTypeInterfaceToString(typeName ValueTypeInterface) builtins.TC_TYPE {
 //
 // Returns:
 //   - error: An error if the types do not match, otherwise nil.
-func MatchTypes(expected, provided ValueTypeInterface) error {
+func matchTypes(expected, provided ValueTypeInterface) error {
 
 	expectedType := valueTypeInterfaceToString(expected)
 	gotType := valueTypeInterfaceToString(provided)
@@ -103,7 +103,7 @@ func MatchTypes(expected, provided ValueTypeInterface) error {
 	return nil
 }
 
-func CheckLValue(node ast.Node, env *TypeEnvironment) error {
+func checkLValue(node ast.Node, env *TypeEnvironment) error {
 	//if not constant and is IdentifierExpr
 	switch t := node.(type) {
 	case ast.IdentifierExpr:
@@ -121,15 +121,15 @@ func CheckLValue(node ast.Node, env *TypeEnvironment) error {
 			return errors.New("constant")
 		}
 	case ast.Indexable:
-		return CheckLValue(t.Container, env)
+		return checkLValue(t.Container, env)
 	case ast.StructPropertyAccessExpr:
-		return CheckLValue(t.Object, env)
+		return checkLValue(t.Object, env)
 	default:
 		return fmt.Errorf("invalid lvalue")
 	}
 }
 
-func IsNumberType(operand ValueTypeInterface) bool {
+func isNumberType(operand ValueTypeInterface) bool {
 	switch operand.(type) {
 	case Int, Float:
 		return true
@@ -138,7 +138,16 @@ func IsNumberType(operand ValueTypeInterface) bool {
 	}
 }
 
-// EvaluateTypeName evaluates the given DataType and returns a corresponding ValueTypeInterface.
+func isIntType(operand ValueTypeInterface) bool {
+	switch operand.(type) {
+	case Int:
+		return true
+	default:
+		return false
+	}
+}
+
+// evaluateTypeName evaluates the given DataType and returns a corresponding ValueTypeInterface.
 // It handles different types of DataType such as ArrayType, FunctionType, and others.
 //
 // Parameters:
@@ -153,11 +162,10 @@ func IsNumberType(operand ValueTypeInterface) bool {
 //  2. If the dtype is a FunctionType, it evaluates the parameter types and return type, creates a new function scope, and returns a Fn.
 //  3. If the dtype is nil, it returns a Void type.
 //  4. For other types, it attempts to create a ValueTypeInterface and handles any errors that occur.
-func EvaluateTypeName(dtype ast.DataType, env *TypeEnvironment) ValueTypeInterface {
-	fmt.Printf("Evaluating type %s\n", dtype.Type())
+func evaluateTypeName(dtype ast.DataType, env *TypeEnvironment) ValueTypeInterface {
 	switch t := dtype.(type) {
 	case ast.ArrayType:
-		val := EvaluateTypeName(t.ArrayType, env)
+		val := evaluateTypeName(t.ArrayType, env)
 		arr := Array{
 			DataType:  builtins.ARRAY,
 			ArrayType: val,
@@ -166,7 +174,7 @@ func EvaluateTypeName(dtype ast.DataType, env *TypeEnvironment) ValueTypeInterfa
 	case ast.FunctionType:
 		var params []FnParam
 		for _, param := range t.Parameters {
-			paramType := EvaluateTypeName(param.Type, env)
+			paramType := evaluateTypeName(param.Type, env)
 			params = append(params, FnParam{
 				Name:       param.Identifier.Name,
 				IsOptional: param.IsOptional,
@@ -174,7 +182,7 @@ func EvaluateTypeName(dtype ast.DataType, env *TypeEnvironment) ValueTypeInterfa
 			})
 		}
 
-		returns := EvaluateTypeName(t.ReturnType, env)
+		returns := evaluateTypeName(t.ReturnType, env)
 
 		scope := NewTypeENV(env, FUNCTION_SCOPE, fmt.Sprintf("_FN_%s", RandStringRunes(10)), env.filePath)
 
@@ -185,8 +193,8 @@ func EvaluateTypeName(dtype ast.DataType, env *TypeEnvironment) ValueTypeInterfa
 			FunctionScope: *scope,
 		}
 	case ast.MapType:
-		keyType := EvaluateTypeName(t.KeyType, env)
-		valueType := EvaluateTypeName(t.ValueType, env)
+		keyType := evaluateTypeName(t.KeyType, env)
+		valueType := evaluateTypeName(t.ValueType, env)
 		return NewMap(keyType, valueType)
 	case ast.UserDefinedType:
 		typename := t.AliasName
