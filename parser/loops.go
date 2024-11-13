@@ -32,18 +32,23 @@ func parseForStmt(p *Parser) ast.Node {
 		// check if there is an opening brace
 		if p.currentTokenKind() == lexer.OPEN_CURLY {
 			// empty loop
+			block := parseBlock(p)
 			return ast.ForStmt{
 				Init:     nil,
 				Condition: nil,
 				Increment: nil,
-				Block:    parseBlock(p),
+				Block:    block,
+				Location: ast.Location{
+					Start: loopType.Start,
+					End:   block.EndPos(),
+				},
 			}
 		}
 
 		// check if there is an init expression
 		init = parseNode(p)
 
-		// check if there is a semicolon
+		// check if there no opening brace, then there is a condition and increment
 		if p.currentTokenKind() != lexer.OPEN_CURLY {
 			fmt.Printf("Current token: %v\n", p.currentTokenKind())
 			cond = parseExpr(p, DEFAULT_BP)

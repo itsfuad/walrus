@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"walrus/ast"
 	"walrus/errgen"
+	"walrus/utils"
 )
 
 func checkTypeDeclaration(node ast.TypeDeclStmt, env *TypeEnvironment) ValueTypeInterface {
@@ -35,7 +36,10 @@ func checkTypeDeclaration(node ast.TypeDeclStmt, env *TypeEnvironment) ValueType
 		errgen.AddError(env.filePath, node.Start.Line, node.End.Line, node.Start.Column, node.End.Column, err.Error())
 	}
 
-	fmt.Printf("Type %s declared\n", node.UDTypeName)
+	//fmt.Printf("Type %s declared\n", node.UDTypeName)
+	utils.ColorPrint(utils.CYAN, "Type ")
+	utils.ColorPrint(utils.PURPLE, node.UDTypeName)
+	fmt.Println(" declared")
 
 	return val
 }
