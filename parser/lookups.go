@@ -66,8 +66,6 @@ func bindLookupHandlers() {
 
 	led(lexer.OPEN_BRACKET, MEMBER_BP, parseIndexable)
 
-	nud(lexer.AT_TOKEN, parseStructLiteral)
-
 	led(lexer.DOT_TOKEN, MEMBER_BP, parsePropertyExpr)
 	led(lexer.OPEN_PAREN, CALL_BP, parseCallExpr)
 
@@ -88,6 +86,10 @@ func bindLookupHandlers() {
 
 	led(lexer.AS_TOKEN, CASTING_BP, parseTypeCastExpr)
 
+	//Postfix
+	led(lexer.PLUS_PLUS_TOKEN, UNARY_BP, parsePostfixExpr)   // a++
+	led(lexer.MINUS_MINUS_TOKEN, UNARY_BP, parsePostfixExpr) // a--
+
 	nud(lexer.IDENTIFIER_TOKEN, parsePrimaryExpr)  // identifier
 	nud(lexer.INT8_TOKEN, parsePrimaryExpr)        // int literal, 8 bit
 	nud(lexer.INT16_TOKEN, parsePrimaryExpr)       // int literal, 16 bit
@@ -104,7 +106,19 @@ func bindLookupHandlers() {
 	nud(lexer.OPEN_BRACKET, parseArrayExpr)        // array literal [1,2,3]
 	nud(lexer.OPEN_PAREN, parseGroupingExpr)       // grouping expression a + (b+c)
 	nud(lexer.FUNCTION_TOKEN, parseLambdaFunction) // anonymous function
+	nud(lexer.AT_TOKEN, parseStructLiteral)
 
+	//Unary
+	nud(lexer.MINUS_TOKEN, parseUnaryExpr) // unary minus : -a
+	nud(lexer.NOT_TOKEN, parseUnaryExpr)   // unary not : !a
+	//Increment and Decrement
+	//Prefix
+	nud(lexer.PLUS_PLUS_TOKEN, parsePrefixExpr)   // ++a
+	nud(lexer.MINUS_MINUS_TOKEN, parsePrefixExpr) // --a
+
+	nud(lexer.MAP_TOKEN, parseMapLiteral)
+
+	//Statements
 	stmt(lexer.LET_TOKEN, parseVarDeclStmt)          // variable declaration
 	stmt(lexer.CONST_TOKEN, parseVarDeclStmt)        // constant declaration
 	stmt(lexer.TYPE_TOKEN, parseUserDefinedTypeStmt) // user defined type
@@ -114,20 +128,6 @@ func bindLookupHandlers() {
 	stmt(lexer.FOREACH_TOKEN, parseForStmt)           // foreach statement
 	stmt(lexer.FUNCTION_TOKEN, parseFunctionDeclStmt) // function declaration
 	stmt(lexer.RETURN_TOKEN, parseReturnStmt)         // return statement
-
-	//Unary
-	nud(lexer.MINUS_TOKEN, parseUnaryExpr) // unary minus : -a
-	nud(lexer.NOT_TOKEN, parseUnaryExpr)   // unary not : !a
-	//Increment and Decrement
-	//Prefix
-	nud(lexer.PLUS_PLUS_TOKEN, parsePrefixExpr)   // ++a
-	nud(lexer.MINUS_MINUS_TOKEN, parsePrefixExpr) // --a
-	//Postfix
-	led(lexer.PLUS_PLUS_TOKEN, UNARY_BP, parsePostfixExpr)   // a++
-	led(lexer.MINUS_MINUS_TOKEN, UNARY_BP, parsePostfixExpr) // a--
-
 	//implement keyword
 	stmt(lexer.IMPLEMENT_TOKEN, parseImplementStmt)
-
-	nud(lexer.MAP_TOKEN, parseMapLiteral)
 }

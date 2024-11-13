@@ -52,8 +52,6 @@ func evaluateIndexableAccess(indexable ast.Indexable, env *TypeEnvironment) Valu
 		errgen.AddError(env.filePath, indexable.Start.Line, indexable.End.Line, indexable.Container.StartPos().Column, indexable.Container.EndPos().Column, fmt.Sprintf("cannot access index of type %s", container.DType())).DisplayWithPanic()
 	}
 
-	fmt.Printf("indexedValueType: %v\n", indexedValueType)
-
 	return indexedValueType
 }
 

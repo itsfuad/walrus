@@ -71,6 +71,8 @@ func CheckAST(node ast.Node, env *TypeEnvironment) ValueTypeInterface {
 		return checkForStmt(t, env)
 	case ast.ReturnStmt:
 		return checkReturnStmt(t, env)
+	case nil:
+		return NewNull()
 	}
 	errgen.AddError(env.filePath, node.StartPos().Line, node.EndPos().Line, node.StartPos().Column, node.EndPos().Column, fmt.Sprintf("<%T> node is not implemented yet to check", node)).DisplayWithPanic()
 	return nil

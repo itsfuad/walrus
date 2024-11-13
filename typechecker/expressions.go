@@ -6,6 +6,7 @@ import (
 	"walrus/builtins"
 	"walrus/errgen"
 	"walrus/lexer"
+	"walrus/utils"
 )
 
 func checkIncrementalExpr(node ast.IncrementalInterface, env *TypeEnvironment) ValueTypeInterface {
@@ -24,16 +25,25 @@ func checkIncrementalExpr(node ast.IncrementalInterface, env *TypeEnvironment) V
 	return typeVal
 }
 
+func logCastSuccess(originalType ValueTypeInterface, toCast ValueTypeInterface) {
+	utils.ColorPrint(utils.ORANGE, "casted type ")
+	utils.ColorPrint(utils.PURPLE,string( originalType.DType()))
+	fmt.Print(" to ")
+	utils.ColorPrint(utils.PURPLE, string(toCast.DType()) + "\n")
+}
+
 func checkTypeCast(node ast.TypeCastExpr, env *TypeEnvironment) ValueTypeInterface {
 
 	originalType := nodeType(node.Expression, env)
 	toCast := evaluateTypeName(node.ToCast, env)
 
 	if originalType.DType() == toCast.DType() {
+		logCastSuccess(originalType, toCast)
 		return originalType
 	}
 
 	if isNumberType(originalType) && isNumberType(toCast) {
+		logCastSuccess(originalType, toCast)
 		return toCast
 	}
 

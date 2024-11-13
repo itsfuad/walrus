@@ -4,6 +4,15 @@ let b := a * (34 - 18);
 let c : f32 = (a * 34 - 12) as f32; //12
 let d : i32 = a - 3.1416 * 18;
 
+//multiple variable declaration in one line
+// with type
+let t1: i32 = 43, t2: f32 = 3.5, t3: str;
+// without type
+let t4 := 43, t5 := 3.14, t6 := "hello";
+
+let x: i32 = 10;
+let y: i8 = x as i8; //10
+
 let e := "hello" + 2; // ok
 let logic := a > b;
 //e = "hello" - 2; // error
@@ -44,17 +53,17 @@ for {
     // infinite loop
     // break logic
 }
-
 for i1 > 0; {
     // do something
     --i1;
 }
+for let i2 := 0; i2 < 10; i2 {
+    // do something
+}
+
 
 //array := 0..10; // expected [0,1,2,3,4,5,6,7,8,9,10] //Not implemented yet
 
-for let i2 := 0; i2 < 10; i2++ {
-    // do something
-}
 */
 
 /*

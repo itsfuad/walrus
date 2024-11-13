@@ -61,52 +61,55 @@ func checkVariableAssignment(node ast.VarAssignmentExpr, env *TypeEnvironment) V
 //  7. Returns a Void type indicating the end of the declaration process.
 func checkVariableDeclaration(node ast.VarDeclStmt, env *TypeEnvironment) ValueTypeInterface {
 
-	varToDecl := node.Variable
+	varsToDecl := node.Variables
 
-	fmt.Print("Declaring variable ")
-	utils.ColorPrint(utils.RED, varToDecl.Name+"\n")
+	for _, varToDecl := range varsToDecl {
 
-	var expectedTypeInterface ValueTypeInterface
+		fmt.Print("Declaring variable ")
+		utils.ColorPrint(utils.RED, varToDecl.Identifier.Name+"\n")
 
-	// let a : int = 5;
+		var expectedTypeInterface ValueTypeInterface
 
-	if node.ExplicitType != nil {
-		expectedTypeInterface = evaluateTypeName(node.ExplicitType, env)
-		fmt.Print("Explicit type: ")
-		utils.ColorPrint(utils.PURPLE, string(valueTypeInterfaceToString(expectedTypeInterface))+"\n")
-	} else {
-		expectedTypeInterface = nodeType(node.Value, env)
-		fmt.Print("Auto detected type: ")
-		utils.ColorPrint(utils.PURPLE, string(valueTypeInterfaceToString(expectedTypeInterface))+"\n")
-	}
+		// let a : int = 5;
 
-	if node.Value != nil && node.ExplicitType != nil {
-		//providedValue := CheckAST(node.Value, env)
-		providedValue := nodeType(node.Value, env)
-		err := matchTypes(expectedTypeInterface, providedValue)
-		if err != nil {
-			errgen.AddError(env.filePath, node.Value.StartPos().Line, node.Value.EndPos().Line, node.Value.StartPos().Column, node.Value.EndPos().Column, err.Error())
+		if varToDecl.ExplicitType != nil {
+			expectedTypeInterface = evaluateTypeName(varToDecl.ExplicitType, env)
+			fmt.Print("Explicit type: ")
+			utils.ColorPrint(utils.PURPLE, string(valueTypeInterfaceToString(expectedTypeInterface))+"\n")
+		} else {
+			expectedTypeInterface = nodeType(varToDecl.Value, env)
+			fmt.Print("Auto detected type: ")
+			utils.ColorPrint(utils.PURPLE, string(valueTypeInterfaceToString(expectedTypeInterface))+"\n")
 		}
+
+		if varToDecl.Value != nil && varToDecl.ExplicitType != nil {
+			//providedValue := CheckAST(node.Value, env)
+			providedValue := nodeType(varToDecl.Value, env)
+			err := matchTypes(expectedTypeInterface, providedValue)
+			if err != nil {
+				errgen.AddError(env.filePath, varToDecl.Value.StartPos().Line, varToDecl.Value.EndPos().Line, varToDecl.Value.StartPos().Column, varToDecl.Value.EndPos().Column, err.Error())
+			}
+		}
+
+		err := env.DeclareVar(varToDecl.Identifier.Name, expectedTypeInterface, node.IsConst, false)
+		if err != nil {
+
+			errgen.AddError(env.filePath, varToDecl.Start.Line, varToDecl.End.Line, varToDecl.Start.Column, varToDecl.End.Column, err.Error())
+		}
+
+		if node.IsConst {
+			utils.ColorPrint(utils.BLUE, "Declared constant variable ")
+			utils.ColorPrint(utils.RED, varToDecl.Identifier.Name)
+			fmt.Print(" of type ")
+			utils.ColorPrint(utils.PURPLE, string(valueTypeInterfaceToString(expectedTypeInterface))+"\n")
+		} else {
+			utils.ColorPrint(utils.BLUE, "Declared variable ")
+			utils.ColorPrint(utils.RED, varToDecl.Identifier.Name)
+			fmt.Print(" of type ")
+			utils.ColorPrint(utils.PURPLE, string(valueTypeInterfaceToString(expectedTypeInterface))+"\n")
+		}
+
+		//return the type of the variable
 	}
-
-	err := env.DeclareVar(varToDecl.Name, expectedTypeInterface, node.IsConst, false)
-	if err != nil {
-
-		errgen.AddError(env.filePath, node.Variable.StartPos().Line, node.Variable.EndPos().Line, node.Variable.StartPos().Column, node.Variable.EndPos().Column, err.Error())
-	}
-
-	if node.IsConst {
-		fmt.Print("Declared constant variable ")
-		utils.ColorPrint(utils.RED, varToDecl.Name)
-		fmt.Print(" of type ")
-		utils.ColorPrint(utils.PURPLE, string(valueTypeInterfaceToString(expectedTypeInterface))+"\n")
-	} else {
-		fmt.Print("Declared variable ")
-		utils.ColorPrint(utils.RED, varToDecl.Name)
-		fmt.Print(" of type ")
-		utils.ColorPrint(utils.PURPLE, string(valueTypeInterfaceToString(expectedTypeInterface))+"\n")
-	}
-
-	//return the type of the variable
-	return expectedTypeInterface
+	return NewVoid()
 }

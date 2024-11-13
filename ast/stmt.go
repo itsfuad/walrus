@@ -17,10 +17,15 @@ func (a ProgramStmt) EndPos() lexer.Position {
 	return a.Location.End
 }
 
-type VarDeclStmt struct {
-	Variable     IdentifierExpr
-	Value        Node
+type VarDeclVar struct {
+	Identifier IdentifierExpr
+	Value      Node
 	ExplicitType DataType
+	Location
+}
+
+type VarDeclStmt struct {
+	Variables []VarDeclVar
 	IsConst      bool
 	Location
 }

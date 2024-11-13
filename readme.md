@@ -4,6 +4,9 @@ A tiny simple programming language made for simplicity. It borrows syntax from '
 - [x] Lexer
 - [x] Parser
     - [x] [Variable declare](#variable-declare-and-assign)
+        - [x] Mutable variable with let
+        - [x] Constant variable with const
+        - [x] Multiple variable declare
     - [x] [Variable assign](#variable-assign)
     - [x] [Expressions](#expressions)
         - [x] Unary (32, f32, bool) `- !`
@@ -51,6 +54,7 @@ A tiny simple programming language made for simplicity. It borrows syntax from '
         - [x] for [condition]
         - [x] for [start] [condition] [end]
         - [x] for [start] in [range] 
+    - [ ] [Switch](#switch)
     - [x] [Interaface](#interface)
     - [ ] Imports
     - [ ] Packages
@@ -65,26 +69,34 @@ A tiny simple programming language made for simplicity. It borrows syntax from '
 # Example
 
 ## Variable declare and assign
-```rust
+```rs
 // Declare a variable with let or const keyword
 let a := 10; // The variable is mutable and its type is inferred from the value e.g. 32
 const pi := 3.14; // constant variable with type f32
 
 // Declare a variable with type
-let b: 32 = 20; // The variable is mutable and its type is 32
+let b: i32 = 20; // The variable is mutable and its type is i32
 const c: f32 = 3.14; // constant variable with type f32
 
 let unsigned: u32 = 10; // Unsigned integer of 32 bits
 ```
+You can also declare multiple variables in a single line
+```rs
+//multiple variable declaration in one line
+// with type
+let t1: i32 = 43, t2: f32 = 3.5, t3: str;
+// without type
+let t4 := 43, t5 := 3.14, t6 := "hello";
+```
 
 ## Variable assign
-```rust
+```rs
 let a := 10;
 a = 20; // Assign a new value to a
 ```
 
 ## Expressions
-```rust
+```rs
 let a := 10;
 let b := 20;
 let c := a + b; // c = 30
@@ -97,20 +109,22 @@ let i := !true; // i = false
 ```
 
 ## Grouping
-```rust
+```rs
 let a := 10;
 let b := 20;
 let c := (a + b) * 2; // c = 60
 ```
 
 ## Type cast
-```rust
+Type must be explicit in walrus. Type cast is done using 'as' keyword. For example, we cannot assign to a 8 bit integer to a 32 bit integer and vice versa. We need to cast the type. 
+But when we declare a variable with explicit type, the value is implicitly casted to the type.
+```rs
 let a := 10;
 let b := a as f32; // b = 10.0 as float32
 ```
 
 ## Array
-```rust
+```rs
 let a := [1, 2, 3, 4, 5]; // Array of integers. One dimensional array
 let b := a[0]; // b = 1
 a[0] = 10; // a = [10, 2, 3, 4, 5]
@@ -122,7 +136,7 @@ c[0][0] = 10; // c = [[10, 2], [3, 4], [5, 6]]
 ```
 
 ## Map
-```rust
+```rs
 let myMap : map[str]i32 = map[str]i32 {
     "a": 10,
     "b": 20,
@@ -134,7 +148,7 @@ myMap["a"] = 20; // myMap = {"a": 20, "b": 20, "c": 30}
 ```
 
 ## Struct
-```rust
+```rs
 type Person struct{
     name: str;
     age: 32;
@@ -154,7 +168,7 @@ let p : Person = @Person { // Here 'Person' is the type, @Person is the type ins
 ```
 
 ## Struct property access
-```rust
+```rs
 let p := @Person {
     name: "John",
     priv age: 20 // Private property
@@ -165,7 +179,7 @@ let age := p.age; // Error: Cannot access private property
 ```
 
 ## Conditionals
-```rust
+```rs
 let a := 10;
 let b := 20;
 
@@ -179,7 +193,7 @@ if a > b {
 ```
 
 ## Functions
-```rust
+```rs
 fn add(a: 32, b: 32) -> 32 {
     ret a + b;
 }
@@ -211,7 +225,7 @@ let sum := adder(20); // sum = 30
 
 ## User defined types
 types are user defined data types. They can be structs, or a function signature or a wrapper around a built-in type.
-```rust
+```rs
 type Circle struct {
     radius: f32;
 }
@@ -232,7 +246,7 @@ let w: WrapperInt = 10;
 ```
 
 ## Increment/Decrement
-```rust
+```rs
 let a := 10;
 let b := ++a; // b = 11, a = 11
 let c := a++; // c = 11, a = 12
@@ -241,7 +255,7 @@ let e := a--; // e = 11, a = 10
 ```
 
 ## Assignment operators
-```rust
+```rs
 let a := 10;
 a += 10; // a = 20
 a -= 10; // a = 10
@@ -251,15 +265,32 @@ a %= 10; // a = 0
 ```
 
 ## For loop
-```rust
+```rs
 for let i := 0; i < 10; i++ {
     print(i);
 }
 ```
 
+## Switch
+```rs
+let a := 10;
+
+switch a {
+    case 10: {
+        print("a is 10");
+    }
+    case 20: {
+        print("a is 20");
+    }
+    default: {
+        print("a is neither 10 nor 20");
+    }
+}
+```
+
 ## Interface
 Interfaces are a way to define a contract that a type must implement. It is a way to achieve polymorphism in the language.
-```rust
+```rs
 type Shape interface {
     fn area() -> f32;
 }
@@ -267,7 +298,7 @@ type Shape interface {
 ```
 
 ## Implementing a interface for a struct
-```rust
+```rs
 type Printable interface {
     fn print();
 }
