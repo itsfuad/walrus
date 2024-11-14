@@ -7,6 +7,7 @@ import (
 	"strings"
 	"walrus/builtins"
 	"walrus/errgen"
+	"walrus/utils"
 )
 
 type regexHandler func(lex *Lexer, regex *regexp.Regexp)
@@ -215,7 +216,7 @@ func skipHandler(lex *Lexer, regex *regexp.Regexp) {
 
 // Tokenize reads the source code from the specified file and tokenizes it.
 func Tokenize(filename string, debug bool) []Token {
-
+	utils.GREEN.Printf("Tokenizing %s\n", filename)
 	lex := createLexer(&filename)
 	lex.FilePath = filename
 
@@ -249,6 +250,8 @@ func Tokenize(filename string, debug bool) []Token {
 			token.Debug(filename)
 		}
 	}
+
+	utils.GREEN.Println("Tokenization complete")
 
 	return lex.Tokens
 }

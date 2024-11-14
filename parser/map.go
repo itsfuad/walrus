@@ -1,14 +1,11 @@
 package parser
 
 import (
-	"fmt"
 	"walrus/ast"
 	"walrus/lexer"
 )
 
 func parseMapLiteral(p *Parser) ast.Node {
-
-	fmt.Println("Parsing map literal")
 
 	mapType := parseMapType(p)
 

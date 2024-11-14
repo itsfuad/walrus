@@ -26,10 +26,10 @@ func checkIncrementalExpr(node ast.IncrementalInterface, env *TypeEnvironment) V
 }
 
 func logCastSuccess(originalType ValueTypeInterface, toCast ValueTypeInterface) {
-	utils.ColorPrint(utils.ORANGE, "casted type ")
-	utils.ColorPrint(utils.PURPLE,string( originalType.DType()))
+	utils.ORANGE.Print("casted type ")
+	utils.PURPLE.Print(string(originalType.DType()))
 	fmt.Print(" to ")
-	utils.ColorPrint(utils.PURPLE, string(toCast.DType()) + "\n")
+	utils.PURPLE.Println(string(toCast.DType()))
 }
 
 func checkTypeCast(node ast.TypeCastExpr, env *TypeEnvironment) ValueTypeInterface {

@@ -66,7 +66,7 @@ func checkVariableDeclaration(node ast.VarDeclStmt, env *TypeEnvironment) ValueT
 	for _, varToDecl := range varsToDecl {
 
 		fmt.Print("Declaring variable ")
-		utils.ColorPrint(utils.RED, varToDecl.Identifier.Name+"\n")
+		utils.RED.Println(varToDecl.Identifier.Name)
 
 		var expectedTypeInterface ValueTypeInterface
 
@@ -75,11 +75,11 @@ func checkVariableDeclaration(node ast.VarDeclStmt, env *TypeEnvironment) ValueT
 		if varToDecl.ExplicitType != nil {
 			expectedTypeInterface = evaluateTypeName(varToDecl.ExplicitType, env)
 			fmt.Print("Explicit type: ")
-			utils.ColorPrint(utils.PURPLE, string(valueTypeInterfaceToString(expectedTypeInterface))+"\n")
+			utils.PURPLE.Println(string(valueTypeInterfaceToString(expectedTypeInterface)))
 		} else {
 			expectedTypeInterface = nodeType(varToDecl.Value, env)
 			fmt.Print("Auto detected type: ")
-			utils.ColorPrint(utils.PURPLE, string(valueTypeInterfaceToString(expectedTypeInterface))+"\n")
+			utils.PURPLE.Println(string(valueTypeInterfaceToString(expectedTypeInterface)))
 		}
 
 		if varToDecl.Value != nil && varToDecl.ExplicitType != nil {
@@ -98,15 +98,15 @@ func checkVariableDeclaration(node ast.VarDeclStmt, env *TypeEnvironment) ValueT
 		}
 
 		if node.IsConst {
-			utils.ColorPrint(utils.BLUE, "Declared constant variable ")
-			utils.ColorPrint(utils.RED, varToDecl.Identifier.Name)
+			utils.BLUE.Print("Declared constant variable ")
+			utils.RED.Print(varToDecl.Identifier.Name)
 			fmt.Print(" of type ")
-			utils.ColorPrint(utils.PURPLE, string(valueTypeInterfaceToString(expectedTypeInterface))+"\n")
+			utils.PURPLE.Println(string(valueTypeInterfaceToString(expectedTypeInterface)))
 		} else {
-			utils.ColorPrint(utils.BLUE, "Declared variable ")
-			utils.ColorPrint(utils.RED, varToDecl.Identifier.Name)
+			utils.BLUE.Print("Declared variable ")
+			utils.RED.Print(varToDecl.Identifier.Name)
 			fmt.Print(" of type ")
-			utils.ColorPrint(utils.PURPLE, string(valueTypeInterfaceToString(expectedTypeInterface))+"\n")
+			utils.PURPLE.Println(string(valueTypeInterfaceToString(expectedTypeInterface)))
 		}
 
 		//return the type of the variable
