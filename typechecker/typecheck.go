@@ -8,13 +8,13 @@ import (
 )
 
 func EvaluateProgram(program ast.ProgramStmt, env *TypeEnvironment) ValueTypeInterface {
-	utils.ColorPrint(utils.PURPLE, "### Running type checker ###\n")
+	utils.PURPLE.Println("### Running type checker ###")
 	for _, item := range program.Contents {
 		CheckAST(item, env)
 	}
 
 	//print the file path
-	utils.ColorPrint(utils.ORANGE, fmt.Sprintf("File path: %s\n", env.filePath))
+	utils.ORANGE.Printf("File path: %s\n", env.filePath)
 
 	return NewVoid()
 }

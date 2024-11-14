@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"walrus/errgen"
 	"walrus/lexer"
 	parseMachine "walrus/parser"
@@ -9,7 +8,7 @@ import (
 )
 
 func main() {
-	fmt.Println("Hello world!")
+
 	filePath := "language/expressions.wal"
 	tokens := lexer.Tokenize(filePath, true)
 	parser := parseMachine.NewParser(filePath, tokens)

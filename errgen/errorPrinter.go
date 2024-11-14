@@ -42,7 +42,7 @@ func PrintError(e *WalrusError, showFileName bool) {
 	}
 
 	if showFileName {
-		utils.ColorPrint(utils.BLUE, fmt.Sprintf("\nIn file: %s:%d:%d\n", e.filePath, e.lineStart, e.colStart))
+		utils.BLUE.Printf("\nIn file: %s:%d:%d\n", e.filePath, e.lineStart, e.colStart)
 	}
 
 	lines := strings.Split(string(fileData), "\n")
@@ -59,20 +59,20 @@ func PrintError(e *WalrusError, showFileName bool) {
 	}
 
 	lineNumber := fmt.Sprintf("%d | ", e.lineStart)
-	utils.ColorPrint(utils.GREY, lineNumber)
+	utils.GREY.Print(lineNumber)
 	fmt.Println(line)
 	underLine := fmt.Sprintf("%s^%s\n", strings.Repeat(" ", (e.colStart-1) + len(lineNumber)), strings.Repeat("~", hLen))
 
-	utils.ColorPrint(utils.RED, underLine)
-	utils.ColorPrint(utils.RED, e.err.Error() + "\n")
+	utils.RED.Print(underLine)
+	utils.RED.Println(e.err.Error())
 
 	if len(e.hints) > 0 {
-		utils.ColorPrint(utils.GREEN, "Hint:\n")
+		utils.GREEN.Println("Hint:")
 		for _, hint := range e.hints {
 			if hint.hintType == TEXT_HINT {
-				utils.ColorPrint(utils.YELLOW, hint.message + "\n")
+				utils.YELLOW.Println(hint.message)
 			} else {
-				utils.ColorPrint(utils.ORANGE, hint.message + "\n")
+				utils.ORANGE.Println(hint.message)
 			}
 		}
 	}
@@ -128,19 +128,19 @@ var globalErrors []*WalrusError
 // make an errorlist to add all errors and display later
 func AddError(filePath string, lineStart, lineEnd int, colStart, colEnd int, err string) *WalrusError {
 	errItem := makeError(filePath, lineStart, lineEnd, colStart, colEnd, err)
-	utils.ColorPrint(utils.YELLOW, fmt.Sprintf("Error added on %s:%d:%d. %d errors available\n", filePath, lineStart, colStart, len(globalErrors)))
+	utils.YELLOW.Printf("Error added on %s:%d:%d. %d errors available\n", filePath, lineStart, colStart, len(globalErrors))
 	return errItem
 }
 
 func DisplayErrors() {
 	if len(globalErrors) == 0 {
-		utils.ColorPrint(utils.GREEN, "------- Passed --------\n")
+		utils.GREEN.Println("------- Passed --------")
 		return
 	}
 	for _, err := range globalErrors {
 		PrintError(err, true)
 	}
-	utils.ColorPrint(utils.BOLD_RED, fmt.Sprintf("%d error(s) found\n", len(globalErrors)))
+	utils.BOLD_RED.Printf("%d error(s) found\n", len(globalErrors))
 	//os.Exit(-1)
 	panic("Errors found")
 }

@@ -118,7 +118,7 @@ type Token struct {
 }
 
 func (t *Token) Debug(filename string) {
-	utils.ColorPrint(utils.GREY, fmt.Sprintf("%s:%d:%d", filename, t.Start.Line, t.Start.Column))
+	utils.GREY.Printf("%s:%d:%d", filename, t.Start.Line, t.Start.Column)
 	if t.Value == string(t.Kind) {
 		fmt.Printf("\t '%s'\n", t.Value)
 	} else {

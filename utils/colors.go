@@ -22,19 +22,18 @@ const (
 	BOLD   		COLOR 	= 	"\033[1m"
 )
 
-func Colorize(color COLOR, text string) string {
-
-	//regex to check if the color is valid
-	switch color {
-	case RESET, RED, BOLD_RED, GREEN, YELLOW, ORANGE, BLUE, PURPLE, CYAN, WHITE, GREY, BOLD:
-		break
-	default:
-		panic("Invalid color")
-	}
-
-	return fmt.Sprintf("%s%s%s", color, text, RESET)
+func (c COLOR) Printf(format string, args ...interface{}) {
+	fmt.Printf(string(c) + format + string(RESET), args...)
 }
 
-func ColorPrint(color COLOR, text string) {
-	fmt.Print(Colorize(color, text))
+func (c COLOR) Println(args ...interface{}) {
+	fmt.Print(string(c))
+	fmt.Println(args...)
+	fmt.Print(string(RESET))
+}
+
+func (c COLOR) Print(args ...interface{}) {
+	fmt.Print(string(c))
+	fmt.Print(args...)
+	fmt.Print(string(RESET))
 }

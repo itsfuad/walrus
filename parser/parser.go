@@ -10,6 +10,7 @@ import (
 	"walrus/builtins"
 	"walrus/errgen"
 	"walrus/lexer"
+	"walrus/utils"
 )
 
 type Parser struct {
@@ -87,6 +88,8 @@ func parseNode(p *Parser) ast.Node {
 
 func (p *Parser) Parse(saveJson bool) ast.Node {
 
+	utils.GREEN.Printf("Parsing %s\n", p.FilePath)
+
 	var contents []ast.Node
 
 	for p.hasToken() {
@@ -119,6 +122,8 @@ func (p *Parser) Parse(saveJson bool) ast.Node {
 	
 		file.Close()
 	}
+
+	utils.GREEN.Println("Parsing complete")
 
 	return program
 }
