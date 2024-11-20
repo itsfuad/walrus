@@ -151,7 +151,7 @@ myMap["a"] = 20; // myMap = {"a": 20, "b": 20, "c": 30}
 ```rs
 type Person struct{
     name: str;
-    age: 32;
+    age: i32;
 }
 
 //Assign the type with @Name syntax. So we can distinguish between type and variable.
@@ -194,14 +194,14 @@ if a > b {
 
 ## Functions
 ```rs
-fn add(a: 32, b: 32) -> 32 {
+fn add(a: i32, b: i32) -> i32 {
     ret a + b;
 }
 
 let sum := add(10, 20); // sum = 30
 
 // function with optional parameters
-fn add(a: 32, b: 32, c?: 32 = 0) -> 32 {
+fn add(a: i32, b: i32, c?: i32 = 0) -> i32 {
     ret a + b + c;
 }
 
@@ -213,8 +213,8 @@ let adder := add;
 let sum := adder(10, 20); // sum = 30
 
 // function with closure
-fn add(a: 32) -> fn(32) -> 32 {
-    ret fn(b: 32) -> 32 {
+fn add(a: i32) -> fn(i32) -> i32 {
+    ret fn(b: i32) -> i32 {
         ret a + b;
     };
 }
@@ -248,15 +248,15 @@ type Circle struct {
     radius: f32;
 }
 
-type FnType fn(a: 32, b: 32) -> 32;
+type FnType fn(a: i32, b: i32) -> i32;
 
-type WrapperInt 32;
+type WrapperInt i32;
 
 let c := @Circle {
     radius: 10.0
 };
 
-let f: FnType = fn(a: 32, b: 32) -> 32 {
+let f: FnType = fn(a: i32, b: i32) -> i32 {
     ret a + b;
 };
 
@@ -323,7 +323,7 @@ type Printable interface {
 
 type Person struct {
     name: str;
-    age: 32;
+    age: i32;
 }
 
 impl Person {
