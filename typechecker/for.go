@@ -5,7 +5,7 @@ import (
 	"walrus/errgen"
 )
 
-func checkForStmt(forStmt ast.ForStmt, env *TypeEnvironment) ValueTypeInterface {
+func checkForStmt(forStmt ast.ForStmt, env *TypeEnvironment) TcValue {
 
 	// for loop can be infinite loop or have a start, end and step
 
@@ -24,14 +24,14 @@ func checkForStmt(forStmt ast.ForStmt, env *TypeEnvironment) ValueTypeInterface 
 		}
 
 		cond := CheckAST(forStmt.Condition, forLoopEnv)
-		
+
 		//must be a boolean if !cond -> error, if !cond.Type == bool -> error
 		if cond == nil || cond.DType() != BOOLEAN_TYPE {
 			errgen.AddError(env.filePath, forStmt.StartPos().Line, forStmt.EndPos().Line, forStmt.StartPos().Column, forStmt.EndPos().Column, "for loop condition must be a boolean expression").DisplayWithPanic()
 		}
 
 		incr := CheckAST(forStmt.Increment, forLoopEnv)
-		
+
 		//must be assignment
 		if _, ok := incr.(ast.IncrementalInterface); !ok {
 			errgen.AddError(env.filePath, forStmt.StartPos().Line, forStmt.EndPos().Line, forStmt.StartPos().Column, forStmt.EndPos().Column, "for loop increment must be incremental assignment").DisplayWithPanic()

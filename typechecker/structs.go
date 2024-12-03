@@ -6,11 +6,11 @@ import (
 	"walrus/errgen"
 )
 
-func checkStructLiteral(structLit ast.StructLiteral, env *TypeEnvironment) ValueTypeInterface {
+func checkStructLiteral(structLit ast.StructLiteral, env *TypeEnvironment) TcValue {
 
 	sName := structLit.Identifier
 
-	Type, err := getTypeDefinition(sName.Name)
+	Type, err := getTypeDefinition(sName.Name) // need to get the most deep type
 	if err != nil {
 		errgen.AddError(env.filePath, sName.StartPos().Line, sName.EndPos().Line, sName.StartPos().Column, sName.EndPos().Column, fmt.Sprintf("'%s' is not a struct", sName.Name))
 	}
@@ -64,32 +64,30 @@ func checkStructLiteral(structLit ast.StructLiteral, env *TypeEnvironment) Value
 	}
 }
 
-func checkPropertyAccess(expr ast.StructPropertyAccessExpr, env *TypeEnvironment) ValueTypeInterface {
+func checkPropertyAccess(expr ast.StructPropertyAccessExpr, env *TypeEnvironment) TcValue {
+
+	fmt.Printf("Property Access: %s\n", expr.Property.Name)
 
 	object := nodeType(expr.Object, env)
 
 	prop := expr.Property
 
-	lineStart := expr.Object.StartPos().Line
-	lineEnd := expr.Object.EndPos().Line
-	start := expr.Object.StartPos().Column
-	end := expr.Object.EndPos().Column
+	fmt.Printf("Obj type: %T\n", object)
 
-	typeName := string(valueTypeInterfaceToString(object))
-
-	Type, err := getTypeDefinition(typeName)
-	if err != nil {
-		errgen.AddError(env.filePath, lineStart, lineEnd, start, end, err.Error())
-	}
+	objName := tcValueToString(object)
 
 	var structEnv TypeEnvironment
 
 	//get the struct's environment
-	switch t := Type.(type) {
+	switch t := object.(type) {
 	case Struct:
 		structEnv = t.StructScope
 	case Interface:
 		//prop must be a method
+		if _, ok := t.Methods[prop.Name]; !ok {
+			errgen.AddError(env.filePath, prop.Start.Line, prop.End.Line, prop.Start.Column, prop.End.Column, fmt.Sprintf("interface '%s' does not have a method '%s'", t.InterfaceName, prop.Name)).DisplayWithPanic()
+			return NewVoid() // unreachable but needed to avoid accidental nil pointer dereference
+		}
 		return t.Methods[prop.Name]
 	}
 
@@ -118,7 +116,7 @@ func checkPropertyAccess(expr ast.StructPropertyAccessExpr, env *TypeEnvironment
 		return property
 	}
 
-	errgen.AddError(env.filePath, prop.Start.Line, prop.End.Line, prop.Start.Column, prop.End.Column, fmt.Sprintf("'%s' does not exist on type '%s'", prop.Name, typeName)).DisplayWithPanic()
+	errgen.AddError(env.filePath, prop.Start.Line, prop.End.Line, prop.Start.Column, prop.End.Column, fmt.Sprintf("'%s' does not exist on type '%s'", prop.Name, objName)).DisplayWithPanic()
 
 	return NewVoid()
 }
@@ -151,7 +149,6 @@ func checkStructTypeDecl(name string, structType ast.StructType, env *TypeEnviro
 	//declare 'this' variable to be used in the struct's methods
 	err := structEnv.DeclareVar("this", structTypeValue, true, false)
 	if err != nil {
-
 		errgen.AddError(env.filePath, structType.Start.Line, structType.End.Line, structType.Start.Column, structType.End.Column, err.Error())
 	}
 

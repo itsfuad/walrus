@@ -3,7 +3,7 @@ package typechecker
 import (
 	"fmt"
 	"walrus/ast"
-	"walrus/errgen"
+	//"walrus/errgen"
 )
 
 type SCOPE_TYPE int
@@ -16,7 +16,7 @@ const (
 	LOOP_SCOPE
 )
 
-var typeDefinitions = map[string]ValueTypeInterface{
+var typeDefinitions = map[string]TcValue{
 	string(INT8_TYPE):    NewInt(8, true),
 	string(INT16_TYPE):   NewInt(16, true),
 	string(INT32_TYPE):   NewInt(32, true),
@@ -37,7 +37,7 @@ type TypeEnvironment struct {
 	parent     *TypeEnvironment
 	scopeType  SCOPE_TYPE
 	scopeName  string
-	variables  map[string]ValueTypeInterface
+	variables  map[string]TcValue
 	constants  map[string]bool
 	isOptional map[string]bool
 	interfaces map[string]Interface
@@ -59,7 +59,7 @@ func NewTypeENV(parent *TypeEnvironment, scope SCOPE_TYPE, scopeName string, fil
 		scopeType:  scope,
 		scopeName:  scopeName,
 		filePath:   filePath,
-		variables:  make(map[string]ValueTypeInterface),
+		variables:  make(map[string]TcValue),
 		constants:  make(map[string]bool),
 		isOptional: make(map[string]bool),
 		interfaces: make(map[string]Interface),
@@ -101,7 +101,7 @@ func (t *TypeEnvironment) ResolveVar(name string) (*TypeEnvironment, error) {
 	return t.parent.ResolveVar(name)
 }
 
-func (t *TypeEnvironment) DeclareVar(name string, typeVar ValueTypeInterface, isConst bool, isOptional bool) error {
+func (t *TypeEnvironment) DeclareVar(name string, typeVar TcValue, isConst bool, isOptional bool) error {
 
 	if _, ok := typeDefinitions[name]; ok {
 		return fmt.Errorf("cannot declare variable with type '%s'", name)
@@ -119,7 +119,7 @@ func (t *TypeEnvironment) DeclareVar(name string, typeVar ValueTypeInterface, is
 	return nil
 }
 
-func DeclareType(name string, typeType ValueTypeInterface) error {
+func DeclareType(name string, typeType TcValue) error {
 	if _, ok := typeDefinitions[name]; ok {
 		return fmt.Errorf("type '%s' already defined", name)
 	}
@@ -134,37 +134,31 @@ func (t *TypeEnvironment) isDeclared(name string) bool {
 	return false
 }
 
-func nodeType(value ast.Node, t *TypeEnvironment) ValueTypeInterface {
-
-	typ := CheckAST(value, t)
-
-	typ, err := unwrapType(typ)
+func nodeType(value ast.Node, t *TypeEnvironment) TcValue {
+	/*
+	val, err := unwrapType(CheckAST(value, t))
 	if err != nil {
-		errgen.AddError(t.filePath, value.StartPos().Line, value.EndPos().Line, value.StartPos().Column, value.EndPos().Column, err.Error()).DisplayWithPanic()
+		errgen.AddError(t.filePath, value.StartPos().Line, value.EndPos().Line, value.StartPos().Column, value.EndPos().Column, err.Error())
 	}
-
-	return typ
+	return val
+	*/
+	return CheckAST(value, t)
 }
 
-func getTypeDefinition(name string) (ValueTypeInterface, error) {
+func getTypeDefinition(name string) (TcValue, error) {
 	if typ, ok := typeDefinitions[name]; !ok {
 		return nil, fmt.Errorf("unknown type '%s'", name)
 	} else {
-		switch t := typ.(type) {
-		case UserDefined:
-			return unwrapType(t.TypeDef)
-		default:
-			return typ, nil
-		}
+		return unwrapType(typ)
 	}
 }
 
-func unwrapType(value ValueTypeInterface) (ValueTypeInterface, error) {
+func unwrapType(value TcValue) (TcValue, error) {
 	switch t := value.(type) {
 	case UserDefined:
 		return unwrapType(t.TypeDef)
 	default:
-		return value, nil
+		return t, nil
 	}
 }
 

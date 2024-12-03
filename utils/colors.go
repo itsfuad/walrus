@@ -13,7 +13,7 @@ const (
 	BOLD_RED 	COLOR 	= 	"\033[38;05;196m"
     GREEN  		COLOR 	= 	"\033[32m"
     YELLOW 		COLOR 	= 	"\033[33m"
-	ORANGE 		COLOR 	= 	"\033[38;05;221m"
+	ORANGE 		COLOR 	= 	"\033[38;05;166m"
     BLUE   		COLOR 	= 	"\033[34m"
     PURPLE 		COLOR 	= 	"\033[35m"
     CYAN   		COLOR 	= 	"\033[36m"

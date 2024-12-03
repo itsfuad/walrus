@@ -6,7 +6,7 @@ import (
 	"walrus/errgen"
 )
 
-func checkFunctionExpr(funcNode ast.FunctionLiteral, env *TypeEnvironment) ValueTypeInterface {
+func checkFunctionExpr(funcNode ast.FunctionLiteral, env *TypeEnvironment) TcValue {
 	name := fmt.Sprintf("_FN_%s", RandStringRunes(10))
 	return CheckAndDeclareFunction(funcNode, name, env)
 }
@@ -81,7 +81,7 @@ func checkandDeclareParamaters(params []ast.FunctionParam, fnEnv *TypeEnvironmen
 	return parameters
 }
 
-func checkFunctionCall(callNode ast.FunctionCallExpr, env *TypeEnvironment) ValueTypeInterface {
+func checkFunctionCall(callNode ast.FunctionCallExpr, env *TypeEnvironment) TcValue {
 	//check if the function is declared
 	caller := nodeType(callNode.Caller, env)
 	fn, err := userDefinedToFn(caller)
@@ -123,7 +123,7 @@ func checkFunctionCall(callNode ast.FunctionCallExpr, env *TypeEnvironment) Valu
 	return fn.Returns
 }
 
-func userDefinedToFn(ud ValueTypeInterface) (Fn, error) {
+func userDefinedToFn(ud TcValue) (Fn, error) {
 	// if UserDefined then chain until Fn or error
 	switch t := ud.(type) {
 	case Fn:
@@ -137,7 +137,7 @@ func userDefinedToFn(ud ValueTypeInterface) (Fn, error) {
 	}
 }
 
-func checkFunctionDeclStmt(funcNode ast.FunctionDeclStmt, env *TypeEnvironment) ValueTypeInterface {
+func checkFunctionDeclStmt(funcNode ast.FunctionDeclStmt, env *TypeEnvironment) TcValue {
 
 	// check if function is already declared
 	funcName := funcNode.Identifier.Name
@@ -150,7 +150,7 @@ func checkFunctionDeclStmt(funcNode ast.FunctionDeclStmt, env *TypeEnvironment) 
 	return CheckAndDeclareFunction(funcNode.FunctionLiteral, funcName, env)
 }
 
-func getFunctionReturnValue(env *TypeEnvironment, returnNode ast.Node) ValueTypeInterface {
+func getFunctionReturnValue(env *TypeEnvironment, returnNode ast.Node) TcValue {
 	funcParent, err := env.ResolveFunctionEnv()
 	if err != nil {
 

@@ -42,7 +42,8 @@ func PrintError(e *WalrusError, showFileName bool) {
 	}
 
 	if showFileName {
-		utils.BLUE.Printf("\nIn file: %s:%d:%d\n", e.filePath, e.lineStart, e.colStart)
+		utils.BLUE.Print("\nIn file: ")
+		utils.GREY.Printf("%s:%d:%d\n", e.filePath, e.lineStart, e.colStart)
 	}
 
 	lines := strings.Split(string(fileData), "\n")

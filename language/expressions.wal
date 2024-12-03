@@ -40,6 +40,15 @@ let myMap : map[str]i32 = map[str]i32{
 
 let mapValue := myMap["key1"];
 
+type Int i32;
+/*
+impl Int {
+    fn toStr() -> str {
+        ret "0";
+    }
+}
+*/
+
 //type i32 i32; // error
 
 //let x : i32 = 10.6; // error

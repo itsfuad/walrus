@@ -31,7 +31,7 @@ const (
 	RETURN_TYPE       builtins.TC_TYPE = "return"
 )
 
-type ValueTypeInterface interface {
+type TcValue interface {
 	DType() builtins.TC_TYPE
 }
 
@@ -88,8 +88,8 @@ func (t Void) DType() builtins.TC_TYPE {
 
 type Map struct {
 	DataType  builtins.TC_TYPE
-	KeyType   ValueTypeInterface
-	ValueType ValueTypeInterface
+	KeyType   TcValue
+	ValueType TcValue
 }
 
 func (t Map) DType() builtins.TC_TYPE {
@@ -100,13 +100,13 @@ type FnParam struct {
 	Name       string
 	IsOptional bool
 	//DefaultValueType ValueTypeInterface
-	Type ValueTypeInterface
+	Type TcValue
 }
 
 type Fn struct {
 	DataType      builtins.TC_TYPE
 	Params        []FnParam
-	Returns       ValueTypeInterface
+	Returns       TcValue
 	FunctionScope TypeEnvironment
 }
 
@@ -116,8 +116,8 @@ func (t Fn) DType() builtins.TC_TYPE {
 
 type ConditionBranch struct {
 	DataType builtins.TC_TYPE
-	Next     ValueTypeInterface
-	Returns  ValueTypeInterface
+	Next     TcValue
+	Returns  TcValue
 }
 
 type ConditionStmt struct {
@@ -131,7 +131,7 @@ func (t ConditionStmt) DType() builtins.TC_TYPE {
 
 type StructProperty struct {
 	IsPrivate bool
-	Type      ValueTypeInterface
+	Type      TcValue
 }
 
 func (t StructProperty) DType() builtins.TC_TYPE {
@@ -159,7 +159,7 @@ func (t Struct) DType() builtins.TC_TYPE {
 
 type Array struct {
 	DataType  builtins.TC_TYPE
-	ArrayType ValueTypeInterface
+	ArrayType TcValue
 }
 
 func (t Array) DType() builtins.TC_TYPE {
@@ -169,7 +169,7 @@ func (t Array) DType() builtins.TC_TYPE {
 type UserDefined struct {
 	DataType builtins.TC_TYPE
 	TypeName string
-	TypeDef  ValueTypeInterface
+	TypeDef  TcValue
 }
 
 func (t UserDefined) DType() builtins.TC_TYPE {
@@ -178,7 +178,7 @@ func (t UserDefined) DType() builtins.TC_TYPE {
 
 type ReturnType struct {
 	DataType   builtins.TC_TYPE
-	Expression ValueTypeInterface
+	Expression TcValue
 }
 
 func (t ReturnType) DType() builtins.TC_TYPE {
@@ -187,7 +187,7 @@ func (t ReturnType) DType() builtins.TC_TYPE {
 
 type Block struct {
 	DataType builtins.TC_TYPE
-	Returns  ValueTypeInterface
+	Returns  TcValue
 	Node     ast.Node
 }
 
