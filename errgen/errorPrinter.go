@@ -31,8 +31,9 @@ type WalrusError struct {
 }
 
 func (e *WalrusError) DisplayWithPanic() {
-	fmt.Printf("Total hints: %d\n", len(e.hints))
 	DisplayErrors()
+	utils.BOLD_RED.Println("Critical error found. Exiting type checker...")
+	panic("Errors found")
 }
 
 func PrintError(e *WalrusError, showFileName bool) {
@@ -142,6 +143,4 @@ func DisplayErrors() {
 		PrintError(err, true)
 	}
 	utils.BOLD_RED.Printf("%d error(s) found\n", len(globalErrors))
-	//os.Exit(-1)
-	panic("Errors found")
 }

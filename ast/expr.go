@@ -280,9 +280,16 @@ func (a Indexable) EndPos() lexer.Position {
 	return a.Location.End
 }
 
+
+type StructProp struct {
+	Prop IdentifierExpr
+	Value Node
+}
+
+
 type StructLiteral struct {
 	Identifier IdentifierExpr
-	Properties map[string]Node
+	Properties map[string]StructProp
 	Location
 }
 
