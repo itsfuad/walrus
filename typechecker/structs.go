@@ -18,21 +18,20 @@ func checkStructLiteral(structLit ast.StructLiteral, env *TypeEnvironment) TcVal
 	structType := Type.(Struct)
 
 	// now we match the defined props with the provided props
-	for propname, propval := range structLit.Properties {
+	for propname, prop := range structLit.Properties {
 		//check if the property is defined
 		if _, ok := structType.StructScope.variables[propname]; !ok {
-
-			errgen.AddError(env.filePath, propval.StartPos().Line, propval.EndPos().Line, propval.StartPos().Column, propval.EndPos().Column, fmt.Sprintf("property '%s' is not defined on struct '%s'", propname, sName.Name))
+			errgen.AddError(env.filePath, prop.Prop.Start.Line, prop.Prop.End.Line, prop.Prop.Start.Column, prop.Prop.End.Column, fmt.Sprintf("property '%s' is not defined on struct '%s'", propname, sName.Name)).DisplayWithPanic()
 		}
 
 		//check if the property type matches the defined type
-		providedType := nodeType(propval, env)
+		providedType := CheckAST(prop.Value, env)
+
 		expectedType := structType.StructScope.variables[propname].(StructProperty).Type
 
 		err := matchTypes(expectedType, providedType)
 		if err != nil {
-
-			errgen.AddError(env.filePath, propval.StartPos().Line, propval.EndPos().Line, propval.StartPos().Column, propval.EndPos().Column, err.Error())
+			errgen.AddError(env.filePath, prop.Prop.StartPos().Column, prop.Value.EndPos().Line, prop.Prop.StartPos().Column, prop.Value.EndPos().Column, err.Error())
 		}
 	}
 
@@ -53,7 +52,7 @@ func checkStructLiteral(structLit ast.StructLiteral, env *TypeEnvironment) TcVal
 
 	structValue := Struct{
 		DataType:    STRUCT_TYPE,
-		StructName:  sName.Name,
+		StructName:  tcValueToString(Type),
 		StructScope: structType.StructScope,
 	}
 
@@ -68,7 +67,7 @@ func checkPropertyAccess(expr ast.StructPropertyAccessExpr, env *TypeEnvironment
 
 	fmt.Printf("Property Access: %s\n", expr.Property.Name)
 
-	object := nodeType(expr.Object, env)
+	object := CheckAST(expr.Object, env)
 
 	prop := expr.Property
 

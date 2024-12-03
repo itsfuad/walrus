@@ -11,7 +11,8 @@ func checkTypeDeclaration(node ast.TypeDeclStmt, env *TypeEnvironment) TcValue {
 
 	typeName := node.UDType
 
-	fmt.Printf("declaring type %s\n", node.UDTypeName)
+	utils.BLUE.Print("declaring type ")
+	utils.PURPLE.Println(node.UDTypeName)
 
 	var val TcValue
 
@@ -36,9 +37,8 @@ func checkTypeDeclaration(node ast.TypeDeclStmt, env *TypeEnvironment) TcValue {
 		errgen.AddError(env.filePath, node.Start.Line, node.End.Line, node.Start.Column, node.End.Column, err.Error())
 	}
 
-	utils.CYAN.Print("Type ")
-	utils.PURPLE.Print(node.UDTypeName)
-	fmt.Println(" declared")
+	utils.GREEN.Print("Declared Type ")
+	utils.PURPLE.Println(node.UDTypeName)
 
 	return val
 }

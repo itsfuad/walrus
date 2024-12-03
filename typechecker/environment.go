@@ -2,8 +2,6 @@ package typechecker
 
 import (
 	"fmt"
-	"walrus/ast"
-	//"walrus/errgen"
 )
 
 type SCOPE_TYPE int
@@ -134,21 +132,16 @@ func (t *TypeEnvironment) isDeclared(name string) bool {
 	return false
 }
 
-func nodeType(value ast.Node, t *TypeEnvironment) TcValue {
-	/*
-	val, err := unwrapType(CheckAST(value, t))
-	if err != nil {
-		errgen.AddError(t.filePath, value.StartPos().Line, value.EndPos().Line, value.StartPos().Column, value.EndPos().Column, err.Error())
-	}
-	return val
-	*/
-	return CheckAST(value, t)
-}
 
 func getTypeDefinition(name string) (TcValue, error) {
 	if typ, ok := typeDefinitions[name]; !ok {
 		return nil, fmt.Errorf("unknown type '%s'", name)
 	} else {
+		if tp, ok := typ.(UserDefined); ok {
+			if st, ok := tp.TypeDef.(Struct); ok {
+				fmt.Printf("unwrapping type from: %s\n", st.StructName)
+			}
+		}
 		return unwrapType(typ)
 	}
 }

@@ -56,7 +56,7 @@ func checkandDeclareParamaters(params []ast.FunctionParam, fnEnv *TypeEnvironmen
 
 		if param.IsOptional {
 			//default value type
-			defaultValue := nodeType(param.DefaultValue, fnEnv)
+			defaultValue := CheckAST(param.DefaultValue, fnEnv)
 			err := matchTypes(paramType, defaultValue)
 			if err != nil {
 
@@ -83,7 +83,7 @@ func checkandDeclareParamaters(params []ast.FunctionParam, fnEnv *TypeEnvironmen
 
 func checkFunctionCall(callNode ast.FunctionCallExpr, env *TypeEnvironment) TcValue {
 	//check if the function is declared
-	caller := nodeType(callNode.Caller, env)
+	caller := CheckAST(callNode.Caller, env)
 	fn, err := userDefinedToFn(caller)
 
 	if err != nil {
@@ -112,7 +112,7 @@ func checkFunctionCall(callNode ast.FunctionCallExpr, env *TypeEnvironment) TcVa
 
 	//check if the arguments match the parameters
 	for i := 0; i < len(callNode.Arguments); i++ {
-		arg := nodeType(callNode.Arguments[i], env)
+		arg := CheckAST(callNode.Arguments[i], env)
 		err := matchTypes(fnParams[i].Type, arg)
 		if err != nil {
 

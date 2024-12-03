@@ -27,8 +27,8 @@ func checkVariableAssignment(node ast.VarAssignmentExpr, env *TypeEnvironment) T
 
 	}
 
-	expectedType := nodeType(Assignee, env)
-	providedType := nodeType(valueToAssign, env)
+	expectedType := CheckAST(Assignee, env)
+	providedType := CheckAST(valueToAssign, env)
 
 	err := matchTypes(expectedType, providedType)
 	if err != nil {
@@ -65,7 +65,7 @@ func checkVariableDeclaration(node ast.VarDeclStmt, env *TypeEnvironment) TcValu
 
 	for _, varToDecl := range varsToDecl {
 
-		utils.GREEN.Print("Declaring variable ")
+		utils.BLUE.Print("Declaring variable ")
 		utils.RED.Println(varToDecl.Identifier.Name)
 
 		var expectedTypeInterface TcValue
@@ -77,14 +77,14 @@ func checkVariableDeclaration(node ast.VarDeclStmt, env *TypeEnvironment) TcValu
 			fmt.Print("Explicit type: ")
 			utils.PURPLE.Println(tcValueToString(expectedTypeInterface))
 		} else {
-			expectedTypeInterface = nodeType(varToDecl.Value, env)
+			expectedTypeInterface = CheckAST(varToDecl.Value, env)
 			utils.ORANGE.Print("Auto detected type: ")
 			utils.PURPLE.Println(tcValueToString(expectedTypeInterface))
 		}
 
 		if varToDecl.Value != nil && varToDecl.ExplicitType != nil {
 			//providedValue := CheckAST(node.Value, env)
-			providedValue := nodeType(varToDecl.Value, env)
+			providedValue := CheckAST(varToDecl.Value, env)
 			err := matchTypes(expectedTypeInterface, providedValue)
 			if err != nil {
 				errgen.AddError(env.filePath, varToDecl.Value.StartPos().Line, varToDecl.Value.EndPos().Line, varToDecl.Value.StartPos().Column, varToDecl.Value.EndPos().Column, err.Error())
@@ -98,12 +98,12 @@ func checkVariableDeclaration(node ast.VarDeclStmt, env *TypeEnvironment) TcValu
 		}
 
 		if node.IsConst {
-			utils.BLUE.Print("Declared constant variable ")
+			utils.GREEN.Print("Declared constant variable ")
 			utils.RED.Print(varToDecl.Identifier.Name)
 			fmt.Print(" of type ")
 			utils.PURPLE.Println(tcValueToString(expectedTypeInterface))
 		} else {
-			utils.BLUE.Print("Declared variable ")
+			utils.GREEN.Print("Declared variable ")
 			utils.RED.Print(varToDecl.Identifier.Name)
 			fmt.Print(" of type ")
 			utils.PURPLE.Println(tcValueToString(expectedTypeInterface))
