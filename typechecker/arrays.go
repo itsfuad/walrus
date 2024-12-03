@@ -20,12 +20,12 @@ import (
 // 2. Ensures that the index expression evaluates to an integer type. If not, it generates an error with a hint that the index must be a valid integer.
 //
 // If both checks pass, the function returns the type of the elements contained in the array.
-func evaluateIndexableAccess(indexable ast.Indexable, env *TypeEnvironment) ValueTypeInterface {
-	
+func evaluateIndexableAccess(indexable ast.Indexable, env *TypeEnvironment) TcValue {
+
 	container := nodeType(indexable.Container, env)
 	index := nodeType(indexable.Index, env)
 
-	var indexedValueType ValueTypeInterface
+	var indexedValueType TcValue
 
 	switch t := container.(type) {
 	case Array:
@@ -64,8 +64,8 @@ func evaluateIndexableAccess(indexable ast.Indexable, env *TypeEnvironment) Valu
 //
 // Returns:
 // - ValueTypeInterface: The type of the array, which includes the data type and the type of the array elements.
-func evaluateArrayExpr(array ast.ArrayLiteral, env *TypeEnvironment) ValueTypeInterface {
-	var expectedType ValueTypeInterface
+func evaluateArrayExpr(array ast.ArrayLiteral, env *TypeEnvironment) TcValue {
+	var expectedType TcValue
 	for i, value := range array.Values {
 		v := nodeType(value, env)
 		if i == 0 {
@@ -74,7 +74,6 @@ func evaluateArrayExpr(array ast.ArrayLiteral, env *TypeEnvironment) ValueTypeIn
 		//check every type is same or not
 		err := matchTypes(expectedType, v)
 		if err != nil {
-
 			errgen.AddError(env.filePath, array.Start.Line, array.End.Line, array.Values[i].StartPos().Column, array.Values[i].EndPos().Column, err.Error())
 		}
 	}

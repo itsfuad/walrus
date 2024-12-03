@@ -7,13 +7,13 @@ import (
 	"walrus/utils"
 )
 
-func checkTypeDeclaration(node ast.TypeDeclStmt, env *TypeEnvironment) ValueTypeInterface {
+func checkTypeDeclaration(node ast.TypeDeclStmt, env *TypeEnvironment) TcValue {
 
 	typeName := node.UDType
 
 	fmt.Printf("declaring type %s\n", node.UDTypeName)
 
-	var val ValueTypeInterface
+	var val TcValue
 
 	switch t := typeName.(type) {
 	case ast.StructType:

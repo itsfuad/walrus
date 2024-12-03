@@ -5,7 +5,7 @@ import (
 	"walrus/errgen"
 )
 
-func checkMapLiteral(node ast.MapLiteral, env *TypeEnvironment) ValueTypeInterface {
+func checkMapLiteral(node ast.MapLiteral, env *TypeEnvironment) TcValue {
 
 	//get the map definitions
 

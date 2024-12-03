@@ -17,7 +17,7 @@ import (
 //
 // Returns:
 // - ValueTypeInterface: the type of the value being assigned.
-func checkVariableAssignment(node ast.VarAssignmentExpr, env *TypeEnvironment) ValueTypeInterface {
+func checkVariableAssignment(node ast.VarAssignmentExpr, env *TypeEnvironment) TcValue {
 
 	Assignee := node.Assignee
 	valueToAssign := node.Value
@@ -59,27 +59,27 @@ func checkVariableAssignment(node ast.VarAssignmentExpr, env *TypeEnvironment) V
 //  5. Declares the variable in the type environment and reports any errors that occur.
 //  6. Prints a message indicating whether the variable is a constant and its type.
 //  7. Returns a Void type indicating the end of the declaration process.
-func checkVariableDeclaration(node ast.VarDeclStmt, env *TypeEnvironment) ValueTypeInterface {
+func checkVariableDeclaration(node ast.VarDeclStmt, env *TypeEnvironment) TcValue {
 
 	varsToDecl := node.Variables
 
 	for _, varToDecl := range varsToDecl {
 
-		fmt.Print("Declaring variable ")
+		utils.GREEN.Print("Declaring variable ")
 		utils.RED.Println(varToDecl.Identifier.Name)
 
-		var expectedTypeInterface ValueTypeInterface
+		var expectedTypeInterface TcValue
 
 		// let a : int = 5;
 
 		if varToDecl.ExplicitType != nil {
 			expectedTypeInterface = evaluateTypeName(varToDecl.ExplicitType, env)
 			fmt.Print("Explicit type: ")
-			utils.PURPLE.Println(string(valueTypeInterfaceToString(expectedTypeInterface)))
+			utils.PURPLE.Println(tcValueToString(expectedTypeInterface))
 		} else {
 			expectedTypeInterface = nodeType(varToDecl.Value, env)
-			fmt.Print("Auto detected type: ")
-			utils.PURPLE.Println(string(valueTypeInterfaceToString(expectedTypeInterface)))
+			utils.ORANGE.Print("Auto detected type: ")
+			utils.PURPLE.Println(tcValueToString(expectedTypeInterface))
 		}
 
 		if varToDecl.Value != nil && varToDecl.ExplicitType != nil {
@@ -101,12 +101,12 @@ func checkVariableDeclaration(node ast.VarDeclStmt, env *TypeEnvironment) ValueT
 			utils.BLUE.Print("Declared constant variable ")
 			utils.RED.Print(varToDecl.Identifier.Name)
 			fmt.Print(" of type ")
-			utils.PURPLE.Println(string(valueTypeInterfaceToString(expectedTypeInterface)))
+			utils.PURPLE.Println(tcValueToString(expectedTypeInterface))
 		} else {
 			utils.BLUE.Print("Declared variable ")
 			utils.RED.Print(varToDecl.Identifier.Name)
 			fmt.Print(" of type ")
-			utils.PURPLE.Println(string(valueTypeInterfaceToString(expectedTypeInterface)))
+			utils.PURPLE.Println(tcValueToString(expectedTypeInterface))
 		}
 
 		//return the type of the variable

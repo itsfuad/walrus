@@ -35,7 +35,7 @@ let distance := @Distance{
     min: 0,
 };
 
-//let a := distance; // error
+//a = distance; // error
 
 //distance.max = 9; // error - private prop
 distance.min = 1;
@@ -92,7 +92,7 @@ fn getPoint() -> Point {
 
 impl Rectangle {
     fn area() -> f32 {
-        ret width * height;
+        ret this.width * height;
     }
 
     fn perimeter() -> f32 {
@@ -104,7 +104,16 @@ fn DrawShape(shape: IShape) {
     //shape.radius; // error
     let area := shape.area();
     let perimeter := shape.perimeter();
+    //shape.do(); // error
 }
+
+type CC Circle;
+type CC2 CC;
+
+let cc1 : CC = @Circle{ radius: 10.0 };
+let cc2 : Circle = @CC2{ radius: 10.0 };
+let cc3 : Circle = i;
+let cc4 : Circle = rectangle;
 
 DrawShape(circle);
 DrawShape(rectangle);

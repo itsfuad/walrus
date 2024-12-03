@@ -5,7 +5,7 @@ import (
 	"walrus/errgen"
 )
 
-func checkIdentifier(node ast.IdentifierExpr, env *TypeEnvironment) ValueTypeInterface {
+func checkIdentifier(node ast.IdentifierExpr, env *TypeEnvironment) TcValue {
 
 	name := node.Name
 
@@ -22,10 +22,11 @@ func checkIdentifier(node ast.IdentifierExpr, env *TypeEnvironment) ValueTypeInt
 	}
 	// if we found value on that scope, return the value. Else make error (though there is no change to reach the error)
 	variable := declaredEnv.variables[name]
-	
-	value, err := unwrapType(variable)
+
+	val, err := unwrapType(variable)
 	if err != nil {
 		errgen.AddError(env.filePath, node.StartPos().Line, node.EndPos().Line, node.StartPos().Column, node.EndPos().Column, err.Error()).DisplayWithPanic()
 	}
-	return value
+
+	return val
 }

@@ -9,7 +9,7 @@ import (
 	"walrus/utils"
 )
 
-func checkIncrementalExpr(node ast.IncrementalInterface, env *TypeEnvironment) ValueTypeInterface {
+func checkIncrementalExpr(node ast.IncrementalInterface, env *TypeEnvironment) TcValue {
 	op := node.Op()
 	arg := node.Arg()
 	// the argument must be an identifier evaluated to a number
@@ -25,14 +25,14 @@ func checkIncrementalExpr(node ast.IncrementalInterface, env *TypeEnvironment) V
 	return typeVal
 }
 
-func logCastSuccess(originalType ValueTypeInterface, toCast ValueTypeInterface) {
+func logCastSuccess(originalType TcValue, toCast TcValue) {
 	utils.ORANGE.Print("casted type ")
 	utils.PURPLE.Print(string(originalType.DType()))
 	fmt.Print(" to ")
 	utils.PURPLE.Println(string(toCast.DType()))
 }
 
-func checkTypeCast(node ast.TypeCastExpr, env *TypeEnvironment) ValueTypeInterface {
+func checkTypeCast(node ast.TypeCastExpr, env *TypeEnvironment) TcValue {
 
 	originalType := nodeType(node.Expression, env)
 	toCast := evaluateTypeName(node.ToCast, env)
@@ -52,7 +52,7 @@ func checkTypeCast(node ast.TypeCastExpr, env *TypeEnvironment) ValueTypeInterfa
 	return originalType
 }
 
-func checkUnaryExpr(node ast.UnaryExpr, env *TypeEnvironment) ValueTypeInterface {
+func checkUnaryExpr(node ast.UnaryExpr, env *TypeEnvironment) TcValue {
 	op := node.Operator
 	arg := node.Argument
 	//evaluate argument. must be evaluated to number or boolean for ! (not)
@@ -78,7 +78,7 @@ func checkUnaryExpr(node ast.UnaryExpr, env *TypeEnvironment) ValueTypeInterface
 	return typeVal
 }
 
-func checkBinaryExpr(node ast.BinaryExpr, env *TypeEnvironment) ValueTypeInterface {
+func checkBinaryExpr(node ast.BinaryExpr, env *TypeEnvironment) TcValue {
 	op := node.Operator
 
 	left := nodeType(node.Left, env)
@@ -124,7 +124,7 @@ func checkBinaryExpr(node ast.BinaryExpr, env *TypeEnvironment) ValueTypeInterfa
 	return left
 }
 
-func checkComparison(node ast.BinaryExpr, left ValueTypeInterface, right ValueTypeInterface, env *TypeEnvironment) ValueTypeInterface {
+func checkComparison(node ast.BinaryExpr, left TcValue, right TcValue, env *TypeEnvironment) TcValue {
 
 	leftType := left.DType()
 	rightType := right.DType()
@@ -152,7 +152,7 @@ func checkComparison(node ast.BinaryExpr, left ValueTypeInterface, right ValueTy
 	return left
 }
 
-func checkAdditionAndConcat(node ast.BinaryExpr, left ValueTypeInterface, right ValueTypeInterface, env *TypeEnvironment) ValueTypeInterface {
+func checkAdditionAndConcat(node ast.BinaryExpr, left TcValue, right TcValue, env *TypeEnvironment) TcValue {
 
 	leftType := left.DType()
 	rightType := right.DType()
