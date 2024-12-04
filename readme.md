@@ -50,10 +50,7 @@ A tiny simple programming language made for simplicity. It borrows syntax from '
         - [x] *=
         - [x] /=
         - [x] %=
-    - [x] [For loop](#for-loop)
-        - [x] for [condition]
-        - [x] for [start] [condition] [end]
-        - [x] for [start] in [range] 
+    - [ ] [For loop](#for-loop)
     - [ ] [Switch](#switch)
     - [x] [Interaface](#interface)
     - [ ] Imports
@@ -283,11 +280,8 @@ a %= 10; // a = 0
 ```
 
 ## For loop
-```rs
-for let i := 0; i < 10; i++ {
-    print(i);
-}
-```
+Syntax is not finalized yet
+
 
 ## Switch
 ```rs
