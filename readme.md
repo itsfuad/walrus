@@ -28,7 +28,7 @@ A tiny simple programming language made for simplicity. It borrows syntax from '
         - [x] Function call
         - [x] Function return
         - [x] Optional parameters
-    - [x] [Closure](#functions)
+    - [x] [Closure](#closure)
     - [x] [User defined types](#user-defined-types)
         - [x] Struct
             - [x] Property access
@@ -221,6 +221,24 @@ fn add(a: 32) -> fn(32) -> 32 {
 
 let adder := add(10);
 let sum := adder(20); // sum = 30
+```
+
+## Closure
+Closures in simple terms are functions which are defined inside another function. They can access the variables of the parent function.
+So when you return a function from a function, it is called a closure.
+```rs
+fn closure(a: i32) -> fn (b: i32) -> i32 {
+    //return a function which takes an integer and returns the sum of a and b
+    ret fn (b: i32) -> i32 {
+        ret a + b;
+    };
+}
+
+const addRes := add(1);
+
+const closureRes1 := closure(1); // returns a function which returns a + b
+const closureRes2 := closureRes1(2); // returns a + b
+const closureRes3 := closure(1)(2); // one liner version of the above two lines
 ```
 
 ## User defined types
