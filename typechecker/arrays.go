@@ -30,14 +30,13 @@ func evaluateIndexableAccess(indexable ast.Indexable, env *TypeEnvironment) TcVa
 	switch t := container.(type) {
 	case Array:
 		if !isIntType(index) {
-			//return t.ArrayType, fmt.Errorf("index must be a valid integer")
-			errgen.AddError(env.filePath, indexable.Start.Line, indexable.End.Line, indexable.Index.StartPos().Column, indexable.Index.EndPos().Column, "index must be a valid integer", errgen.ERROR_NORMAL)
+			errgen.AddError(env.filePath, indexable.Start.Line, indexable.End.Line, indexable.Index.StartPos().Column, indexable.Index.EndPos().Column, fmt.Sprintf("cannot use type '%s' to index array", tcValueToString(index)), errgen.ERROR_NORMAL).AddHint("try using integer or cast", errgen.TEXT_HINT)
 		}
 		indexedValueType = t.ArrayType
 	case Str:
 		if !isIntType(index) {
 			//fmt.Errorf("index must be a valid integer")
-			errgen.AddError(env.filePath, indexable.Start.Line, indexable.End.Line, indexable.Index.StartPos().Column, indexable.Index.EndPos().Column, "index must be a valid integer", errgen.ERROR_NORMAL)
+			errgen.AddError(env.filePath, indexable.Start.Line, indexable.End.Line, indexable.Index.StartPos().Column, indexable.Index.EndPos().Column, fmt.Sprintf("cannot use type '%s' to index string", tcValueToString(index)), errgen.ERROR_NORMAL).AddHint("try using integer or cast", errgen.TEXT_HINT)
 		}
 		return NewInt(8, false)
 	case Map:

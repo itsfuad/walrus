@@ -144,18 +144,8 @@ func matchTypes(expectedType, providedType TcValue) error {
 		return checkMethodsImplementations(expectedType, providedType)
 	}
 
-	unwrappedExpected, err := unwrapType(expectedType)
-	if err != nil {
-		return err
-	}
-
-	unwrappedProvided, err := unwrapType(providedType)
-	if err != nil {
-		return err
-	}
-
-	expectedStr := tcValueToString(unwrappedExpected)
-	providedStr := tcValueToString(unwrappedProvided)
+	expectedStr := tcValueToString(expectedType)
+	providedStr := tcValueToString(providedType)
 
 	if expectedStr != providedStr {
 		return fmt.Errorf("expected type '%s', got '%s'", expectedStr, providedStr)
@@ -194,7 +184,7 @@ func tcValueToString(val TcValue) string {
 	case Map:
 		return fmt.Sprintf("map[%s]%s", tcValueToString(t.KeyType), tcValueToString(t.ValueType))
 	case UserDefined:
-		return tcValueToString(t.TypeDef)
+		return tcValueToString(unwrapType(t.TypeDef))
 	default:
 		return string(t.DType())
 	}

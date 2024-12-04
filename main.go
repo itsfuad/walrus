@@ -9,7 +9,7 @@ import (
 
 func main() {
 
-	filePath := "language/types.wal"
+	filePath := "language/expressions.wal"
 	tokens := lexer.Tokenize(filePath, true)
 	parser := parseMachine.NewParser(filePath, tokens)
 	tree := parser.Parse(false)

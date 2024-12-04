@@ -18,6 +18,8 @@ let op : byte = '+';
 
 let none : null = null;
 
+//let i32 := 2; //type name 'i32' cannot be used as variable name
+
 let isTrue := !true;
 
 let counter := 0;

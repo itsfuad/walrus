@@ -9,7 +9,7 @@ A tiny simple programming language made for simplicity. It borrows syntax from '
         - [x] Multiple variable declare
     - [x] [Variable assign](#variable-assign)
     - [x] [Expressions](#expressions)
-        - [x] Unary (32, f32, bool) `- !`
+        - [x] Unary (i32, f32, bool) `- !`
         - [x] Additive `+ -`
         - [x] Multiplicative `* / % ^`
         - [x] Grouping `( )`
@@ -35,7 +35,7 @@ A tiny simple programming language made for simplicity. It borrows syntax from '
             - [x] Property assignment
             - [x] Private property deny access
             - [x] Implement for struct
-        - [x] Builtins (32, f32, bool, string)
+        - [x] Builtins (i32, f32, bool, string)
         - [x] Function
         - [x] Interface
             - [x] Define
@@ -71,7 +71,7 @@ A tiny simple programming language made for simplicity. It borrows syntax from '
 ## Variable declare and assign
 ```rs
 // Declare a variable with let or const keyword
-let a := 10; // The variable is mutable and its type is inferred from the value e.g. 32
+let a := 10; // The variable is mutable and its type is inferred from the value e.g. i32
 const pi := 3.14; // constant variable with type f32
 
 // Declare a variable with type
@@ -151,7 +151,7 @@ myMap["a"] = 20; // myMap = {"a": 20, "b": 20, "c": 30}
 ```rs
 type Person struct{
     name: str;
-    age: 32;
+    age: i32;
 }
 
 //Assign the type with @Name syntax. So we can distinguish between type and variable.
@@ -194,14 +194,14 @@ if a > b {
 
 ## Functions
 ```rs
-fn add(a: 32, b: 32) -> 32 {
+fn add(a: i32, b: i32) -> i32 {
     ret a + b;
 }
 
 let sum := add(10, 20); // sum = 30
 
 // function with optional parameters
-fn add(a: 32, b: 32, c?: 32 = 0) -> 32 {
+fn add(a: i32, b: i32, c?: i32 = 0) -> i32 {
     ret a + b + c;
 }
 
@@ -213,8 +213,8 @@ let adder := add;
 let sum := adder(10, 20); // sum = 30
 
 // function with closure
-fn add(a: 32) -> fn(32) -> 32 {
-    ret fn(b: 32) -> 32 {
+fn add(a: i32) -> fn(i32) -> i32 {
+    ret fn(b: i32) -> i32 {
         ret a + b;
     };
 }
@@ -230,15 +230,15 @@ type Circle struct {
     radius: f32;
 }
 
-type FnType fn(a: 32, b: 32) -> 32;
+type FnType fn(a: i32, b: i32) -> i32;
 
-type WrapperInt 32;
+type WrapperInt i32;
 
 let c := @Circle {
     radius: 10.0
 };
 
-let f: FnType = fn(a: 32, b: 32) -> 32 {
+let f: FnType = fn(a: i32, b: i32) -> i32 {
     ret a + b;
 };
 
@@ -305,7 +305,7 @@ type Printable interface {
 
 type Person struct {
     name: str;
-    age: 32;
+    age: i32;
 }
 
 impl Person {

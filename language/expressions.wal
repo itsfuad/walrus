@@ -4,6 +4,8 @@ let b := a * (34 - 18);
 let c : f32 = (a * 34 - 12) as f32; //12
 let d : i32 = a - 3.1416 * 18;
 
+a += 24;
+
 //multiple variable declaration in one line
 // with type
 let t1: i32 = 43, t2: f32 = 3.5, t3: str;
