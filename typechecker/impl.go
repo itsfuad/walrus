@@ -52,20 +52,20 @@ func checkImplStmt(implStmt ast.ImplStmt, env *TypeEnvironment) TcValue {
 
 	//scope must be global
 	if env.scopeType != GLOBAL_SCOPE {
-		errgen.AddError(env.filePath, implStmt.Start.Line, implStmt.End.Line, implStmt.Start.Column, implStmt.End.Column, "implement statement must be at global scope").DisplayWithPanic()
+		errgen.AddError(env.filePath, implStmt.Start.Line, implStmt.End.Line, implStmt.Start.Column, implStmt.End.Column, "implement statement must be at global scope", errgen.ERROR_CRITICAL)
 		return NewVoid()
 	}
 
 	// check if the type to implement exists
 	structValue, err := getTypeDefinition(implStmt.ImplFor.Name)
 	if err != nil {
-		errgen.AddError(env.filePath, implStmt.Start.Line, implStmt.End.Line, implStmt.Start.Column, implStmt.End.Column, err.Error()).DisplayWithPanic()
+		errgen.AddError(env.filePath, implStmt.Start.Line, implStmt.End.Line, implStmt.Start.Column, implStmt.End.Column, err.Error(), errgen.ERROR_CRITICAL)
 	}
 
 	// type must be a struct
 	implForType, ok := structValue.(Struct)
 	if !ok {
-		errgen.AddError(env.filePath, implStmt.Start.Line, implStmt.End.Line, implStmt.Start.Column, implStmt.End.Column, "only structs can be implemented").DisplayWithPanic()
+		errgen.AddError(env.filePath, implStmt.Start.Line, implStmt.End.Line, implStmt.Start.Column, implStmt.End.Column, "only structs can be implemented", errgen.ERROR_CRITICAL)
 	}
 
 	//fmt.Printf("Implementing type %s\n", valueTypeInterfaceToString(implForType))
@@ -76,7 +76,7 @@ func checkImplStmt(implStmt ast.ImplStmt, env *TypeEnvironment) TcValue {
 		// if the method name is in the struct's elements, throw an error
 		if _, ok := implForType.StructScope.variables[name]; ok {
 
-			errgen.AddError(env.filePath, method.Start.Line, method.End.Line, method.Start.Column, method.End.Column, fmt.Sprintf("name '%s' already exists in struct", name)).DisplayWithPanic()
+			errgen.AddError(env.filePath, method.Start.Line, method.End.Line, method.Start.Column, method.End.Column, fmt.Sprintf("name '%s' already exists in struct", name), errgen.ERROR_CRITICAL)
 		}
 
 		fnEnv := NewTypeENV(&implForType.StructScope, FUNCTION_SCOPE, name, implForType.StructScope.filePath)
@@ -101,7 +101,7 @@ func checkImplStmt(implStmt ast.ImplStmt, env *TypeEnvironment) TcValue {
 		err := implForType.StructScope.DeclareVar(name, methodToDeclare, false, false)
 		if err != nil {
 
-			errgen.AddError(env.filePath, method.Start.Line, method.End.Line, method.Start.Column, method.End.Column, err.Error()).DisplayWithPanic()
+			errgen.AddError(env.filePath, method.Start.Line, method.End.Line, method.Start.Column, method.End.Column, err.Error(), errgen.ERROR_CRITICAL)
 		}
 
 		//check the function body

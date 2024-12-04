@@ -15,6 +15,15 @@ const (
 	CODE_HINT
 )
 
+type ERROR_LEVEL int
+
+const (
+	ERROR_CRITICAL ERROR_LEVEL = iota
+	ERROR_NORMAL
+	WARNING
+	INFO
+)
+
 type Hint struct {
 	message  string
 	hintType HINT
@@ -28,12 +37,7 @@ type WalrusError struct {
 	colEnd    int
 	err       error
 	hints     []Hint
-}
-
-func (e *WalrusError) DisplayWithPanic() {
-	DisplayErrors()
-	utils.BOLD_RED.Println("Critical error found. Exiting type checker...")
-	panic("Errors found")
+	level     ERROR_LEVEL
 }
 
 func PrintError(e *WalrusError, showFileName bool) {
@@ -63,9 +67,14 @@ func PrintError(e *WalrusError, showFileName bool) {
 	lineNumber := fmt.Sprintf("%d | ", e.lineStart)
 	utils.GREY.Print(lineNumber)
 	fmt.Println(line)
-	underLine := fmt.Sprintf("%s^%s\n", strings.Repeat(" ", (e.colStart-1) + len(lineNumber)), strings.Repeat("~", hLen))
+	underLine := fmt.Sprintf("%s^%s\n", strings.Repeat(" ", (e.colStart-1)+len(lineNumber)), strings.Repeat("~", hLen))
 
 	utils.RED.Print(underLine)
+	if e.level == ERROR_CRITICAL {
+		//stop further execution
+		utils.BOLD_RED.Print("Critical Error: ")
+	}
+
 	utils.RED.Println(e.err.Error())
 
 	if len(e.hints) > 0 {
@@ -77,6 +86,11 @@ func PrintError(e *WalrusError, showFileName bool) {
 				utils.ORANGE.Println(hint.message)
 			}
 		}
+	}
+
+	if e.level == ERROR_CRITICAL {
+		utils.ORANGE.Println("Compilation stopped due to critical error. Resolve the critical error to continue compilation")
+		os.Exit(-1)
 	}
 }
 
@@ -96,7 +110,7 @@ func (e *WalrusError) AddHint(msg string, htype HINT) *WalrusError {
 	return e
 }
 
-func makeError(filePath string, lineStart, lineEnd int, colStart, colEnd int, errMsg string) *WalrusError {
+func makeError(filePath string, lineStart, lineEnd int, colStart, colEnd int, errMsg string, level ERROR_LEVEL) *WalrusError {
 	if lineStart < 1 {
 		lineStart = 1
 	}
@@ -117,6 +131,7 @@ func makeError(filePath string, lineStart, lineEnd int, colStart, colEnd int, er
 		colStart:  colStart,
 		colEnd:    colEnd,
 		err:       errors.New(errMsg),
+		level:     level,
 	}
 
 	globalErrors = append(globalErrors, err)
@@ -124,13 +139,16 @@ func makeError(filePath string, lineStart, lineEnd int, colStart, colEnd int, er
 	return err
 }
 
-//global errors are arrays of error pointers
+// global errors are arrays of error pointers
 var globalErrors []*WalrusError
 
 // make an errorlist to add all errors and display later
-func AddError(filePath string, lineStart, lineEnd int, colStart, colEnd int, err string) *WalrusError {
-	errItem := makeError(filePath, lineStart, lineEnd, colStart, colEnd, err)
+func AddError(filePath string, lineStart, lineEnd int, colStart, colEnd int, err string, level ERROR_LEVEL) *WalrusError {
+	errItem := makeError(filePath, lineStart, lineEnd, colStart, colEnd, err, level)
 	utils.YELLOW.Printf("Error added on %s:%d:%d. %d errors available\n", filePath, lineStart, colStart, len(globalErrors))
+	if level == ERROR_CRITICAL {
+		DisplayErrors()
+	}
 	return errItem
 }
 
@@ -138,9 +156,10 @@ func DisplayErrors() {
 	if len(globalErrors) == 0 {
 		utils.GREEN.Println("------- Passed --------")
 		return
+	} else {
+		utils.BOLD_RED.Printf("%d error(s) found\n", len(globalErrors))
 	}
 	for _, err := range globalErrors {
 		PrintError(err, true)
 	}
-	utils.BOLD_RED.Printf("%d error(s) found\n", len(globalErrors))
 }

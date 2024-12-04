@@ -20,7 +20,9 @@ type IShape interface {
 
 let a := 0;
 
-// a.x; // 'x' does not exist on type 'i32'
+let p := a.x; // 'x' does not exist on type 'i32'
+
+p++;
 
 let rec := @Rectangle{width: 10.0, height: 20.0};
 let cir := @Circle{radius: 10.0};
