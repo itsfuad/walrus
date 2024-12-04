@@ -12,7 +12,7 @@ func checkStructLiteral(structLit ast.StructLiteral, env *TypeEnvironment) TcVal
 
 	Type, err := getTypeDefinition(sName.Name) // need to get the most deep type
 	if err != nil {
-		errgen.AddError(env.filePath, sName.StartPos().Line, sName.EndPos().Line, sName.StartPos().Column, sName.EndPos().Column, fmt.Sprintf("'%s' is not a struct", sName.Name))
+		errgen.AddError(env.filePath, sName.StartPos().Line, sName.EndPos().Line, sName.StartPos().Column, sName.EndPos().Column, fmt.Sprintf("'%s' is not a struct", sName.Name), errgen.ERROR_NORMAL)
 	}
 
 	structType := Type.(Struct)
@@ -21,7 +21,7 @@ func checkStructLiteral(structLit ast.StructLiteral, env *TypeEnvironment) TcVal
 	for propname, prop := range structLit.Properties {
 		//check if the property is defined
 		if _, ok := structType.StructScope.variables[propname]; !ok {
-			errgen.AddError(env.filePath, prop.Prop.Start.Line, prop.Prop.End.Line, prop.Prop.Start.Column, prop.Prop.End.Column, fmt.Sprintf("property '%s' is not defined on struct '%s'", propname, sName.Name)).DisplayWithPanic()
+			errgen.AddError(env.filePath, prop.Prop.Start.Line, prop.Prop.End.Line, prop.Prop.Start.Column, prop.Prop.End.Column, fmt.Sprintf("property '%s' is not defined on struct '%s'", propname, sName.Name), errgen.ERROR_CRITICAL)
 		}
 
 		//check if the property type matches the defined type
@@ -31,7 +31,7 @@ func checkStructLiteral(structLit ast.StructLiteral, env *TypeEnvironment) TcVal
 
 		err := matchTypes(expectedType, providedType)
 		if err != nil {
-			errgen.AddError(env.filePath, prop.Prop.StartPos().Column, prop.Value.EndPos().Line, prop.Prop.StartPos().Column, prop.Value.EndPos().Column, err.Error())
+			errgen.AddError(env.filePath, prop.Prop.StartPos().Column, prop.Value.EndPos().Line, prop.Prop.StartPos().Column, prop.Value.EndPos().Column, err.Error(), errgen.ERROR_NORMAL)
 		}
 	}
 
@@ -46,7 +46,7 @@ func checkStructLiteral(structLit ast.StructLiteral, env *TypeEnvironment) TcVal
 		}
 		if _, ok := structLit.Properties[propname]; !ok {
 
-			errgen.AddError(env.filePath, structLit.StartPos().Line, structLit.EndPos().Line, structLit.StartPos().Column, structLit.EndPos().Column, fmt.Sprintf("property '%s' is required on struct '%s'", propname, sName.Name))
+			errgen.AddError(env.filePath, structLit.StartPos().Line, structLit.EndPos().Line, structLit.StartPos().Column, structLit.EndPos().Column, fmt.Sprintf("property '%s' is required on struct '%s'", propname, sName.Name), errgen.ERROR_NORMAL)
 		}
 	}
 
@@ -84,7 +84,7 @@ func checkPropertyAccess(expr ast.StructPropertyAccessExpr, env *TypeEnvironment
 	case Interface:
 		//prop must be a method
 		if _, ok := t.Methods[prop.Name]; !ok {
-			errgen.AddError(env.filePath, prop.Start.Line, prop.End.Line, prop.Start.Column, prop.End.Column, fmt.Sprintf("interface '%s' does not have a method '%s'", t.InterfaceName, prop.Name)).DisplayWithPanic()
+			errgen.AddError(env.filePath, prop.Start.Line, prop.End.Line, prop.Start.Column, prop.End.Column, fmt.Sprintf("interface '%s' does not have a method '%s'", t.InterfaceName, prop.Name), errgen.ERROR_CRITICAL)
 			return NewVoid() // unreachable but needed to avoid accidental nil pointer dereference
 		}
 		return t.Methods[prop.Name]
@@ -103,19 +103,19 @@ func checkPropertyAccess(expr ast.StructPropertyAccessExpr, env *TypeEnvironment
 			propType = "property"
 			isPrivate = t.IsPrivate
 		default:
-			errgen.AddError(env.filePath, prop.Start.Line, prop.End.Line, prop.Start.Column, prop.End.Column, fmt.Sprintf("'%s' is not a %s", prop.Name, propType)).DisplayWithPanic()
+			errgen.AddError(env.filePath, prop.Start.Line, prop.End.Line, prop.Start.Column, prop.End.Column, fmt.Sprintf("'%s' is not a %s", prop.Name, propType), errgen.ERROR_CRITICAL)
 		}
 
 		if isPrivate {
 			//check the scope we are in
 			if !env.IsInStructScope() {
-				errgen.AddError(env.filePath, prop.Start.Line, prop.End.Line, prop.Start.Column, prop.End.Column, fmt.Sprintf("cannot access private property '%s' from outside of the struct's scope", prop.Name))
+				errgen.AddError(env.filePath, prop.Start.Line, prop.End.Line, prop.Start.Column, prop.End.Column, fmt.Sprintf("cannot access private property '%s' from outside of the struct's scope", prop.Name), errgen.ERROR_NORMAL)
 			}
 		}
 		return property
 	}
 
-	errgen.AddError(env.filePath, prop.Start.Line, prop.End.Line, prop.Start.Column, prop.End.Column, fmt.Sprintf("'%s' does not exist on type '%s'", prop.Name, objName)).DisplayWithPanic()
+	errgen.AddError(env.filePath, prop.Start.Line, prop.End.Line, prop.Start.Column, prop.End.Column, fmt.Sprintf("'%s' does not exist on type '%s'", prop.Name, objName), errgen.ERROR_CRITICAL)
 
 	return NewVoid()
 }
@@ -135,7 +135,7 @@ func checkStructTypeDecl(name string, structType ast.StructType, env *TypeEnviro
 		err := structEnv.DeclareVar(propname, property, false, false)
 		if err != nil {
 
-			errgen.AddError(env.filePath, propval.Prop.Start.Line, propval.Prop.End.Line, propval.Prop.Start.Column, propval.Prop.End.Column, err.Error())
+			errgen.AddError(env.filePath, propval.Prop.Start.Line, propval.Prop.End.Line, propval.Prop.Start.Column, propval.Prop.End.Column, err.Error(), errgen.ERROR_NORMAL)
 		}
 	}
 
@@ -148,7 +148,7 @@ func checkStructTypeDecl(name string, structType ast.StructType, env *TypeEnviro
 	//declare 'this' variable to be used in the struct's methods
 	err := structEnv.DeclareVar("this", structTypeValue, true, false)
 	if err != nil {
-		errgen.AddError(env.filePath, structType.Start.Line, structType.End.Line, structType.Start.Column, structType.End.Column, err.Error())
+		errgen.AddError(env.filePath, structType.Start.Line, structType.End.Line, structType.Start.Column, structType.End.Column, err.Error(), errgen.ERROR_NORMAL)
 	}
 
 	return structTypeValue

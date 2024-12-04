@@ -123,22 +123,16 @@ func evaluateTypeName(dtype ast.DataType, env *TypeEnvironment) TcValue {
 	case ast.UserDefinedType:
 		typename := t.AliasName
 		val, err := getTypeDefinition(typename) // need to get the most deep type
-		if err != nil {
-			errgen.AddError(env.filePath, dtype.StartPos().Line, dtype.EndPos().Line, dtype.StartPos().Column, dtype.EndPos().Column, err.Error())
-		}
-		if val == nil {
-			errgen.DisplayErrors()
+		if err != nil || val == nil {
+			errgen.AddError(env.filePath, dtype.StartPos().Line, dtype.EndPos().Line, dtype.StartPos().Column, dtype.EndPos().Column, err.Error(), errgen.ERROR_CRITICAL)
 		}
 		return val
 	case nil:
 		return NewVoid()
 	default:
 		val, err := getTypeDefinition(string(t.Type())) // need to get the most deep type
-		if err != nil {
-			errgen.AddError(env.filePath, dtype.StartPos().Line, dtype.EndPos().Line, dtype.StartPos().Column, dtype.EndPos().Column, err.Error())
-		}
-		if val == nil {
-			errgen.DisplayErrors()
+		if err != nil || val == nil {
+			errgen.AddError(env.filePath, dtype.StartPos().Line, dtype.EndPos().Line, dtype.StartPos().Column, dtype.EndPos().Column, err.Error(), errgen.ERROR_CRITICAL)
 		}
 		return val
 	}

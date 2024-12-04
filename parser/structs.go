@@ -53,9 +53,9 @@ func parseStructLiteral(p *Parser) ast.Node {
 		p.expect(lexer.COLON_TOKEN)
 		//now we expect value as expression
 		val := parseExpr(p, DEFAULT_BP)
-		
+
 		if _, ok := props[iden.Value]; ok {
-			errgen.AddError(p.FilePath, iden.Start.Line, iden.End.Line, iden.Start.Column, iden.End.Column, fmt.Sprintf("property '%s' was previously assigned", iden.Value)).DisplayWithPanic()
+			errgen.AddError(p.FilePath, iden.Start.Line, iden.End.Line, iden.Start.Column, iden.End.Column, fmt.Sprintf("property '%s' was previously assigned", iden.Value), errgen.ERROR_CRITICAL)
 		}
 
 		props[iden.Value] = ast.StructProp{

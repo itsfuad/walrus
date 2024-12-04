@@ -13,7 +13,7 @@ func checkMapLiteral(node ast.MapLiteral, env *TypeEnvironment) TcValue {
 
 	//check if the map type is valid
 	if evaluatedMapType.DType() != MAP_TYPE {
-		errgen.AddError(env.filePath, node.StartPos().Line, node.EndPos().Line, node.StartPos().Column, node.EndPos().Column, "invalid map type")
+		errgen.AddError(env.filePath, node.StartPos().Line, node.EndPos().Line, node.StartPos().Column, node.EndPos().Column, "invalid map type", errgen.ERROR_NORMAL)
 	}
 
 	//check the key value pairs
@@ -23,11 +23,11 @@ func checkMapLiteral(node ast.MapLiteral, env *TypeEnvironment) TcValue {
 
 		err := matchTypes(evaluatedMapType.(Map).KeyType, keyType)
 		if err != nil {
-			errgen.AddError(env.filePath, value.Key.StartPos().Line, value.Key.EndPos().Line, value.Key.StartPos().Column, value.Key.EndPos().Column, "incorrect map key. "+err.Error())
+			errgen.AddError(env.filePath, value.Key.StartPos().Line, value.Key.EndPos().Line, value.Key.StartPos().Column, value.Key.EndPos().Column, "incorrect map key. "+err.Error(), errgen.ERROR_NORMAL)
 		}
 		err = matchTypes(evaluatedMapType.(Map).ValueType, valueType)
 		if err != nil {
-			errgen.AddError(env.filePath, value.Value.StartPos().Line, value.Value.EndPos().Line, value.Value.StartPos().Column, value.Value.EndPos().Column, "incorrect map value. "+err.Error())
+			errgen.AddError(env.filePath, value.Value.StartPos().Line, value.Value.EndPos().Line, value.Value.StartPos().Column, value.Value.EndPos().Column, "incorrect map value. "+err.Error(), errgen.ERROR_NORMAL)
 		}
 	}
 
