@@ -2,6 +2,8 @@ package typechecker
 
 import (
 	"fmt"
+	"os"
+	"walrus/utils"
 )
 
 type SCOPE_TYPE int
@@ -44,11 +46,19 @@ type TypeEnvironment struct {
 
 func ProgramEnv(filepath string) *TypeEnvironment {
 	env := NewTypeENV(nil, GLOBAL_SCOPE, "global", filepath)
-	env.DeclareVar("true", NewBool(), true, false)
-	env.DeclareVar("false", NewBool(), true, false)
-	env.DeclareVar("null", NewNull(), true, false)
-	env.DeclareVar("PI", NewFloat(32), true, false)
+	initVar(env, "true", NewBool(), true, false)
+	initVar(env, "false", NewBool(), true, false)
+	initVar(env, "null", NewNull(), true, false)
+	initVar(env, "PI", NewFloat(32), true, false)
 	return env
+}
+
+func initVar(env *TypeEnvironment, name string, typeVar TcValue, isConst bool, isOptional bool) {
+	err := env.DeclareVar(name, typeVar, isConst, isOptional)
+	if err != nil {
+		utils.RED.Println(err)
+		os.Exit(-1)
+	}
 }
 
 func NewTypeENV(parent *TypeEnvironment, scope SCOPE_TYPE, scopeName string, filePath string) *TypeEnvironment {
@@ -101,8 +111,8 @@ func (t *TypeEnvironment) ResolveVar(name string) (*TypeEnvironment, error) {
 
 func (t *TypeEnvironment) DeclareVar(name string, typeVar TcValue, isConst bool, isOptional bool) error {
 
-	if _, ok := typeDefinitions[name]; ok {
-		return fmt.Errorf("cannot declare variable with type '%s'", name)
+	if _, ok := typeDefinitions[name]; ok && name != "null" && name != "void" {
+		return fmt.Errorf("type name '%s' cannot be used as variable name", name)
 	}
 
 	//should not be declared
@@ -142,16 +152,16 @@ func getTypeDefinition(name string) (TcValue, error) {
 				fmt.Printf("unwrapping type from: %s\n", st.StructName)
 			}
 		}
-		return unwrapType(typ)
+		return unwrapType(typ), nil
 	}
 }
 
-func unwrapType(value TcValue) (TcValue, error) {
+func unwrapType(value TcValue) TcValue {
 	switch t := value.(type) {
 	case UserDefined:
 		return unwrapType(t.TypeDef)
 	default:
-		return t, nil
+		return t
 	}
 }
 

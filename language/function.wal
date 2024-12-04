@@ -48,7 +48,7 @@ testFn2(4, fn (a: i32, b: f32) -> i32 {
     ret a + 5;
 });
 
-fn add(a: i32, b?: i32 = 9) -> i32 {
+fn add(a: i32, b?: i32 = 10) -> i32 {
     ret a + b;
 }
 
