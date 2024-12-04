@@ -44,7 +44,7 @@ func parseStructLiteral(p *Parser) ast.Node {
 	p.expect(lexer.OPEN_CURLY)
 
 	//parse the values
-	props := map[string]ast.Node{}
+	props := make(map[string]ast.StructProp)
 
 	for p.hasToken() && p.currentTokenKind() != lexer.CLOSE_CURLY {
 		//we expect an identifier
@@ -55,10 +55,19 @@ func parseStructLiteral(p *Parser) ast.Node {
 		val := parseExpr(p, DEFAULT_BP)
 
 		if _, ok := props[iden.Value]; ok {
-			errgen.AddError(p.FilePath, iden.Start.Line, iden.End.Line, iden.Start.Column, iden.End.Column, fmt.Sprintf("property '%s' was previously assigned", iden.Value)).DisplayWithPanic()
+			errgen.AddError(p.FilePath, iden.Start.Line, iden.End.Line, iden.Start.Column, iden.End.Column, fmt.Sprintf("property '%s' was previously assigned", iden.Value), errgen.ERROR_CRITICAL)
 		}
 
-		props[iden.Value] = val
+		props[iden.Value] = ast.StructProp{
+			Prop: ast.IdentifierExpr{
+				Name: iden.Value,
+				Location: ast.Location{
+					Start: iden.Start,
+					End:   iden.End,
+				},
+			},
+			Value: val,
+		}
 
 		//if the next token is not } then we have more values
 		if p.currentTokenKind() != lexer.CLOSE_CURLY {

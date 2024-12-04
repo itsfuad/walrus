@@ -4,6 +4,8 @@ import (
 	"errors"
 	"fmt"
 	"math/rand"
+
+	//"reflect"
 	"time"
 
 	"walrus/ast"
@@ -23,84 +25,6 @@ func RandStringRunes(n int) string {
 		b[i] = letterRunes[rand.Intn(len(letterRunes))]
 	}
 	return string(b)
-}
-
-// valueTypeInterfaceToString converts a ValueTypeInterface to a string representation of builtins.VALUE_TYPE.
-// It handles different types such as Array, Struct, Interface, and Fn by recursively converting
-// their components to strings and formatting them appropriately.
-//
-// Parameters:
-// - typeName: A ValueTypeInterface representing the type to be converted.
-//
-// Returns:
-// - builtins.VALUE_TYPE: A string representation of the given ValueTypeInterface.
-//
-// Note: The function currently has a commented-out case for UserDefined types and a default case
-// that prints the type and value of unhandled cases.
-func valueTypeInterfaceToString(typeName ValueTypeInterface) builtins.TC_TYPE {
-	switch t := typeName.(type) {
-	case Array:
-		return "[]" + valueTypeInterfaceToString(t.ArrayType)
-	case Struct:
-		return builtins.TC_TYPE(t.StructName)
-	case Interface:
-		return builtins.TC_TYPE(t.InterfaceName)
-	case Fn:
-		ParamStrs := ""
-		for i, param := range t.Params {
-			ParamStrs += param.Name
-			if param.IsOptional {
-				ParamStrs += "?: "
-			} else {
-				ParamStrs += ": "
-			}
-			ParamStrs += string(valueTypeInterfaceToString(param.Type))
-			if i != len(t.Params)-1 {
-				ParamStrs += ", "
-			}
-		}
-		ReturnStr := string(valueTypeInterfaceToString(t.Returns))
-		if ReturnStr != "" {
-			ReturnStr = " -> " + ReturnStr
-		}
-		return builtins.TC_TYPE(fmt.Sprintf("fn(%s)%s", ParamStrs, ReturnStr))
-	case UserDefined:
-		return valueTypeInterfaceToString(t.TypeDef)
-	case Map:
-		return builtins.TC_TYPE(fmt.Sprintf("map[%s]%s", valueTypeInterfaceToString(t.KeyType), valueTypeInterfaceToString(t.ValueType)))
-	default:
-		return t.DType()
-	}
-}
-
-// matchTypes compares the expected and provided ValueTypeInterface types.
-// If the types do not match, it returns an error indicating the mismatch.
-// If the expected type is an interface, it checks the method implementations
-// of the provided type against the expected type.
-//
-// Parameters:
-//   - expected: The expected ValueTypeInterface type.
-//   - provided: The provided ValueTypeInterface type.
-//   - filePath: The file path where the type check is being performed.
-//   - lineStart: The starting line number of the type check.
-//   - lineEnd: The ending line number of the type check.
-//   - colStart: The starting column number of the type check.
-//   - colEnd: The ending column number of the type check.
-//
-// Returns:
-//   - error: An error if the types do not match, otherwise nil.
-func matchTypes(expected, provided ValueTypeInterface) error {
-
-	expectedType := valueTypeInterfaceToString(expected)
-	gotType := valueTypeInterfaceToString(provided)
-
-	if expectedType != gotType {
-		if expected.DType() == INTERFACE_TYPE {
-			return checkMethodsImplementations(expected, provided)
-		}
-		return fmt.Errorf("expected %s, got %s", expectedType, gotType)
-	}
-	return nil
 }
 
 func checkLValue(node ast.Node, env *TypeEnvironment) error {
@@ -129,7 +53,7 @@ func checkLValue(node ast.Node, env *TypeEnvironment) error {
 	}
 }
 
-func isNumberType(operand ValueTypeInterface) bool {
+func isNumberType(operand TcValue) bool {
 	switch operand.(type) {
 	case Int, Float:
 		return true
@@ -138,7 +62,7 @@ func isNumberType(operand ValueTypeInterface) bool {
 	}
 }
 
-func isIntType(operand ValueTypeInterface) bool {
+func isIntType(operand TcValue) bool {
 	switch operand.(type) {
 	case Int:
 		return true
@@ -162,7 +86,7 @@ func isIntType(operand ValueTypeInterface) bool {
 //  2. If the dtype is a FunctionType, it evaluates the parameter types and return type, creates a new function scope, and returns a Fn.
 //  3. If the dtype is nil, it returns a Void type.
 //  4. For other types, it attempts to create a ValueTypeInterface and handles any errors that occur.
-func evaluateTypeName(dtype ast.DataType, env *TypeEnvironment) ValueTypeInterface {
+func evaluateTypeName(dtype ast.DataType, env *TypeEnvironment) TcValue {
 	switch t := dtype.(type) {
 	case ast.ArrayType:
 		val := evaluateTypeName(t.ArrayType, env)
@@ -198,24 +122,70 @@ func evaluateTypeName(dtype ast.DataType, env *TypeEnvironment) ValueTypeInterfa
 		return NewMap(keyType, valueType)
 	case ast.UserDefinedType:
 		typename := t.AliasName
-		val, err := getTypeDefinition(typename)
-		if err != nil {
-			errgen.AddError(env.filePath, dtype.StartPos().Line, dtype.EndPos().Line, dtype.StartPos().Column, dtype.EndPos().Column, err.Error())
-		}
-		if val == nil {
-			errgen.DisplayErrors()
+		val, err := getTypeDefinition(typename) // need to get the most deep type
+		if err != nil || val == nil {
+			errgen.AddError(env.filePath, dtype.StartPos().Line, dtype.EndPos().Line, dtype.StartPos().Column, dtype.EndPos().Column, err.Error(), errgen.ERROR_CRITICAL)
 		}
 		return val
 	case nil:
 		return NewVoid()
 	default:
-		val, err := getTypeDefinition(string(t.Type()))
-		if err != nil {
-			errgen.AddError(env.filePath, dtype.StartPos().Line, dtype.EndPos().Line, dtype.StartPos().Column, dtype.EndPos().Column, err.Error())
-		}
-		if val == nil {
-			errgen.DisplayErrors()
+		val, err := getTypeDefinition(string(t.Type())) // need to get the most deep type
+		if err != nil || val == nil {
+			errgen.AddError(env.filePath, dtype.StartPos().Line, dtype.EndPos().Line, dtype.StartPos().Column, dtype.EndPos().Column, err.Error(), errgen.ERROR_CRITICAL)
 		}
 		return val
+	}
+}
+
+func matchTypes(expectedType, providedType TcValue) error {
+
+	if expectedType.DType() == builtins.INTERFACE {
+		return checkMethodsImplementations(expectedType, providedType)
+	}
+
+	expectedStr := tcValueToString(expectedType)
+	providedStr := tcValueToString(providedType)
+
+	if expectedStr != providedStr {
+		return fmt.Errorf("expected type '%s', got '%s'", expectedStr, providedStr)
+	}
+
+	return nil
+}
+
+func tcValueToString(val TcValue) string {
+	switch t := val.(type) {
+	case Array:
+		return "[]" + tcValueToString(t.ArrayType)
+	case Struct:
+		return t.StructName
+	case Interface:
+		return t.InterfaceName
+	case Fn:
+		ParamStrs := ""
+		for i, param := range t.Params {
+			ParamStrs += param.Name
+			if param.IsOptional {
+				ParamStrs += "?: "
+			} else {
+				ParamStrs += ": "
+			}
+			ParamStrs += string(tcValueToString(param.Type))
+			if i != len(t.Params)-1 {
+				ParamStrs += ", "
+			}
+		}
+		ReturnStr := string(tcValueToString(t.Returns))
+		if ReturnStr != "" {
+			ReturnStr = " -> " + ReturnStr
+		}
+		return fmt.Sprintf("fn(%s)%s", ParamStrs, ReturnStr)
+	case Map:
+		return fmt.Sprintf("map[%s]%s", tcValueToString(t.KeyType), tcValueToString(t.ValueType))
+	case UserDefined:
+		return tcValueToString(unwrapType(t.TypeDef))
+	default:
+		return string(t.DType())
 	}
 }

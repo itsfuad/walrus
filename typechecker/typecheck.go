@@ -7,19 +7,19 @@ import (
 	"walrus/utils"
 )
 
-func EvaluateProgram(program ast.ProgramStmt, env *TypeEnvironment) ValueTypeInterface {
+func EvaluateProgram(program ast.ProgramStmt, env *TypeEnvironment) TcValue {
 	utils.PURPLE.Println("### Running type checker ###")
 	for _, item := range program.Contents {
 		CheckAST(item, env)
 	}
 
 	//print the file path
-	utils.ORANGE.Printf("File path: %s\n", env.filePath)
+	utils.GREY.Printf("File path: %s\n", env.filePath)
 
 	return NewVoid()
 }
 
-func CheckAST(node ast.Node, env *TypeEnvironment) ValueTypeInterface {
+func CheckAST(node ast.Node, env *TypeEnvironment) TcValue {
 	switch t := node.(type) {
 	case ast.ProgramStmt:
 		return EvaluateProgram(t, env)
@@ -74,6 +74,6 @@ func CheckAST(node ast.Node, env *TypeEnvironment) ValueTypeInterface {
 	case nil:
 		return NewNull()
 	}
-	errgen.AddError(env.filePath, node.StartPos().Line, node.EndPos().Line, node.StartPos().Column, node.EndPos().Column, fmt.Sprintf("<%T> node is not implemented yet to check", node)).DisplayWithPanic()
+	errgen.AddError(env.filePath, node.StartPos().Line, node.EndPos().Line, node.StartPos().Column, node.EndPos().Column, fmt.Sprintf("<%T> node is not implemented yet to check", node), errgen.ERROR_CRITICAL)
 	return nil
 }

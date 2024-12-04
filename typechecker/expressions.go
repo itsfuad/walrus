@@ -9,32 +9,32 @@ import (
 	"walrus/utils"
 )
 
-func checkIncrementalExpr(node ast.IncrementalInterface, env *TypeEnvironment) ValueTypeInterface {
+func checkIncrementalExpr(node ast.IncrementalInterface, env *TypeEnvironment) TcValue {
 	op := node.Op()
 	arg := node.Arg()
 	// the argument must be an identifier evaluated to a number
-	typeVal := nodeType(arg, env)
+	typeVal := CheckAST(arg, env)
 	if !isNumberType(typeVal) {
 
-		errgen.AddError(env.filePath, arg.StartPos().Line, arg.EndPos().Line, arg.StartPos().Column, arg.EndPos().Column, "invalid prefix operation with non-numeric type")
+		errgen.AddError(env.filePath, arg.StartPos().Line, arg.EndPos().Line, arg.StartPos().Column, arg.EndPos().Column, "invalid prefix operation with non-numeric type", errgen.ERROR_NORMAL)
 	}
 	if op.Kind != lexer.PLUS_PLUS_TOKEN && op.Kind != lexer.MINUS_MINUS_TOKEN {
 
-		errgen.AddError(env.filePath, op.Start.Line, op.End.Line, op.Start.Column, op.End.Column, "invalid prefix operation")
+		errgen.AddError(env.filePath, op.Start.Line, op.End.Line, op.Start.Column, op.End.Column, "invalid prefix operation", errgen.ERROR_NORMAL)
 	}
 	return typeVal
 }
 
-func logCastSuccess(originalType ValueTypeInterface, toCast ValueTypeInterface) {
+func logCastSuccess(originalType TcValue, toCast TcValue) {
 	utils.ORANGE.Print("casted type ")
 	utils.PURPLE.Print(string(originalType.DType()))
 	fmt.Print(" to ")
 	utils.PURPLE.Println(string(toCast.DType()))
 }
 
-func checkTypeCast(node ast.TypeCastExpr, env *TypeEnvironment) ValueTypeInterface {
+func checkTypeCast(node ast.TypeCastExpr, env *TypeEnvironment) TcValue {
 
-	originalType := nodeType(node.Expression, env)
+	originalType := CheckAST(node.Expression, env)
 	toCast := evaluateTypeName(node.ToCast, env)
 
 	if originalType.DType() == toCast.DType() {
@@ -47,42 +47,42 @@ func checkTypeCast(node ast.TypeCastExpr, env *TypeEnvironment) ValueTypeInterfa
 		return toCast
 	}
 
-	errgen.AddError(env.filePath, node.Start.Line, node.End.Line, node.Start.Column, node.End.Column, fmt.Sprintf("cannot cast '%s' to '%s'", originalType.DType(), toCast.DType()))
+	errgen.AddError(env.filePath, node.Start.Line, node.End.Line, node.Start.Column, node.End.Column, fmt.Sprintf("cannot cast '%s' to '%s'", originalType.DType(), toCast.DType()), errgen.ERROR_NORMAL)
 
 	return originalType
 }
 
-func checkUnaryExpr(node ast.UnaryExpr, env *TypeEnvironment) ValueTypeInterface {
+func checkUnaryExpr(node ast.UnaryExpr, env *TypeEnvironment) TcValue {
 	op := node.Operator
 	arg := node.Argument
 	//evaluate argument. must be evaluated to number or boolean for ! (not)
-	typeVal := nodeType(arg, env)
+	typeVal := CheckAST(arg, env)
 
 	switch t := typeVal.(type) {
 	case Int, Float:
 		//allow - only
 		if op.Kind != lexer.MINUS_TOKEN {
 
-			errgen.AddError(env.filePath, op.Start.Line, op.End.Line, op.Start.Column, op.End.Column, "invalid unary operation with numeric types")
+			errgen.AddError(env.filePath, op.Start.Line, op.End.Line, op.Start.Column, op.End.Column, "invalid unary operation with numeric types", errgen.ERROR_NORMAL)
 		}
 	case Bool:
 		if op.Kind != lexer.NOT_TOKEN {
 
-			errgen.AddError(env.filePath, op.Start.Line, op.End.Line, op.Start.Column, op.End.Column, "invalid unary operation with boolean types")
+			errgen.AddError(env.filePath, op.Start.Line, op.End.Line, op.Start.Column, op.End.Column, "invalid unary operation with boolean types", errgen.ERROR_NORMAL)
 		}
 	default:
 
-		errgen.AddError(env.filePath, op.Start.Line, op.End.Line, op.Start.Column, op.End.Column, fmt.Sprintf("this unary operation is not supported with %s types", t.DType()))
+		errgen.AddError(env.filePath, op.Start.Line, op.End.Line, op.Start.Column, op.End.Column, fmt.Sprintf("this unary operation is not supported with %s types", t.DType()), errgen.ERROR_NORMAL)
 	}
 
 	return typeVal
 }
 
-func checkBinaryExpr(node ast.BinaryExpr, env *TypeEnvironment) ValueTypeInterface {
+func checkBinaryExpr(node ast.BinaryExpr, env *TypeEnvironment) TcValue {
 	op := node.Operator
 
-	left := nodeType(node.Left, env)
-	right := nodeType(node.Right, env)
+	left := CheckAST(node.Left, env)
+	right := CheckAST(node.Right, env)
 
 	leftType := left.DType()
 	rightType := right.DType()
@@ -120,11 +120,11 @@ func checkBinaryExpr(node ast.BinaryExpr, env *TypeEnvironment) ValueTypeInterfa
 		errEnd = op.End.Column
 	}
 
-	errgen.AddError(env.filePath, errLineStart, errLineEnd, errStart, errEnd, errMsg)
+	errgen.AddError(env.filePath, errLineStart, errLineEnd, errStart, errEnd, errMsg, errgen.ERROR_NORMAL)
 	return left
 }
 
-func checkComparison(node ast.BinaryExpr, left ValueTypeInterface, right ValueTypeInterface, env *TypeEnvironment) ValueTypeInterface {
+func checkComparison(node ast.BinaryExpr, left TcValue, right TcValue, env *TypeEnvironment) TcValue {
 
 	leftType := left.DType()
 	rightType := right.DType()
@@ -148,11 +148,11 @@ func checkComparison(node ast.BinaryExpr, left ValueTypeInterface, right ValueTy
 	}
 	errMsg := fmt.Sprintf("invalid compare operation between '%s' and '%s'", leftType, rightType)
 
-	errgen.AddError(env.filePath, node.Start.Line, node.End.Line, node.Start.Column, node.End.Column, errMsg)
+	errgen.AddError(env.filePath, node.Start.Line, node.End.Line, node.Start.Column, node.End.Column, errMsg, errgen.ERROR_NORMAL)
 	return left
 }
 
-func checkAdditionAndConcat(node ast.BinaryExpr, left ValueTypeInterface, right ValueTypeInterface, env *TypeEnvironment) ValueTypeInterface {
+func checkAdditionAndConcat(node ast.BinaryExpr, left TcValue, right TcValue, env *TypeEnvironment) TcValue {
 
 	leftType := left.DType()
 	rightType := right.DType()
@@ -183,6 +183,6 @@ func checkAdditionAndConcat(node ast.BinaryExpr, left ValueTypeInterface, right 
 		errEnd = node.EndPos().Column
 	}
 
-	errgen.AddError(env.filePath, errLineStart, errLineEnd, errStart, errEnd, errMsg)
+	errgen.AddError(env.filePath, errLineStart, errLineEnd, errStart, errEnd, errMsg, errgen.ERROR_NORMAL)
 	return left
 }

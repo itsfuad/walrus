@@ -77,6 +77,12 @@ func createLexer(filePath *string) *Lexer {
 			{regexp.MustCompile(`\->`), defaultHandler(ARROW_TOKEN, "->")},
 			{regexp.MustCompile(`@`), defaultHandler(AT_TOKEN, "@")},
 			{regexp.MustCompile(`!=`), defaultHandler(NOT_EQUAL_TOKEN, "!=")},
+			{regexp.MustCompile(`\+=`), defaultHandler(PLUS_EQUALS_TOKEN, "+=")},
+			{regexp.MustCompile(`-=`), defaultHandler(MINUS_EQUALS_TOKEN, "-=")},
+			{regexp.MustCompile(`\*=`), defaultHandler(MUL_EQUALS_TOKEN, "*=")},
+			{regexp.MustCompile(`/=`), defaultHandler(DIV_EQUALS_TOKEN, "/=")},
+			{regexp.MustCompile(`%=`), defaultHandler(MOD_EQUALS_TOKEN, "%=")},
+			{regexp.MustCompile(`\^=`), defaultHandler(EXP_EQUALS_TOKEN, "^=")},
 			{regexp.MustCompile(`!`), defaultHandler(NOT_TOKEN, "!")},
 			{regexp.MustCompile(`\-`), defaultHandler(MINUS_TOKEN, "-")},
 			{regexp.MustCompile(`\+`), defaultHandler(PLUS_TOKEN, "+")},
@@ -237,7 +243,7 @@ func Tokenize(filename string, debug bool) []Token {
 
 		if !matched {
 			errStr := fmt.Sprintf("lexer:unexpected charecter: '%c'", lex.at())
-			errgen.AddError(filename, lex.Position.Line, lex.Position.Line, lex.Position.Column, lex.Position.Column, errStr).DisplayWithPanic()
+			errgen.AddError(filename, lex.Position.Line, lex.Position.Line, lex.Position.Column, lex.Position.Column, errStr, errgen.ERROR_CRITICAL)
 			return nil
 		}
 	}

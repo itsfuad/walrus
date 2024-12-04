@@ -28,7 +28,6 @@ func (p *Parser) currentTokenKind() builtins.TOKEN_KIND {
 	return p.currentToken().Kind
 }
 
-
 func (p *Parser) hasToken() bool {
 	return p.index < len(p.tokens) && p.currentTokenKind() != lexer.EOF_TOKEN
 }
@@ -48,7 +47,7 @@ func (p *Parser) expectError(expectedKind builtins.TOKEN_KIND, err error) lexer.
 
 	if kind != expectedKind {
 		if err != nil {
-			errgen.AddError(p.FilePath, start.Line, end.Line, start.Column, end.Column, err.Error()).DisplayWithPanic()
+			errgen.AddError(p.FilePath, start.Line, end.Line, start.Column, end.Column, err.Error(), errgen.ERROR_CRITICAL)
 		} else {
 			msg := "error while parsing: "
 			if lexer.IsKeyword(token.Value) {
@@ -56,7 +55,7 @@ func (p *Parser) expectError(expectedKind builtins.TOKEN_KIND, err error) lexer.
 			} else {
 				msg += fmt.Sprintf("unexpected token '%s' found. expected '%s'", token.Value, expectedKind)
 			}
-			errgen.AddError(p.FilePath, start.Line, end.Line, start.Column, end.Column, msg).DisplayWithPanic()
+			errgen.AddError(p.FilePath, start.Line, end.Line, start.Column, end.Column, msg, errgen.ERROR_CRITICAL)
 		}
 	}
 	return p.advance()
@@ -106,20 +105,20 @@ func (p *Parser) Parse(saveJson bool) ast.Node {
 		if err != nil {
 			panic(err)
 		}
-	
+
 		//parse as string
 		astString, err := json.MarshalIndent(program, "", "  ")
-	
+
 		if err != nil {
 			panic(err)
 		}
-	
+
 		_, err = file.Write(astString)
-	
+
 		if err != nil {
 			panic(err)
 		}
-	
+
 		file.Close()
 	}
 

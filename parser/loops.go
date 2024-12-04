@@ -34,10 +34,10 @@ func parseForStmt(p *Parser) ast.Node {
 			// empty loop
 			block := parseBlock(p)
 			return ast.ForStmt{
-				Init:     nil,
+				Init:      nil,
 				Condition: nil,
 				Increment: nil,
-				Block:    block,
+				Block:     block,
 				Location: ast.Location{
 					Start: loopType.Start,
 					End:   block.EndPos(),
@@ -64,11 +64,11 @@ func parseForStmt(p *Parser) ast.Node {
 		block := parseBlock(p)
 
 		return ast.ForStmt{
-			Init:      	init,
-			Condition: 	cond,
-			Increment: 	incr,
-			Block:     	block,
-			Location: 	ast.Location{
+			Init:      init,
+			Condition: cond,
+			Increment: incr,
+			Block:     block,
+			Location: ast.Location{
 				Start: loopType.Start,
 				End:   block.EndPos(),
 			},
@@ -98,17 +98,17 @@ func parseForStmt(p *Parser) ast.Node {
 		block := parseBlock(p)
 
 		return ast.ForEachStmt{
-			Key:      	first,
-			Value:     	second,
-			Iterable:   array,
-			Block:      block,
-			Location:   ast.Location{
-				Start: 	loopType.Start,
-				End:   	block.EndPos(),
+			Key:      first,
+			Value:    second,
+			Iterable: array,
+			Block:    block,
+			Location: ast.Location{
+				Start: loopType.Start,
+				End:   block.EndPos(),
 			},
 		}
 	} else {
-		errgen.AddError(p.FilePath, loopType.Start.Line, loopType.End.Line, loopType.Start.Column, loopType.End.Column, "Expected 'for' or 'foreach' keyword").DisplayWithPanic()
+		errgen.AddError(p.FilePath, loopType.Start.Line, loopType.End.Line, loopType.Start.Column, loopType.End.Column, "Expected 'for' or 'foreach' keyword", errgen.ERROR_CRITICAL)
 	}
 
 	return nil

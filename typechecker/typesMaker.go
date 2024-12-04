@@ -47,6 +47,6 @@ func NewVoid() Void {
 	return Void{DataType: VOID_TYPE}
 }
 
-func NewMap(keyType ValueTypeInterface, valueType ValueTypeInterface) Map {
+func NewMap(keyType TcValue, valueType TcValue) Map {
 	return Map{DataType: MAP_TYPE, KeyType: keyType, ValueType: valueType}
 }

@@ -1,69 +1,54 @@
 package errgen
 
 import (
-	"errors"
 	"testing"
 )
 
-const (
-	filename = "testfile.go"
-	errorMsg = "test error"
-)
+func TestAddHint(t *testing.T) {
+	err := &WalrusError{}
+	err.AddHint("This is a hint", TEXT_HINT)
 
-func TestMakeError(t *testing.T) {
-	tests := []struct {
-		filePath  string
-		lineStart int
-		lineEnd   int
-		colStart  int
-		colEnd    int
-		errMsg    string
-		expected  *WalrusError
-	}{
-		{
-			filePath:  filename,
-			lineStart: 10,
-			lineEnd:   10,
-			colStart:  5,
-			colEnd:    15,
-			errMsg:    errorMsg,
-			expected: &WalrusError{
-				filePath:  filename,
-				lineStart: 10,
-				lineEnd:   10,
-				colStart:  5,
-				colEnd:    15,
-				err:       errors.New(errorMsg),
-			},
-		},
-		{
-			filePath:  filename,
-			lineStart: -1,
-			lineEnd:   -1,
-			colStart:  -1,
-			colEnd:    -1,
-			errMsg:    errorMsg,
-			expected: &WalrusError{
-				filePath:  filename,
-				lineStart: 1,
-				lineEnd:   1,
-				colStart:  1,
-				colEnd:    1,
-				err:       errors.New(errorMsg),
-			},
-		},
+	if len(err.hints) != 1 {
+		t.Errorf("Expected 1 hint, got %d", len(err.hints))
 	}
 
-	for _, tt := range tests {
-		result := makeError(tt.filePath, tt.lineStart, tt.lineEnd, tt.colStart, tt.colEnd, tt.errMsg)
-		if result.filePath != tt.expected.filePath ||
-			result.lineStart != tt.expected.lineStart ||
-			result.lineEnd != tt.expected.lineEnd ||
-			result.colStart != tt.expected.colStart ||
-			result.colEnd != tt.expected.colEnd ||
-			result.err.Error() != tt.expected.err.Error() {
-			t.Errorf("MakeError(%s, %d, %d, %d, %d, %s) = %+v; expected %+v",
-				tt.filePath, tt.lineStart, tt.lineEnd, tt.colStart, tt.colEnd, tt.errMsg, result, tt.expected)
-		}
+	if err.hints[0].message != "This is a hint" {
+		t.Errorf("Expected hint message 'This is a hint', got '%s'", err.hints[0].message)
+	}
+
+	if err.hints[0].hintType != TEXT_HINT {
+		t.Errorf("Expected hint type TEXT_HINT, got %d", err.hints[0].hintType)
+	}
+}
+
+func TestMakeError(t *testing.T) {
+	err := makeError("test.go", 1, 1, 1, 1, "Test error", ERROR_CRITICAL)
+
+	if err.filePath != "test.go" {
+		t.Errorf("Expected filePath 'test.go', got '%s'", err.filePath)
+	}
+
+	if err.lineStart != 1 {
+		t.Errorf("Expected lineStart 1, got %d", err.lineStart)
+	}
+
+	if err.lineEnd != 1 {
+		t.Errorf("Expected lineEnd 1, got %d", err.lineEnd)
+	}
+
+	if err.colStart != 1 {
+		t.Errorf("Expected colStart 1, got %d", err.colStart)
+	}
+
+	if err.colEnd != 1 {
+		t.Errorf("Expected colEnd 1, got %d", err.colEnd)
+	}
+
+	if err.err.Error() != "Test error" {
+		t.Errorf("Expected error message 'Test error', got '%s'", err.err.Error())
+	}
+
+	if err.level != ERROR_CRITICAL {
+		t.Errorf("Expected error level ERROR_CRITICAL, got %d", err.level)
 	}
 }

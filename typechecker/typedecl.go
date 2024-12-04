@@ -7,13 +7,14 @@ import (
 	"walrus/utils"
 )
 
-func checkTypeDeclaration(node ast.TypeDeclStmt, env *TypeEnvironment) ValueTypeInterface {
+func checkTypeDeclaration(node ast.TypeDeclStmt, env *TypeEnvironment) TcValue {
 
 	typeName := node.UDType
 
-	fmt.Printf("declaring type %s\n", node.UDTypeName)
+	utils.BLUE.Print("declaring type ")
+	utils.PURPLE.Println(node.UDTypeName)
 
-	var val ValueTypeInterface
+	var val TcValue
 
 	switch t := typeName.(type) {
 	case ast.StructType:
@@ -33,12 +34,11 @@ func checkTypeDeclaration(node ast.TypeDeclStmt, env *TypeEnvironment) ValueType
 	err := DeclareType(node.UDTypeName, typeVal)
 	if err != nil {
 		fmt.Printf("cannot declare type %s: %s\n", node.UDTypeName, err.Error())
-		errgen.AddError(env.filePath, node.Start.Line, node.End.Line, node.Start.Column, node.End.Column, err.Error())
+		errgen.AddError(env.filePath, node.Start.Line, node.End.Line, node.Start.Column, node.End.Column, err.Error(), errgen.ERROR_NORMAL)
 	}
 
-	utils.CYAN.Print("Type ")
-	utils.PURPLE.Print(node.UDTypeName)
-	fmt.Println(" declared")
+	utils.GREEN.Print("Declared Type ")
+	utils.PURPLE.Println(node.UDTypeName)
 
 	return val
 }
