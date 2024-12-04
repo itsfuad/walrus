@@ -1,0 +1,50 @@
+
+type Circle struct {
+    priv radius: f32,
+};
+
+type Rectangle struct {
+    width: f32,
+    height: f32,
+};
+
+impl Rectangle {
+    fn area() -> f32 {
+        ret 1.0;
+    }
+}
+
+type IShape interface {
+    fn area() -> f32;
+};
+
+let a := 0;
+
+//let p := a.x; // 'x' does not exist on type 'i32'
+
+//p++;
+
+let rec := @Rectangle{width: 10.0, height: 20.0};
+let cir := @Circle{radius: 10.0};
+
+type Rec Rectangle;
+type Rec2 Rec;
+
+let rec1 : Rectangle = @Rec{width: 89.234, height: 23.4};
+let rec2 : Rec2 = @Rectangle{width: 61.6, height: 54.4};
+//let cir1 : Circle = @Rec2{radius: 10.0}; // property 'radius' is not defined on struct 'Rec2'
+let cir2 : Circle = @Rec2{width: 10.0}; // [property 'height' is required on struct 'Rec2', expected type 'Circle', got 'Rectangle']
+
+fn draw(shape: IShape) {
+    let area := shape.area();
+}
+
+draw(rec);
+draw(cir);
+
+type Float f32;
+type Int i32;
+
+rec.width = 30.0 as Float;
+
+let wrappedInt : Int = 10.8;

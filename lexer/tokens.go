@@ -118,11 +118,11 @@ type Token struct {
 }
 
 func (t *Token) Debug(filename string) {
-	utils.GREY.Printf("%s:%d:%d", filename, t.Start.Line, t.Start.Column)
+	utils.GREY.Printf("%s:%d:%d ", filename, t.Start.Line, t.Start.Column)
 	if t.Value == string(t.Kind) {
-		fmt.Printf("\t '%s'\n", t.Value)
+		fmt.Printf("'%s'\n", t.Value)
 	} else {
-		fmt.Printf("\t '%s'\t('%v')\n", t.Value, t.Kind)
+		fmt.Printf("'%s' ('%v')\n", t.Value, t.Kind)
 	}
 }
 

@@ -9,7 +9,7 @@ A tiny simple programming language made for simplicity. It borrows syntax from '
         - [x] Multiple variable declare
     - [x] [Variable assign](#variable-assign)
     - [x] [Expressions](#expressions)
-        - [x] Unary (32, f32, bool) `- !`
+        - [x] Unary (i32, f32, bool) `- !`
         - [x] Additive `+ -`
         - [x] Multiplicative `* / % ^`
         - [x] Grouping `( )`
@@ -35,7 +35,7 @@ A tiny simple programming language made for simplicity. It borrows syntax from '
             - [x] Property assignment
             - [x] Private property deny access
             - [x] Implement for struct
-        - [x] Builtins (32, f32, bool, string)
+        - [x] Builtins (i32, f32, bool, string)
         - [x] Function
         - [x] Interface
             - [x] Define
@@ -50,10 +50,7 @@ A tiny simple programming language made for simplicity. It borrows syntax from '
         - [x] *=
         - [x] /=
         - [x] %=
-    - [x] [For loop](#for-loop)
-        - [x] for [condition]
-        - [x] for [start] [condition] [end]
-        - [x] for [start] in [range] 
+    - [ ] [For loop](#for-loop)
     - [ ] [Switch](#switch)
     - [x] [Interaface](#interface)
     - [ ] Imports
@@ -71,7 +68,7 @@ A tiny simple programming language made for simplicity. It borrows syntax from '
 ## Variable declare and assign
 ```rs
 // Declare a variable with let or const keyword
-let a := 10; // The variable is mutable and its type is inferred from the value e.g. 32
+let a := 10; // The variable is mutable and its type is inferred from the value e.g. i32
 const pi := 3.14; // constant variable with type f32
 
 // Declare a variable with type
@@ -265,11 +262,8 @@ a %= 10; // a = 0
 ```
 
 ## For loop
-```rs
-for let i := 0; i < 10; i++ {
-    print(i);
-}
-```
+Syntax is not finalized yet
+
 
 ## Switch
 ```rs

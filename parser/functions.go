@@ -111,7 +111,7 @@ func parseFunctionSignature(p *Parser) ([]ast.FunctionParam, ast.DataType) {
 		currentToken := p.currentToken()
 
 		if currentToken.Kind != lexer.COLON_TOKEN && currentToken.Kind != lexer.OPTIONAL_TOKEN {
-			errgen.AddError(p.FilePath, currentToken.Start.Line, currentToken.End.Line, currentToken.Start.Column, currentToken.End.Column, "expected : or ?:").DisplayWithPanic()
+			errgen.AddError(p.FilePath, currentToken.Start.Line, currentToken.End.Line, currentToken.Start.Column, currentToken.End.Column, "expected : or ?:", errgen.ERROR_CRITICAL)
 		}
 
 		p.advance()
@@ -123,7 +123,7 @@ func parseFunctionSignature(p *Parser) ([]ast.FunctionParam, ast.DataType) {
 		var defaultValue ast.Node
 
 		if isOptional {
-			p.expectError(lexer.EQUALS_TOKEN, errors.New("expected default value for optional parameter. eg: param?: int = 10"))
+			p.expectError(lexer.EQUALS_TOKEN, errors.New("expected '=' followed by a default value for optional parameter. eg: param?: i32 = 10"))
 			defaultValue = parseExpr(p, ASSIGNMENT_BP)
 		}
 

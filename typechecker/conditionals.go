@@ -5,19 +5,19 @@ import (
 	"walrus/errgen"
 )
 
-func checkConditionBlock(block ast.BlockStmt, env *TypeEnvironment) ValueTypeInterface {
+func checkConditionBlock(block ast.BlockStmt, env *TypeEnvironment) TcValue {
 	for _, stmt := range block.Contents {
 		CheckAST(stmt, env)
 	}
 	return NewVoid()
 }
 
-func checkIfStmt(ifNode ast.IfStmt, env *TypeEnvironment) ValueTypeInterface {
+func checkIfStmt(ifNode ast.IfStmt, env *TypeEnvironment) TcValue {
 	//condition
-	cond := nodeType(ifNode.Condition, env)
+	cond := CheckAST(ifNode.Condition, env)
 	if cond.DType() != BOOLEAN_TYPE {
 
-		errgen.AddError(env.filePath, ifNode.Condition.StartPos().Line, ifNode.Condition.EndPos().Line, ifNode.Condition.StartPos().Column, ifNode.Condition.EndPos().Column, "Condition must be a boolean expression")
+		errgen.AddError(env.filePath, ifNode.Condition.StartPos().Line, ifNode.Condition.EndPos().Line, ifNode.Condition.StartPos().Column, ifNode.Condition.EndPos().Column, "Condition must be a boolean expression", errgen.ERROR_NORMAL)
 	}
 
 	//then block
