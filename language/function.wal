@@ -60,7 +60,7 @@ fn closure(a: i32) -> fn (b: i32) -> i32 {
 
 const addRes := add(1);
 
-const closureRes1 := closure(1);
-const closureRes2 := closureRes1(2);
-const closureRes3 := closure(1)(2);
+const closureRes1 := closure(1); // returns a function which returns a + b
+const closureRes2 := closureRes1(2); // returns a + b
+const closureRes3 := closure(1)(2); // one liner version of the above two lines
 //const fnval := add;
