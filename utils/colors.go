@@ -14,6 +14,8 @@ const (
     GREEN  		COLOR 	= 	"\033[32m"
     YELLOW 		COLOR 	= 	"\033[33m"
 	ORANGE 		COLOR 	= 	"\033[38;05;166m"
+	BROWN 		COLOR 	= 	"\033[38;05;130m"
+	BRIGHT_BROWN COLOR 	= 	"\033[38;05;136m"
     BLUE   		COLOR 	= 	"\033[34m"
     PURPLE 		COLOR 	= 	"\033[35m"
     CYAN   		COLOR 	= 	"\033[36m"
@@ -36,4 +38,16 @@ func (c COLOR) Print(args ...interface{}) {
 	fmt.Print(string(c))
 	fmt.Print(args...)
 	fmt.Print(string(RESET))
+}
+
+func (c COLOR) Sprintf(format string, args ...interface{}) string {
+	return string(c) + fmt.Sprintf(format, args...) + string(RESET)
+}
+
+func (c COLOR) Sprintln(args ...interface{}) string {
+	return string(c) + fmt.Sprintln(args...) + string(RESET)
+}
+
+func (c COLOR) Sprint(args ...interface{}) string {
+	return string(c) + fmt.Sprint(args...) + string(RESET)
 }

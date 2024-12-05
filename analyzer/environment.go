@@ -56,7 +56,7 @@ func ProgramEnv(filepath string) *TypeEnvironment {
 }
 
 func initVar(env *TypeEnvironment, name string, typeVar TcValue, isConst bool, isOptional bool) {
-	err := env.DeclareVar(name, typeVar, isConst, isOptional)
+	err := env.declareVar(name, typeVar, isConst, isOptional)
 	if err != nil {
 		utils.RED.Println(err)
 		os.Exit(-1)
@@ -87,17 +87,17 @@ func (t *TypeEnvironment) IsInStructScope() bool {
 	return t.parent.IsInStructScope()
 }
 
-func (t *TypeEnvironment) ResolveFunctionEnv() (*TypeEnvironment, error) {
+func (t *TypeEnvironment) resolveFunctionEnv() (*TypeEnvironment, error) {
 	if t.scopeType == FUNCTION_SCOPE {
 		return t, nil
 	}
 	if t.parent == nil {
 		return nil, fmt.Errorf("function not found")
 	}
-	return t.parent.ResolveFunctionEnv()
+	return t.parent.resolveFunctionEnv()
 }
 
-func (t *TypeEnvironment) ResolveVar(name string) (*TypeEnvironment, error) {
+func (t *TypeEnvironment) resolveVar(name string) (*TypeEnvironment, error) {
 
 	if t.isDeclared(name) {
 		return t, nil
@@ -109,10 +109,10 @@ func (t *TypeEnvironment) ResolveVar(name string) (*TypeEnvironment, error) {
 		return nil, fmt.Errorf("'%s' was not declared in this scope", name)
 	}
 
-	return t.parent.ResolveVar(name)
+	return t.parent.resolveVar(name)
 }
 
-func (t *TypeEnvironment) DeclareVar(name string, typeVar TcValue, isConst bool, isOptional bool) error {
+func (t *TypeEnvironment) declareVar(name string, typeVar TcValue, isConst bool, isOptional bool) error {
 
 	if _, ok := typeDefinitions[name]; ok && name != "null" && name != "void" {
 		return fmt.Errorf("type name '%s' cannot be used as variable name", name)
@@ -123,7 +123,7 @@ func (t *TypeEnvironment) DeclareVar(name string, typeVar TcValue, isConst bool,
 	}
 
 	//should not be declared
-	if scope, err := t.ResolveVar(name); err == nil && scope == t {
+	if scope, err := t.resolveVar(name); err == nil && scope == t {
 		return fmt.Errorf("'%s' is already declared in this scope", name)
 	}
 
@@ -134,7 +134,7 @@ func (t *TypeEnvironment) DeclareVar(name string, typeVar TcValue, isConst bool,
 	return nil
 }
 
-func DeclareType(name string, typeType TcValue) error {
+func declareType(name string, typeType TcValue) error {
 	if _, ok := typeDefinitions[name]; ok {
 		return fmt.Errorf("type '%s' already defined", name)
 	}

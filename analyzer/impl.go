@@ -55,7 +55,7 @@ func checkImplStmt(implStmt ast.ImplStmt, env *TypeEnvironment) TcValue {
 		}
 
 		//declare the method on the struct's environment and then check the body
-		err := implForType.StructScope.DeclareVar(name, methodToDeclare, false, false)
+		err := implForType.StructScope.declareVar(name, methodToDeclare, false, false)
 		if err != nil {
 			errgen.AddError(env.filePath, method.Start.Line, method.End.Line, method.Start.Column, method.End.Column, fmt.Sprintf("cannot declare method '%s': %s", method.Identifier.Name, err.Error()), errgen.ERROR_CRITICAL)
 		}

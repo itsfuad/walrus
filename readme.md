@@ -336,3 +336,31 @@ fn printPerson(p: Printable) {
 }
 
 ```
+
+# Running the compiler
+To test a walrus file, you need to open `main.go` and change the `filePath` variable to the path of the file you want to test.
+```go
+func main() {
+
+	filePath := "filename.wal"
+    // ... rest of the code
+}
+```
+Then run the following command
+```sh
+go run main.go
+```
+Or, if you're on windows then you can run the batch file `run.bat`
+```sh
+./run
+```
+
+# Running the tests
+To run the tests, run the following command
+```sh
+go test ./...
+```
+Or, if you're on windows then you can run the batch file `test.bat`
+```sh
+./test
+```

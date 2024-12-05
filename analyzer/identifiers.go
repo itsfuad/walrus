@@ -15,7 +15,7 @@ func checkIdentifier(node ast.IdentifierExpr, env *TypeEnvironment) TcValue {
 	}
 
 	//find the declaredEnv where the variable was declared
-	declaredEnv, err := env.ResolveVar(name)
+	declaredEnv, err := env.resolveVar(name)
 	if err != nil {
 		errgen.AddError(env.filePath, node.StartPos().Line, node.EndPos().Line, node.StartPos().Column, node.EndPos().Column, err.Error(), errgen.ERROR_CRITICAL)
 	}

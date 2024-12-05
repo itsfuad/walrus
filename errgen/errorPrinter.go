@@ -8,13 +8,6 @@ import (
 	"walrus/utils"
 )
 
-type HINT int
-
-const (
-	TEXT_HINT HINT = iota
-	CODE_HINT
-)
-
 type ERROR_LEVEL int
 
 const (
@@ -24,11 +17,6 @@ const (
 	INFO
 )
 
-type Hint struct {
-	message  string
-	hintType HINT
-}
-
 type WalrusError struct {
 	filePath  string
 	lineStart int
@@ -36,7 +24,7 @@ type WalrusError struct {
 	colStart  int
 	colEnd    int
 	err       error
-	hints     []Hint
+	hints     []string
 	level     ERROR_LEVEL
 }
 
@@ -80,11 +68,7 @@ func PrintError(e *WalrusError, showFileName bool) {
 	if len(e.hints) > 0 {
 		utils.GREEN.Println("Hint:")
 		for _, hint := range e.hints {
-			if hint.hintType == TEXT_HINT {
-				utils.YELLOW.Println(hint.message)
-			} else {
-				utils.ORANGE.Println(hint.message)
-			}
+			utils.GREEN.Printf("  %s\n", hint)
 		}
 	}
 
@@ -94,16 +78,13 @@ func PrintError(e *WalrusError, showFileName bool) {
 	}
 }
 
-func (e *WalrusError) AddHint(msg string, htype HINT) *WalrusError {
+func (e *WalrusError) AddHint(msg string) *WalrusError {
 
 	if msg == "" {
 		return e
 	}
 
-	e.hints = append(e.hints, Hint{
-		message:  msg,
-		hintType: htype,
-	})
+	e.hints = append(e.hints, msg)
 
 	fmt.Printf("Hint added. %d hints available\n", len(e.hints))
 
