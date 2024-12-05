@@ -45,8 +45,7 @@ func checkStructLiteral(structLit ast.StructLiteral, env *TypeEnvironment) TcVal
 			continue
 		}
 		if _, ok := structLit.Properties[propname]; !ok {
-			structName := tcValueToString(structType)
-			errgen.AddError(env.filePath, structLit.StartPos().Line, structLit.EndPos().Line, structLit.StartPos().Column, structLit.EndPos().Column, fmt.Sprintf("property '%s' is missing on struct '%s'", propname, structName), errgen.ERROR_NORMAL)
+			errgen.AddError(env.filePath, structLit.StartPos().Line, structLit.EndPos().Line, structLit.StartPos().Column, structLit.EndPos().Column, fmt.Sprintf("property '%s' is missing on @%s", propname, sName.Name), errgen.ERROR_NORMAL)
 		}
 	}
 
