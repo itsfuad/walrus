@@ -2,8 +2,6 @@ package typechecker
 
 import (
 	"fmt"
-	"os"
-	"walrus/utils"
 )
 
 type SCOPE_TYPE int
@@ -33,6 +31,14 @@ var typeDefinitions = map[string]TcValue{
 	string(VOID_TYPE):    NewVoid(),
 }
 
+var builtinValues = map[string]TcValue{
+	"true":  NewBool(),
+	"false": NewBool(),
+	"null":  NewNull(),
+	"void":  NewVoid(),
+	"PI":    NewFloat(32),
+}
+
 type TypeEnvironment struct {
 	parent     *TypeEnvironment
 	scopeType  SCOPE_TYPE
@@ -46,19 +52,7 @@ type TypeEnvironment struct {
 
 func ProgramEnv(filepath string) *TypeEnvironment {
 	env := NewTypeENV(nil, GLOBAL_SCOPE, "global", filepath)
-	initVar(env, "true", NewBool(), true, false)
-	initVar(env, "false", NewBool(), true, false)
-	initVar(env, "null", NewNull(), true, false)
-	initVar(env, "PI", NewFloat(32), true, false)
 	return env
-}
-
-func initVar(env *TypeEnvironment, name string, typeVar TcValue, isConst bool, isOptional bool) {
-	err := env.DeclareVar(name, typeVar, isConst, isOptional)
-	if err != nil {
-		utils.RED.Println(err)
-		os.Exit(-1)
-	}
 }
 
 func NewTypeENV(parent *TypeEnvironment, scope SCOPE_TYPE, scopeName string, filePath string) *TypeEnvironment {
@@ -113,10 +107,17 @@ func (t *TypeEnvironment) DeclareVar(name string, typeVar TcValue, isConst bool,
 
 	if _, ok := typeDefinitions[name]; ok && name != "null" && name != "void" {
 		return fmt.Errorf("type name '%s' cannot be used as variable name", name)
+		//errgen.AddError(t.filePath, loc.Start.Line, loc.End.Line, loc.Start.Column, loc.End.Column, fmt.Sprintf("type name '%s' cannot be used as variable name", name), errgen.ERROR_CRITICAL)
+	}
+
+	if _, ok := builtinValues[name]; ok {
+		return fmt.Errorf("'%s' is a builtin value and cannot be redeclared", name)
+		//errgen.AddError(t.filePath, loc.Start.Line, loc.End.Line, loc.Start.Column, loc.End.Column, fmt.Sprintf("'%s' is a builtin value and cannot be redeclared", name), errgen.ERROR_CRITICAL)
 	}
 
 	//should not be declared
 	if scope, err := t.ResolveVar(name); err == nil && scope == t {
+		//errgen.AddError(t.filePath, loc.Start.Line, loc.End.Line, loc.Start.Column, loc.End.Column, fmt.Sprintf("'%s' is already declared in this scope", name), errgen.ERROR_NORMAL)
 		return fmt.Errorf("'%s' is already declared in this scope", name)
 	}
 

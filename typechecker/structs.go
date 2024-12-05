@@ -45,7 +45,6 @@ func checkStructLiteral(structLit ast.StructLiteral, env *TypeEnvironment) TcVal
 			continue
 		}
 		if _, ok := structLit.Properties[propname]; !ok {
-
 			errgen.AddError(env.filePath, structLit.StartPos().Line, structLit.EndPos().Line, structLit.StartPos().Column, structLit.EndPos().Column, fmt.Sprintf("property '%s' is required on struct '%s'", propname, sName.Name), errgen.ERROR_NORMAL)
 		}
 	}
@@ -130,12 +129,10 @@ func checkStructTypeDecl(name string, structType ast.StructType, env *TypeEnviro
 			IsPrivate: propval.IsPrivate,
 			Type:      propType,
 		}
-		//props[propname] = property
 		//declare the property on the struct environment
 		err := structEnv.DeclareVar(propname, property, false, false)
 		if err != nil {
-
-			errgen.AddError(env.filePath, propval.Prop.Start.Line, propval.Prop.End.Line, propval.Prop.Start.Column, propval.Prop.End.Column, err.Error(), errgen.ERROR_NORMAL)
+			errgen.AddError(env.filePath, propval.PropType.StartPos().Line, propval.PropType.EndPos().Line, propval.PropType.StartPos().Column, propval.PropType.EndPos().Column, fmt.Sprintf("error declaring property '%s': %s", propname, err.Error()), errgen.ERROR_CRITICAL)
 		}
 	}
 
@@ -148,7 +145,7 @@ func checkStructTypeDecl(name string, structType ast.StructType, env *TypeEnviro
 	//declare 'this' variable to be used in the struct's methods
 	err := structEnv.DeclareVar("this", structTypeValue, true, false)
 	if err != nil {
-		errgen.AddError(env.filePath, structType.Start.Line, structType.End.Line, structType.Start.Column, structType.End.Column, err.Error(), errgen.ERROR_NORMAL)
+		errgen.AddError(env.filePath, structType.StartPos().Line, structType.EndPos().Line, structType.StartPos().Column, structType.EndPos().Column, err.Error(), errgen.ERROR_CRITICAL)
 	}
 
 	return structTypeValue
