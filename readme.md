@@ -64,8 +64,11 @@ A tiny simple programming language made for simplicity. It borrows syntax from '
 - [ ] Codegen
 
 [Runnning the compiler](#running-the-compiler)
+    [Install Go](#install-go)
 [Running the tests](#running-the-tests)
 [Installing syntax highlighting for vscode](#installing-syntax-highlighting-for-vscode)
+    [Build the extension](#build-the-extension)
+    [Install from marketplace](#install-from-marketplace)
 
 
 # Example
@@ -343,6 +346,11 @@ fn printPerson(p: Printable) {
 ```
 
 # Running the compiler
+
+## Install Go
+To run the compiler, you need to have go installed. You can download it from [here](https://golang.org/dl/)
+
+## Testing a walrus file
 To test a walrus file, you need to open `main.go` and change the `filePath` variable to the path of the file you want to test.
 ```go
 func main() {
@@ -375,6 +383,7 @@ To install local build, go to `language-support` directory and run the following
 ```sh
 npm install -g vsce
 ```
+## Build the extension
 If you don't have node installed, you can download it from [here](https://nodejs.org/en/download/)
 Then run the following command
 ```sh
@@ -383,5 +392,6 @@ code --install-extension walrus-<full-output-name>.vsix
 ```
 Or open vscode, go to extensions and click on the three dots on the top right corner and click on 'Install from VSIX' and select the generated vsix file.
 
+## Install from marketplace
 Or, you can install the extension from the marketplace [here](https://marketplace.visualstudio.com/items?itemName=Walrus.walrus)
 Or, Search for 'Walrus' in the vscode extensions marketplace.
