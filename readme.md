@@ -63,6 +63,11 @@ A tiny simple programming language made for simplicity. It borrows syntax from '
 - [x] Rich multi error reporting system
 - [ ] Codegen
 
+[Runnning the compiler](#running-the-compiler)
+[Running the tests](#running-the-tests)
+[Installing syntax highlighting for vscode](#installing-syntax-highlighting-for-vscode)
+
+
 # Example
 
 ## Variable declare and assign
@@ -364,3 +369,19 @@ Or, if you're on windows then you can run the batch file `test.bat`
 ```sh
 ./test
 ```
+
+# Installing syntax highlighting for vscode
+To install local build, go to `language-support` directory and run the following command
+```sh
+npm install -g vsce
+```
+If you don't have node installed, you can download it from [here](https://nodejs.org/en/download/)
+Then run the following command
+```sh
+vsce package
+code --install-extension walrus-<full-output-name>.vsix
+```
+Or open vscode, go to extensions and click on the three dots on the top right corner and click on 'Install from VSIX' and select the generated vsix file.
+
+Or, you can install the extension from the marketplace [here](https://marketplace.visualstudio.com/items?itemName=Walrus.walrus)
+Or, Search for 'Walrus' in the vscode extensions marketplace.
