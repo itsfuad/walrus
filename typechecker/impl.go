@@ -75,7 +75,6 @@ func checkImplStmt(implStmt ast.ImplStmt, env *TypeEnvironment) TcValue {
 
 		// if the method name is in the struct's elements, throw an error
 		if _, ok := implForType.StructScope.variables[name]; ok {
-
 			errgen.AddError(env.filePath, method.Start.Line, method.End.Line, method.Start.Column, method.End.Column, fmt.Sprintf("name '%s' already exists in struct", name), errgen.ERROR_CRITICAL)
 		}
 
@@ -100,8 +99,7 @@ func checkImplStmt(implStmt ast.ImplStmt, env *TypeEnvironment) TcValue {
 		//declare the method on the struct's environment and then check the body
 		err := implForType.StructScope.DeclareVar(name, methodToDeclare, false, false)
 		if err != nil {
-
-			errgen.AddError(env.filePath, method.Start.Line, method.End.Line, method.Start.Column, method.End.Column, err.Error(), errgen.ERROR_CRITICAL)
+			errgen.AddError(env.filePath, method.Start.Line, method.End.Line, method.Start.Column, method.End.Column, fmt.Sprintf("cannot declare method '%s': %s", method.Identifier.Name, err.Error()), errgen.ERROR_CRITICAL)
 		}
 
 		//check the function body

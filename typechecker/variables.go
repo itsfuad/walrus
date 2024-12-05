@@ -87,13 +87,13 @@ func checkVariableDeclaration(node ast.VarDeclStmt, env *TypeEnvironment) TcValu
 			providedValue := CheckAST(varToDecl.Value, env)
 			err := matchTypes(expectedTypeInterface, providedValue)
 			if err != nil {
-				errgen.AddError(env.filePath, varToDecl.Value.StartPos().Line, varToDecl.Value.EndPos().Line, varToDecl.Value.StartPos().Column, varToDecl.Value.EndPos().Column, err.Error(), errgen.ERROR_NORMAL)
+				errgen.AddError(env.filePath, varToDecl.Value.StartPos().Line, varToDecl.Value.EndPos().Line, varToDecl.Value.StartPos().Column, varToDecl.Value.EndPos().Column, fmt.Sprintf("error declaring variable '%s'. %s", varToDecl.Identifier.Name, err.Error()), errgen.ERROR_CRITICAL)
 			}
 		}
 
 		err := env.DeclareVar(varToDecl.Identifier.Name, expectedTypeInterface, node.IsConst, false)
 		if err != nil {
-			errgen.AddError(env.filePath, varToDecl.Start.Line, varToDecl.End.Line, varToDecl.Start.Column, varToDecl.End.Column, err.Error(), errgen.ERROR_CRITICAL)
+			errgen.AddError(env.filePath, varToDecl.Identifier.StartPos().Line, varToDecl.Identifier.EndPos().Line, varToDecl.Identifier.StartPos().Column, varToDecl.Identifier.EndPos().Column, err.Error(), errgen.ERROR_CRITICAL)
 		}
 
 		if node.IsConst {
@@ -107,8 +107,6 @@ func checkVariableDeclaration(node ast.VarDeclStmt, env *TypeEnvironment) TcValu
 			fmt.Print(" of type ")
 			utils.PURPLE.Println(tcValueToString(expectedTypeInterface))
 		}
-
-		//return the type of the variable
 	}
 	return NewVoid()
 }

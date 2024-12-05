@@ -3,16 +3,15 @@ package main
 import (
 	"walrus/errgen"
 	"walrus/lexer"
-	parseMachine "walrus/parser"
+	"walrus/parser"
 	"walrus/typechecker"
 )
 
 func main() {
 
-	filePath := "language/expressions.wal"
+	filePath := "language/types.wal"
 	tokens := lexer.Tokenize(filePath, true)
-	parser := parseMachine.NewParser(filePath, tokens)
-	tree := parser.Parse(false)
+	tree := parser.NewParser(filePath, tokens).Parse(false)
 
 	tc := typechecker.ProgramEnv(filePath)
 
