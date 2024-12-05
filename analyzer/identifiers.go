@@ -1,4 +1,4 @@
-package typechecker
+package analyzer
 
 import (
 	"walrus/ast"
@@ -10,7 +10,7 @@ func checkIdentifier(node ast.IdentifierExpr, env *TypeEnvironment) TcValue {
 	name := node.Name
 
 	//identifier cannot be types or builtins
-	if isTypeDefined(name) && ( name != "null" && name != "void" ) {
+	if isTypeDefined(name) && (name != "null" && name != "void") {
 		errgen.AddError(env.filePath, node.StartPos().Line, node.EndPos().Line, node.StartPos().Column, node.EndPos().Column, "cannot use type as value", errgen.ERROR_CRITICAL)
 	}
 

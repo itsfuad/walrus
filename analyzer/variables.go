@@ -1,4 +1,4 @@
-package typechecker
+package analyzer
 
 import (
 	"fmt"
@@ -87,7 +87,7 @@ func checkVariableDeclaration(node ast.VarDeclStmt, env *TypeEnvironment) TcValu
 			providedValue := CheckAST(varToDecl.Value, env)
 			err := matchTypes(expectedTypeInterface, providedValue)
 			if err != nil {
-				errgen.AddError(env.filePath, varToDecl.Value.StartPos().Line, varToDecl.Value.EndPos().Line, varToDecl.Value.StartPos().Column, varToDecl.Value.EndPos().Column, fmt.Sprintf("error declaring variable '%s'. %s", varToDecl.Identifier.Name, err.Error()), errgen.ERROR_CRITICAL)
+				errgen.AddError(env.filePath, varToDecl.Value.StartPos().Line, varToDecl.Value.EndPos().Line, varToDecl.Value.StartPos().Column, varToDecl.Value.EndPos().Column, fmt.Sprintf("error declaring variable '%s'. %s", varToDecl.Identifier.Name, err.Error()), errgen.ERROR_NORMAL)
 			}
 		}
 

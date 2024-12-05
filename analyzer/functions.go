@@ -1,4 +1,4 @@
-package typechecker
+package analyzer
 
 import (
 	"fmt"
@@ -29,7 +29,7 @@ func CheckAndDeclareFunction(funcNode ast.FunctionLiteral, name string, env *Typ
 	//declare the function
 	err := env.DeclareVar(name, fn, true, false)
 	if err != nil {
-		errgen.AddError(env.filePath, funcNode.Start.Line, funcNode.End.Line, funcNode.Start.Column, funcNode.End.Column, "error declaring function. " + err.Error(), errgen.ERROR_CRITICAL)
+		errgen.AddError(env.filePath, funcNode.Start.Line, funcNode.End.Line, funcNode.Start.Column, funcNode.End.Column, "error declaring function. "+err.Error(), errgen.ERROR_CRITICAL)
 	}
 	//check the function body
 	for _, stmt := range funcNode.Body.Contents {
@@ -136,7 +136,7 @@ func checkFunctionDeclStmt(funcNode ast.FunctionDeclStmt, env *TypeEnvironment) 
 
 	if env.isDeclared(funcName) {
 
-		errgen.AddError(env.filePath, funcNode.Identifier.Start.Line, funcNode.Identifier.End.Line, funcNode.Identifier.Start.Column, funcNode.Identifier.End.Column, fmt.Sprintf("Function %s is already declared", funcName), errgen.ERROR_NORMAL)
+		errgen.AddError(env.filePath, funcNode.Identifier.Start.Line, funcNode.Identifier.End.Line, funcNode.Identifier.Start.Column, funcNode.Identifier.End.Column, fmt.Sprintf("function %s is already declared", funcName), errgen.ERROR_NORMAL)
 	}
 
 	return CheckAndDeclareFunction(funcNode.FunctionLiteral, funcName, env)
