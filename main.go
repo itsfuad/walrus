@@ -4,7 +4,7 @@ import (
 	"walrus/errgen"
 	"walrus/lexer"
 	"walrus/parser"
-	"walrus/typechecker"
+	"walrus/analyzer"
 )
 
 func main() {
@@ -13,9 +13,9 @@ func main() {
 	tokens := lexer.Tokenize(filePath, true)
 	tree := parser.NewParser(filePath, tokens).Parse(false)
 
-	tc := typechecker.ProgramEnv(filePath)
+	anz := analyzer.ProgramEnv(filePath)
 
-	typechecker.CheckAST(tree, tc)
+	analyzer.CheckAST(tree, anz)
 
 	errgen.DisplayErrors()
 }

@@ -1,4 +1,4 @@
-package typechecker
+package analyzer
 
 import (
 	"errors"
@@ -188,4 +188,46 @@ func tcValueToString(val TcValue) string {
 	default:
 		return string(t.DType())
 	}
+}
+
+func checkMethodsImplementations(expected, provided TcValue) error {
+
+	//check if the provided type implements the interface
+	expectedMethods := expected.(Interface).Methods
+	structType, ok := provided.(Struct)
+	if !ok {
+		return fmt.Errorf("type must be a struct")
+	}
+
+	for methodName, method := range expectedMethods {
+		// check if method is present in the struct's variables and is a function
+		methodVal, ok := structType.StructScope.variables[methodName]
+		if !ok {
+			return fmt.Errorf("struct '%s' did not implement method '%s' of interface '%s'",
+				provided.(Struct).StructName, methodName, expected.(Interface).InterfaceName)
+		}
+		methodFn, ok := methodVal.(StructMethod)
+		if !ok {
+			return fmt.Errorf("'%s' on struct '%s' is not a valid method for interface '%s'",
+				methodName, provided.(Struct).StructName, expected.(Interface).InterfaceName)
+		}
+
+		// check the return type and parameters
+		for i, param := range method.Params {
+			expectedParam := tcValueToString(param.Type)
+			providedParam := tcValueToString(methodFn.Fn.Params[i].Type)
+			if expectedParam != providedParam {
+				return fmt.Errorf("method '%s' found for interface '%s' but parameter missmatch", methodName, expected.(Interface).InterfaceName)
+			}
+		}
+
+		//check the return type
+		expectedReturn := tcValueToString(method.Returns)
+		providedReturn := tcValueToString(methodFn.Fn.Returns)
+		if expectedReturn != providedReturn {
+			return fmt.Errorf("method '%s' found for interface '%s' but return type mismatched", methodName, expected.(Interface).InterfaceName)
+		}
+	}
+
+	return nil
 }

@@ -1,4 +1,4 @@
-package typechecker
+package analyzer
 
 import (
 	"fmt"
@@ -20,35 +20,35 @@ import (
 // 2. Ensures that the index expression evaluates to an integer type. If not, it generates an error with a hint that the index must be a valid integer.
 //
 // If both checks pass, the function returns the type of the elements contained in the array.
-func evaluateIndexableAccess(indexable ast.Indexable, env *TypeEnvironment) TcValue {
+func evaluateIndexableAccess(indexable ast.Indexable, e *TypeEnvironment) TcValue {
 
-	container := CheckAST(indexable.Container, env)
-	index := CheckAST(indexable.Index, env)
+	container := CheckAST(indexable.Container, e)
+	index := CheckAST(indexable.Index, e)
 
 	var indexedValueType TcValue
 
 	switch t := container.(type) {
 	case Array:
 		if !isIntType(index) {
-			errgen.AddError(env.filePath, indexable.Start.Line, indexable.End.Line, indexable.Index.StartPos().Column, indexable.Index.EndPos().Column, fmt.Sprintf("cannot use type '%s' to index array", tcValueToString(index)), errgen.ERROR_NORMAL).AddHint("try using integer or cast", errgen.TEXT_HINT)
+			errgen.AddError(e.filePath, indexable.Start.Line, indexable.End.Line, indexable.Index.StartPos().Column, indexable.Index.EndPos().Column, fmt.Sprintf("cannot use type '%s' to index array", tcValueToString(index)), errgen.ERROR_NORMAL).AddHint("try using integer or cast", errgen.TEXT_HINT)
 		}
 		indexedValueType = t.ArrayType
 	case Str:
 		if !isIntType(index) {
 			//fmt.Errorf("index must be a valid integer")
-			errgen.AddError(env.filePath, indexable.Start.Line, indexable.End.Line, indexable.Index.StartPos().Column, indexable.Index.EndPos().Column, fmt.Sprintf("cannot use type '%s' to index string", tcValueToString(index)), errgen.ERROR_NORMAL).AddHint("try using integer or cast", errgen.TEXT_HINT)
+			errgen.AddError(e.filePath, indexable.Start.Line, indexable.End.Line, indexable.Index.StartPos().Column, indexable.Index.EndPos().Column, fmt.Sprintf("cannot use type '%s' to index string", tcValueToString(index)), errgen.ERROR_NORMAL).AddHint("try using integer or cast", errgen.TEXT_HINT)
 		}
 		return NewInt(8, false)
 	case Map:
 		//if key is interface then error
 		if t.KeyType.DType() == INTERFACE_TYPE {
 			//return t.ValueType, fmt.Errorf("cannot access index of type %s", INTERFACE_TYPE)
-			errgen.AddError(env.filePath, indexable.Start.Line, indexable.End.Line, indexable.Index.StartPos().Column, indexable.Index.EndPos().Column, fmt.Sprintf("cannot access index of type %s", INTERFACE_TYPE), errgen.ERROR_NORMAL)
+			errgen.AddError(e.filePath, indexable.Start.Line, indexable.End.Line, indexable.Index.StartPos().Column, indexable.Index.EndPos().Column, fmt.Sprintf("cannot access index of type %s", INTERFACE_TYPE), errgen.ERROR_NORMAL)
 		}
 		indexedValueType = t.ValueType
 	default:
 		//return nil, fmt.Errorf("cannot access index of type %s", container.DType())
-		errgen.AddError(env.filePath, indexable.Start.Line, indexable.End.Line, indexable.Container.StartPos().Column, indexable.Container.EndPos().Column, fmt.Sprintf("cannot access index of type %s", container.DType()), errgen.ERROR_CRITICAL)
+		errgen.AddError(e.filePath, indexable.Start.Line, indexable.End.Line, indexable.Container.StartPos().Column, indexable.Container.EndPos().Column, fmt.Sprintf("cannot access index of type %s", container.DType()), errgen.ERROR_CRITICAL)
 	}
 
 	return indexedValueType
