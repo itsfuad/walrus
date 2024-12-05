@@ -356,8 +356,7 @@ To run the compiler, you need to have go installed. You can download it from [he
 To test a walrus file, you need to open `main.go` and change the `filePath` variable to the path of the file you want to test.
 ```go
 func main() {
-
-	filePath := "filename.wal"
+    filePath := "filename.wal"
     // ... rest of the code
 }
 ```
