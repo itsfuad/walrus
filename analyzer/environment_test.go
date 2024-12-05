@@ -30,7 +30,7 @@ func TestDeclareVar(t *testing.T) {
 	env := NewTypeENV(nil, GLOBAL_SCOPE, "global", FILE)
 	intType := Int{DataType: INT32_TYPE}
 
-	err := env.DeclareVar("x", intType, false, false)
+	err := env.declareVar("x", intType, false, false)
 	if err != nil {
 		t.Fatalf(EXPECTED_NO_ERROR, err)
 	}
@@ -51,9 +51,9 @@ func TestDeclareVar(t *testing.T) {
 func TestResolveVar(t *testing.T) {
 	env := NewTypeENV(nil, GLOBAL_SCOPE, "global", FILE)
 	intType := Int{DataType: INT32_TYPE}
-	env.DeclareVar("x", intType, false, false)
+	env.declareVar("x", intType, false, false)
 
-	scope, err := env.ResolveVar("x")
+	scope, err := env.resolveVar("x")
 	if err != nil {
 		t.Fatalf(EXPECTED_NO_ERROR, err)
 	}
@@ -62,7 +62,7 @@ func TestResolveVar(t *testing.T) {
 		t.Errorf("Expected scope to be the same as env")
 	}
 
-	_, err = env.ResolveVar("y")
+	_, err = env.resolveVar("y")
 	if err == nil {
 		t.Fatalf("EXPECTED_ERROR")
 	}
@@ -71,7 +71,7 @@ func TestResolveVar(t *testing.T) {
 func TestDeclareType(t *testing.T) {
 	structType := Struct{DataType: STRUCT_TYPE, StructName: "MyStruct"}
 
-	err := DeclareType("MyStruct", structType)
+	err := declareType("MyStruct", structType)
 	if err != nil {
 		t.Fatalf(EXPECTED_NO_ERROR, err)
 	}
@@ -83,7 +83,7 @@ func TestDeclareType(t *testing.T) {
 
 func TestResolveType(t *testing.T) {
 	structType := Struct{DataType: STRUCT_TYPE, StructName: "MyStruct"}
-	DeclareType("MyStruct", structType)
+	declareType("MyStruct", structType)
 
 	_, err := getTypeDefinition("MyStruct")
 	if err != nil {
@@ -95,7 +95,7 @@ func TestResolveFunctionEnv(t *testing.T) {
 	globalEnv := NewTypeENV(nil, GLOBAL_SCOPE, "global", FILE)
 	funcEnv := NewTypeENV(globalEnv, FUNCTION_SCOPE, "function", FILE)
 
-	resolvedEnv, err := funcEnv.ResolveFunctionEnv()
+	resolvedEnv, err := funcEnv.resolveFunctionEnv()
 	if err != nil {
 		t.Fatalf(EXPECTED_NO_ERROR, err)
 	}
@@ -104,7 +104,7 @@ func TestResolveFunctionEnv(t *testing.T) {
 		t.Errorf("Expected resolvedEnv to be the same as funcEnv")
 	}
 
-	_, err = globalEnv.ResolveFunctionEnv()
+	_, err = globalEnv.resolveFunctionEnv()
 	if err == nil {
 		t.Fatalf("EXPECTED_ERROR")
 	}

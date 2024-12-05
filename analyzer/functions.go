@@ -27,7 +27,7 @@ func CheckAndDeclareFunction(funcNode ast.FunctionLiteral, name string, env *Typ
 	}
 
 	//declare the function
-	err := env.DeclareVar(name, fn, true, false)
+	err := env.declareVar(name, fn, true, false)
 	if err != nil {
 		errgen.AddError(env.filePath, funcNode.Start.Line, funcNode.End.Line, funcNode.Start.Column, funcNode.End.Column, "error declaring function. "+err.Error(), errgen.ERROR_CRITICAL)
 	}
@@ -60,7 +60,7 @@ func checkandDeclareParamaters(params []ast.FunctionParam, fnEnv *TypeEnvironmen
 			}
 		}
 
-		err := fnEnv.DeclareVar(param.Identifier.Name, paramType, false, param.IsOptional)
+		err := fnEnv.declareVar(param.Identifier.Name, paramType, false, param.IsOptional)
 		if err != nil {
 			errgen.AddError(fnEnv.filePath, param.Identifier.Start.Line, param.Identifier.End.Line, param.Identifier.Start.Column, param.Identifier.End.Column, fmt.Sprintf("error declaring parameter. %s", err.Error()), errgen.ERROR_CRITICAL)
 		}
@@ -143,7 +143,7 @@ func checkFunctionDeclStmt(funcNode ast.FunctionDeclStmt, env *TypeEnvironment) 
 }
 
 func getFunctionReturnValue(env *TypeEnvironment, returnNode ast.Node) TcValue {
-	funcParent, err := env.ResolveFunctionEnv()
+	funcParent, err := env.resolveFunctionEnv()
 
 	if err != nil {
 		errgen.AddError(env.filePath, returnNode.StartPos().Line, returnNode.EndPos().Line, returnNode.StartPos().Column, returnNode.EndPos().Column, err.Error(), errgen.ERROR_NORMAL)

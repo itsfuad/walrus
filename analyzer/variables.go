@@ -91,7 +91,7 @@ func checkVariableDeclaration(node ast.VarDeclStmt, env *TypeEnvironment) TcValu
 			}
 		}
 
-		err := env.DeclareVar(varToDecl.Identifier.Name, expectedTypeInterface, node.IsConst, false)
+		err := env.declareVar(varToDecl.Identifier.Name, expectedTypeInterface, node.IsConst, false)
 		if err != nil {
 			errgen.AddError(env.filePath, varToDecl.Identifier.StartPos().Line, varToDecl.Identifier.EndPos().Line, varToDecl.Identifier.StartPos().Column, varToDecl.Identifier.EndPos().Column, err.Error(), errgen.ERROR_CRITICAL)
 		}

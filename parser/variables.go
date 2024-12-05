@@ -113,7 +113,7 @@ func parseVarDeclStmt(p *Parser) ast.Node {
 			explicitType = parseType(p, DEFAULT_BP)
 		} else if assignmentToken.Kind != lexer.WALRUS_TOKEN {
 			msg := "Invalid variable declaration syntax"
-			errgen.AddError(p.FilePath, assignmentToken.Start.Line, assignmentToken.End.Line, assignmentToken.Start.Column, assignmentToken.End.Column, msg, errgen.ERROR_CRITICAL).AddHint("Maybe you want to use : or := instead of =", errgen.TEXT_HINT)
+			errgen.AddError(p.FilePath, assignmentToken.Start.Line, assignmentToken.End.Line, assignmentToken.Start.Column, assignmentToken.End.Column, msg, errgen.ERROR_CRITICAL).AddHint("Maybe you want to use : or := instead of =")
 		}
 
 		if p.currentTokenKind() != lexer.COMMA_TOKEN && p.currentTokenKind() != lexer.SEMI_COLON_TOKEN {

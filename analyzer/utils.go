@@ -35,7 +35,7 @@ func checkLValue(node ast.Node, env *TypeEnvironment) error {
 			return errors.New("type")
 		}
 		//find the declaredEnv where the variable was declared
-		declaredEnv, err := env.ResolveVar(t.Name)
+		declaredEnv, err := env.resolveVar(t.Name)
 		if err != nil {
 			return err
 		}
@@ -148,7 +148,7 @@ func matchTypes(expectedType, providedType TcValue) error {
 	providedStr := tcValueToString(providedType)
 
 	if expectedStr != providedStr {
-		return fmt.Errorf("expected type '%s', got '%s'", expectedStr, providedStr)
+		return fmt.Errorf("cannot assign type '%s' to type '%s'", providedStr, expectedStr)
 	}
 
 	return nil
