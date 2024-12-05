@@ -63,12 +63,14 @@ A tiny simple programming language made for simplicity. It borrows syntax from '
 - [x] Rich multi error reporting system
 - [ ] Codegen
 
-[Runnning the compiler](#running-the-compiler)
-    [Install Go](#install-go)
-[Running the tests](#running-the-tests)
-[Installing syntax highlighting for vscode](#installing-syntax-highlighting-for-vscode)
-    [Build the extension](#build-the-extension)
-    [Install from marketplace](#install-from-marketplace)
+
+# Install and Run
+- [Runnning the compiler](#running-the-compiler)
+    - [Install Go](#install-go)
+- [Running the tests](#running-the-tests)
+- [Installing syntax highlighting for vscode](#installing-syntax-highlighting-for-vscode)
+    - [Build the extension](#build-the-extension)
+    - [Install from marketplace](#install-from-marketplace)
 
 
 # Example
