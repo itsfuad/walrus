@@ -1,6 +1,12 @@
 # Walrus Programming Language
 Walrus is a tiny and simple programming language designed for simplicity. Its syntax draws inspiration from Go, Rust, and TypeScript.
 
+# Rules 
+1. **Expressive**: Just look at the code and you can tell what's going on without jumping around codes.
+2. **Beginner friendly**
+3. **Distinct behavior for every things** (most of the cases). Like in other language type cast often uses int(2.4) or (int)2.4; which looks like function calls. We have separate keyword 'as' for type casting like typescript keeping it as unambiguous as we can.
+4. **Less over complications**: we removed OOP instead used structs which support methods, access modifiers and has interfaces with duck typing. We have simple approach. 
+
 ## Features
 
 ### Lexer
