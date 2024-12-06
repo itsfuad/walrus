@@ -144,10 +144,10 @@ c[0][0] = 10; // c = [[10, 2], [3, 4], [5, 6]]
 
 ## Map
 ```rs
-let myMap : map[str]i32 = map[str]i32 {
-    "a": 10,
-    "b": 20,
-    "c": 30
+let myMap : map[str]i32 = $map[str]i32 {
+    "a" => 10,
+    "b" => 20,
+    "c" => 30
 };
 
 let a := myMap["a"]; // a = 10
