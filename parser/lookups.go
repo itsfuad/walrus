@@ -116,7 +116,7 @@ func bindLookupHandlers() {
 	nud(lexer.PLUS_PLUS_TOKEN, parsePrefixExpr)   // ++a
 	nud(lexer.MINUS_MINUS_TOKEN, parsePrefixExpr) // --a
 
-	nud(lexer.MAP_TOKEN, parseMapLiteral)
+	nud(lexer.DOLLAR_TOKEN, parseMapLiteral)
 
 	//Statements
 	stmt(lexer.LET_TOKEN, parseVarDeclStmt)          // variable declaration

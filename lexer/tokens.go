@@ -79,8 +79,10 @@ const (
 	DOT_TOKEN        builtins.TOKEN_KIND = "."
 	SEMI_COLON_TOKEN builtins.TOKEN_KIND = ";"
 	ARROW_TOKEN      builtins.TOKEN_KIND = "->"
+	FAT_ARROW_TOKEN  builtins.TOKEN_KIND = "=>"
 	OPTIONAL_TOKEN   builtins.TOKEN_KIND = "?:"
 	AT_TOKEN         builtins.TOKEN_KIND = "@"
+	DOLLAR_TOKEN     builtins.TOKEN_KIND = "$"
 	EOF_TOKEN        builtins.TOKEN_KIND = "eof"
 )
 

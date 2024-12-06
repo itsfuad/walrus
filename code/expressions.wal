@@ -1,0 +1,17 @@
+let a := 2;
+let b := a + 23 * 2; // operator precedence is used, 23 * 2 is evaluated first
+let c : i32 = (a + b) * 2; // brackets are used to change the order of evaluation, a + b is evaluated first
+
+//increment and decrement operators
+a++; //post increment
+b--; //post decrement
+++a; //pre increment
+--b; //pre decrement
+
+//assignment operators with arithmetic operators
+a += 2; // a = a + 2
+b -= 3; // b = b - 3
+c *= 4; // c = c * 4    
+a /= 5; // a = a / 5
+b %= 6; // b = b % 6
+a ^= 7; // a = a ^ 7

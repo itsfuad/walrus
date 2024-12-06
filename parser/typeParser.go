@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"errors"
 	"fmt"
 	"walrus/ast"
 	"walrus/builtins"
@@ -28,7 +29,35 @@ func bindTypeLookups() {
 
 func parseMapType(p *Parser) ast.DataType {
 
-	token := p.expect(lexer.MAP_TOKEN)
+	// map[<keyType>]<valueType>
+	// or
+	// type UserDefinedType map[<keyType>]<valueType>
+	// UserDefinedType
+
+	var mapToken lexer.Token
+
+	if p.currentTokenKind() == lexer.MAP_TOKEN {
+		mapToken = p.advance()
+	} else {
+		//we expect an identifier
+		mapToken = p.expectError(lexer.IDENTIFIER_TOKEN, errors.New("expected 'map' keyword or the map type"))
+		return ast.MapType{
+			TypeName: builtins.PARSER_TYPE(builtins.MAP),
+			Map: ast.IdentifierExpr{
+				Name: mapToken.Value,
+				Location: ast.Location{
+					Start: mapToken.Start,
+					End:   mapToken.End,
+				},
+			},
+			KeyType:   nil,
+			ValueType: nil,
+			Location: ast.Location{
+				Start: mapToken.Start,
+				End:   mapToken.End,
+			},
+		}
+	}
 
 	p.expect(lexer.OPEN_BRACKET)
 
@@ -39,12 +68,19 @@ func parseMapType(p *Parser) ast.DataType {
 	valueType := parseType(p, DEFAULT_BP)
 
 	return ast.MapType{
-		TypeName:  builtins.PARSER_TYPE(builtins.MAP),
+		TypeName: builtins.PARSER_TYPE(builtins.MAP),
+		Map: ast.IdentifierExpr{
+			Name: mapToken.Value,
+			Location: ast.Location{
+				Start: mapToken.Start,
+				End:   mapToken.End,
+			},
+		},
 		KeyType:   keyType,
 		ValueType: valueType,
 		Location: ast.Location{
-			Start: token.Start,
-			End:   token.End,
+			Start: mapToken.Start,
+			End:   valueType.EndPos(),
 		},
 	}
 }

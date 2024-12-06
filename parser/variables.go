@@ -26,64 +26,6 @@ import (
 // 7. Expects and consumes a semicolon `;` to terminate the statement.
 // 8. Constructs and returns an ast.VarDeclStmt node with the parsed information.
 func parseVarDeclStmt(p *Parser) ast.Node {
-	/*
-		declToken := p.advance() // advance the let/const keyword
-
-		// is it let or const?
-		isConst := declToken.Kind == lexer.CONST_TOKEN
-
-		// parse the variable name
-		identifier := p.expect(lexer.IDENTIFIER_TOKEN)
-
-		// parse the explicit type if present. This will be nil if no type is specified.
-		var explicitType ast.DataType
-
-		var value ast.Node
-
-		assignmentToken := p.advance()
-
-		if assignmentToken.Kind == lexer.COLON_TOKEN {
-			explicitType = parseType(p, DEFAULT_BP)
-		} else if assignmentToken.Kind != lexer.WALRUS_TOKEN {
-			msg := "Invalid variable declaration syntax"
-			errgen.AddError(p.FilePath, assignmentToken.Start.Line, assignmentToken.End.Line, assignmentToken.Start.Column, assignmentToken.End.Column, msg).AddHint("Maybe you want to use : or := instead of =", errgen.TEXT_HINT, errgen.ERROR_CRITICAL)
-		}
-
-		if p.currentTokenKind() != lexer.SEMI_COLON_TOKEN {
-			// then we have an assignment
-			if assignmentToken.Kind == lexer.COLON_TOKEN {
-				p.expect(lexer.EQUALS_TOKEN)
-			}
-			value = parseExpr(p, ASSIGNMENT_BP)
-		}
-
-		//if const, we must have a value
-		if isConst && value == nil {
-			msg := "constants must have value when declared"
-			errgen.AddError(p.FilePath, p.currentToken().Start.Line, p.currentToken().End.Line, p.currentToken().Start.Column, p.currentToken().End.Column, msg, errgen.ERROR_CRITICAL)
-		}
-
-		end := p.expect(lexer.SEMI_COLON_TOKEN).End
-
-		node := ast.VarDeclStmt{
-			Variable: ast.IdentifierExpr{
-				Name: identifier.Value,
-				Location: ast.Location{
-					Start: identifier.Start,
-					End:   identifier.End,
-				},
-			},
-			Value:        value,
-			ExplicitType: explicitType,
-			IsConst:      isConst,
-			Location: ast.Location{
-				Start: declToken.Start,
-				End:   end,
-			},
-		}
-
-		return node
-	*/
 
 	//	we now support multiple variable declarations in one statement like
 	// 	let a: i32 = 10, b: f32 = 20, c : bool;
@@ -112,8 +54,8 @@ func parseVarDeclStmt(p *Parser) ast.Node {
 		if assignmentToken.Kind == lexer.COLON_TOKEN {
 			explicitType = parseType(p, DEFAULT_BP)
 		} else if assignmentToken.Kind != lexer.WALRUS_TOKEN {
-			msg := "Invalid variable declaration syntax"
-			errgen.AddError(p.FilePath, assignmentToken.Start.Line, assignmentToken.End.Line, assignmentToken.Start.Column, assignmentToken.End.Column, msg, errgen.ERROR_CRITICAL).AddHint("Maybe you want to use : or := instead of =")
+			msg := "Invalid variable declaration syntax. Expected : or :="
+			errgen.AddError(p.FilePath, assignmentToken.Start.Line, assignmentToken.End.Line, assignmentToken.Start.Column, assignmentToken.End.Column, msg, errgen.ERROR_CRITICAL)
 		}
 
 		if p.currentTokenKind() != lexer.COMMA_TOKEN && p.currentTokenKind() != lexer.SEMI_COLON_TOKEN {

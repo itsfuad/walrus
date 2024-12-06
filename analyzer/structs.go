@@ -12,10 +12,14 @@ func checkStructLiteral(structLit ast.StructLiteral, env *TypeEnvironment) TcVal
 
 	Type, err := getTypeDefinition(sName.Name) // need to get the most deep type
 	if err != nil {
-		errgen.AddError(env.filePath, sName.StartPos().Line, sName.EndPos().Line, sName.StartPos().Column, sName.EndPos().Column, fmt.Sprintf("'%s' is not a struct", sName.Name), errgen.ERROR_NORMAL)
+		errgen.AddError(env.filePath, sName.StartPos().Line, sName.EndPos().Line, sName.StartPos().Column, sName.EndPos().Column, err.Error(), errgen.ERROR_NORMAL)
 	}
 
-	structType := Type.(Struct)
+	structType, ok := Type.(Struct)
+
+	if !ok {
+		errgen.AddError(env.filePath, sName.StartPos().Line, sName.EndPos().Line, sName.StartPos().Column, sName.EndPos().Column, fmt.Sprintf("'%s' is not a struct", sName.Name), errgen.ERROR_CRITICAL)
+	}
 
 	// now we match the defined props with the provided props
 	for propname, prop := range structLit.Properties {

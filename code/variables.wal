@@ -1,0 +1,19 @@
+//variable declartion with let allows value to be changed later
+let a : i32 = 1; //variable a is declared with type i32 and value 1
+//declare constant variable with const
+const b : i32 = 2; //variable b is declared with type i32 and value 2
+//you can declare and assign by multiple statements
+let c : i32; //variable c is declared with type i32
+c = 3; //variable c is assigned value 3
+
+//you can declare variable with type inference, the type will be inferred from the value
+let x := 1; //variable x is declared with type i32 and value 1
+
+//you can declare multiple variables in one line
+let y := 2, z : f32 = 9.8; //variable y is declared with type i32 and value 2, variable z is declared with type i32 and value 3
+
+//To have a boolean type, you can use boolean literals true and false or use the result of a comparison
+let isTrue := a == b;
+//But you cannot compare different types (except for some cases like integer and floats because they are generally numeric types)
+let isFalse := a == 1.0; //this will not give an error
+//let isTrue2 := a == [1, 2, 3]; //this will give an error

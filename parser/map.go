@@ -7,8 +7,8 @@ import (
 
 func parseMapLiteral(p *Parser) ast.Node {
 
+	p.expect(lexer.DOLLAR_TOKEN)
 	mapType := parseMapType(p)
-
 	//parse the opening curly brace
 	p.expect(lexer.OPEN_CURLY)
 
@@ -19,7 +19,7 @@ func parseMapLiteral(p *Parser) ast.Node {
 		//parse the key
 		key := parseExpr(p, DEFAULT_BP)
 		//parse the colon
-		p.expect(lexer.COLON_TOKEN)
+		p.expect(lexer.FAT_ARROW_TOKEN)
 		//parse the value
 		value := parseExpr(p, DEFAULT_BP)
 

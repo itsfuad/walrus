@@ -1,3 +1,30 @@
+// Package errgen provides error handling and reporting functionality for the Walrus compiler.
+//
+// The package implements a custom error type WalrusError and various utility functions
+// for error management, including error creation, display, and collection.
+//
+// Error Levels:
+//   - ERROR_CRITICAL: Stops compilation immediately
+//   - ERROR_NORMAL: Regular error that doesn't halt compilation
+//   - WARNING: Indicates potential issues
+//   - INFO: Informational messages
+//
+// Example usage:
+//
+//	err := AddError("main.go", 1, 1, 1, 10, "unexpected token", ERROR_NORMAL)
+//	err.AddHint("Did you forget a semicolon?")
+//	DisplayErrors()
+//
+// The package provides colored output for better error visualization and supports
+// features like:
+//   - Line highlighting with ^ and ~ characters
+//   - File location reporting
+//   - Multiple hints per error
+//   - Global error collection
+//   - Critical error handling with immediate program termination
+//
+// Global error tracking allows accumulating multiple errors before displaying them,
+// unless a critical error is encountered, which triggers immediate display and program exit.
 package errgen
 
 import (
@@ -11,10 +38,10 @@ import (
 type ERROR_LEVEL int
 
 const (
-	ERROR_CRITICAL ERROR_LEVEL = iota
-	ERROR_NORMAL
-	WARNING
-	INFO
+	ERROR_CRITICAL ERROR_LEVEL = iota			// Stops compilation immediately	
+	ERROR_NORMAL								// Regular error that doesn't halt compilation
+	WARNING										// Indicates potential issues
+	INFO										// Informational messages
 )
 
 type WalrusError struct {
@@ -28,6 +55,26 @@ type WalrusError struct {
 	level     ERROR_LEVEL
 }
 
+
+// PrintError formats and displays error information for a WalrusError.
+// It prints the error location, the relevant code line, and visual indicators
+// showing where the error occurred. For critical errors, it will terminate
+// program execution.
+//
+// Parameters:
+//   - e: Pointer to a WalrusError containing error details
+//   - showFileName: Boolean flag to control whether the file name is displayed
+//
+// The function:
+//   - Reads the source file
+//   - Displays file location (if showFileName is true)
+//   - Shows the problematic line of code
+//   - Highlights the error position with ^ and ~ characters
+//   - Prints the error message
+//   - Shows hints if available
+//   - Exits program if error is critical
+//
+// If file reading fails, the function will panic.
 func PrintError(e *WalrusError, showFileName bool) {
 	fileData, err := os.ReadFile(e.filePath)
 	if err != nil {
@@ -65,6 +112,8 @@ func PrintError(e *WalrusError, showFileName bool) {
 
 	utils.RED.Println(e.err.Error())
 
+	fmt.Printf("Total hints: %d\n", len(e.hints))
+
 	if len(e.hints) > 0 {
 		utils.GREEN.Println("Hint:")
 		for _, hint := range e.hints {
@@ -78,6 +127,15 @@ func PrintError(e *WalrusError, showFileName bool) {
 	}
 }
 
+// AddHint appends a hint message to the error's hints slice.
+// If the provided message is empty, it returns the error without modification.
+// Each hint provides additional context or suggestions about the error.
+//
+// Parameters:
+//   - msg: The hint message to add
+//
+// Returns:
+//   - *WalrusError: Returns the error instance to allow for method chaining
 func (e *WalrusError) AddHint(msg string) *WalrusError {
 
 	if msg == "" {

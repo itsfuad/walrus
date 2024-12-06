@@ -89,52 +89,89 @@ func isIntType(operand TcValue) bool {
 func evaluateTypeName(dtype ast.DataType, env *TypeEnvironment) TcValue {
 	switch t := dtype.(type) {
 	case ast.ArrayType:
-		val := evaluateTypeName(t.ArrayType, env)
-		arr := Array{
-			DataType:  builtins.ARRAY,
-			ArrayType: val,
-		}
-		return arr
+		return evalArray(t, env)
 	case ast.FunctionType:
-		var params []FnParam
-		for _, param := range t.Parameters {
-			paramType := evaluateTypeName(param.Type, env)
-			params = append(params, FnParam{
-				Name:       param.Identifier.Name,
-				IsOptional: param.IsOptional,
-				Type:       paramType,
-			})
-		}
-
-		returns := evaluateTypeName(t.ReturnType, env)
-
-		scope := NewTypeENV(env, FUNCTION_SCOPE, fmt.Sprintf("_FN_%s", RandStringRunes(10)), env.filePath)
-
-		return Fn{
-			DataType:      builtins.FUNCTION,
-			Params:        params,
-			Returns:       returns,
-			FunctionScope: *scope,
-		}
+		return evalFn(t, env)
 	case ast.MapType:
-		keyType := evaluateTypeName(t.KeyType, env)
-		valueType := evaluateTypeName(t.ValueType, env)
-		return NewMap(keyType, valueType)
+		return evalMap(t, env)
 	case ast.UserDefinedType:
-		typename := t.AliasName
-		val, err := getTypeDefinition(typename) // need to get the most deep type
-		if err != nil || val == nil {
-			errgen.AddError(env.filePath, dtype.StartPos().Line, dtype.EndPos().Line, dtype.StartPos().Column, dtype.EndPos().Column, err.Error(), errgen.ERROR_CRITICAL)
-		}
-		return val
+		return evalUD(t, env)
 	case nil:
 		return NewVoid()
 	default:
-		val, err := getTypeDefinition(string(t.Type())) // need to get the most deep type
-		if err != nil || val == nil {
-			errgen.AddError(env.filePath, dtype.StartPos().Line, dtype.EndPos().Line, dtype.StartPos().Column, dtype.EndPos().Column, err.Error(), errgen.ERROR_CRITICAL)
+		return evalDefaultType(dtype, env)
+	}
+}
+
+func evalDefaultType(defaultType ast.DataType, env *TypeEnvironment) TcValue {
+	val, err := getTypeDefinition(string(defaultType.Type())) // need to get the most deep type
+	if err != nil || val == nil {
+		errgen.AddError(env.filePath, defaultType.StartPos().Line, defaultType.EndPos().Line, defaultType.StartPos().Column, defaultType.EndPos().Column, err.Error(), errgen.ERROR_CRITICAL)
+	}
+	return val
+}
+
+func evalUD(analyzedUD ast.UserDefinedType, env *TypeEnvironment) TcValue {
+	typename := analyzedUD.AliasName
+	val, err := getTypeDefinition(typename) // need to get the most deep type
+	if err != nil || val == nil {
+		errgen.AddError(env.filePath, analyzedUD.StartPos().Line, analyzedUD.EndPos().Line, analyzedUD.StartPos().Column, analyzedUD.EndPos().Column, err.Error(), errgen.ERROR_CRITICAL)
+	}
+	return val
+}
+
+func evalArray(analyzedArray ast.ArrayType, env *TypeEnvironment) TcValue {
+	val := evaluateTypeName(analyzedArray.ArrayType, env)
+	arr := Array{
+		DataType:  builtins.ARRAY,
+		ArrayType: val,
+	}
+	return arr
+}
+
+func evalFn(analyzedFunctionType ast.FunctionType, env *TypeEnvironment) TcValue {
+	var params []FnParam
+	for _, param := range analyzedFunctionType.Parameters {
+		paramType := evaluateTypeName(param.Type, env)
+		params = append(params, FnParam{
+			Name:       param.Identifier.Name,
+			IsOptional: param.IsOptional,
+			Type:       paramType,
+		})
+	}
+
+	returns := evaluateTypeName(analyzedFunctionType.ReturnType, env)
+
+	scope := NewTypeENV(env, FUNCTION_SCOPE, fmt.Sprintf("_FN_%s", RandStringRunes(10)), env.filePath)
+
+	return Fn{
+		DataType:      builtins.FUNCTION,
+		Params:        params,
+		Returns:       returns,
+		FunctionScope: *scope,
+	}
+}
+
+func evalMap(analyzedMap ast.MapType, env *TypeEnvironment) TcValue {
+	if analyzedMap.Map.Name == "map" {
+		keyType := evaluateTypeName(analyzedMap.KeyType, env)
+		valueType := evaluateTypeName(analyzedMap.ValueType, env)
+		return NewMap(keyType, valueType)
+	} else {
+		//find the name in the type definition
+
+		val, err := getTypeDefinition(analyzedMap.Map.Name) // need to get the most deep type
+		if err != nil {
+			errgen.AddError(env.filePath, analyzedMap.StartPos().Line, analyzedMap.EndPos().Line, analyzedMap.StartPos().Column, analyzedMap.EndPos().Column, err.Error(), errgen.ERROR_NORMAL)
 		}
-		return val
+
+		if mapVal, ok := val.(Map); ok {
+			return NewMap(mapVal.KeyType, mapVal.ValueType)
+		}
+
+		errgen.AddError(env.filePath, analyzedMap.StartPos().Line, analyzedMap.EndPos().Line, analyzedMap.StartPos().Column, analyzedMap.EndPos().Column, fmt.Sprintf("'%s' is not a map", analyzedMap.Map.Name), errgen.ERROR_CRITICAL)
+		
+		return NewVoid()
 	}
 }
 
@@ -148,7 +185,7 @@ func matchTypes(expectedType, providedType TcValue) error {
 	providedStr := tcValueToString(providedType)
 
 	if expectedStr != providedStr {
-		return fmt.Errorf("cannot assign type '%s' to type '%s'", providedStr, expectedStr)
+		return fmt.Errorf("cannot assign value of type '%s' to type '%s'", providedStr, expectedStr)
 	}
 
 	return nil
@@ -193,8 +230,8 @@ func tcValueToString(val TcValue) string {
 func checkMethodsImplementations(expected, provided TcValue) error {
 
 	//check if the provided type implements the interface
-	expectedMethods := expected.(Interface).Methods
-	structType, ok := provided.(Struct)
+	expectedMethods := unwrapType(expected).(Interface).Methods
+	structType, ok := unwrapType(provided).(Struct)
 	if !ok {
 		return fmt.Errorf("type must be a struct")
 	}

@@ -31,7 +31,7 @@ const (
 )
 
 type Searchable interface {
-	TC_TYPE | PARSER_TYPE
+	~string
 }
 
 func GetBitSize[T Searchable](kind T) uint8 {

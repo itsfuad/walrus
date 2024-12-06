@@ -1,0 +1,48 @@
+
+//Functions are defined by fn keyword. They can be used to define a block of code that can be called later in the program.
+fn doSomething() {
+    //do something
+}
+
+//Functions can also take parameters
+fn print(message: str) {
+    //print the message
+}
+
+//Functions can also return values. Return type is defined after the -> symbol.
+fn add(a: i32, b: i32) -> i32 {
+    ret a + b;
+}
+
+//Functions parameters can have optional parameters. Optional parameters are defined by adding a ? after the parameter name. Optional parameters must have a default value.
+fn addOptional(a: i32, b: i32, c?: i32 = 0) -> i32 {
+    ret a + b + c;
+}
+
+//calling functions
+let a := doSomething();
+let b := print("Hello, World!");
+let c := add(1, 2);
+let d := addOptional(1, 2, 3);
+let e := addOptional(1, 2);
+
+//Closure
+fn parent() -> fn() -> i32 {
+    fn child() -> i32 {
+        ret 1;
+    }
+    ret child;
+}
+
+//or return annonymous function
+fn parent2() -> fn() -> i32 {
+    ret fn() -> i32 {
+        ret 1;
+    };
+}
+
+let f := parent();
+let g := f();
+//or directly
+let h := parent()();
+let i := parent2()();

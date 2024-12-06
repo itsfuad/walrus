@@ -1,0 +1,514 @@
+{
+    "Contents": [
+        {
+            "Variables": [
+                {
+                    "Identifier": {
+                        "Name": "a",
+                        "Start": {
+                            "Line": 2,
+                            "Column": 5,
+                            "Index": 83
+                        },
+                        "End": {
+                            "Line": 2,
+                            "Column": 6,
+                            "Index": 84
+                        }
+                    },
+                    "Value": {
+                        "Value": "2",
+                        "BitSize": 32,
+                        "IsSigned": true,
+                        "Start": {
+                            "Line": 2,
+                            "Column": 10,
+                            "Index": 88
+                        },
+                        "End": {
+                            "Line": 2,
+                            "Column": 11,
+                            "Index": 89
+                        }
+                    },
+                    "ExplicitType": null,
+                    "Start": {
+                        "Line": 2,
+                        "Column": 5,
+                        "Index": 83
+                    },
+                    "End": {
+                        "Line": 2,
+                        "Column": 11,
+                        "Index": 89
+                    }
+                }
+            ],
+            "IsConst": false,
+            "Start": {
+                "Line": 2,
+                "Column": 1,
+                "Index": 79
+            },
+            "End": {
+                "Line": 2,
+                "Column": 12,
+                "Index": 90
+            }
+        },
+        {
+            "Variables": [
+                {
+                    "Identifier": {
+                        "Name": "b",
+                        "Start": {
+                            "Line": 3,
+                            "Column": 5,
+                            "Index": 96
+                        },
+                        "End": {
+                            "Line": 3,
+                            "Column": 6,
+                            "Index": 97
+                        }
+                    },
+                    "Value": {
+                        "Value": "3",
+                        "BitSize": 32,
+                        "IsSigned": true,
+                        "Start": {
+                            "Line": 3,
+                            "Column": 10,
+                            "Index": 101
+                        },
+                        "End": {
+                            "Line": 3,
+                            "Column": 11,
+                            "Index": 102
+                        }
+                    },
+                    "ExplicitType": null,
+                    "Start": {
+                        "Line": 3,
+                        "Column": 5,
+                        "Index": 96
+                    },
+                    "End": {
+                        "Line": 3,
+                        "Column": 11,
+                        "Index": 102
+                    }
+                }
+            ],
+            "IsConst": false,
+            "Start": {
+                "Line": 3,
+                "Column": 1,
+                "Index": 92
+            },
+            "End": {
+                "Line": 3,
+                "Column": 12,
+                "Index": 103
+            }
+        },
+        {
+            "Variables": [
+                {
+                    "Identifier": {
+                        "Name": "x",
+                        "Start": {
+                            "Line": 5,
+                            "Column": 5,
+                            "Index": 111
+                        },
+                        "End": {
+                            "Line": 5,
+                            "Column": 6,
+                            "Index": 112
+                        }
+                    },
+                    "Value": null,
+                    "ExplicitType": {
+                        "TypeName": "i32",
+                        "BitSize": 32,
+                        "IsSigned": true,
+                        "Start": {
+                            "Line": 5,
+                            "Column": 9,
+                            "Index": 115
+                        },
+                        "End": {
+                            "Line": 5,
+                            "Column": 12,
+                            "Index": 118
+                        }
+                    },
+                    "Start": {
+                        "Line": 5,
+                        "Column": 5,
+                        "Index": 111
+                    },
+                    "End": {
+                        "Line": 5,
+                        "Column": 12,
+                        "Index": 118
+                    }
+                }
+            ],
+            "IsConst": false,
+            "Start": {
+                "Line": 5,
+                "Column": 1,
+                "Index": 107
+            },
+            "End": {
+                "Line": 5,
+                "Column": 13,
+                "Index": 119
+            }
+        },
+        {
+            "Condition": {
+                "Operator": {
+                    "Kind": "\u003c=",
+                    "Value": "\u003c=",
+                    "Start": {
+                        "Line": 7,
+                        "Column": 6,
+                        "Index": 128
+                    },
+                    "End": {
+                        "Line": 7,
+                        "Column": 8,
+                        "Index": 130
+                    }
+                },
+                "Left": {
+                    "Name": "a",
+                    "Start": {
+                        "Line": 7,
+                        "Column": 4,
+                        "Index": 126
+                    },
+                    "End": {
+                        "Line": 7,
+                        "Column": 5,
+                        "Index": 127
+                    }
+                },
+                "Right": {
+                    "Name": "b",
+                    "Start": {
+                        "Line": 7,
+                        "Column": 8,
+                        "Index": 130
+                    },
+                    "End": {
+                        "Line": 7,
+                        "Column": 9,
+                        "Index": 131
+                    }
+                },
+                "Start": {
+                    "Line": 7,
+                    "Column": 4,
+                    "Index": 126
+                },
+                "End": {
+                    "Line": 7,
+                    "Column": 9,
+                    "Index": 131
+                }
+            },
+            "Block": {
+                "Contents": [
+                    {
+                        "Assignee": {
+                            "Name": "x",
+                            "Start": {
+                                "Line": 8,
+                                "Column": 5,
+                                "Index": 139
+                            },
+                            "End": {
+                                "Line": 8,
+                                "Column": 6,
+                                "Index": 140
+                            }
+                        },
+                        "Value": {
+                            "Value": "1",
+                            "BitSize": 32,
+                            "IsSigned": true,
+                            "Start": {
+                                "Line": 8,
+                                "Column": 9,
+                                "Index": 143
+                            },
+                            "End": {
+                                "Line": 8,
+                                "Column": 10,
+                                "Index": 144
+                            }
+                        },
+                        "Operator": {
+                            "Kind": "=",
+                            "Value": "=",
+                            "Start": {
+                                "Line": 8,
+                                "Column": 7,
+                                "Index": 141
+                            },
+                            "End": {
+                                "Line": 8,
+                                "Column": 8,
+                                "Index": 142
+                            }
+                        },
+                        "Start": {
+                            "Line": 8,
+                            "Column": 5,
+                            "Index": 139
+                        },
+                        "End": {
+                            "Line": 8,
+                            "Column": 10,
+                            "Index": 144
+                        }
+                    }
+                ],
+                "Start": {
+                    "Line": 7,
+                    "Column": 10,
+                    "Index": 132
+                },
+                "End": {
+                    "Line": 9,
+                    "Column": 2,
+                    "Index": 148
+                }
+            },
+            "AlternateBlock": {
+                "Condition": {
+                    "Operator": {
+                        "Kind": "\u003e",
+                        "Value": "\u003e",
+                        "Start": {
+                            "Line": 9,
+                            "Column": 13,
+                            "Index": 159
+                        },
+                        "End": {
+                            "Line": 9,
+                            "Column": 14,
+                            "Index": 160
+                        }
+                    },
+                    "Left": {
+                        "Name": "a",
+                        "Start": {
+                            "Line": 9,
+                            "Column": 11,
+                            "Index": 157
+                        },
+                        "End": {
+                            "Line": 9,
+                            "Column": 12,
+                            "Index": 158
+                        }
+                    },
+                    "Right": {
+                        "Name": "b",
+                        "Start": {
+                            "Line": 9,
+                            "Column": 15,
+                            "Index": 161
+                        },
+                        "End": {
+                            "Line": 9,
+                            "Column": 16,
+                            "Index": 162
+                        }
+                    },
+                    "Start": {
+                        "Line": 9,
+                        "Column": 11,
+                        "Index": 157
+                    },
+                    "End": {
+                        "Line": 9,
+                        "Column": 16,
+                        "Index": 162
+                    }
+                },
+                "Block": {
+                    "Contents": [
+                        {
+                            "Assignee": {
+                                "Name": "x",
+                                "Start": {
+                                    "Line": 10,
+                                    "Column": 5,
+                                    "Index": 170
+                                },
+                                "End": {
+                                    "Line": 10,
+                                    "Column": 6,
+                                    "Index": 171
+                                }
+                            },
+                            "Value": {
+                                "Value": "2",
+                                "BitSize": 32,
+                                "IsSigned": true,
+                                "Start": {
+                                    "Line": 10,
+                                    "Column": 9,
+                                    "Index": 174
+                                },
+                                "End": {
+                                    "Line": 10,
+                                    "Column": 10,
+                                    "Index": 175
+                                }
+                            },
+                            "Operator": {
+                                "Kind": "=",
+                                "Value": "=",
+                                "Start": {
+                                    "Line": 10,
+                                    "Column": 7,
+                                    "Index": 172
+                                },
+                                "End": {
+                                    "Line": 10,
+                                    "Column": 8,
+                                    "Index": 173
+                                }
+                            },
+                            "Start": {
+                                "Line": 10,
+                                "Column": 5,
+                                "Index": 170
+                            },
+                            "End": {
+                                "Line": 10,
+                                "Column": 10,
+                                "Index": 175
+                            }
+                        }
+                    ],
+                    "Start": {
+                        "Line": 9,
+                        "Column": 17,
+                        "Index": 163
+                    },
+                    "End": {
+                        "Line": 11,
+                        "Column": 2,
+                        "Index": 179
+                    }
+                },
+                "AlternateBlock": {
+                    "Contents": [
+                        {
+                            "Assignee": {
+                                "Name": "x",
+                                "Start": {
+                                    "Line": 12,
+                                    "Column": 5,
+                                    "Index": 192
+                                },
+                                "End": {
+                                    "Line": 12,
+                                    "Column": 6,
+                                    "Index": 193
+                                }
+                            },
+                            "Value": {
+                                "Value": "3",
+                                "BitSize": 32,
+                                "IsSigned": true,
+                                "Start": {
+                                    "Line": 12,
+                                    "Column": 9,
+                                    "Index": 196
+                                },
+                                "End": {
+                                    "Line": 12,
+                                    "Column": 10,
+                                    "Index": 197
+                                }
+                            },
+                            "Operator": {
+                                "Kind": "=",
+                                "Value": "=",
+                                "Start": {
+                                    "Line": 12,
+                                    "Column": 7,
+                                    "Index": 194
+                                },
+                                "End": {
+                                    "Line": 12,
+                                    "Column": 8,
+                                    "Index": 195
+                                }
+                            },
+                            "Start": {
+                                "Line": 12,
+                                "Column": 5,
+                                "Index": 192
+                            },
+                            "End": {
+                                "Line": 12,
+                                "Column": 10,
+                                "Index": 197
+                            }
+                        }
+                    ],
+                    "Start": {
+                        "Line": 11,
+                        "Column": 8,
+                        "Index": 185
+                    },
+                    "End": {
+                        "Line": 13,
+                        "Column": 2,
+                        "Index": 201
+                    }
+                },
+                "Start": {
+                    "Line": 9,
+                    "Column": 8,
+                    "Index": 154
+                },
+                "End": {
+                    "Line": 11,
+                    "Column": 2,
+                    "Index": 179
+                }
+            },
+            "Start": {
+                "Line": 7,
+                "Column": 1,
+                "Index": 123
+            },
+            "End": {
+                "Line": 9,
+                "Column": 2,
+                "Index": 148
+            }
+        }
+    ],
+    "Start": {
+        "Line": 0,
+        "Column": 0,
+        "Index": 0
+    },
+    "End": {
+        "Line": 0,
+        "Column": 0,
+        "Index": 0
+    }
+}
