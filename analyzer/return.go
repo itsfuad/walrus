@@ -9,8 +9,7 @@ import (
 func checkReturnStmt(returnNode ast.ReturnStmt, env *TypeEnvironment) TcValue {
 	//check if the function is declared
 	if env.scopeType != FUNCTION_SCOPE {
-
-		errgen.AddError(env.filePath, returnNode.StartPos().Line, returnNode.EndPos().Line, returnNode.StartPos().Column, returnNode.EndPos().Column, "Return statement must be inside a function", errgen.ERROR_NORMAL)
+		errgen.AddError(env.filePath, returnNode.StartPos().Line, returnNode.EndPos().Line, returnNode.StartPos().Column, returnNode.EndPos().Column, "Return statement must be inside a function", errgen.ERROR_CRITICAL)
 	}
 
 	//check if the return type matches the function return type

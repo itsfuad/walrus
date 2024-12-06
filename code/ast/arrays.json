@@ -1,0 +1,735 @@
+{
+    "Contents": [
+        {
+            "Variables": [
+                {
+                    "Identifier": {
+                        "Name": "oneDArray",
+                        "Start": {
+                            "Line": 3,
+                            "Column": 5,
+                            "Index": 239
+                        },
+                        "End": {
+                            "Line": 3,
+                            "Column": 14,
+                            "Index": 248
+                        }
+                    },
+                    "Value": {
+                        "Values": [
+                            {
+                                "Value": "1",
+                                "BitSize": 32,
+                                "IsSigned": true,
+                                "Start": {
+                                    "Line": 3,
+                                    "Column": 26,
+                                    "Index": 260
+                                },
+                                "End": {
+                                    "Line": 3,
+                                    "Column": 27,
+                                    "Index": 261
+                                }
+                            },
+                            {
+                                "Value": "2",
+                                "BitSize": 32,
+                                "IsSigned": true,
+                                "Start": {
+                                    "Line": 3,
+                                    "Column": 29,
+                                    "Index": 263
+                                },
+                                "End": {
+                                    "Line": 3,
+                                    "Column": 30,
+                                    "Index": 264
+                                }
+                            },
+                            {
+                                "Value": "3",
+                                "BitSize": 32,
+                                "IsSigned": true,
+                                "Start": {
+                                    "Line": 3,
+                                    "Column": 32,
+                                    "Index": 266
+                                },
+                                "End": {
+                                    "Line": 3,
+                                    "Column": 33,
+                                    "Index": 267
+                                }
+                            }
+                        ],
+                        "Start": {
+                            "Line": 3,
+                            "Column": 25,
+                            "Index": 259
+                        },
+                        "End": {
+                            "Line": 3,
+                            "Column": 34,
+                            "Index": 268
+                        }
+                    },
+                    "ExplicitType": {
+                        "TypeName": "array",
+                        "ArrayType": {
+                            "TypeName": "i32",
+                            "BitSize": 32,
+                            "IsSigned": true,
+                            "Start": {
+                                "Line": 3,
+                                "Column": 19,
+                                "Index": 253
+                            },
+                            "End": {
+                                "Line": 3,
+                                "Column": 22,
+                                "Index": 256
+                            }
+                        },
+                        "Start": {
+                            "Line": 3,
+                            "Column": 19,
+                            "Index": 253
+                        },
+                        "End": {
+                            "Line": 3,
+                            "Column": 22,
+                            "Index": 256
+                        }
+                    },
+                    "Start": {
+                        "Line": 3,
+                        "Column": 5,
+                        "Index": 239
+                    },
+                    "End": {
+                        "Line": 3,
+                        "Column": 34,
+                        "Index": 268
+                    }
+                }
+            ],
+            "IsConst": false,
+            "Start": {
+                "Line": 3,
+                "Column": 1,
+                "Index": 235
+            },
+            "End": {
+                "Line": 3,
+                "Column": 35,
+                "Index": 269
+            }
+        },
+        {
+            "Variables": [
+                {
+                    "Identifier": {
+                        "Name": "twoDArray",
+                        "Start": {
+                            "Line": 5,
+                            "Column": 5,
+                            "Index": 360
+                        },
+                        "End": {
+                            "Line": 5,
+                            "Column": 14,
+                            "Index": 369
+                        }
+                    },
+                    "Value": {
+                        "Values": [
+                            {
+                                "Values": [
+                                    {
+                                        "Value": "1",
+                                        "BitSize": 32,
+                                        "IsSigned": true,
+                                        "Start": {
+                                            "Line": 5,
+                                            "Column": 20,
+                                            "Index": 375
+                                        },
+                                        "End": {
+                                            "Line": 5,
+                                            "Column": 21,
+                                            "Index": 376
+                                        }
+                                    },
+                                    {
+                                        "Value": "2",
+                                        "BitSize": 32,
+                                        "IsSigned": true,
+                                        "Start": {
+                                            "Line": 5,
+                                            "Column": 23,
+                                            "Index": 378
+                                        },
+                                        "End": {
+                                            "Line": 5,
+                                            "Column": 24,
+                                            "Index": 379
+                                        }
+                                    }
+                                ],
+                                "Start": {
+                                    "Line": 5,
+                                    "Column": 19,
+                                    "Index": 374
+                                },
+                                "End": {
+                                    "Line": 5,
+                                    "Column": 25,
+                                    "Index": 380
+                                }
+                            },
+                            {
+                                "Values": [
+                                    {
+                                        "Value": "3",
+                                        "BitSize": 32,
+                                        "IsSigned": true,
+                                        "Start": {
+                                            "Line": 5,
+                                            "Column": 28,
+                                            "Index": 383
+                                        },
+                                        "End": {
+                                            "Line": 5,
+                                            "Column": 29,
+                                            "Index": 384
+                                        }
+                                    },
+                                    {
+                                        "Value": "4",
+                                        "BitSize": 32,
+                                        "IsSigned": true,
+                                        "Start": {
+                                            "Line": 5,
+                                            "Column": 31,
+                                            "Index": 386
+                                        },
+                                        "End": {
+                                            "Line": 5,
+                                            "Column": 32,
+                                            "Index": 387
+                                        }
+                                    }
+                                ],
+                                "Start": {
+                                    "Line": 5,
+                                    "Column": 27,
+                                    "Index": 382
+                                },
+                                "End": {
+                                    "Line": 5,
+                                    "Column": 33,
+                                    "Index": 388
+                                }
+                            }
+                        ],
+                        "Start": {
+                            "Line": 5,
+                            "Column": 18,
+                            "Index": 373
+                        },
+                        "End": {
+                            "Line": 5,
+                            "Column": 34,
+                            "Index": 389
+                        }
+                    },
+                    "ExplicitType": null,
+                    "Start": {
+                        "Line": 5,
+                        "Column": 5,
+                        "Index": 360
+                    },
+                    "End": {
+                        "Line": 5,
+                        "Column": 34,
+                        "Index": 389
+                    }
+                }
+            ],
+            "IsConst": false,
+            "Start": {
+                "Line": 5,
+                "Column": 1,
+                "Index": 356
+            },
+            "End": {
+                "Line": 5,
+                "Column": 35,
+                "Index": 390
+            }
+        },
+        {
+            "Variables": [
+                {
+                    "Identifier": {
+                        "Name": "emptyArray",
+                        "Start": {
+                            "Line": 7,
+                            "Column": 5,
+                            "Index": 526
+                        },
+                        "End": {
+                            "Line": 7,
+                            "Column": 15,
+                            "Index": 536
+                        }
+                    },
+                    "Value": null,
+                    "ExplicitType": {
+                        "TypeName": "array",
+                        "ArrayType": {
+                            "TypeName": "i32",
+                            "BitSize": 32,
+                            "IsSigned": true,
+                            "Start": {
+                                "Line": 7,
+                                "Column": 20,
+                                "Index": 541
+                            },
+                            "End": {
+                                "Line": 7,
+                                "Column": 23,
+                                "Index": 544
+                            }
+                        },
+                        "Start": {
+                            "Line": 7,
+                            "Column": 20,
+                            "Index": 541
+                        },
+                        "End": {
+                            "Line": 7,
+                            "Column": 23,
+                            "Index": 544
+                        }
+                    },
+                    "Start": {
+                        "Line": 7,
+                        "Column": 5,
+                        "Index": 526
+                    },
+                    "End": {
+                        "Line": 7,
+                        "Column": 23,
+                        "Index": 544
+                    }
+                }
+            ],
+            "IsConst": false,
+            "Start": {
+                "Line": 7,
+                "Column": 1,
+                "Index": 522
+            },
+            "End": {
+                "Line": 7,
+                "Column": 24,
+                "Index": 545
+            }
+        },
+        {
+            "Assignee": {
+                "Name": "emptyArray",
+                "Start": {
+                    "Line": 8,
+                    "Column": 1,
+                    "Index": 547
+                },
+                "End": {
+                    "Line": 8,
+                    "Column": 11,
+                    "Index": 557
+                }
+            },
+            "Value": {
+                "Values": [
+                    {
+                        "Value": "1",
+                        "BitSize": 32,
+                        "IsSigned": true,
+                        "Start": {
+                            "Line": 8,
+                            "Column": 15,
+                            "Index": 561
+                        },
+                        "End": {
+                            "Line": 8,
+                            "Column": 16,
+                            "Index": 562
+                        }
+                    },
+                    {
+                        "Value": "2",
+                        "BitSize": 32,
+                        "IsSigned": true,
+                        "Start": {
+                            "Line": 8,
+                            "Column": 18,
+                            "Index": 564
+                        },
+                        "End": {
+                            "Line": 8,
+                            "Column": 19,
+                            "Index": 565
+                        }
+                    },
+                    {
+                        "Value": "3",
+                        "BitSize": 32,
+                        "IsSigned": true,
+                        "Start": {
+                            "Line": 8,
+                            "Column": 21,
+                            "Index": 567
+                        },
+                        "End": {
+                            "Line": 8,
+                            "Column": 22,
+                            "Index": 568
+                        }
+                    }
+                ],
+                "Start": {
+                    "Line": 8,
+                    "Column": 14,
+                    "Index": 560
+                },
+                "End": {
+                    "Line": 8,
+                    "Column": 23,
+                    "Index": 569
+                }
+            },
+            "Operator": {
+                "Kind": "=",
+                "Value": "=",
+                "Start": {
+                    "Line": 8,
+                    "Column": 12,
+                    "Index": 558
+                },
+                "End": {
+                    "Line": 8,
+                    "Column": 13,
+                    "Index": 559
+                }
+            },
+            "Start": {
+                "Line": 8,
+                "Column": 1,
+                "Index": 547
+            },
+            "End": {
+                "Line": 8,
+                "Column": 23,
+                "Index": 569
+            }
+        },
+        {
+            "Variables": [
+                {
+                    "Identifier": {
+                        "Name": "firstElement",
+                        "Start": {
+                            "Line": 11,
+                            "Column": 5,
+                            "Index": 681
+                        },
+                        "End": {
+                            "Line": 11,
+                            "Column": 17,
+                            "Index": 693
+                        }
+                    },
+                    "Value": {
+                        "Index": {
+                            "Value": "0",
+                            "BitSize": 32,
+                            "IsSigned": true,
+                            "Start": {
+                                "Line": 11,
+                                "Column": 31,
+                                "Index": 707
+                            },
+                            "End": {
+                                "Line": 11,
+                                "Column": 32,
+                                "Index": 708
+                            }
+                        },
+                        "Container": {
+                            "Name": "oneDArray",
+                            "Start": {
+                                "Line": 11,
+                                "Column": 21,
+                                "Index": 697
+                            },
+                            "End": {
+                                "Line": 11,
+                                "Column": 30,
+                                "Index": 706
+                            }
+                        },
+                        "Start": {
+                            "Line": 11,
+                            "Column": 21,
+                            "Index": 697
+                        },
+                        "End": {
+                            "Line": 11,
+                            "Column": 33,
+                            "Index": 709
+                        }
+                    },
+                    "ExplicitType": null,
+                    "Start": {
+                        "Line": 11,
+                        "Column": 5,
+                        "Index": 681
+                    },
+                    "End": {
+                        "Line": 11,
+                        "Column": 33,
+                        "Index": 709
+                    }
+                }
+            ],
+            "IsConst": false,
+            "Start": {
+                "Line": 11,
+                "Column": 1,
+                "Index": 677
+            },
+            "End": {
+                "Line": 11,
+                "Column": 34,
+                "Index": 710
+            }
+        },
+        {
+            "Variables": [
+                {
+                    "Identifier": {
+                        "Name": "otherElement",
+                        "Start": {
+                            "Line": 12,
+                            "Column": 5,
+                            "Index": 748
+                        },
+                        "End": {
+                            "Line": 12,
+                            "Column": 17,
+                            "Index": 760
+                        }
+                    },
+                    "Value": {
+                        "Index": {
+                            "Value": "0",
+                            "BitSize": 32,
+                            "IsSigned": true,
+                            "Start": {
+                                "Line": 12,
+                                "Column": 34,
+                                "Index": 777
+                            },
+                            "End": {
+                                "Line": 12,
+                                "Column": 35,
+                                "Index": 778
+                            }
+                        },
+                        "Container": {
+                            "Index": {
+                                "Value": "1",
+                                "BitSize": 32,
+                                "IsSigned": true,
+                                "Start": {
+                                    "Line": 12,
+                                    "Column": 31,
+                                    "Index": 774
+                                },
+                                "End": {
+                                    "Line": 12,
+                                    "Column": 32,
+                                    "Index": 775
+                                }
+                            },
+                            "Container": {
+                                "Name": "twoDArray",
+                                "Start": {
+                                    "Line": 12,
+                                    "Column": 21,
+                                    "Index": 764
+                                },
+                                "End": {
+                                    "Line": 12,
+                                    "Column": 30,
+                                    "Index": 773
+                                }
+                            },
+                            "Start": {
+                                "Line": 12,
+                                "Column": 21,
+                                "Index": 764
+                            },
+                            "End": {
+                                "Line": 12,
+                                "Column": 33,
+                                "Index": 776
+                            }
+                        },
+                        "Start": {
+                            "Line": 12,
+                            "Column": 21,
+                            "Index": 764
+                        },
+                        "End": {
+                            "Line": 12,
+                            "Column": 36,
+                            "Index": 779
+                        }
+                    },
+                    "ExplicitType": null,
+                    "Start": {
+                        "Line": 12,
+                        "Column": 5,
+                        "Index": 748
+                    },
+                    "End": {
+                        "Line": 12,
+                        "Column": 36,
+                        "Index": 779
+                    }
+                }
+            ],
+            "IsConst": false,
+            "Start": {
+                "Line": 12,
+                "Column": 1,
+                "Index": 744
+            },
+            "End": {
+                "Line": 12,
+                "Column": 37,
+                "Index": 780
+            }
+        },
+        {
+            "Assignee": {
+                "Index": {
+                    "Value": "0",
+                    "BitSize": 32,
+                    "IsSigned": true,
+                    "Start": {
+                        "Line": 14,
+                        "Column": 11,
+                        "Index": 899
+                    },
+                    "End": {
+                        "Line": 14,
+                        "Column": 12,
+                        "Index": 900
+                    }
+                },
+                "Container": {
+                    "Name": "oneDArray",
+                    "Start": {
+                        "Line": 14,
+                        "Column": 1,
+                        "Index": 889
+                    },
+                    "End": {
+                        "Line": 14,
+                        "Column": 10,
+                        "Index": 898
+                    }
+                },
+                "Start": {
+                    "Line": 14,
+                    "Column": 1,
+                    "Index": 889
+                },
+                "End": {
+                    "Line": 14,
+                    "Column": 13,
+                    "Index": 901
+                }
+            },
+            "Value": {
+                "Values": [
+                    {
+                        "Value": "5",
+                        "BitSize": 32,
+                        "IsSigned": true,
+                        "Start": {
+                            "Line": 14,
+                            "Column": 17,
+                            "Index": 905
+                        },
+                        "End": {
+                            "Line": 14,
+                            "Column": 18,
+                            "Index": 906
+                        }
+                    }
+                ],
+                "Start": {
+                    "Line": 14,
+                    "Column": 16,
+                    "Index": 904
+                },
+                "End": {
+                    "Line": 14,
+                    "Column": 19,
+                    "Index": 907
+                }
+            },
+            "Operator": {
+                "Kind": "=",
+                "Value": "=",
+                "Start": {
+                    "Line": 14,
+                    "Column": 14,
+                    "Index": 902
+                },
+                "End": {
+                    "Line": 14,
+                    "Column": 15,
+                    "Index": 903
+                }
+            },
+            "Start": {
+                "Line": 14,
+                "Column": 1,
+                "Index": 889
+            },
+            "End": {
+                "Line": 14,
+                "Column": 19,
+                "Index": 907
+            }
+        }
+    ],
+    "Start": {
+        "Line": 0,
+        "Column": 0,
+        "Index": 0
+    },
+    "End": {
+        "Line": 0,
+        "Column": 0,
+        "Index": 0
+    }
+}

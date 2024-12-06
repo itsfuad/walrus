@@ -146,7 +146,7 @@ func getFunctionReturnValue(env *TypeEnvironment, returnNode ast.Node) TcValue {
 	funcParent, err := env.resolveFunctionEnv()
 
 	if err != nil {
-		errgen.AddError(env.filePath, returnNode.StartPos().Line, returnNode.EndPos().Line, returnNode.StartPos().Column, returnNode.EndPos().Column, err.Error(), errgen.ERROR_NORMAL)
+		errgen.AddError(env.filePath, returnNode.StartPos().Line, returnNode.EndPos().Line, returnNode.StartPos().Column, returnNode.EndPos().Column, err.Error(), errgen.ERROR_CRITICAL)
 	}
 
 	fnName := funcParent.scopeName

@@ -1,0 +1,80 @@
+//Any custom types are created with type keyword. syntax is type <name> <type>
+type Int i32; //Int is an alias for i32
+let a : Int = 10;
+
+//it is usefull to create custom typenames for long built-in types like, functions or maps
+type Func fn(a: i32, b: i32) -> i32;
+
+const add : Func = fn(a: i32, b: i32) -> i32 {
+    ret a + b;
+};
+
+let myMap : map[str]i32 = $map[str]i32 {
+    "John" => 10,
+    "Doe" => 20,
+};
+
+let myMap2 : map[str]i32 = $map[str]i32 {
+    "John" => 10,
+    "Doe" => 20,
+};
+
+type Users map[str]i32;
+let users : Users = $Users{
+    "John" => 10,
+    "Doe" => 20,
+};
+
+let users2 := $Users{
+    "John" => 10,
+    "Doe" => 20,
+};
+
+// add or change value in map
+users["John"] = 20;
+users["Doe"] = 30;
+users["Jane"] = 40; // new key-value pair
+
+let mapItem := users["John"]; // get value from map
+
+type User struct {
+    priv name: str,  //private field
+    age: i32,
+};
+
+let user := @User{
+    name: "John",
+    age: 10,
+};
+
+type Banana struct {
+    name: str,
+    price: i32,
+};
+
+type Fn fn(a: i32, b: i32) -> i32;
+
+type IPerson interface {
+    fn getName() -> str;
+};
+
+fn ShowInfo(p: IPerson) {
+    p.getName();
+}
+
+// To pass any User and Banana to ShowInfo function, they must implement IPerson interface's every method
+// in simple words, they must have a method called getName that returns a string. The structs can have any more fields or methods but they must have getName method in this case.
+impl User {
+    fn getName() -> str {
+        ret this.name;
+    }
+}
+
+impl Banana {
+    fn getName() -> str {
+        ret this.name;
+    }
+}
+
+ShowInfo(user);
+ShowInfo(@Banana{name: "Cavendish", price: 10});

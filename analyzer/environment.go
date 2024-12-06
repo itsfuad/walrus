@@ -92,7 +92,7 @@ func (t *TypeEnvironment) resolveFunctionEnv() (*TypeEnvironment, error) {
 		return t, nil
 	}
 	if t.parent == nil {
-		return nil, fmt.Errorf("function not found")
+		return nil, fmt.Errorf("no function found in this scope")
 	}
 	return t.parent.resolveFunctionEnv()
 }
@@ -119,7 +119,7 @@ func (t *TypeEnvironment) declareVar(name string, typeVar TcValue, isConst bool,
 	}
 
 	if ok, hasVal := builtinValues[name]; hasVal && ok {
-		return fmt.Errorf("cannot declare builtin value '%s'", name)
+		return fmt.Errorf("cannot redeclare builtin value '%s'", name)
 	}
 
 	//should not be declared
@@ -158,11 +158,6 @@ func getTypeDefinition(name string) (TcValue, error) {
 	if typ, ok := typeDefinitions[name]; !ok {
 		return nil, fmt.Errorf("unknown type '%s'", name)
 	} else {
-		if tp, ok := typ.(UserDefined); ok {
-			if st, ok := tp.TypeDef.(Struct); ok {
-				fmt.Printf("unwrapping type from: %s\n", st.StructName)
-			}
-		}
 		return unwrapType(typ), nil
 	}
 }

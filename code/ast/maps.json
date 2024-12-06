@@ -1,0 +1,559 @@
+{
+    "Contents": [
+        {
+            "Variables": [
+                {
+                    "Identifier": {
+                        "Name": "myMap",
+                        "Start": {
+                            "Line": 2,
+                            "Column": 5,
+                            "Index": 127
+                        },
+                        "End": {
+                            "Line": 2,
+                            "Column": 10,
+                            "Index": 132
+                        }
+                    },
+                    "Value": {
+                        "TypeName": "map",
+                        "KeyType": {
+                            "TypeName": "str",
+                            "Start": {
+                                "Line": 2,
+                                "Column": 31,
+                                "Index": 153
+                            },
+                            "End": {
+                                "Line": 2,
+                                "Column": 34,
+                                "Index": 156
+                            }
+                        },
+                        "ValueType": {
+                            "TypeName": "i32",
+                            "BitSize": 32,
+                            "IsSigned": true,
+                            "Start": {
+                                "Line": 2,
+                                "Column": 35,
+                                "Index": 157
+                            },
+                            "End": {
+                                "Line": 2,
+                                "Column": 38,
+                                "Index": 160
+                            }
+                        },
+                        "Values": [
+                            {
+                                "Key": {
+                                    "Value": "one",
+                                    "Start": {
+                                        "Line": 3,
+                                        "Column": 5,
+                                        "Index": 167
+                                    },
+                                    "End": {
+                                        "Line": 3,
+                                        "Column": 10,
+                                        "Index": 172
+                                    }
+                                },
+                                "Value": {
+                                    "Value": "1",
+                                    "BitSize": 32,
+                                    "IsSigned": true,
+                                    "Start": {
+                                        "Line": 3,
+                                        "Column": 12,
+                                        "Index": 174
+                                    },
+                                    "End": {
+                                        "Line": 3,
+                                        "Column": 13,
+                                        "Index": 175
+                                    }
+                                }
+                            },
+                            {
+                                "Key": {
+                                    "Value": "two",
+                                    "Start": {
+                                        "Line": 4,
+                                        "Column": 5,
+                                        "Index": 182
+                                    },
+                                    "End": {
+                                        "Line": 4,
+                                        "Column": 10,
+                                        "Index": 187
+                                    }
+                                },
+                                "Value": {
+                                    "Value": "2",
+                                    "BitSize": 32,
+                                    "IsSigned": true,
+                                    "Start": {
+                                        "Line": 4,
+                                        "Column": 12,
+                                        "Index": 189
+                                    },
+                                    "End": {
+                                        "Line": 4,
+                                        "Column": 13,
+                                        "Index": 190
+                                    }
+                                }
+                            },
+                            {
+                                "Key": {
+                                    "Value": "three",
+                                    "Start": {
+                                        "Line": 5,
+                                        "Column": 5,
+                                        "Index": 197
+                                    },
+                                    "End": {
+                                        "Line": 5,
+                                        "Column": 12,
+                                        "Index": 204
+                                    }
+                                },
+                                "Value": {
+                                    "Value": "3",
+                                    "BitSize": 32,
+                                    "IsSigned": true,
+                                    "Start": {
+                                        "Line": 5,
+                                        "Column": 14,
+                                        "Index": 206
+                                    },
+                                    "End": {
+                                        "Line": 5,
+                                        "Column": 15,
+                                        "Index": 207
+                                    }
+                                }
+                            }
+                        ],
+                        "Start": {
+                            "Line": 2,
+                            "Column": 27,
+                            "Index": 149
+                        },
+                        "End": {
+                            "Line": 6,
+                            "Column": 2,
+                            "Index": 210
+                        }
+                    },
+                    "ExplicitType": {
+                        "TypeName": "map",
+                        "KeyType": {
+                            "TypeName": "str",
+                            "Start": {
+                                "Line": 2,
+                                "Column": 17,
+                                "Index": 139
+                            },
+                            "End": {
+                                "Line": 2,
+                                "Column": 20,
+                                "Index": 142
+                            }
+                        },
+                        "ValueType": {
+                            "TypeName": "i32",
+                            "BitSize": 32,
+                            "IsSigned": true,
+                            "Start": {
+                                "Line": 2,
+                                "Column": 21,
+                                "Index": 143
+                            },
+                            "End": {
+                                "Line": 2,
+                                "Column": 24,
+                                "Index": 146
+                            }
+                        },
+                        "Start": {
+                            "Line": 2,
+                            "Column": 13,
+                            "Index": 135
+                        },
+                        "End": {
+                            "Line": 2,
+                            "Column": 16,
+                            "Index": 138
+                        }
+                    },
+                    "Start": {
+                        "Line": 2,
+                        "Column": 5,
+                        "Index": 127
+                    },
+                    "End": {
+                        "Line": 6,
+                        "Column": 2,
+                        "Index": 210
+                    }
+                }
+            ],
+            "IsConst": false,
+            "Start": {
+                "Line": 2,
+                "Column": 1,
+                "Index": 123
+            },
+            "End": {
+                "Line": 6,
+                "Column": 3,
+                "Index": 211
+            }
+        },
+        {
+            "Variables": [
+                {
+                    "Identifier": {
+                        "Name": "myMap2",
+                        "Start": {
+                            "Line": 9,
+                            "Column": 5,
+                            "Index": 294
+                        },
+                        "End": {
+                            "Line": 9,
+                            "Column": 11,
+                            "Index": 300
+                        }
+                    },
+                    "Value": {
+                        "TypeName": "map",
+                        "KeyType": {
+                            "TypeName": "str",
+                            "Start": {
+                                "Line": 9,
+                                "Column": 19,
+                                "Index": 308
+                            },
+                            "End": {
+                                "Line": 9,
+                                "Column": 22,
+                                "Index": 311
+                            }
+                        },
+                        "ValueType": {
+                            "TypeName": "i32",
+                            "BitSize": 32,
+                            "IsSigned": true,
+                            "Start": {
+                                "Line": 9,
+                                "Column": 23,
+                                "Index": 312
+                            },
+                            "End": {
+                                "Line": 9,
+                                "Column": 26,
+                                "Index": 315
+                            }
+                        },
+                        "Values": [
+                            {
+                                "Key": {
+                                    "Value": "one",
+                                    "Start": {
+                                        "Line": 10,
+                                        "Column": 5,
+                                        "Index": 322
+                                    },
+                                    "End": {
+                                        "Line": 10,
+                                        "Column": 10,
+                                        "Index": 327
+                                    }
+                                },
+                                "Value": {
+                                    "Value": "1",
+                                    "BitSize": 32,
+                                    "IsSigned": true,
+                                    "Start": {
+                                        "Line": 10,
+                                        "Column": 12,
+                                        "Index": 329
+                                    },
+                                    "End": {
+                                        "Line": 10,
+                                        "Column": 13,
+                                        "Index": 330
+                                    }
+                                }
+                            },
+                            {
+                                "Key": {
+                                    "Value": "two",
+                                    "Start": {
+                                        "Line": 11,
+                                        "Column": 5,
+                                        "Index": 337
+                                    },
+                                    "End": {
+                                        "Line": 11,
+                                        "Column": 10,
+                                        "Index": 342
+                                    }
+                                },
+                                "Value": {
+                                    "Value": "2",
+                                    "BitSize": 32,
+                                    "IsSigned": true,
+                                    "Start": {
+                                        "Line": 11,
+                                        "Column": 12,
+                                        "Index": 344
+                                    },
+                                    "End": {
+                                        "Line": 11,
+                                        "Column": 13,
+                                        "Index": 345
+                                    }
+                                }
+                            },
+                            {
+                                "Key": {
+                                    "Value": "three",
+                                    "Start": {
+                                        "Line": 12,
+                                        "Column": 5,
+                                        "Index": 352
+                                    },
+                                    "End": {
+                                        "Line": 12,
+                                        "Column": 12,
+                                        "Index": 359
+                                    }
+                                },
+                                "Value": {
+                                    "Value": "3",
+                                    "BitSize": 32,
+                                    "IsSigned": true,
+                                    "Start": {
+                                        "Line": 12,
+                                        "Column": 14,
+                                        "Index": 361
+                                    },
+                                    "End": {
+                                        "Line": 12,
+                                        "Column": 15,
+                                        "Index": 362
+                                    }
+                                }
+                            }
+                        ],
+                        "Start": {
+                            "Line": 9,
+                            "Column": 15,
+                            "Index": 304
+                        },
+                        "End": {
+                            "Line": 13,
+                            "Column": 2,
+                            "Index": 365
+                        }
+                    },
+                    "ExplicitType": null,
+                    "Start": {
+                        "Line": 9,
+                        "Column": 5,
+                        "Index": 294
+                    },
+                    "End": {
+                        "Line": 13,
+                        "Column": 2,
+                        "Index": 365
+                    }
+                }
+            ],
+            "IsConst": false,
+            "Start": {
+                "Line": 9,
+                "Column": 1,
+                "Index": 290
+            },
+            "End": {
+                "Line": 13,
+                "Column": 3,
+                "Index": 366
+            }
+        },
+        {
+            "Variables": [
+                {
+                    "Identifier": {
+                        "Name": "value",
+                        "Start": {
+                            "Line": 16,
+                            "Column": 5,
+                            "Index": 392
+                        },
+                        "End": {
+                            "Line": 16,
+                            "Column": 10,
+                            "Index": 397
+                        }
+                    },
+                    "Value": {
+                        "Index": {
+                            "Value": "one",
+                            "Start": {
+                                "Line": 16,
+                                "Column": 20,
+                                "Index": 407
+                            },
+                            "End": {
+                                "Line": 16,
+                                "Column": 25,
+                                "Index": 412
+                            }
+                        },
+                        "Container": {
+                            "Name": "myMap",
+                            "Start": {
+                                "Line": 16,
+                                "Column": 14,
+                                "Index": 401
+                            },
+                            "End": {
+                                "Line": 16,
+                                "Column": 19,
+                                "Index": 406
+                            }
+                        },
+                        "Start": {
+                            "Line": 16,
+                            "Column": 14,
+                            "Index": 401
+                        },
+                        "End": {
+                            "Line": 16,
+                            "Column": 26,
+                            "Index": 413
+                        }
+                    },
+                    "ExplicitType": null,
+                    "Start": {
+                        "Line": 16,
+                        "Column": 5,
+                        "Index": 392
+                    },
+                    "End": {
+                        "Line": 16,
+                        "Column": 26,
+                        "Index": 413
+                    }
+                }
+            ],
+            "IsConst": false,
+            "Start": {
+                "Line": 16,
+                "Column": 1,
+                "Index": 388
+            },
+            "End": {
+                "Line": 16,
+                "Column": 27,
+                "Index": 414
+            }
+        },
+        {
+            "Assignee": {
+                "Index": {
+                    "Value": "four",
+                    "Start": {
+                        "Line": 18,
+                        "Column": 7,
+                        "Index": 452
+                    },
+                    "End": {
+                        "Line": 18,
+                        "Column": 13,
+                        "Index": 458
+                    }
+                },
+                "Container": {
+                    "Name": "myMap",
+                    "Start": {
+                        "Line": 18,
+                        "Column": 1,
+                        "Index": 446
+                    },
+                    "End": {
+                        "Line": 18,
+                        "Column": 6,
+                        "Index": 451
+                    }
+                },
+                "Start": {
+                    "Line": 18,
+                    "Column": 1,
+                    "Index": 446
+                },
+                "End": {
+                    "Line": 18,
+                    "Column": 14,
+                    "Index": 459
+                }
+            },
+            "Value": {
+                "Value": "4.3",
+                "BitSize": 32,
+                "Start": {
+                    "Line": 18,
+                    "Column": 17,
+                    "Index": 462
+                },
+                "End": {
+                    "Line": 18,
+                    "Column": 20,
+                    "Index": 465
+                }
+            },
+            "Operator": {
+                "Kind": "=",
+                "Value": "=",
+                "Start": {
+                    "Line": 18,
+                    "Column": 15,
+                    "Index": 460
+                },
+                "End": {
+                    "Line": 18,
+                    "Column": 16,
+                    "Index": 461
+                }
+            },
+            "Start": {
+                "Line": 18,
+                "Column": 1,
+                "Index": 446
+            },
+            "End": {
+                "Line": 18,
+                "Column": 20,
+                "Index": 465
+            }
+        }
+    ],
+    "Start": {
+        "Line": 0,
+        "Column": 0,
+        "Index": 0
+    },
+    "End": {
+        "Line": 0,
+        "Column": 0,
+        "Index": 0
+    }
+}

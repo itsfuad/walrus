@@ -1,0 +1,14 @@
+//Arrays are simple to create and are dynamic. Which means you can add or remove elements from an array at any time.
+//Arrays are created using square brackets [] along with the type of the elements in the array. for example: []Type
+let oneDArray : []i32 = [1, 2, 3];
+//you can also remove the type as it can be inferred from the elements in the array
+let twoDArray := [[1, 2], [3, 4]];
+//you can also create an empty array and add elements to it later. But you need to specify the type of the elements in the array
+let emptyArray : []i32;
+emptyArray = [1, 2, 3];
+
+//Indexing an array is done using square brackets [] with the index of the element you want to access
+let firstElement := oneDArray[0]; //firstElement is 1 of type i32
+let otherElement := twoDArray[1][0]; //otherElement is 3 of type i32
+//you can also change the value of an element in an array using the index
+oneDArray[0] = 5;
