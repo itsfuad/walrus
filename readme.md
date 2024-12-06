@@ -1,77 +1,100 @@
-# Walrus Programming language
-A tiny simple programming language made for simplicity. It borrows syntax from 'go', 'rust' and 'typescript'
+# Walrus Programming Language
+Walrus is a tiny and simple programming language designed for simplicity. Its syntax draws inspiration from Go, Rust, and TypeScript.
 
-- [x] Lexer
-- [x] Parser
-    - [x] [Variable declare](#variable-declare-and-assign)
-        - [x] Mutable variable with let
-        - [x] Constant variable with const
-        - [x] Multiple variable declare
-    - [x] [Variable assign](#variable-assign)
-    - [x] [Expressions](#expressions)
-        - [x] Unary (i32, f32, bool) `- !`
-        - [x] Additive `+ -`
-        - [x] Multiplicative `* / % ^`
-        - [x] Grouping `( )`
-        - [x] Type cast `as`
-    - [x] [Array](#array)
-        - [x] Array indexing
-    - [x] [Map](#map)
-        - [x] Map indexing
-        - [x] Map assignment
-    - [x] [Conditionals](#conditionals)
-        - [x] if
-        - [x] else
-        - [x] else if
-    - [x] [Functions](#functions)
-        - [x] Function declaration
-        - [x] Function call
-        - [x] Function return
-        - [x] Optional parameters
-    - [x] [Closure](#closure)
-    - [x] [User defined types](#user-defined-types)
-        - [x] Struct
-            - [x] Property access
-            - [x] Property assignment
-            - [x] Private property deny access
-            - [x] Implement for struct
-        - [x] Builtins (i32, f32, bool, string)
-        - [x] Function
-        - [x] Interface
-            - [x] Define
-            - [x] Implement
-            - [x] Use 
-    - [x] [Increment/Decrement](#incrementdecrement)
-        - [x] Prefix
-        - [x] Postfix
-    - [x] [Assignment operators](#assignment-operators)
-        - [x] +=
-        - [x] -=
-        - [x] *=
-        - [x] /=
-        - [x] %=
-    - [ ] [For loop](#for-loop)
-    - [ ] [Switch](#switch)
-    - [x] [Interaface](#interface)
-    - [ ] Imports
-    - [ ] Packages
-    - [ ] Modules
-    - [ ] Generics
-- [x] Analyzer
-    - [x] Everything in parser except - 
-        - [ ] For loop
-- [x] Rich multi error reporting system
-- [ ] Codegen
+## Features
 
+### Lexer
+- Tokenizes the source code for parsing.
 
-# Install and Run
-- [Runnning the compiler](#running-the-compiler)
-    - [Install Go](#install-go)
-- [Running the tests](#running-the-tests)
-- [Installing syntax highlighting for vscode](#installing-syntax-highlighting-for-vscode)
-    - [Build the extension](#build-the-extension)
-    - [Install from marketplace](#install-from-marketplace)
+### Parser
+- Handles syntactic analysis for:
+  - **Variable Declaration and Assignment**
+    - Mutable variables with `let`
+    - Constant variables with `const`
+    - Multiple variable declarations in one line
+  - **Expressions**
+    - Unary: `-`, `!`
+    - Additive: `+`, `-`
+    - Multiplicative: `*`, `/`, `%`, `^`
+    - Grouping: `( )`
+    - Type casting using `as`
+  - **Data Structures**
+    - Arrays: Indexing and assignment
+    - Maps: Indexing and key-value assignments
+  - **Conditionals**
+    - `if`, `else if`, `else`
+  - **Functions**
+    - Declaration, calls, return values
+    - Optional parameters
+    - First-class functions and closures
+  - **User-Defined Types**
+    - Structs: Property access and assignment
+    - Interfaces: Definition, implementation, and usage
+  - **Operators**
+    - Increment/Decrement: Prefix and Postfix
+    - Assignment: `+=`, `-=`, `*=`, `/=`, `%=`
+  - **Additional Constructs**
+    - Switch statements
+    - For loops (syntax under development)
+  - **Rich Error Reporting**
+    - Displays multiple errors during parsing and type checking
 
+### Type Checking
+- Ensures type safety across all constructs.
+- Handles all parser-supported features except for loops and imports (in progress).
+
+### Code Generation
+- Planned for future releases.
+
+# Installation and Usage
+
+## Install Go
+To run the compiler, you need to have go installed. You can download it from [here](https://golang.org/dl/)
+
+## Testing a walrus file
+To test a walrus file, you need to open `main.go` and change the `filePath` variable to the path of the file you want to test.
+```go
+func main() {
+    filePath := "filename.wal"
+    // ... rest of the code
+}
+```
+Then run the following command
+```sh
+go run main.go
+```
+Or, if you're on windows then you can run the batch file `run.bat`
+```sh
+./run
+```
+
+# Running the tests
+To run the tests, run the following command
+```sh
+go test ./...
+```
+Or, if you're on windows then you can run the batch file `test.bat`
+```sh
+./test
+```
+
+# Installing syntax highlighting for vscode
+To install local build, go to `language-support` directory and run the following command
+```sh
+npm install -g vsce
+```
+## Build the extension
+If you don't have node installed, you can download it from [here](https://nodejs.org/en/download/)
+Then run the following command
+```sh
+vsce package
+code --install-extension walrus-<full-output-name>.vsix
+```
+Or open vscode, go to extensions and click on the three dots on the top right corner and click on 'Install from VSIX' and select the generated vsix file.
+
+## Install from marketplace
+Or, you can install the extension from the marketplace [here](https://marketplace.visualstudio.com/items?itemName=Walrus.walrus)
+Or, Search for 'Walrus' in the vscode extensions marketplace.
 
 # Example
 
@@ -347,52 +370,10 @@ fn printPerson(p: Printable) {
 
 ```
 
-# Running the compiler
+## Roadmap
+- [ ] For loops
+- [ ] Imports and modules
+- [ ] Generics
+- [ ] Advanced code generation
 
-## Install Go
-To run the compiler, you need to have go installed. You can download it from [here](https://golang.org/dl/)
-
-## Testing a walrus file
-To test a walrus file, you need to open `main.go` and change the `filePath` variable to the path of the file you want to test.
-```go
-func main() {
-    filePath := "filename.wal"
-    // ... rest of the code
-}
-```
-Then run the following command
-```sh
-go run main.go
-```
-Or, if you're on windows then you can run the batch file `run.bat`
-```sh
-./run
-```
-
-# Running the tests
-To run the tests, run the following command
-```sh
-go test ./...
-```
-Or, if you're on windows then you can run the batch file `test.bat`
-```sh
-./test
-```
-
-# Installing syntax highlighting for vscode
-To install local build, go to `language-support` directory and run the following command
-```sh
-npm install -g vsce
-```
-## Build the extension
-If you don't have node installed, you can download it from [here](https://nodejs.org/en/download/)
-Then run the following command
-```sh
-vsce package
-code --install-extension walrus-<full-output-name>.vsix
-```
-Or open vscode, go to extensions and click on the three dots on the top right corner and click on 'Install from VSIX' and select the generated vsix file.
-
-## Install from marketplace
-Or, you can install the extension from the marketplace [here](https://marketplace.visualstudio.com/items?itemName=Walrus.walrus)
-Or, Search for 'Walrus' in the vscode extensions marketplace.
+Stay tuned for updates and contribute to the project!
