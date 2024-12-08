@@ -170,7 +170,7 @@ func evalMap(analyzedMap ast.MapType, env *TypeEnvironment) TcValue {
 		}
 
 		errgen.AddError(env.filePath, analyzedMap.StartPos().Line, analyzedMap.EndPos().Line, analyzedMap.StartPos().Column, analyzedMap.EndPos().Column, fmt.Sprintf("'%s' is not a map", analyzedMap.Map.Name), errgen.ERROR_CRITICAL)
-		
+
 		return NewVoid()
 	}
 }
@@ -230,18 +230,21 @@ func tcValueToString(val TcValue) string {
 func checkMethodsImplementations(expected, provided TcValue) error {
 
 	//check if the provided type implements the interface
-	expectedMethods := unwrapType(expected).(Interface).Methods
+	expected, ok := unwrapType(expected).(Interface)
+	if !ok {
+		return fmt.Errorf("type must be an interface")
+	}
 	structType, ok := unwrapType(provided).(Struct)
 	if !ok {
 		return fmt.Errorf("type must be a struct")
 	}
 
-	for methodName, method := range expectedMethods {
+	for methodName, method := range expected.(Interface).Methods {
 		// check if method is present in the struct's variables and is a function
 		methodVal, ok := structType.StructScope.variables[methodName]
 		if !ok {
 			return fmt.Errorf("struct '%s' did not implement method '%s' of interface '%s'",
-				provided.(Struct).StructName, methodName, expected.(Interface).InterfaceName)
+				structType.StructName, methodName, expected.(Interface).InterfaceName)
 		}
 		methodFn, ok := methodVal.(StructMethod)
 		if !ok {

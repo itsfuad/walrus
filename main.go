@@ -16,14 +16,14 @@ func serialize(root *ast.Node, folder, filename string) error {
 
 	//create the folder if it does not exist
 	if _, err := os.Stat(folder + "/ast"); os.IsNotExist(err) {
-		os.Mkdir(folder + "/ast", os.ModePerm)
+		os.Mkdir(folder+"/ast", os.ModePerm)
 	}
 
-    file, err := os.Create(fmt.Sprintf("%s/ast/%s.json", folder, filename))
+	file, err := os.Create(fmt.Sprintf("%s/ast/%s.json", folder, filename))
 	if err != nil {
 		fmt.Printf("Error creating file: %s", err)
 	}
-    defer file.Close()
+	defer file.Close()
 
 	//write the tree to a file named 'expressions.json' in 'code/ast' folder
 	encoder := json.NewEncoder(file)
@@ -35,7 +35,6 @@ func serialize(root *ast.Node, folder, filename string) error {
 	}
 	return nil
 }
-
 
 func main() {
 
