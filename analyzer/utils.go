@@ -11,6 +11,7 @@ import (
 	"walrus/ast"
 	"walrus/builtins"
 	"walrus/errgen"
+	"walrus/utils"
 )
 
 func init() {
@@ -178,7 +179,14 @@ func evalMap(analyzedMap ast.MapType, env *TypeEnvironment) TcValue {
 func matchTypes(expectedType, providedType TcValue) error {
 
 	if expectedType.DType() == builtins.INTERFACE {
-		return checkMethodsImplementations(expectedType, providedType)
+		errs := checkMethodsImplementations(expectedType, providedType)
+		if len(errs) > 0 {
+			msgs := fmt.Sprintf("cannot use type '%s' as interface '%s'\n", tcValueToString(providedType), tcValueToString(expectedType))
+			for _, err := range errs {
+				msgs += utils.ORANGE.Sprintln(" - " + err.Error())
+			}
+			return errors.New(msgs)
+		}
 	}
 
 	expectedStr := tcValueToString(expectedType)
@@ -227,29 +235,41 @@ func tcValueToString(val TcValue) string {
 	}
 }
 
-func checkMethodsImplementations(expected, provided TcValue) error {
-
+func checkMethodsImplementations(expected, provided TcValue) []error {
+	
 	//check if the provided type implements the interface
-	expected, ok := unwrapType(expected).(Interface)
+	errs := []error{}
+
+	var interfaceType Interface
+	interfaceType, ok := unwrapType(expected).(Interface)
 	if !ok {
-		return fmt.Errorf("type must be an interface")
-	}
-	structType, ok := unwrapType(provided).(Struct)
-	if !ok {
-		return fmt.Errorf("type must be a struct")
+		return []error{fmt.Errorf("type must be an interface")}
 	}
 
-	for methodName, method := range expected.(Interface).Methods {
-		// check if method is present in the struct's variables and is a function
+	var structType Struct
+	structType, ok = unwrapType(provided).(Struct)
+	if !ok {
+		return []error{fmt.Errorf("type must be a struct")}
+	}
+
+	// check if all methods are implemented
+	for methodName, method := range interfaceType.Methods {
+		// check if method is present in the struct's variables
 		methodVal, ok := structType.StructScope.variables[methodName]
 		if !ok {
-			return fmt.Errorf("struct '%s' did not implement method '%s' of interface '%s'",
-				structType.StructName, methodName, expected.(Interface).InterfaceName)
+			//return fmt.Errorf("struct '%s' did not implement method '%s' of interface '%s'",
+			//	structType.StructName, methodName, interfaceType.InterfaceName)
+			errs = append(errs, fmt.Errorf("method '%s' is not implemented for interface '%s'", methodName, interfaceType.InterfaceName))
+			continue
 		}
+
+		// check if the method is a function
 		methodFn, ok := methodVal.(StructMethod)
 		if !ok {
-			return fmt.Errorf("'%s' on struct '%s' is not a valid method for interface '%s'",
-				methodName, provided.(Struct).StructName, expected.(Interface).InterfaceName)
+			//return fmt.Errorf("'%s' on struct '%s' is not a valid method for interface '%s'",
+			//	methodName, structType.StructName, interfaceType.InterfaceName)
+			errs = append(errs, fmt.Errorf("'%s' is expected to be a method", methodName))
+			continue
 		}
 
 		// check the return type and parameters
@@ -257,7 +277,8 @@ func checkMethodsImplementations(expected, provided TcValue) error {
 			expectedParam := tcValueToString(param.Type)
 			providedParam := tcValueToString(methodFn.Fn.Params[i].Type)
 			if expectedParam != providedParam {
-				return fmt.Errorf("method '%s' found for interface '%s' but parameter missmatch", methodName, expected.(Interface).InterfaceName)
+				//return fmt.Errorf("method '%s' found for interface '%s' but parameter missmatch", methodName, interfaceType.InterfaceName)
+				errs = append(errs, fmt.Errorf("method '%s' found for interface '%s' but parameter missmatch", methodName, interfaceType.InterfaceName))
 			}
 		}
 
@@ -265,9 +286,10 @@ func checkMethodsImplementations(expected, provided TcValue) error {
 		expectedReturn := tcValueToString(method.Returns)
 		providedReturn := tcValueToString(methodFn.Fn.Returns)
 		if expectedReturn != providedReturn {
-			return fmt.Errorf("method '%s' found for interface '%s' but return type mismatched", methodName, expected.(Interface).InterfaceName)
+			//return fmt.Errorf("method '%s' found for interface '%s' but return type mismatched", methodName, interfaceType.InterfaceName)
+			errs = append(errs, fmt.Errorf("method '%s' found for interface '%s' but return type mismatched", methodName, interfaceType.InterfaceName))
 		}
 	}
 
-	return nil
+	return errs
 }

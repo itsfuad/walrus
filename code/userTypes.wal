@@ -53,11 +53,13 @@ let emp := user.age;
 type Banana struct {
     name: str,
     price: i32,
+    getName: str,
 };
 
 type Fn fn(a: i32, b: i32) -> i32;
 
 type IPerson interface {
+    fn someMethod();
     fn getName() -> str;
 };
 
@@ -67,11 +69,7 @@ fn ShowInfo(p: IPerson) {
 
 // To pass any User and Banana to ShowInfo function, they must implement IPerson interface's every method
 // in simple words, they must have a method called getName that returns a string. The structs can have any more fields or methods but they must have getName method in this case.
-impl User {
-    fn getName() -> str {
-        ret this.name;
-    }
-}
+
 
 /*impl Banana {
     fn getName() -> str {
@@ -80,4 +78,4 @@ impl User {
 }*/
 
 ShowInfo(user);
-ShowInfo(@Banana{name: "Cavendish", price: 10});
+ShowInfo(@Banana{name: "Cavendish", price: 10, getName: ""});
