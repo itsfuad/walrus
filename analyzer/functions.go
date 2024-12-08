@@ -40,40 +40,52 @@ func CheckAndDeclareFunction(funcNode ast.FunctionLiteral, name string, env *Typ
 }
 
 func checkandDeclareParamaters(params []ast.FunctionParam, fnEnv *TypeEnvironment) []FnParam {
-
 	var parameters []FnParam
 
-	for _, param := range params {
-
-		if fnEnv.isDeclared(param.Identifier.Name) {
-			errgen.AddError(fnEnv.filePath, param.Identifier.Start.Line, param.Identifier.End.Line, param.Identifier.Start.Column, param.Identifier.End.Column, fmt.Sprintf("parameter %s is already declared", param.Identifier.Name), errgen.ERROR_NORMAL)
-		}
-
-		paramType := evaluateTypeName(param.Type, fnEnv)
-
-		if param.IsOptional {
-			//default value type
-			defaultValue := CheckAST(param.DefaultValue, fnEnv)
-			err := matchTypes(paramType, defaultValue)
-			if err != nil {
-				errgen.AddError(fnEnv.filePath, param.DefaultValue.StartPos().Line, param.DefaultValue.EndPos().Line, param.DefaultValue.StartPos().Column, param.DefaultValue.EndPos().Column, fmt.Sprintf("error declaring parameter. %s", err.Error()), errgen.ERROR_NORMAL)
-			}
-		}
-
-		err := fnEnv.declareVar(param.Identifier.Name, paramType, false, param.IsOptional)
-		if err != nil {
-			errgen.AddError(fnEnv.filePath, param.Identifier.Start.Line, param.Identifier.End.Line, param.Identifier.Start.Column, param.Identifier.End.Column, fmt.Sprintf("error declaring parameter. %s", err.Error()), errgen.ERROR_CRITICAL)
-		}
-
-		fmt.Printf("Declared parameter %s of type %s\n", param.Identifier.Name, paramType.DType())
-
-		parameters = append(parameters, FnParam{
-			Name:       param.Identifier.Name,
-			IsOptional: param.IsOptional,
-			Type:       paramType,
-		})
+	for i, param := range params {
+		checkAndDeclareSingleParameter(param, i, params, fnEnv, &parameters)
 	}
 	return parameters
+}
+
+func checkAndDeclareSingleParameter(param ast.FunctionParam, i int, params []ast.FunctionParam, fnEnv *TypeEnvironment, parameters *[]FnParam) {
+	if fnEnv.isDeclared(param.Identifier.Name) {
+		errgen.AddError(fnEnv.filePath, param.Identifier.Start.Line, param.Identifier.End.Line, param.Identifier.Start.Column, param.Identifier.End.Column, fmt.Sprintf("parameter '%s' is already defined", param.Identifier.Name), errgen.ERROR_NORMAL)
+	}
+
+	paramType := evaluateTypeName(param.Type, fnEnv)
+
+	if param.IsOptional {
+		checkOptionalParameter(param, i, params, fnEnv, paramType)
+	}
+
+	err := fnEnv.declareVar(param.Identifier.Name, paramType, false, param.IsOptional)
+	if err != nil {
+		errgen.AddError(fnEnv.filePath, param.Identifier.Start.Line, param.Identifier.End.Line, param.Identifier.Start.Column, param.Identifier.End.Column, fmt.Sprintf("error defining parameter. %s", err.Error()), errgen.ERROR_CRITICAL)
+	}
+
+	fmt.Printf("Declared parameter %s of type %s\n", param.Identifier.Name, paramType.DType())
+
+	*parameters = append(*parameters, FnParam{
+		Name:       param.Identifier.Name,
+		IsOptional: param.IsOptional,
+		Type:       paramType,
+	})
+}
+
+func checkOptionalParameter(param ast.FunctionParam, i int, params []ast.FunctionParam, fnEnv *TypeEnvironment, paramType TcValue) {
+	for j := i + 1; j < len(params); j++ {
+		if !params[j].IsOptional {
+			errgen.AddError(fnEnv.filePath, params[j].Identifier.Start.Line, params[j].Identifier.End.Line, params[j].Identifier.Start.Column, params[j].Identifier.End.Column, fmt.Sprintf("parameter '%s' cannot be non-optional after an optional parameter", params[j].Identifier.Name), errgen.ERROR_CRITICAL)
+		}
+	}
+
+	defaultValue := CheckAST(param.DefaultValue, fnEnv)
+	fmt.Printf("Default value for parameter %s is %s\n", param.Identifier.Name, defaultValue.DType())	
+	err := matchTypes(paramType, defaultValue)
+	if err != nil {
+		errgen.AddError(fnEnv.filePath, param.DefaultValue.StartPos().Line, param.DefaultValue.EndPos().Line, param.DefaultValue.StartPos().Column, param.DefaultValue.EndPos().Column, fmt.Sprintf("error defining parameter. %s", err.Error()), errgen.ERROR_CRITICAL)
+	}
 }
 
 func checkFunctionCall(callNode ast.FunctionCallExpr, env *TypeEnvironment) TcValue {

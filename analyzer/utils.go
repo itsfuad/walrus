@@ -202,37 +202,45 @@ func matchTypes(expectedType, providedType TcValue) error {
 func tcValueToString(val TcValue) string {
 	switch t := val.(type) {
 	case Array:
-		return "[]" + tcValueToString(t.ArrayType)
+		return fmt.Sprintf("[]%s", tcValueToString(t.ArrayType))
 	case Struct:
 		return t.StructName
 	case Interface:
 		return t.InterfaceName
 	case Fn:
-		ParamStrs := ""
-		for i, param := range t.Params {
-			ParamStrs += param.Name
-			if param.IsOptional {
-				ParamStrs += "?: "
-			} else {
-				ParamStrs += ": "
-			}
-			ParamStrs += string(tcValueToString(param.Type))
-			if i != len(t.Params)-1 {
-				ParamStrs += ", "
-			}
-		}
-		ReturnStr := string(tcValueToString(t.Returns))
-		if ReturnStr != "" {
-			ReturnStr = " -> " + ReturnStr
-		}
-		return fmt.Sprintf("fn(%s)%s", ParamStrs, ReturnStr)
+		return functionSignatureString(t)
 	case Map:
 		return fmt.Sprintf("map[%s]%s", tcValueToString(t.KeyType), tcValueToString(t.ValueType))
 	case UserDefined:
 		return tcValueToString(unwrapType(t.TypeDef))
 	default:
+		if t == nil {
+			return "void"
+		}
 		return string(t.DType())
 	}
+}
+
+
+func functionSignatureString(fn Fn) string {
+	ParamStrs := ""
+	for i, param := range fn.Params {
+		ParamStrs += param.Name
+		if param.IsOptional {
+			ParamStrs += "?: "
+		} else {
+			ParamStrs += ": "
+		}
+		ParamStrs += string(tcValueToString(param.Type))
+		if i != len(fn.Params)-1 {
+			ParamStrs += ", "
+		}
+	}
+	ReturnStr := string(tcValueToString(fn.Returns))
+	if ReturnStr != "" {
+		ReturnStr = " -> " + ReturnStr
+	}
+	return fmt.Sprintf("fn(%s)%s", ParamStrs, ReturnStr)
 }
 
 func checkMethodsImplementations(expected, provided TcValue) []error {
