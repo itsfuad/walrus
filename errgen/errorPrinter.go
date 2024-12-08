@@ -112,8 +112,6 @@ func PrintError(e *WalrusError, showFileName bool) {
 
 	utils.RED.Println(e.err.Error())
 
-	fmt.Printf("Total hints: %d\n", len(e.hints))
-
 	if len(e.hints) > 0 {
 		utils.GREEN.Println("Hint:")
 		for _, hint := range e.hints {
