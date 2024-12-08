@@ -29,6 +29,7 @@ var typeDefinitions = map[string]TcValue{
 	string(STRING_TYPE):  NewStr(),
 	string(FLOAT32_TYPE): NewFloat(32),
 	string(FLOAT64_TYPE): NewFloat(64),
+	string(BOOLEAN_TYPE): NewBool(),
 	string(NULL_TYPE):    NewNull(),
 	string(VOID_TYPE):    NewVoid(),
 }
@@ -61,7 +62,10 @@ func initVar(env *TypeEnvironment, name string, typeVar TcValue, isConst bool, i
 		utils.RED.Println(err)
 		os.Exit(-1)
 	}
+
 	builtinValues[name] = true
+	
+	utils.BRIGHT_BROWN.Printf("Initialized builtin value '%s'\n", name)
 }
 
 func NewTypeENV(parent *TypeEnvironment, scope SCOPE_TYPE, scopeName string, filePath string) *TypeEnvironment {
@@ -146,11 +150,6 @@ func (t *TypeEnvironment) isDeclared(name string) bool {
 	if _, ok := t.variables[name]; ok {
 		return true
 	}
-
-	if _, ok := builtinValues[name]; ok {
-		return true
-	}
-
 	return false
 }
 
