@@ -47,6 +47,9 @@ let user := @User{
     age: 10,
 };
 
+let emp := user.age;
+
+
 type Banana struct {
     name: str,
     price: i32,
@@ -70,11 +73,11 @@ impl User {
     }
 }
 
-impl Banana {
+/*impl Banana {
     fn getName() -> str {
         ret this.name;
     }
-}
+}*/
 
 ShowInfo(user);
 ShowInfo(@Banana{name: "Cavendish", price: 10});
