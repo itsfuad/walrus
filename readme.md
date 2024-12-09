@@ -14,6 +14,14 @@ Walrus is a tiny and simple programming language designed for simplicity. Its sy
 
 ### Parser
 - Handles syntactic analysis for:
+  - **Builtin types**
+    - Signed Integers: `i8`, `i16`, `i32`, `i64`, `i128`
+    - Unsigned Intergers: `u8`, `u16`, `u32`, `u64`, `u128`
+    - Floats: `f32`, `f64`
+    - String: `str`
+    - Null: `null`
+    - Void: `void`
+    - Map: `map[key]value`
   - **Variable Declaration and Assignment**
     - Mutable variables with `let`
     - Constant variables with `const`
