@@ -74,6 +74,6 @@ func CheckAST(node ast.Node, env *TypeEnvironment) TcValue {
 	case nil:
 		return NewNull()
 	}
-	errgen.AddError(env.filePath, node.StartPos().Line, node.EndPos().Line, node.StartPos().Column, node.EndPos().Column, fmt.Sprintf("<%T> node is not implemented yet to check", node), errgen.ERROR_CRITICAL)
+	errgen.AddError(env.filePath, node.StartPos().Line, node.EndPos().Line, node.StartPos().Column, node.EndPos().Column, fmt.Sprintf("<%T> node is not implemented yet to check", node)).ErrorLevel(errgen.CRITICAL)
 	return nil
 }

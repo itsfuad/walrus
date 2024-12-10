@@ -245,7 +245,7 @@ func Tokenize(filename string, debug bool) []Token {
 
 		if !matched {
 			errStr := fmt.Sprintf("lexer:unexpected charecter: '%c'", lex.at())
-			errgen.AddError(filename, lex.Position.Line, lex.Position.Line, lex.Position.Column, lex.Position.Column, errStr, errgen.ERROR_CRITICAL)
+			errgen.AddError(filename, lex.Position.Line, lex.Position.Line, lex.Position.Column, lex.Position.Column, errStr).ErrorLevel(errgen.CRITICAL)
 			return nil
 		}
 	}

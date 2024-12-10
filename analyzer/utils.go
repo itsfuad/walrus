@@ -107,7 +107,7 @@ func evaluateTypeName(dtype ast.DataType, env *TypeEnvironment) TcValue {
 func evalDefaultType(defaultType ast.DataType, env *TypeEnvironment) TcValue {
 	val, err := getTypeDefinition(string(defaultType.Type())) // need to get the most deep type
 	if err != nil || val == nil {
-		errgen.AddError(env.filePath, defaultType.StartPos().Line, defaultType.EndPos().Line, defaultType.StartPos().Column, defaultType.EndPos().Column, err.Error(), errgen.ERROR_CRITICAL)
+		errgen.AddError(env.filePath, defaultType.StartPos().Line, defaultType.EndPos().Line, defaultType.StartPos().Column, defaultType.EndPos().Column, err.Error()).ErrorLevel(errgen.CRITICAL)
 	}
 	return val
 }
@@ -116,7 +116,7 @@ func evalUD(analyzedUD ast.UserDefinedType, env *TypeEnvironment) TcValue {
 	typename := analyzedUD.AliasName
 	val, err := getTypeDefinition(typename) // need to get the most deep type
 	if err != nil || val == nil {
-		errgen.AddError(env.filePath, analyzedUD.StartPos().Line, analyzedUD.EndPos().Line, analyzedUD.StartPos().Column, analyzedUD.EndPos().Column, err.Error(), errgen.ERROR_CRITICAL)
+		errgen.AddError(env.filePath, analyzedUD.StartPos().Line, analyzedUD.EndPos().Line, analyzedUD.StartPos().Column, analyzedUD.EndPos().Column, err.Error()).ErrorLevel(errgen.CRITICAL)
 	}
 	return val
 }
@@ -163,14 +163,14 @@ func evalMap(analyzedMap ast.MapType, env *TypeEnvironment) TcValue {
 
 		val, err := getTypeDefinition(analyzedMap.Map.Name) // need to get the most deep type
 		if err != nil {
-			errgen.AddError(env.filePath, analyzedMap.StartPos().Line, analyzedMap.EndPos().Line, analyzedMap.StartPos().Column, analyzedMap.EndPos().Column, err.Error(), errgen.ERROR_NORMAL)
+			errgen.AddError(env.filePath, analyzedMap.StartPos().Line, analyzedMap.EndPos().Line, analyzedMap.StartPos().Column, analyzedMap.EndPos().Column, err.Error()).ErrorLevel(errgen.NORMAL)
 		}
 
 		if mapVal, ok := val.(Map); ok {
 			return NewMap(mapVal.KeyType, mapVal.ValueType)
 		}
 
-		errgen.AddError(env.filePath, analyzedMap.StartPos().Line, analyzedMap.EndPos().Line, analyzedMap.StartPos().Column, analyzedMap.EndPos().Column, fmt.Sprintf("'%s' is not a map", analyzedMap.Map.Name), errgen.ERROR_CRITICAL)
+		errgen.AddError(env.filePath, analyzedMap.StartPos().Line, analyzedMap.EndPos().Line, analyzedMap.StartPos().Column, analyzedMap.EndPos().Column, fmt.Sprintf("'%s' is not a map", analyzedMap.Map.Name)).ErrorLevel(errgen.CRITICAL)
 
 		return NewVoid()
 	}
@@ -221,7 +221,6 @@ func tcValueToString(val TcValue) string {
 	}
 }
 
-
 func functionSignatureString(fn Fn) string {
 	ParamStrs := ""
 	for i, param := range fn.Params {
@@ -244,7 +243,7 @@ func functionSignatureString(fn Fn) string {
 }
 
 func checkMethodsImplementations(expected, provided TcValue) []error {
-	
+
 	//check if the provided type implements the interface
 	errs := []error{}
 

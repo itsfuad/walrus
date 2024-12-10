@@ -55,7 +55,7 @@ func parseVarDeclStmt(p *Parser) ast.Node {
 			explicitType = parseType(p, DEFAULT_BP)
 		} else if assignmentToken.Kind != lexer.WALRUS_TOKEN {
 			msg := "Invalid variable declaration syntax. Expected : or :="
-			errgen.AddError(p.FilePath, assignmentToken.Start.Line, assignmentToken.End.Line, assignmentToken.Start.Column, assignmentToken.End.Column, msg, errgen.ERROR_CRITICAL)
+			errgen.AddError(p.FilePath, assignmentToken.Start.Line, assignmentToken.End.Line, assignmentToken.Start.Column, assignmentToken.End.Column, msg).ErrorLevel(errgen.CRITICAL)
 		}
 
 		if p.currentTokenKind() != lexer.COMMA_TOKEN && p.currentTokenKind() != lexer.SEMI_COLON_TOKEN {
@@ -69,7 +69,7 @@ func parseVarDeclStmt(p *Parser) ast.Node {
 		//if const, we must have a value
 		if isConst && value == nil {
 			msg := "constants must have value when declared"
-			errgen.AddError(p.FilePath, p.currentToken().Start.Line, p.currentToken().End.Line, p.currentToken().Start.Column, p.currentToken().End.Column, msg, errgen.ERROR_CRITICAL)
+			errgen.AddError(p.FilePath, p.currentToken().Start.Line, p.currentToken().End.Line, p.currentToken().Start.Column, p.currentToken().End.Column, msg).ErrorLevel(errgen.CRITICAL)
 		}
 
 		variables = append(variables, ast.VarDeclVar{

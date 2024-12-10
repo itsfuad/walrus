@@ -23,7 +23,7 @@ func checkVariableAssignment(node ast.VarAssignmentExpr, env *TypeEnvironment) T
 	valueToAssign := node.Value
 
 	if err := checkLValue(Assignee, env); err != nil {
-		errgen.AddError(env.filePath, Assignee.StartPos().Line, Assignee.EndPos().Line, Assignee.StartPos().Column, Assignee.EndPos().Column, "cannot assign to "+err.Error(), errgen.ERROR_CRITICAL)
+		errgen.AddError(env.filePath, Assignee.StartPos().Line, Assignee.EndPos().Line, Assignee.StartPos().Column, Assignee.EndPos().Column, "cannot assign to "+err.Error()).ErrorLevel(errgen.CRITICAL)
 
 	}
 
@@ -33,7 +33,7 @@ func checkVariableAssignment(node ast.VarAssignmentExpr, env *TypeEnvironment) T
 	err := matchTypes(expectedType, providedType)
 	if err != nil {
 
-		errgen.AddError(env.filePath, valueToAssign.StartPos().Line, valueToAssign.EndPos().Line, valueToAssign.StartPos().Column, valueToAssign.EndPos().Column, err.Error(), errgen.ERROR_NORMAL)
+		errgen.AddError(env.filePath, valueToAssign.StartPos().Line, valueToAssign.EndPos().Line, valueToAssign.StartPos().Column, valueToAssign.EndPos().Column, err.Error()).ErrorLevel(errgen.NORMAL)
 	}
 
 	return providedType
@@ -87,13 +87,13 @@ func checkVariableDeclaration(node ast.VarDeclStmt, env *TypeEnvironment) TcValu
 			providedValue := CheckAST(varToDecl.Value, env)
 			err := matchTypes(expectedTypeInterface, providedValue)
 			if err != nil {
-				errgen.AddError(env.filePath, varToDecl.Value.StartPos().Line, varToDecl.Value.EndPos().Line, varToDecl.Value.StartPos().Column, varToDecl.Value.EndPos().Column, fmt.Sprintf("error declaring variable '%s'. %s", varToDecl.Identifier.Name, err.Error()), errgen.ERROR_NORMAL)
+				errgen.AddError(env.filePath, varToDecl.Value.StartPos().Line, varToDecl.Value.EndPos().Line, varToDecl.Value.StartPos().Column, varToDecl.Value.EndPos().Column, fmt.Sprintf("error declaring variable '%s'. %s", varToDecl.Identifier.Name, err.Error())).ErrorLevel(errgen.NORMAL)
 			}
 		}
 
 		err := env.declareVar(varToDecl.Identifier.Name, expectedTypeInterface, node.IsConst, false)
 		if err != nil {
-			errgen.AddError(env.filePath, varToDecl.Identifier.StartPos().Line, varToDecl.Identifier.EndPos().Line, varToDecl.Identifier.StartPos().Column, varToDecl.Identifier.EndPos().Column, err.Error(), errgen.ERROR_CRITICAL)
+			errgen.AddError(env.filePath, varToDecl.Identifier.StartPos().Line, varToDecl.Identifier.EndPos().Line, varToDecl.Identifier.StartPos().Column, varToDecl.Identifier.EndPos().Column, err.Error()).ErrorLevel(errgen.CRITICAL)
 		}
 
 		if node.IsConst {
