@@ -22,6 +22,7 @@ Walrus is a tiny and simple programming language designed for simplicity. Its sy
     - Null: `null`
     - Void: `void`
     - Map: `map[key]value`
+    - Maybe: `maybe{type}`
   - **Variable Declaration and Assignment**
     - Mutable variables with `let`
     - Constant variables with `const`
@@ -189,6 +190,26 @@ let myMap : map[str]i32 = $map[str]i32 {
 
 let a := myMap["a"]; // a = 10
 myMap["a"] = 20; // myMap = {"a": 20, "b": 20, "c": 30}
+```
+
+## Maybe
+Maybe is a type which can be null or the type specified. It is used to handle null values.
+```rs
+let a: maybe{i32} = null; // a can be null or an integer
+
+a = 10; // a can be assigned an integer but the value is still maybe{i32}
+a = null; // a can be assigned null
+
+let b := 12;
+
+//Now to use the value of a, we need to check if it is null or not
+safe a {
+    // when a is not null, this block will be executed
+    b = 23 + a; // b = 33
+} otherwise {
+    // when a is null, this block will be executed
+    b = 23;
+}
 ```
 
 ## Struct
