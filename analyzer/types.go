@@ -26,6 +26,7 @@ const (
 	INTERFACE_TYPE    builtins.TC_TYPE = builtins.INTERFACE
 	ARRAY_TYPE        builtins.TC_TYPE = builtins.ARRAY
 	MAP_TYPE          builtins.TC_TYPE = builtins.MAP
+	MAYBE_TYPE        builtins.TC_TYPE = builtins.MAYBE
 	USER_DEFINED_TYPE builtins.TC_TYPE = builtins.USER_DEFINED
 	BLOCK_TYPE        builtins.TC_TYPE = "block"
 	RETURN_TYPE       builtins.TC_TYPE = "return"
@@ -202,5 +203,14 @@ type Interface struct {
 }
 
 func (t Interface) DType() builtins.TC_TYPE {
+	return t.DataType
+}
+
+type Maybe struct {
+	DataType  builtins.TC_TYPE
+	MaybeType TcValue
+}
+
+func (t Maybe) DType() builtins.TC_TYPE {
 	return t.DataType
 }

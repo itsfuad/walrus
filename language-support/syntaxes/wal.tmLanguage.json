@@ -504,7 +504,7 @@
                 {
                     "comment": "control flow keywords",
                     "name": "keyword.control.wal",
-                    "match": "\\b(await|switch|break|case|default|continue|do|else|for|foreach|if|where|as|try|catch|while|typeof)\\b"
+                    "match": "\\b(await|switch|break|case|default|continue|do|else|for|foreach|if|where|as|try|catch|while|typeof|maybe|match|when|otherwise|safe|optional)\\b"
                 },
                 {
                     "comment": "storage keywords",

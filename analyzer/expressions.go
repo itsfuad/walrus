@@ -71,7 +71,6 @@ func checkUnaryExpr(node ast.UnaryExpr, env *TypeEnvironment) TcValue {
 			errgen.AddError(env.filePath, op.Start.Line, op.End.Line, op.Start.Column, op.End.Column, "invalid unary operation with boolean types").ErrorLevel(errgen.NORMAL)
 		}
 	default:
-
 		errgen.AddError(env.filePath, op.Start.Line, op.End.Line, op.Start.Column, op.End.Column, fmt.Sprintf("this unary operation is not supported with %s types", t.DType())).ErrorLevel(errgen.NORMAL)
 	}
 
@@ -84,8 +83,8 @@ func checkBinaryExpr(node ast.BinaryExpr, env *TypeEnvironment) TcValue {
 	left := CheckAST(node.Left, env)
 	right := CheckAST(node.Right, env)
 
-	leftType := left.DType()
-	rightType := right.DType()
+	leftType := tcValueToString(left)
+	rightType := tcValueToString(right)
 
 	var errLineStart, errLineEnd, errStart, errEnd int
 	var errMsg string
@@ -96,13 +95,13 @@ func checkBinaryExpr(node ast.BinaryExpr, env *TypeEnvironment) TcValue {
 	case lexer.MINUS_TOKEN, lexer.MUL_TOKEN, lexer.DIV_TOKEN, lexer.MOD_TOKEN, lexer.EXP_TOKEN:
 		//must have to be numeric type on both side
 		if leftType != builtins.INT32 && leftType != builtins.FLOAT32 {
-			errMsg = "cannot perform numeric operation. left hand side expression must be evaluated to a numeric type"
+			errMsg = fmt.Sprintf("cannot perform numeric operation between type '%s' and '%s'. left hand side expression must be evaluated to a numeric type.", leftType, rightType)
 			errLineStart = node.Left.StartPos().Line
 			errLineEnd = node.Left.EndPos().Line
 			errStart = node.Left.StartPos().Column
 			errEnd = node.Left.EndPos().Column
 		} else if rightType != builtins.INT32 && rightType != builtins.FLOAT32 {
-			errMsg = "cannot perform numeric operation. right hand side expression must be evaluated to a numeric type"
+			errMsg = fmt.Sprintf("cannot perform numeric operation between type '%s' and '%s'. right hand side expression must be evaluated to a numeric type.", leftType, rightType)
 			errLineStart = node.Right.StartPos().Line
 			errLineEnd = node.Right.EndPos().Line
 			errStart = node.Right.StartPos().Column
@@ -126,8 +125,8 @@ func checkBinaryExpr(node ast.BinaryExpr, env *TypeEnvironment) TcValue {
 
 func checkComparison(node ast.BinaryExpr, left TcValue, right TcValue, env *TypeEnvironment) TcValue {
 
-	leftType := left.DType()
-	rightType := right.DType()
+	leftType := tcValueToString(left)
+	rightType := tcValueToString(right)
 
 	op := node.Operator
 
@@ -154,8 +153,8 @@ func checkComparison(node ast.BinaryExpr, left TcValue, right TcValue, env *Type
 
 func checkAdditionAndConcat(node ast.BinaryExpr, left TcValue, right TcValue, env *TypeEnvironment) TcValue {
 
-	leftType := left.DType()
-	rightType := right.DType()
+	leftType := tcValueToString(left)
+	rightType := tcValueToString(right)
 
 	var errLineStart, errLineEnd, errStart, errEnd int
 	var errMsg string
@@ -163,7 +162,7 @@ func checkAdditionAndConcat(node ast.BinaryExpr, left TcValue, right TcValue, en
 	if leftType == builtins.INT32 || leftType == builtins.FLOAT32 {
 		//right has to be int or float
 		if rightType != builtins.INT32 && rightType != builtins.FLOAT32 {
-			errMsg = "cannot perform numeric operation. right hand side expression must be evaluated to a numeric type"
+			errMsg = fmt.Sprintf("cannot perform numeric operation between type '%s' and '%s'. right hand side expression must be evaluated to a numeric type.", leftType, rightType)
 			errLineStart = node.Right.StartPos().Line
 			errLineEnd = node.Right.EndPos().Line
 			errStart = node.Right.StartPos().Column

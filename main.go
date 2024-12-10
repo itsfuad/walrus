@@ -38,7 +38,7 @@ func serialize(root *ast.Node, folder, filename string) error {
 
 func main() {
 
-	fileName := "functions"
+	fileName := "maybe"
 	folder := "code"
 	filePath := fmt.Sprintf("%s/%s.wal", folder, fileName)
 	tokens := lexer.Tokenize(filePath, true)

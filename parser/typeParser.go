@@ -25,6 +25,26 @@ func bindTypeLookups() {
 	typeNUD(lexer.OPEN_BRACKET, parseArrayType)
 	typeNUD(lexer.FUNCTION_TOKEN, parseFunctionType)
 	typeNUD(lexer.MAP_TOKEN, parseMapType)
+	typeNUD(lexer.MAYBE_TOKEN, parseMaybeType)
+}
+
+func parseMaybeType(p *Parser) ast.DataType {
+	start := p.advance().Start
+
+	p.expect(lexer.OPEN_CURLY)
+
+	dataType := parseType(p, DEFAULT_BP)
+
+	end := p.expect(lexer.CLOSE_CURLY).End
+
+	return ast.MaybeType{
+		TypeName: builtins.PARSER_TYPE(builtins.MAYBE),
+		MaybeType: dataType,
+		Location: ast.Location{
+			Start: start,
+			End:   end,
+		},
+	}
 }
 
 func parseMapType(p *Parser) ast.DataType {

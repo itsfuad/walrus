@@ -95,6 +95,8 @@ func evaluateTypeName(dtype ast.DataType, env *TypeEnvironment) TcValue {
 		return evalFn(t, env)
 	case ast.MapType:
 		return evalMap(t, env)
+	case ast.MaybeType:
+		return NewMaybe(evaluateTypeName(t.MaybeType, env))
 	case ast.UserDefinedType:
 		return evalUD(t, env)
 	case nil:
@@ -178,8 +180,12 @@ func evalMap(analyzedMap ast.MapType, env *TypeEnvironment) TcValue {
 
 func matchTypes(expectedType, providedType TcValue) error {
 
-	if expectedType.DType() == builtins.INTERFACE {
-		errs := checkMethodsImplementations(expectedType, providedType)
+	unwrappedExpected := unwrapType(expectedType)
+	unwrappedProvided := unwrapType(providedType)
+
+	switch t := unwrappedExpected.(type) {
+	case Interface:
+		errs := checkMethodsImplementations(unwrappedExpected, unwrappedProvided)
 		if len(errs) > 0 {
 			msgs := fmt.Sprintf("cannot use type '%s' as interface '%s'\n", tcValueToString(providedType), tcValueToString(expectedType))
 			for _, err := range errs {
@@ -187,10 +193,15 @@ func matchTypes(expectedType, providedType TcValue) error {
 			}
 			return errors.New(msgs)
 		}
+		return nil
+	case Maybe:
+		if unwrapType(t.MaybeType).DType() == unwrappedProvided.DType() || unwrappedProvided.DType() == builtins.NULL {
+			return nil
+		}
 	}
 
-	expectedStr := tcValueToString(expectedType)
-	providedStr := tcValueToString(providedType)
+	expectedStr := tcValueToString(unwrappedExpected)
+	providedStr := tcValueToString(unwrappedProvided)
 
 	if expectedStr != providedStr {
 		return fmt.Errorf("cannot assign value of type '%s' to type '%s'", providedStr, expectedStr)
@@ -211,6 +222,8 @@ func tcValueToString(val TcValue) string {
 		return functionSignatureString(t)
 	case Map:
 		return fmt.Sprintf("map[%s]%s", tcValueToString(t.KeyType), tcValueToString(t.ValueType))
+	case Maybe:
+		return fmt.Sprintf("maybe{%s}", tcValueToString(t.MaybeType))
 	case UserDefined:
 		return tcValueToString(unwrapType(t.TypeDef))
 	default:
@@ -248,13 +261,13 @@ func checkMethodsImplementations(expected, provided TcValue) []error {
 	errs := []error{}
 
 	var interfaceType Interface
-	interfaceType, ok := unwrapType(expected).(Interface)
+	interfaceType, ok := expected.(Interface)
 	if !ok {
 		return []error{fmt.Errorf("type must be an interface")}
 	}
 
 	var structType Struct
-	structType, ok = unwrapType(provided).(Struct)
+	structType, ok = provided.(Struct)
 	if !ok {
 		return []error{fmt.Errorf("type must be a struct")}
 	}

@@ -1,0 +1,21 @@
+
+let a : maybe{i32} = 3; // a is i32 or null
+
+a = 10; // allowed
+//a = 2.4; // not allowed
+a = null; // allowed
+let b := 34;
+
+//now let's try to access the value
+//let x := 2 + a; // cannot add i32 and maybe{i32}
+
+let res: i32;
+
+//safe access
+safe a {
+    //a is i32 here
+    res = 2 + a; // allowed
+} otherwise {
+    //a is null here
+    res = a; // not allowed
+}

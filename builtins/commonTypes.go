@@ -24,6 +24,8 @@ const (
 	FUNCTION  = "fn"
 	STRUCT    = "struct"
 	INTERFACE = "interface"
+	OPTIONAL  = "optional"
+	MAYBE	  = "maybe"
 	ARRAY     = "array"
 	MAP       = "map"
 	VOID      = "void"

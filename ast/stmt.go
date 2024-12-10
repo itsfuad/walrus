@@ -1,6 +1,8 @@
 package ast
 
-import "walrus/lexer"
+import (
+	"walrus/lexer"
+)
 
 type ProgramStmt struct {
 	Contents []Node
@@ -200,5 +202,24 @@ func (a ImplStmt) StartPos() lexer.Position {
 }
 
 func (a ImplStmt) EndPos() lexer.Position {
+	return a.Location.End
+}
+
+type SafeStmt struct {
+	Value IdentifierExpr
+	SafeBlock BlockStmt
+	UnsafeBlock BlockStmt
+	Location
+}
+
+func (a SafeStmt) INode() {
+	//empty method implements Node interface
+}
+
+func (a SafeStmt) StartPos() lexer.Position {
+	return a.Location.Start
+}
+
+func (a SafeStmt) EndPos() lexer.Position {
 	return a.Location.End
 }
