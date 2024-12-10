@@ -119,14 +119,14 @@ func getFunctionTypeSignature(p *Parser) (builtins.PARSER_TYPE, []ast.FunctionTy
 		//if exists, then it is a duplicate
 		for _, param := range params {
 			if param.Identifier.Name == iden.Value {
-				errgen.AddError(p.FilePath, iden.Start.Line, iden.End.Line, iden.Start.Column, iden.End.Column, fmt.Sprintf("parameter '%s' already defined", iden.Value), errgen.ERROR_CRITICAL)
+				errgen.AddError(p.FilePath, iden.Start.Line, iden.End.Line, iden.Start.Column, iden.End.Column, fmt.Sprintf("parameter '%s' already defined", iden.Value)).ErrorLevel(errgen.CRITICAL)
 			}
 		}
 
 		curentToken := p.currentToken()
 
 		if curentToken.Kind != lexer.COLON_TOKEN && curentToken.Kind != lexer.OPTIONAL_TOKEN {
-			errgen.AddError(p.FilePath, curentToken.Start.Line, curentToken.End.Line, curentToken.Start.Column, curentToken.End.Column, "expected : or ?:", errgen.ERROR_CRITICAL)
+			errgen.AddError(p.FilePath, curentToken.Start.Line, curentToken.End.Line, curentToken.Start.Column, curentToken.End.Column, "expected : or ?:").ErrorLevel(errgen.CRITICAL)
 		}
 
 		isOptional := p.advance().Kind == lexer.OPTIONAL_TOKEN
@@ -185,7 +185,7 @@ func parseDataType(p *Parser) ast.DataType {
 	case lexer.IDENTIFIER_TOKEN:
 		break
 	default:
-		errgen.AddError(p.FilePath, identifier.Start.Line, identifier.End.Line, identifier.Start.Column, identifier.End.Column, "invalid data type", errgen.ERROR_CRITICAL)
+		errgen.AddError(p.FilePath, identifier.Start.Line, identifier.End.Line, identifier.Start.Column, identifier.End.Column, "invalid data type").ErrorLevel(errgen.CRITICAL)
 	}
 
 	value := identifier.Value
@@ -280,7 +280,7 @@ func parseType(p *Parser, bp BINDING_POWER) ast.DataType {
 
 	if !exists {
 		//panic(fmt.Sprintf("TYPE NUD handler expected for token %s\n", tokenKind))
-		errgen.AddError(p.FilePath, p.currentToken().Start.Line, p.currentToken().End.Line, p.currentToken().Start.Column, p.currentToken().End.Column, fmt.Sprintf("unexpected token '%s'\n", tokenKind), errgen.ERROR_CRITICAL)
+		errgen.AddError(p.FilePath, p.currentToken().Start.Line, p.currentToken().End.Line, p.currentToken().Start.Column, p.currentToken().End.Column, fmt.Sprintf("unexpected token '%s'\n", tokenKind)).ErrorLevel(errgen.CRITICAL)
 		return nil
 	}
 
@@ -361,7 +361,7 @@ func parseStructType(p *Parser) ast.DataType {
 		iden := p.expect(lexer.IDENTIFIER_TOKEN)
 
 		if _, ok := props[iden.Value]; ok {
-			errgen.AddError(p.FilePath, iden.Start.Line, iden.End.Line, iden.Start.Column, iden.End.Column, fmt.Sprintf("property '%s' already defined", iden.Value), errgen.ERROR_CRITICAL)
+			errgen.AddError(p.FilePath, iden.Start.Line, iden.End.Line, iden.Start.Column, iden.End.Column, fmt.Sprintf("property '%s' already defined", iden.Value)).ErrorLevel(errgen.CRITICAL)
 		}
 
 		idenExpr := ast.IdentifierExpr{
@@ -395,7 +395,7 @@ func parseStructType(p *Parser) ast.DataType {
 	}
 
 	if len(props) == 0 {
-		errgen.AddError(p.FilePath, identifier.Start.Line, identifier.End.Line, identifier.Start.Column, identifier.End.Column, "struct is empty", errgen.ERROR_CRITICAL)
+		errgen.AddError(p.FilePath, identifier.Start.Line, identifier.End.Line, identifier.Start.Column, identifier.End.Column, "struct is empty").ErrorLevel(errgen.CRITICAL)
 	}
 
 	return ast.StructType{
@@ -418,7 +418,7 @@ func parseInterfaceType(p *Parser) ast.DataType {
 		start := p.expect(lexer.FUNCTION_TOKEN).Start
 
 		if p.currentTokenKind() != lexer.IDENTIFIER_TOKEN {
-			errgen.AddError(p.FilePath, p.currentToken().Start.Line, p.currentToken().End.Line, p.currentToken().Start.Column, p.currentToken().End.Column, "expected method name", errgen.ERROR_CRITICAL)
+			errgen.AddError(p.FilePath, p.currentToken().Start.Line, p.currentToken().End.Line, p.currentToken().Start.Column, p.currentToken().End.Column, "expected method name").ErrorLevel(errgen.CRITICAL)
 		}
 
 		name := p.expect(lexer.IDENTIFIER_TOKEN)
@@ -427,7 +427,7 @@ func parseInterfaceType(p *Parser) ast.DataType {
 
 		if _, ok := methods[name.Value]; ok {
 			msg := fmt.Sprintf("method %s already defined", name.Value)
-			errgen.AddError(p.FilePath, name.Start.Line, name.End.Line, name.Start.Column, name.End.Column, msg, errgen.ERROR_CRITICAL)
+			errgen.AddError(p.FilePath, name.Start.Line, name.End.Line, name.Start.Column, name.End.Column, msg).ErrorLevel(errgen.CRITICAL)
 		}
 
 		methods[name.Value] = ast.InterfaceMethod{

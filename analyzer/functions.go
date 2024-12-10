@@ -29,7 +29,7 @@ func CheckAndDeclareFunction(funcNode ast.FunctionLiteral, name string, env *Typ
 	//declare the function
 	err := env.declareVar(name, fn, true, false)
 	if err != nil {
-		errgen.AddError(env.filePath, funcNode.Start.Line, funcNode.End.Line, funcNode.Start.Column, funcNode.End.Column, "error declaring function. "+err.Error(), errgen.ERROR_CRITICAL)
+		errgen.AddError(env.filePath, funcNode.Start.Line, funcNode.End.Line, funcNode.Start.Column, funcNode.End.Column, "error declaring function. "+err.Error()).ErrorLevel(errgen.CRITICAL)
 	}
 	//check the function body
 	for _, stmt := range funcNode.Body.Contents {
@@ -50,7 +50,7 @@ func checkandDeclareParamaters(params []ast.FunctionParam, fnEnv *TypeEnvironmen
 
 func checkAndDeclareSingleParameter(param ast.FunctionParam, i int, params []ast.FunctionParam, fnEnv *TypeEnvironment, parameters *[]FnParam) {
 	if fnEnv.isDeclared(param.Identifier.Name) {
-		errgen.AddError(fnEnv.filePath, param.Identifier.Start.Line, param.Identifier.End.Line, param.Identifier.Start.Column, param.Identifier.End.Column, fmt.Sprintf("parameter '%s' is already defined", param.Identifier.Name), errgen.ERROR_NORMAL)
+		errgen.AddError(fnEnv.filePath, param.Identifier.Start.Line, param.Identifier.End.Line, param.Identifier.Start.Column, param.Identifier.End.Column, fmt.Sprintf("parameter '%s' is already defined", param.Identifier.Name)).ErrorLevel(errgen.NORMAL)
 	}
 
 	paramType := evaluateTypeName(param.Type, fnEnv)
@@ -61,7 +61,7 @@ func checkAndDeclareSingleParameter(param ast.FunctionParam, i int, params []ast
 
 	err := fnEnv.declareVar(param.Identifier.Name, paramType, false, param.IsOptional)
 	if err != nil {
-		errgen.AddError(fnEnv.filePath, param.Identifier.Start.Line, param.Identifier.End.Line, param.Identifier.Start.Column, param.Identifier.End.Column, fmt.Sprintf("error defining parameter. %s", err.Error()), errgen.ERROR_CRITICAL)
+		errgen.AddError(fnEnv.filePath, param.Identifier.Start.Line, param.Identifier.End.Line, param.Identifier.Start.Column, param.Identifier.End.Column, fmt.Sprintf("error defining parameter. %s", err.Error())).ErrorLevel(errgen.CRITICAL)
 	}
 
 	fmt.Printf("Declared parameter %s of type %s\n", param.Identifier.Name, paramType.DType())
@@ -76,15 +76,15 @@ func checkAndDeclareSingleParameter(param ast.FunctionParam, i int, params []ast
 func checkOptionalParameter(param ast.FunctionParam, i int, params []ast.FunctionParam, fnEnv *TypeEnvironment, paramType TcValue) {
 	for j := i + 1; j < len(params); j++ {
 		if !params[j].IsOptional {
-			errgen.AddError(fnEnv.filePath, params[j].Identifier.Start.Line, params[j].Identifier.End.Line, params[j].Identifier.Start.Column, params[j].Identifier.End.Column, fmt.Sprintf("parameter '%s' cannot be non-optional after an optional parameter", params[j].Identifier.Name), errgen.ERROR_CRITICAL)
+			errgen.AddError(fnEnv.filePath, params[j].Identifier.Start.Line, params[j].Identifier.End.Line, params[j].Identifier.Start.Column, params[j].Identifier.End.Column, fmt.Sprintf("parameter '%s' cannot be non-optional after an optional parameter", params[j].Identifier.Name)).ErrorLevel(errgen.CRITICAL)
 		}
 	}
 
 	defaultValue := CheckAST(param.DefaultValue, fnEnv)
-	fmt.Printf("Default value for parameter %s is %s\n", param.Identifier.Name, defaultValue.DType())	
+	fmt.Printf("Default value for parameter %s is %s\n", param.Identifier.Name, defaultValue.DType())
 	err := matchTypes(paramType, defaultValue)
 	if err != nil {
-		errgen.AddError(fnEnv.filePath, param.DefaultValue.StartPos().Line, param.DefaultValue.EndPos().Line, param.DefaultValue.StartPos().Column, param.DefaultValue.EndPos().Column, fmt.Sprintf("error defining parameter. %s", err.Error()), errgen.ERROR_CRITICAL)
+		errgen.AddError(fnEnv.filePath, param.DefaultValue.StartPos().Line, param.DefaultValue.EndPos().Line, param.DefaultValue.StartPos().Column, param.DefaultValue.EndPos().Column, fmt.Sprintf("error defining parameter. %s", err.Error())).ErrorLevel(errgen.CRITICAL)
 	}
 }
 
@@ -94,7 +94,7 @@ func checkFunctionCall(callNode ast.FunctionCallExpr, env *TypeEnvironment) TcVa
 	fn, err := userDefinedToFn(caller)
 
 	if err != nil {
-		errgen.AddError(env.filePath, callNode.Caller.StartPos().Line, callNode.Caller.EndPos().Line, callNode.Caller.StartPos().Column, callNode.Caller.EndPos().Column, err.Error(), errgen.ERROR_CRITICAL)
+		errgen.AddError(env.filePath, callNode.Caller.StartPos().Line, callNode.Caller.EndPos().Line, callNode.Caller.StartPos().Column, callNode.Caller.EndPos().Column, err.Error()).ErrorLevel(errgen.CRITICAL)
 	}
 
 	fnParams := fn.Params
@@ -107,10 +107,10 @@ func checkFunctionCall(callNode ast.FunctionCallExpr, env *TypeEnvironment) TcVa
 			}
 		}
 		if len(callNode.Arguments) < len(fnParams)-optionalParams {
-			errgen.AddError(env.filePath, callNode.Start.Line, callNode.End.Line, callNode.Start.Column, callNode.End.Column, fmt.Sprintf("function expects at least %d arguments, got %d", len(fnParams)-optionalParams, len(callNode.Arguments)), errgen.ERROR_NORMAL)
+			errgen.AddError(env.filePath, callNode.Start.Line, callNode.End.Line, callNode.Start.Column, callNode.End.Column, fmt.Sprintf("function expects at least %d arguments, got %d", len(fnParams)-optionalParams, len(callNode.Arguments))).ErrorLevel(errgen.NORMAL)
 		}
 		if len(callNode.Arguments) > len(fnParams) {
-			errgen.AddError(env.filePath, callNode.Start.Line, callNode.End.Line, callNode.Start.Column, callNode.End.Column, fmt.Sprintf("function expects at most %d arguments, got %d", len(fnParams), len(callNode.Arguments)), errgen.ERROR_NORMAL)
+			errgen.AddError(env.filePath, callNode.Start.Line, callNode.End.Line, callNode.Start.Column, callNode.End.Column, fmt.Sprintf("function expects at most %d arguments, got %d", len(fnParams), len(callNode.Arguments))).ErrorLevel(errgen.NORMAL)
 		}
 	}
 
@@ -120,7 +120,7 @@ func checkFunctionCall(callNode ast.FunctionCallExpr, env *TypeEnvironment) TcVa
 		err := matchTypes(fnParams[i].Type, arg)
 		if err != nil {
 
-			errgen.AddError(env.filePath, callNode.Arguments[i].StartPos().Line, callNode.Arguments[i].EndPos().Line, callNode.Arguments[i].StartPos().Column, callNode.Arguments[i].EndPos().Column, err.Error(), errgen.ERROR_NORMAL)
+			errgen.AddError(env.filePath, callNode.Arguments[i].StartPos().Line, callNode.Arguments[i].EndPos().Line, callNode.Arguments[i].StartPos().Column, callNode.Arguments[i].EndPos().Column, err.Error()).ErrorLevel(errgen.NORMAL)
 		}
 	}
 
@@ -148,7 +148,7 @@ func checkFunctionDeclStmt(funcNode ast.FunctionDeclStmt, env *TypeEnvironment) 
 
 	if env.isDeclared(funcName) {
 
-		errgen.AddError(env.filePath, funcNode.Identifier.Start.Line, funcNode.Identifier.End.Line, funcNode.Identifier.Start.Column, funcNode.Identifier.End.Column, fmt.Sprintf("function %s is already declared", funcName), errgen.ERROR_NORMAL)
+		errgen.AddError(env.filePath, funcNode.Identifier.Start.Line, funcNode.Identifier.End.Line, funcNode.Identifier.Start.Column, funcNode.Identifier.End.Column, fmt.Sprintf("function %s is already declared", funcName)).ErrorLevel(errgen.NORMAL)
 	}
 
 	return CheckAndDeclareFunction(funcNode.FunctionLiteral, funcName, env)
@@ -158,7 +158,7 @@ func getFunctionReturnValue(env *TypeEnvironment, returnNode ast.Node) TcValue {
 	funcParent, err := env.resolveFunctionEnv()
 
 	if err != nil {
-		errgen.AddError(env.filePath, returnNode.StartPos().Line, returnNode.EndPos().Line, returnNode.StartPos().Column, returnNode.EndPos().Column, err.Error(), errgen.ERROR_CRITICAL)
+		errgen.AddError(env.filePath, returnNode.StartPos().Line, returnNode.EndPos().Line, returnNode.StartPos().Column, returnNode.EndPos().Column, err.Error()).ErrorLevel(errgen.CRITICAL)
 	}
 
 	fnName := funcParent.scopeName
@@ -170,7 +170,7 @@ func getFunctionReturnValue(env *TypeEnvironment, returnNode ast.Node) TcValue {
 		return fn.Fn.Returns
 	default:
 
-		errgen.AddError(env.filePath, returnNode.StartPos().Line, returnNode.EndPos().Line, returnNode.StartPos().Column, returnNode.EndPos().Column, fmt.Sprintf("'%s' is not a function", fnName), errgen.ERROR_NORMAL)
+		errgen.AddError(env.filePath, returnNode.StartPos().Line, returnNode.EndPos().Line, returnNode.StartPos().Column, returnNode.EndPos().Column, fmt.Sprintf("'%s' is not a function", fnName)).ErrorLevel(errgen.NORMAL)
 		return NewVoid()
 	}
 }
