@@ -189,6 +189,24 @@ func (a FunctionType) EndPos() lexer.Position {
 	return a.Location.End
 }
 
+type MaybeType struct {
+	TypeName  builtins.PARSER_TYPE
+	MaybeType DataType
+	Location
+}
+
+func (a MaybeType) Type() builtins.PARSER_TYPE {
+	return a.TypeName
+}
+
+func (a MaybeType) StartPos() lexer.Position {
+	return a.Location.Start
+}
+
+func (a MaybeType) EndPos() lexer.Position {
+	return a.Location.End
+}
+
 type MapType struct {
 	TypeName  builtins.PARSER_TYPE
 	Map       IdentifierExpr

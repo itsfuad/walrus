@@ -41,13 +41,11 @@ func evaluateIndexableAccess(indexable ast.Indexable, e *TypeEnvironment) TcValu
 		return NewInt(8, false)
 	case Map:
 		//if key is interface then error
-		if t.KeyType.DType() == INTERFACE_TYPE {
-			//return t.ValueType, fmt.Errorf("cannot access index of type %s", INTERFACE_TYPE)
+		if unwrapType(t.KeyType).DType() == INTERFACE_TYPE {
 			errgen.AddError(e.filePath, indexable.Start.Line, indexable.End.Line, indexable.Index.StartPos().Column, indexable.Index.EndPos().Column, fmt.Sprintf("cannot access index of type %s", INTERFACE_TYPE)).ErrorLevel(errgen.NORMAL)
 		}
 		indexedValueType = t.ValueType
 	default:
-		//return nil, fmt.Errorf("cannot access index of type %s", container.DType())
 		errgen.AddError(e.filePath, indexable.Start.Line, indexable.End.Line, indexable.Container.StartPos().Column, indexable.Container.EndPos().Column, fmt.Sprintf("cannot access index of type %s", container.DType())).ErrorLevel(errgen.CRITICAL)
 	}
 

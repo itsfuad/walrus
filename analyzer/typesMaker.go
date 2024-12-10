@@ -50,3 +50,7 @@ func NewVoid() Void {
 func NewMap(keyType TcValue, valueType TcValue) Map {
 	return Map{DataType: MAP_TYPE, KeyType: keyType, ValueType: valueType}
 }
+
+func NewMaybe(valueType TcValue) Maybe {
+	return Maybe{DataType: MAYBE_TYPE, MaybeType: valueType}
+}

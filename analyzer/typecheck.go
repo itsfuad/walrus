@@ -71,6 +71,8 @@ func CheckAST(node ast.Node, env *TypeEnvironment) TcValue {
 		return checkForStmt(t, env)
 	case ast.ReturnStmt:
 		return checkReturnStmt(t, env)
+	case ast.SafeStmt:
+		return checkSafeStmt(t, env)
 	case nil:
 		return NewNull()
 	}

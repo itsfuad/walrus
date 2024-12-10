@@ -130,4 +130,5 @@ func bindLookupHandlers() {
 	stmt(lexer.RETURN_TOKEN, parseReturnStmt)         // return statement
 	//implement keyword
 	stmt(lexer.IMPLEMENT_TOKEN, parseImplementStmt)
+	stmt(lexer.SAFE_TOKEN, parseSafeStmt)
 }

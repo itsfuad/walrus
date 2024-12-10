@@ -12,6 +12,8 @@ const (
 	GLOBAL_SCOPE SCOPE_TYPE = iota
 	FUNCTION_SCOPE
 	STRUCT_SCOPE
+	SAFE_SCOPE
+	OTHERWISE_SCOPE
 	CONDITIONAL_SCOPE
 	LOOP_SCOPE
 )
@@ -64,7 +66,7 @@ func initVar(env *TypeEnvironment, name string, typeVar TcValue, isConst bool, i
 	}
 
 	builtinValues[name] = true
-	
+
 	utils.BRIGHT_BROWN.Printf("Initialized builtin value '%s'\n", name)
 }
 
@@ -81,14 +83,24 @@ func NewTypeENV(parent *TypeEnvironment, scope SCOPE_TYPE, scopeName string, fil
 	}
 }
 
-func (t *TypeEnvironment) IsInStructScope() bool {
+func (t *TypeEnvironment) isInFunctionScope() bool {
+	if t.scopeType == FUNCTION_SCOPE {
+		return true
+	}
+	if t.parent == nil {
+		return false
+	}
+	return t.parent.isInFunctionScope()
+}
+
+func (t *TypeEnvironment) isInStructScope() bool {
 	if t.scopeType == STRUCT_SCOPE {
 		return true
 	}
 	if t.parent == nil {
 		return false
 	}
-	return t.parent.IsInStructScope()
+	return t.parent.isInStructScope()
 }
 
 func (t *TypeEnvironment) resolveFunctionEnv() (*TypeEnvironment, error) {

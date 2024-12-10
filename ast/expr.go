@@ -286,7 +286,6 @@ type StructProp struct {
 	Value Node
 }
 
-
 type StructLiteral struct {
 	Identifier IdentifierExpr
 	Properties map[string]StructProp
