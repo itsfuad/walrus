@@ -33,7 +33,7 @@ func parseExpr(p *Parser, bp BINDING_POWER) ast.Node {
 		} else {
 			msg = fmt.Sprintf("parser:nud:unexpected token '%s'\n", tokenKind)
 		}
-		errgen.AddError(p.FilePath, p.currentToken().Start.Line, p.currentToken().End.Line, p.currentToken().Start.Column, p.currentToken().End.Column, msg).ErrorLevel(errgen.CRITICAL)
+		errgen.AddError(p.FilePath, p.currentToken().Start.Line, p.currentToken().End.Line, p.currentToken().Start.Column, p.currentToken().End.Column, msg).ErrorLevel(errgen.SYNTAX)
 	}
 
 	expr := nudFunction(p)
@@ -46,7 +46,7 @@ func parseExpr(p *Parser, bp BINDING_POWER) ast.Node {
 
 		if !exists {
 			msg := fmt.Sprintf("parser:led:unexpected token %s\n", tokenKind)
-			errgen.AddError(p.FilePath, p.currentToken().Start.Line, p.currentToken().End.Line, p.currentToken().Start.Column, p.currentToken().End.Column, msg).ErrorLevel(errgen.CRITICAL)
+			errgen.AddError(p.FilePath, p.currentToken().Start.Line, p.currentToken().End.Line, p.currentToken().Start.Column, p.currentToken().End.Column, msg).ErrorLevel(errgen.SYNTAX)
 		}
 
 		expr = ledFunction(p, expr, GetBP(p.currentTokenKind()))
@@ -101,7 +101,7 @@ func parsePrimaryExpr(p *Parser) ast.Node {
 		}
 	default:
 		msg := fmt.Sprintf("Cannot create primary expression from %s\n", primaryToken.Value)
-		errgen.AddError(p.FilePath, p.currentToken().Start.Line, p.currentToken().End.Line, p.currentToken().Start.Column, p.currentToken().End.Column, msg).ErrorLevel(errgen.CRITICAL)
+		errgen.AddError(p.FilePath, p.currentToken().Start.Line, p.currentToken().End.Line, p.currentToken().Start.Column, p.currentToken().End.Column, msg).ErrorLevel(errgen.SYNTAX)
 	}
 
 	return nil
@@ -140,7 +140,7 @@ func parsePostfixExpr(p *Parser, left ast.Node, bp BINDING_POWER) ast.Node {
 	start := left.StartPos()
 	// left must be an identifier
 	if _, ok := left.(ast.IdentifierExpr); !ok {
-		errgen.AddError(p.FilePath, left.StartPos().Line, left.EndPos().Line, left.StartPos().Column, left.EndPos().Column, "only identifiers can be incremented or decremented").ErrorLevel(errgen.CRITICAL)
+		errgen.AddError(p.FilePath, left.StartPos().Line, left.EndPos().Line, left.StartPos().Column, left.EndPos().Column, "only identifiers can be incremented or decremented").ErrorLevel(errgen.SYNTAX)
 	}
 	operator := p.advance()
 	return ast.PostfixExpr{
@@ -206,7 +206,7 @@ func parseUnaryExpr(p *Parser) ast.Node {
 	case lexer.MINUS_TOKEN, lexer.NOT_TOKEN:
 		break
 	default:
-		errgen.AddError(p.FilePath, operator.Start.Line, operator.End.Line, operator.Start.Column, operator.End.Column, fmt.Sprintf("invalid unary operator '%s'", operator.Value)).ErrorLevel(errgen.CRITICAL)
+		errgen.AddError(p.FilePath, operator.Start.Line, operator.End.Line, operator.Start.Column, operator.End.Column, fmt.Sprintf("invalid unary operator '%s'", operator.Value)).ErrorLevel(errgen.SYNTAX)
 	}
 
 	argument := parseExpr(p, UNARY_BP)

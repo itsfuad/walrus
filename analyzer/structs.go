@@ -29,7 +29,7 @@ func checkStructLiteral(structLit ast.StructLiteral, env *TypeEnvironment) TcVal
 		}
 
 		//check if the property type matches the defined type
-		providedType := CheckAST(prop.Value, env)
+		providedType := parseNodeValue(prop.Value, env)
 
 		expectedType := structType.StructScope.variables[propname].(StructProperty).Type
 
@@ -70,7 +70,7 @@ func checkPropertyAccess(expr ast.StructPropertyAccessExpr, env *TypeEnvironment
 
 	fmt.Printf("Property Access: %s\n", expr.Property.Name)
 
-	object := CheckAST(expr.Object, env)
+	object := parseNodeValue(expr.Object, env)
 
 	prop := expr.Property
 

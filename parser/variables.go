@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"fmt"
 	"walrus/ast"
 	"walrus/errgen"
 	"walrus/lexer"
@@ -38,7 +39,7 @@ func parseVarDeclStmt(p *Parser) ast.Node {
 	// is it let or const?
 	isConst := declToken.Kind == lexer.CONST_TOKEN
 
-	var variables []ast.VarDeclVar
+	var variables []ast.VarDeclStmtVar
 
 	for {
 		// parse the variable name
@@ -55,7 +56,7 @@ func parseVarDeclStmt(p *Parser) ast.Node {
 			explicitType = parseType(p, DEFAULT_BP)
 		} else if assignmentToken.Kind != lexer.WALRUS_TOKEN {
 			msg := "Invalid variable declaration syntax. Expected : or :="
-			errgen.AddError(p.FilePath, assignmentToken.Start.Line, assignmentToken.End.Line, assignmentToken.Start.Column, assignmentToken.End.Column, msg).ErrorLevel(errgen.CRITICAL)
+			errgen.AddError(p.FilePath, assignmentToken.Start.Line, assignmentToken.End.Line, assignmentToken.Start.Column, assignmentToken.End.Column, msg).ErrorLevel(errgen.SYNTAX)
 		}
 
 		if p.currentTokenKind() != lexer.COMMA_TOKEN && p.currentTokenKind() != lexer.SEMI_COLON_TOKEN {
@@ -69,10 +70,10 @@ func parseVarDeclStmt(p *Parser) ast.Node {
 		//if const, we must have a value
 		if isConst && value == nil {
 			msg := "constants must have value when declared"
-			errgen.AddError(p.FilePath, p.currentToken().Start.Line, p.currentToken().End.Line, p.currentToken().Start.Column, p.currentToken().End.Column, msg).ErrorLevel(errgen.CRITICAL)
+			errgen.AddError(p.FilePath, p.currentToken().Start.Line, p.currentToken().End.Line, p.currentToken().Start.Column, p.currentToken().End.Column, msg).ErrorLevel(errgen.SYNTAX)
 		}
 
-		variables = append(variables, ast.VarDeclVar{
+		variables = append(variables, ast.VarDeclStmtVar{
 			Identifier: ast.IdentifierExpr{
 				Name: identifier.Value,
 				Location: ast.Location{
@@ -92,7 +93,7 @@ func parseVarDeclStmt(p *Parser) ast.Node {
 			break
 		}
 
-		p.expect(lexer.COMMA_TOKEN)
+		p.expectError(lexer.COMMA_TOKEN, fmt.Errorf("expected ';' or ',' for multiple variable declarations"))
 	}
 
 	end := p.expect(lexer.SEMI_COLON_TOKEN).End

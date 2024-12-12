@@ -22,8 +22,8 @@ import (
 // If both checks pass, the function returns the type of the elements contained in the array.
 func evaluateIndexableAccess(indexable ast.Indexable, e *TypeEnvironment) TcValue {
 
-	container := CheckAST(indexable.Container, e)
-	index := CheckAST(indexable.Index, e)
+	container := parseNodeValue(indexable.Container, e)
+	index := parseNodeValue(indexable.Index, e)
 
 	var indexedValueType TcValue
 
@@ -64,7 +64,7 @@ func evaluateIndexableAccess(indexable ast.Indexable, e *TypeEnvironment) TcValu
 func evaluateArrayExpr(array ast.ArrayLiteral, env *TypeEnvironment) TcValue {
 	var expectedType TcValue
 	for i, value := range array.Values {
-		v := CheckAST(value, env)
+		v := parseNodeValue(value, env)
 		if i == 0 {
 			expectedType = v
 		}

@@ -19,16 +19,16 @@ func (a ProgramStmt) EndPos() lexer.Position {
 	return a.Location.End
 }
 
-type VarDeclVar struct {
-	Identifier IdentifierExpr
-	Value      Node
+type VarDeclStmtVar struct {
+	Identifier   IdentifierExpr
+	Value        Node
 	ExplicitType DataType
 	Location
 }
 
 type VarDeclStmt struct {
-	Variables []VarDeclVar
-	IsConst      bool
+	Variables []VarDeclStmtVar
+	IsConst   bool
 	Location
 }
 
@@ -206,8 +206,8 @@ func (a ImplStmt) EndPos() lexer.Position {
 }
 
 type SafeStmt struct {
-	Value IdentifierExpr
-	SafeBlock BlockStmt
+	Value       IdentifierExpr
+	SafeBlock   BlockStmt
 	UnsafeBlock BlockStmt
 	Location
 }

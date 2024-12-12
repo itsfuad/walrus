@@ -23,14 +23,14 @@ func checkForStmt(forStmt ast.ForStmt, env *TypeEnvironment) TcValue {
 			errgen.AddError(env.filePath, forStmt.StartPos().Line, forStmt.EndPos().Line, forStmt.StartPos().Column, forStmt.EndPos().Column, "for loop initialization must be a variable declaration or assignment").ErrorLevel(errgen.CRITICAL)
 		}
 
-		cond := CheckAST(forStmt.Condition, forLoopEnv)
+		cond := parseNodeValue(forStmt.Condition, forLoopEnv)
 
 		//must be a boolean if !cond -> error, if !cond.Type == bool -> error
 		if cond == nil || cond.DType() != BOOLEAN_TYPE {
 			errgen.AddError(env.filePath, forStmt.StartPos().Line, forStmt.EndPos().Line, forStmt.StartPos().Column, forStmt.EndPos().Column, "for loop condition must be a boolean expression").ErrorLevel(errgen.CRITICAL)
 		}
 
-		incr := CheckAST(forStmt.Increment, forLoopEnv)
+		incr := parseNodeValue(forStmt.Increment, forLoopEnv)
 
 		//must be assignment
 		if _, ok := incr.(ast.IncrementalInterface); !ok {
@@ -40,7 +40,7 @@ func checkForStmt(forStmt ast.ForStmt, env *TypeEnvironment) TcValue {
 
 	//infinte loop
 	for _, stmt := range forStmt.Block.Contents {
-		CheckAST(stmt, forLoopEnv)
+		parseNodeValue(stmt, forLoopEnv)
 	}
 
 	return NewVoid()

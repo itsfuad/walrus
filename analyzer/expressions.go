@@ -13,7 +13,7 @@ func checkIncrementalExpr(node ast.IncrementalInterface, env *TypeEnvironment) T
 	op := node.Op()
 	arg := node.Arg()
 	// the argument must be an identifier evaluated to a number
-	typeVal := CheckAST(arg, env)
+	typeVal := parseNodeValue(arg, env)
 	if !isNumberType(typeVal) {
 
 		errgen.AddError(env.filePath, arg.StartPos().Line, arg.EndPos().Line, arg.StartPos().Column, arg.EndPos().Column, "invalid prefix operation with non-numeric type").ErrorLevel(errgen.NORMAL)
@@ -34,7 +34,7 @@ func logCastSuccess(originalType TcValue, toCast TcValue) {
 
 func checkTypeCast(node ast.TypeCastExpr, env *TypeEnvironment) TcValue {
 
-	originalType := CheckAST(node.Expression, env)
+	originalType := parseNodeValue(node.Expression, env)
 	toCast := evaluateTypeName(node.ToCast, env)
 
 	if originalType.DType() == toCast.DType() {
@@ -56,7 +56,7 @@ func checkUnaryExpr(node ast.UnaryExpr, env *TypeEnvironment) TcValue {
 	op := node.Operator
 	arg := node.Argument
 	//evaluate argument. must be evaluated to number or boolean for ! (not)
-	typeVal := CheckAST(arg, env)
+	typeVal := parseNodeValue(arg, env)
 
 	switch t := typeVal.(type) {
 	case Int, Float:
@@ -80,8 +80,8 @@ func checkUnaryExpr(node ast.UnaryExpr, env *TypeEnvironment) TcValue {
 func checkBinaryExpr(node ast.BinaryExpr, env *TypeEnvironment) TcValue {
 	op := node.Operator
 
-	left := CheckAST(node.Left, env)
-	right := CheckAST(node.Right, env)
+	left := parseNodeValue(node.Left, env)
+	right := parseNodeValue(node.Right, env)
 
 	leftType := tcValueToString(left)
 	rightType := tcValueToString(right)

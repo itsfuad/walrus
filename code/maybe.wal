@@ -9,13 +9,16 @@ let b := 34;
 //now let's try to access the value
 //let x := 2 + a; // cannot add i32 and maybe{i32}
 
-let res: i32;
+let res: i32 = 12;
+let z : i32 = (res = 4);
+z = (res = 4);
+
 
 //safe access
 safe a {
     //a is i32 here
-    res = 2 + a; // allowed
+    res = 2 + a + 5; // allowed
 } otherwise {
     //a is null here
-    res = a; // not allowed
+    //res = a; // not allowed
 }
