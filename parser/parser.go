@@ -47,15 +47,15 @@ func (p *Parser) expectError(expectedKind builtins.TOKEN_KIND, err error) lexer.
 
 	if kind != expectedKind {
 		if err != nil {
-			errgen.AddError(p.FilePath, start.Line, end.Line, start.Column, end.Column, err.Error()).ErrorLevel(errgen.CRITICAL)
+			errgen.AddError(p.FilePath, start.Line, end.Line, start.Column, end.Column, err.Error()).ErrorLevel(errgen.SYNTAX)
 		} else {
-			msg := "error while parsing: "
+			var msg string
 			if lexer.IsKeyword(token.Value) {
-				msg += fmt.Sprintf("unexpected keyword '%s' found. expected '%s'", token.Value, expectedKind)
+				msg = fmt.Sprintf("unexpected keyword '%s' found. expected '%s'", token.Value, expectedKind)
 			} else {
-				msg += fmt.Sprintf("unexpected token '%s' found. expected '%s'", token.Value, expectedKind)
+				msg = fmt.Sprintf("unexpected token '%s' found. expected '%s'", token.Value, expectedKind)
 			}
-			errgen.AddError(p.FilePath, start.Line, end.Line, start.Column, end.Column, msg).ErrorLevel(errgen.CRITICAL)
+			errgen.AddError(p.FilePath, start.Line, end.Line, start.Column, end.Column, msg).ErrorLevel(errgen.SYNTAX)
 		}
 	}
 	return p.advance()

@@ -55,7 +55,7 @@ func parseStructLiteral(p *Parser) ast.Node {
 		val := parseExpr(p, DEFAULT_BP)
 
 		if _, ok := props[iden.Value]; ok {
-			errgen.AddError(p.FilePath, iden.Start.Line, iden.End.Line, iden.Start.Column, iden.End.Column, fmt.Sprintf("property '%s' was previously assigned", iden.Value)).ErrorLevel(errgen.CRITICAL)
+			errgen.AddError(p.FilePath, iden.Start.Line, iden.End.Line, iden.Start.Column, iden.End.Column, fmt.Sprintf("property '%s' was previously assigned", iden.Value)).ErrorLevel(errgen.SYNTAX)
 		}
 
 		props[iden.Value] = ast.StructProp{

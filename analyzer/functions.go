@@ -33,7 +33,7 @@ func CheckAndDeclareFunction(funcNode ast.FunctionLiteral, name string, env *Typ
 	}
 	//check the function body
 	for _, stmt := range funcNode.Body.Contents {
-		CheckAST(stmt, fnEnv)
+		parseNodeValue(stmt, fnEnv)
 	}
 
 	return fn
@@ -80,7 +80,7 @@ func checkOptionalParameter(param ast.FunctionParam, i int, params []ast.Functio
 		}
 	}
 
-	defaultValue := CheckAST(param.DefaultValue, fnEnv)
+	defaultValue := parseNodeValue(param.DefaultValue, fnEnv)
 	fmt.Printf("Default value for parameter %s is %s\n", param.Identifier.Name, defaultValue.DType())
 	err := matchTypes(paramType, defaultValue)
 	if err != nil {
@@ -90,7 +90,7 @@ func checkOptionalParameter(param ast.FunctionParam, i int, params []ast.Functio
 
 func checkFunctionCall(callNode ast.FunctionCallExpr, env *TypeEnvironment) TcValue {
 	//check if the function is declared
-	caller := CheckAST(callNode.Caller, env)
+	caller := parseNodeValue(callNode.Caller, env)
 	fn, err := userDefinedToFn(caller)
 
 	if err != nil {
@@ -116,7 +116,7 @@ func checkFunctionCall(callNode ast.FunctionCallExpr, env *TypeEnvironment) TcVa
 
 	//check if the arguments match the parameters
 	for i := 0; i < len(callNode.Arguments); i++ {
-		arg := CheckAST(callNode.Arguments[i], env)
+		arg := parseNodeValue(callNode.Arguments[i], env)
 		err := matchTypes(fnParams[i].Type, arg)
 		if err != nil {
 

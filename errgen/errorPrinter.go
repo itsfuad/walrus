@@ -35,14 +35,15 @@ import (
 	"walrus/utils"
 )
 
-type ERROR_LEVEL int
+type ERROR_LEVEL string
 
 const (
-	NULL ERROR_LEVEL = iota
-	CRITICAL // Stops compilation immediately
-	NORMAL                      // Regular error that doesn't halt compilation
-	WARNING                     // Indicates potential issues
-	INFO                        // Informational messages
+	NULL ERROR_LEVEL = ""
+	CRITICAL ERROR_LEVEL = "critical error" // Stops compilation immediately
+	SYNTAX ERROR_LEVEL = "syntax error" // Syntax error, also stops compilation
+	NORMAL ERROR_LEVEL = "error"                      // Regular error that doesn't halt compilation
+	WARNING ERROR_LEVEL = "warning"                     // Indicates potential issues
+	INFO ERROR_LEVEL = "info"                        // Informational messages
 )
 
 type WalrusError struct {
@@ -56,7 +57,7 @@ type WalrusError struct {
 	level     ERROR_LEVEL
 }
 
-// PrintError formats and displays error information for a WalrusError.
+// printError formats and displays error information for a WalrusError.
 // It prints the error location, the relevant code line, and visual indicators
 // showing where the error occurred. For critical errors, it will terminate
 // program execution.
@@ -75,15 +76,10 @@ type WalrusError struct {
 //   - Exits program if error is critical
 //
 // If file reading fails, the function will panic.
-func PrintError(e *WalrusError, showFileName bool) {
+func printError(e *WalrusError) {
 	fileData, err := os.ReadFile(e.filePath)
 	if err != nil {
 		panic(err)
-	}
-
-	if showFileName {
-		utils.BLUE.Print("\nIn file: ")
-		utils.GREY.Printf("%s:%d:%d\n", e.filePath, e.lineStart, e.colStart)
 	}
 
 	lines := strings.Split(string(fileData), "\n")
@@ -108,9 +104,15 @@ func PrintError(e *WalrusError, showFileName bool) {
 	if e.level == CRITICAL {
 		//stop further execution
 		utils.BOLD_RED.Print("Critical Error: ")
+	} else if e.level == SYNTAX {
+		utils.BOLD_RED.Print("Syntax Error: ")
+	} else {
+		utils.RED.Print("Error: ")
 	}
 
 	utils.RED.Println(e.err.Error())
+
+	utils.GREY.Printf("└─ at: %s:%d:%d\n", e.filePath, e.lineStart, e.colStart)
 
 	if len(e.hints) > 0 {
 		utils.GREEN.Println("Hint:")
@@ -119,8 +121,8 @@ func PrintError(e *WalrusError, showFileName bool) {
 		}
 	}
 
-	if e.level == CRITICAL {
-		utils.ORANGE.Println("Compilation stopped due to critical error. Resolve the critical error to continue compilation")
+	if e.level == CRITICAL || e.level == SYNTAX {
+		utils.ORANGE.Printf("Compilation halted due to %s\n", e.level)
 		os.Exit(-1)
 	}
 }
@@ -189,11 +191,11 @@ func AddError(filePath string, lineStart, lineEnd int, colStart, colEnd int, err
 
 
 func (e *WalrusError) ErrorLevel(level ERROR_LEVEL) {
-	if level == 0 {
+	if level == NULL {
 		panic("call ErrorLevel() method with valid Error level")
 	}
 	e.level = level
-	if level == CRITICAL {
+	if level == CRITICAL || level == SYNTAX {
 		DisplayErrors()
 	}
 }
@@ -203,12 +205,17 @@ func DisplayErrors() {
 		utils.GREEN.Println("------- Passed --------")
 		return
 	} else {
-		utils.BOLD_RED.Printf("%d error(s) found\n", len(globalErrors))
+		//utils.BOLD_RED.Printf("%d error(s) found\n", len(globalErrors))
+		str := fmt.Sprintf("%d error", len(globalErrors))
+		if len(globalErrors) > 1 {
+			str += "s"
+		}
+		utils.BOLD_RED.Printf("%s found\n", str)
 	}
 	for _, err := range globalErrors {
-		if err.level == 0 {
+		if err.level == NULL {
 			panic("call ErrorLevel() method with valid Error level")
 		}
-		PrintError(err, true)
+		printError(err)
 	}
 }

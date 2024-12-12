@@ -12,8 +12,8 @@ func checkMapLiteral(node ast.MapLiteral, env *TypeEnvironment) TcValue {
 
 	//check the key value pairs
 	for _, value := range node.Values {
-		keyType := CheckAST(value.Key, env)
-		valueType := CheckAST(value.Value, env)
+		keyType := parseNodeValue(value.Key, env)
+		valueType := parseNodeValue(value.Value, env)
 
 		err := matchTypes(evaluatedMapType.(Map).KeyType, keyType)
 		if err != nil {

@@ -21,7 +21,7 @@ import (
 // - Adds normal errors if there are issues within the safe or unsafe blocks.
 func checkSafeStmt(node ast.SafeStmt, env *TypeEnvironment) TcValue {
 
-	maybeVar := CheckAST(node.Value, env)
+	maybeVar := parseNodeValue(node.Value, env)
 
 	if maybeVar.DType() != MAYBE_TYPE {
 		errgen.AddError(env.filePath, node.Value.Start.Line, node.Value.End.Line, node.Value.Start.Column, node.Value.End.Column, "safe-otherwise can only be used with 'maybe' types").ErrorLevel(errgen.CRITICAL)
@@ -53,7 +53,7 @@ func checkSafeBlock(env *TypeEnvironment, name string, block ast.BlockStmt, valu
 
 	//check the block
 	for _, stmt := range block.Contents {
-		CheckAST(stmt, safeScope)
+		parseNodeValue(stmt, safeScope)
 	}
 
 	return nil
@@ -72,7 +72,7 @@ func checkOtherwiseBlock(env *TypeEnvironment, name string, block ast.BlockStmt)
 
 	//check the block
 	for _, stmt := range block.Contents {
-		CheckAST(stmt, unsafeScope)
+		parseNodeValue(stmt, unsafeScope)
 	}
 
 	return nil
