@@ -15,7 +15,7 @@ func main() {
 
 	fileName := "userTypes"
 	folder := "code"
-	filePath := fmt.Sprintf("%s/%ss.wal", folder, fileName)
+	filePath := fmt.Sprintf("%s/%s.wal", folder, fileName)
 	tokens := lexer.Tokenize(filePath, true)
 	tree := parser.NewParser(filePath, tokens).Parse(false)
 

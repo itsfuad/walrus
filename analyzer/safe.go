@@ -53,7 +53,7 @@ func checkSafeBlock(env *TypeEnvironment, name string, block ast.BlockStmt, valu
 
 	//check the block
 	for _, stmt := range block.Contents {
-		parseNodeValue(stmt, safeScope)
+		CheckAST(stmt, safeScope)
 	}
 
 	return nil
@@ -72,7 +72,7 @@ func checkOtherwiseBlock(env *TypeEnvironment, name string, block ast.BlockStmt)
 
 	//check the block
 	for _, stmt := range block.Contents {
-		parseNodeValue(stmt, unsafeScope)
+		CheckAST(stmt, unsafeScope)
 	}
 
 	return nil

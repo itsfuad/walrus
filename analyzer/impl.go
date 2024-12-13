@@ -60,7 +60,7 @@ func checkImplStmt(implStmt ast.ImplStmt, env *TypeEnvironment) TcValue {
 
 		//check the function body
 		for _, stmt := range method.Body.Contents {
-			parseNodeValue(stmt, fnEnv)
+			CheckAST(stmt, fnEnv)
 		}
 
 	}

@@ -64,7 +64,7 @@ type IPerson interface {
 };
 
 fn ShowInfo(p: IPerson) {
-    p.getName();
+    let name := p.getName();
 }
 
 // To pass any User and Banana to ShowInfo function, they must implement IPerson interface's every method
@@ -76,6 +76,9 @@ fn ShowInfo(p: IPerson) {
         ret this.name;
     }
 }*/
+
+let arr := [1, 2, 3, 4, 5];
+arr[user];
 
 ShowInfo(user);
 ShowInfo(@Banana{name: "Cavendish", price: 10});

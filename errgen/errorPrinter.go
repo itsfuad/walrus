@@ -1,30 +1,3 @@
-// Package errgen provides error handling and reporting functionality for the Walrus compiler.
-//
-// The package implements a custom error type WalrusError and various utility functions
-// for error management, including error creation, display, and collection.
-//
-// Error Levels:
-//   - ERROR_CRITICAL: Stops compilation immediately
-//   - ERROR_NORMAL: Regular error that doesn't halt compilation
-//   - WARNING: Indicates potential issues
-//   - INFO: Informational messages
-//
-// Example usage:
-//
-//	err := AddError("main.go", 1, 1, 1, 10, "unexpected token", ERROR_NORMAL)
-//	err.AddHint("Did you forget a semicolon?")
-//	DisplayErrors()
-//
-// The package provides colored output for better error visualization and supports
-// features like:
-//   - Line highlighting with ^ and ~ characters
-//   - File location reporting
-//   - Multiple hints per error
-//   - Global error collection
-//   - Critical error handling with immediate program termination
-//
-// Global error tracking allows accumulating multiple errors before displaying them,
-// unless a critical error is encountered, which triggers immediate display and program exit.
 package errgen
 
 import (
@@ -95,12 +68,16 @@ func printError(e *WalrusError) {
 		hLen = 0
 	}
 
+	//print the previous line if available
+	if e.lineStart > 1 && strings.TrimSpace(lines[e.lineStart-2]) != "" {
+		utils.GREY.Printf("%d | %s\n", e.lineStart-1, lines[e.lineStart-2])
+	}
 	lineNumber := fmt.Sprintf("%d | ", e.lineStart)
 	utils.GREY.Print(lineNumber)
 	fmt.Println(line)
 	underLine := fmt.Sprintf("%s^%s\n", strings.Repeat(" ", (e.colStart-1)+len(lineNumber)), strings.Repeat("~", hLen))
-
 	utils.RED.Print(underLine)
+
 	if e.level == CRITICAL {
 		//stop further execution
 		utils.BOLD_RED.Print("Critical Error: ")
@@ -110,9 +87,9 @@ func printError(e *WalrusError) {
 		utils.RED.Print("Error: ")
 	}
 
-	utils.RED.Print(e.err.Error())
+	utils.RED.Print(e.err.Error() + "\n")
 
-	utils.GREY.Printf("at: %s:%d:%d\n\n", e.filePath, e.lineStart, e.colStart)
+	utils.GREY.Printf("at: %s:%d:%d\n", e.filePath, e.lineStart, e.colStart)
 
 	if len(e.hints) > 0 {
 		utils.GREEN.Println("Hint:")
@@ -123,7 +100,8 @@ func printError(e *WalrusError) {
 
 	if e.level == CRITICAL || e.level == SYNTAX {
 		utils.ORANGE.Printf("Compilation halted due to %s\n", e.level)
-		os.Exit(-1)
+		//os.Exit(-1)
+		panic("0x0")
 	}
 }
 
@@ -205,7 +183,6 @@ func DisplayErrors() {
 		utils.GREEN.Println("------- Passed --------")
 		return
 	} else {
-		//utils.BOLD_RED.Printf("%d error(s) found\n", len(globalErrors))
 		str := fmt.Sprintf("%d error", len(globalErrors))
 		if len(globalErrors) > 1 {
 			str += "s"
@@ -226,7 +203,7 @@ func TreeFormatString(strings ...string) string {
 	str := ""
 	for i, prop := range strings {
 		if i == len(strings)-1 {
-			str += utils.GREY.Sprint("└── ") + utils.BROWN.Sprint(prop + "\n")
+			str += utils.GREY.Sprint("└── ") + utils.BROWN.Sprint(prop)
 		} else {
 			str += utils.GREY.Sprint("├── ") + utils.BROWN.Sprint(prop + "\n")
 		}

@@ -7,7 +7,7 @@ import (
 
 func checkConditionBlock(block ast.BlockStmt, env *TypeEnvironment) TcValue {
 	for _, stmt := range block.Contents {
-		parseNodeValue(stmt, env)
+		CheckAST(stmt, env)
 	}
 	return NewVoid()
 }
