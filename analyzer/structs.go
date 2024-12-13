@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"walrus/ast"
 	"walrus/errgen"
-	"walrus/utils"
 )
 
 func checkStructLiteral(structLit ast.StructLiteral, env *TypeEnvironment) TcValue {
@@ -47,7 +46,7 @@ func composeErrors(structLit ast.StructLiteral, missingProps []string, env *Type
 		return
 	}
 	errMsg := fmt.Sprintf("incomplete struct literal for struct '%s'\n", structLit.Identifier.Name)
-	errMsg += utils.TreeFormatString(missingProps...)
+	errMsg += errgen.TreeFormatString(missingProps...)
 	errgen.AddError(env.filePath, structLit.StartPos().Line, structLit.EndPos().Line, structLit.StartPos().Column, structLit.EndPos().Column, errMsg).ErrorLevel(errgen.NORMAL)
 }
 

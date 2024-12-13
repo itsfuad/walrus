@@ -11,7 +11,6 @@ import (
 	"walrus/ast"
 	"walrus/builtins"
 	"walrus/errgen"
-	"walrus/utils"
 )
 
 func init() {
@@ -188,7 +187,7 @@ func matchTypes(expectedType, providedType TcValue) error {
 		errs := checkMethodsImplementations(unwrappedExpected, unwrappedProvided)
 		if len(errs) > 0 {
 			msgs := fmt.Sprintf("cannot use type '%s' as interface '%s'\n", tcValueToString(providedType), tcValueToString(expectedType))
-			return errors.New(msgs + utils.TreeFormatError(errs...).Error())
+			return errors.New(msgs + errgen.TreeFormatError(errs...).Error())
 		}
 		return nil
 	case Maybe:
