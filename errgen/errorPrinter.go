@@ -112,7 +112,7 @@ func printError(e *WalrusError) {
 
 	utils.RED.Print(e.err.Error())
 
-	utils.GREY.Printf("└─ at: %s:%d:%d\n\n", e.filePath, e.lineStart, e.colStart)
+	utils.GREY.Printf("at: %s:%d:%d\n\n", e.filePath, e.lineStart, e.colStart)
 
 	if len(e.hints) > 0 {
 		utils.GREEN.Println("Hint:")
@@ -224,8 +224,12 @@ func DisplayErrors() {
 func TreeFormatString(strings ...string) string {
 	// use └, ├ as tree characters
 	str := ""
-	for _, prop := range strings {
-		str += utils.GREY.Sprint("├─── ") + utils.BROWN.Sprint(prop + "\n")
+	for i, prop := range strings {
+		if i == len(strings)-1 {
+			str += utils.GREY.Sprint("└── ") + utils.BROWN.Sprint(prop + "\n")
+		} else {
+			str += utils.GREY.Sprint("├── ") + utils.BROWN.Sprint(prop + "\n")
+		}
 	}
 	return str
 }
