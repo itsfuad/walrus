@@ -31,7 +31,7 @@ func checkImplStmt(implStmt ast.ImplStmt, env *TypeEnvironment) TcValue {
 		name := method.Identifier.Name
 		// if the method name is in the struct's elements, throw an error
 		if _, ok := implForType.StructScope.variables[name]; ok {
-			errgen.AddError(env.filePath, method.Start.Line, method.End.Line, method.Start.Column, method.End.Column, fmt.Sprintf("name '%s' already exists in struct", name)).ErrorLevel(errgen.CRITICAL)
+			errgen.AddError(env.filePath, method.Start.Line, method.End.Line, method.Start.Column, method.End.Column, fmt.Sprintf("'%s' is already defined in struct '%s'", name, implForType.StructName)).ErrorLevel(errgen.CRITICAL)
 		}
 
 		fnEnv := NewTypeENV(&implForType.StructScope, FUNCTION_SCOPE, name, implForType.StructScope.filePath)

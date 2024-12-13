@@ -4,13 +4,12 @@ import (
 	"errors"
 	"fmt"
 	"math/rand"
-
-	//"reflect"
 	"time"
 
 	"walrus/ast"
 	"walrus/builtins"
 	"walrus/errgen"
+	"walrus/utils"
 )
 
 func init() {
@@ -134,6 +133,14 @@ func evalArray(analyzedArray ast.ArrayType, env *TypeEnvironment) TcValue {
 func evalFn(analyzedFunctionType ast.FunctionType, env *TypeEnvironment) TcValue {
 	var params []FnParam
 	for _, param := range analyzedFunctionType.Parameters {
+		//check if the parameter is already declared
+		if utils.Some(params, func(p FnParam) bool {
+			return p.Name == param.Identifier.Name
+		}) {
+			errgen.AddError(env.filePath, param.Identifier.Start.Line, param.Identifier.End.Line, param.Identifier.Start.Column, param.Identifier.End.Column,
+				fmt.Sprintf("parameter '%s' is already defined", param.Identifier.Name)).ErrorLevel(errgen.CRITICAL)
+		}
+
 		paramType := evaluateTypeName(param.Type, env)
 		params = append(params, FnParam{
 			Name:       param.Identifier.Name,
@@ -161,7 +168,6 @@ func evalMap(analyzedMap ast.MapType, env *TypeEnvironment) TcValue {
 		return NewMap(keyType, valueType)
 	} else {
 		//find the name in the type definition
-
 		val, err := getTypeDefinition(analyzedMap.Map.Name) // need to get the most deep type
 		if err != nil {
 			errgen.AddError(env.filePath, analyzedMap.StartPos().Line, analyzedMap.EndPos().Line, analyzedMap.StartPos().Column, analyzedMap.EndPos().Column, err.Error()).ErrorLevel(errgen.NORMAL)
