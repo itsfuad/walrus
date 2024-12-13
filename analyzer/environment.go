@@ -140,7 +140,7 @@ func (t *TypeEnvironment) declareVar(name string, typeVar TcValue, isConst bool,
 
 	//should not be declared
 	if scope, err := t.resolveVar(name); err == nil && scope == t {
-		return fmt.Errorf("'%s' is already declared in this scope", name)
+		return fmt.Errorf("variable '%s' is already declared in this scope", name)
 	}
 
 	t.variables[name] = typeVar
@@ -152,7 +152,7 @@ func (t *TypeEnvironment) declareVar(name string, typeVar TcValue, isConst bool,
 
 func declareType(name string, typeType TcValue) error {
 	if _, ok := typeDefinitions[name]; ok {
-		return fmt.Errorf("type '%s' already defined", name)
+		return fmt.Errorf("type '%s' is already defined", name)
 	}
 	typeDefinitions[name] = typeType
 	return nil

@@ -64,8 +64,6 @@ func checkAndDeclareSingleParameter(param ast.FunctionParam, i int, params []ast
 		errgen.AddError(fnEnv.filePath, param.Identifier.Start.Line, param.Identifier.End.Line, param.Identifier.Start.Column, param.Identifier.End.Column, fmt.Sprintf("error defining parameter. %s", err.Error())).ErrorLevel(errgen.CRITICAL)
 	}
 
-	fmt.Printf("Declared parameter %s of type %s\n", param.Identifier.Name, paramType.DType())
-
 	*parameters = append(*parameters, FnParam{
 		Name:       param.Identifier.Name,
 		IsOptional: param.IsOptional,
@@ -81,7 +79,7 @@ func checkOptionalParameter(param ast.FunctionParam, i int, params []ast.Functio
 	}
 
 	defaultValue := parseNodeValue(param.DefaultValue, fnEnv)
-	fmt.Printf("Default value for parameter %s is %s\n", param.Identifier.Name, defaultValue.DType())
+
 	err := matchTypes(paramType, defaultValue)
 	if err != nil {
 		errgen.AddError(fnEnv.filePath, param.DefaultValue.StartPos().Line, param.DefaultValue.EndPos().Line, param.DefaultValue.StartPos().Column, param.DefaultValue.EndPos().Column, fmt.Sprintf("error defining parameter. %s", err.Error())).ErrorLevel(errgen.CRITICAL)
@@ -119,7 +117,6 @@ func checkFunctionCall(callNode ast.FunctionCallExpr, env *TypeEnvironment) TcVa
 		arg := parseNodeValue(callNode.Arguments[i], env)
 		err := matchTypes(fnParams[i].Type, arg)
 		if err != nil {
-
 			errgen.AddError(env.filePath, callNode.Arguments[i].StartPos().Line, callNode.Arguments[i].EndPos().Line, callNode.Arguments[i].StartPos().Column, callNode.Arguments[i].EndPos().Column, err.Error()).ErrorLevel(errgen.NORMAL)
 		}
 	}
@@ -147,8 +144,7 @@ func checkFunctionDeclStmt(funcNode ast.FunctionDeclStmt, env *TypeEnvironment) 
 	funcName := funcNode.Identifier.Name
 
 	if env.isDeclared(funcName) {
-
-		errgen.AddError(env.filePath, funcNode.Identifier.Start.Line, funcNode.Identifier.End.Line, funcNode.Identifier.Start.Column, funcNode.Identifier.End.Column, fmt.Sprintf("function %s is already declared", funcName)).ErrorLevel(errgen.NORMAL)
+		errgen.AddError(env.filePath, funcNode.Identifier.Start.Line, funcNode.Identifier.End.Line, funcNode.Identifier.Start.Column, funcNode.Identifier.End.Column, fmt.Sprintf("function '%s' is already defined in this scope", funcName)).ErrorLevel(errgen.NORMAL)
 	}
 
 	return CheckAndDeclareFunction(funcNode.FunctionLiteral, funcName, env)

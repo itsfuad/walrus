@@ -196,15 +196,15 @@ func (t Block) DType() builtins.TC_TYPE {
 	return t.DataType
 }
 
-type InterfaceMethod struct {
-	Name 	 	string
-	Method		Fn
+type InterfaceMethodType struct {
+	Name   string
+	Method Fn
 }
 
 type Interface struct {
 	DataType      builtins.TC_TYPE
 	InterfaceName string
-	Methods       []InterfaceMethod
+	Methods       []InterfaceMethodType
 }
 
 func (t Interface) DType() builtins.TC_TYPE {

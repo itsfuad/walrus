@@ -69,9 +69,9 @@ func printError(e *WalrusError) {
 	}
 
 	//print the previous line if available
-	if e.lineStart > 1 && strings.TrimSpace(lines[e.lineStart-2]) != "" {
-		utils.GREY.Printf("%d | %s\n", e.lineStart-1, lines[e.lineStart-2])
-	}
+	//if e.lineStart > 1 && strings.TrimSpace(lines[e.lineStart-2]) != "" {
+	//	utils.GREY.Printf("%d | %s\n", e.lineStart-1, lines[e.lineStart-2])
+	//}
 	lineNumber := fmt.Sprintf("%d | ", e.lineStart)
 	utils.GREY.Print(lineNumber)
 	fmt.Println(line)
@@ -96,6 +96,8 @@ func printError(e *WalrusError) {
 		for _, hint := range e.hints {
 			utils.GREEN.Printf("  %s\n", hint)
 		}
+	} else {
+		fmt.Println()
 	}
 
 	if e.level == CRITICAL || e.level == SYNTAX {

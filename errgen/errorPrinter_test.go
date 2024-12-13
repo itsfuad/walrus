@@ -6,10 +6,8 @@ import (
 	"walrus/utils"
 )
 
-const (
-	error1 = "error message 1"
-	error2 = "error message 2"
-)
+const error1 = "error message 1"
+const error2 = "error message 2"
 
 var tests = []struct {
 	name     string
@@ -42,7 +40,6 @@ func TestTreeFormatString(t *testing.T) {
 		})
 	}
 }
-
 
 func TestTreeFormatError(t *testing.T) {
 	//use the strings array and use as error

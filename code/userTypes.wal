@@ -59,8 +59,8 @@ type Banana struct {
 type Fn fn(a: i32, b: i32) -> i32;
 
 type IPerson interface {
-    fn someMethod();
     fn getName() -> str;
+    fn someMethod(a: i32);
 };
 
 fn ShowInfo(p: IPerson) {

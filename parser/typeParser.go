@@ -136,12 +136,6 @@ func getFunctionTypeSignature(p *Parser) (builtins.PARSER_TYPE, []ast.FunctionTy
 	var params []ast.FunctionTypeParam
 	for p.hasToken() && p.currentTokenKind() != lexer.CLOSE_PAREN {
 		iden := p.expect(lexer.IDENTIFIER_TOKEN)
-		//if exists, then it is a duplicate
-		for _, param := range params {
-			if param.Identifier.Name == iden.Value {
-				errgen.AddError(p.FilePath, iden.Start.Line, iden.End.Line, iden.Start.Column, iden.End.Column, fmt.Sprintf("parameter '%s' already defined", iden.Value)).ErrorLevel(errgen.SYNTAX)
-			}
-		}
 
 		curentToken := p.currentToken()
 

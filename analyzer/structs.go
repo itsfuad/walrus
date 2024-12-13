@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"walrus/ast"
 	"walrus/errgen"
+	"walrus/utils"
 )
 
 func checkStructLiteral(structLit ast.StructLiteral, env *TypeEnvironment) TcValue {
@@ -64,14 +65,10 @@ func checkMissingProps(structType Struct, structLit ast.StructLiteral) []string 
 		}
 		//find the missing properties
 		toHaveProps := structLit.Properties //slice of provided properties
-		found := false
-		for _, prop := range toHaveProps {
-			if prop.Prop.Name == propname {
-				found = true
-				break
-			}
-		}
-		if !found {
+
+		if utils.None(toHaveProps, func(p ast.StructProp) bool {
+			return p.Prop.Name == propname
+		}) {
 			missingProps = append(missingProps, fmt.Sprintf("missing property '%s'", propname))
 		}
 	}
@@ -105,8 +102,6 @@ func checkPropertyAccess(expr ast.StructPropertyAccessExpr, env *TypeEnvironment
 	object := parseNodeValue(expr.Object, env)
 
 	prop := expr.Property
-
-	fmt.Printf("Obj type: %T\n", object)
 
 	objName := tcValueToString(object)
 
