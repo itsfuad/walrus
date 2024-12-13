@@ -19,12 +19,12 @@ var tests = []struct {
 	{
 		name:     "Single string",
 		input:    []string{error1},
-		expected: utils.GREY.Sprint("└── ") + utils.BROWN.Sprintln(error1),
+		expected: utils.GREY.Sprint("└── ") + utils.BROWN.Sprint(error1),
 	},
 	{
 		name:     "Multiple strings",
 		input:    []string{error1, error2},
-		expected: utils.GREY.Sprint("├── ") + utils.BROWN.Sprintln(error1) + utils.GREY.Sprint("└── ") + utils.BROWN.Sprintln(error2),
+		expected: utils.GREY.Sprint("├── ") + utils.BROWN.Sprintln(error1) + utils.GREY.Sprint("└── ") + utils.BROWN.Sprint(error2),
 	},
 	{
 		name:     "No strings",
@@ -37,7 +37,7 @@ func TestTreeFormatString(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			result := TreeFormatString(tt.input...)
 			if result != tt.expected {
-				t.Errorf("expected %q, got %q", tt.expected, result)
+				t.Errorf("expected %q\ngot %q", tt.expected, result)
 			}
 		})
 	}
@@ -57,7 +57,7 @@ func TestTreeFormatError(t *testing.T) {
 			result = TreeFormatError(errs...)
 			expected := tt.expected
 			if result.Error() != expected {
-				t.Errorf("expected %q, got %q", expected, result.Error())
+				t.Errorf("expected %q\ngot %q", expected, result.Error())
 			}
 		})
 	}
