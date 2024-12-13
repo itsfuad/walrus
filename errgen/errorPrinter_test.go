@@ -19,12 +19,12 @@ var tests = []struct {
 	{
 		name:     "Single string",
 		input:    []string{error1},
-		expected: utils.GREY.Sprint("├─── ") + utils.BROWN.Sprintln(error1),
+		expected: utils.GREY.Sprint("└── ") + utils.BROWN.Sprintln(error1),
 	},
 	{
 		name:     "Multiple strings",
 		input:    []string{error1, error2},
-		expected: utils.GREY.Sprint("├─── ") + utils.BROWN.Sprintln(error1) + utils.GREY.Sprint("├─── ") + utils.BROWN.Sprintln(error2),
+		expected: utils.GREY.Sprint("├── ") + utils.BROWN.Sprintln(error1) + utils.GREY.Sprint("└── ") + utils.BROWN.Sprintln(error2),
 	},
 	{
 		name:     "No strings",

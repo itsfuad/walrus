@@ -50,7 +50,8 @@ func createLexer(filePath *string) *Lexer {
 
 	fileText, err := os.ReadFile(*filePath)
 	if err != nil {
-		fmt.Printf("cannot compile: %v", err)
+		utils.RED.Println("error reading file")
+		fmt.Print(errgen.TreeFormatString(utils.BROWN.Sprint(err.Error())))
 		os.Exit(-1)
 	}
 
