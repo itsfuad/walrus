@@ -22,12 +22,6 @@ func parseUserDefinedTypeStmt(p *Parser) ast.Node {
 
 	typeName := p.expect(lexer.IDENTIFIER_TOKEN)
 
-	/*
-		if strings.ToUpper(typeName.Value[:1]) != typeName.Value[:1] {
-			errgen.AddError(p.FilePath, typeName.Start.Line, typeName.End.Line, typeName.Start.Column, typeName.End.Column, "user defined types should start with capital letter").AddHint(fmt.Sprintf("type %s%s [your type]", strings.ToUpper(typeName.Value[:1]), typeName.Value[1:]), errgen.TEXT_HINT, errgen.ERROR_CRITICAL)
-		}
-	*/
-
 	udType := parseUDTType(p)
 
 	p.expect(lexer.SEMI_COLON_TOKEN)

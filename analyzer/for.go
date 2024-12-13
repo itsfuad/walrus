@@ -40,7 +40,7 @@ func checkForStmt(forStmt ast.ForStmt, env *TypeEnvironment) TcValue {
 
 	//infinte loop
 	for _, stmt := range forStmt.Block.Contents {
-		parseNodeValue(stmt, forLoopEnv)
+		CheckAST(stmt, forLoopEnv)
 	}
 
 	return NewVoid()

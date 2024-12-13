@@ -30,13 +30,12 @@ func evaluateIndexableAccess(indexable ast.Indexable, e *TypeEnvironment) TcValu
 	switch t := container.(type) {
 	case Array:
 		if !isIntType(index) {
-			errgen.AddError(e.filePath, indexable.Start.Line, indexable.End.Line, indexable.Index.StartPos().Column, indexable.Index.EndPos().Column, fmt.Sprintf("cannot use type '%s' to index array", tcValueToString(index))).AddHint("try using integer or cast").ErrorLevel(errgen.NORMAL)
+			errgen.AddError(e.filePath, indexable.Start.Line, indexable.End.Line, indexable.Index.StartPos().Column, indexable.Index.EndPos().Column, fmt.Sprintf("cannot use type '%s' to index array\n", tcValueToString(index)) + errgen.TreeFormatString("type must be a valid signed integer")).ErrorLevel(errgen.NORMAL)
 		}
 		indexedValueType = t.ArrayType
 	case Str:
 		if !isIntType(index) {
-			//fmt.Errorf("index must be a valid integer")
-			errgen.AddError(e.filePath, indexable.Start.Line, indexable.End.Line, indexable.Index.StartPos().Column, indexable.Index.EndPos().Column, fmt.Sprintf("cannot use type '%s' to index string", tcValueToString(index))).AddHint("try using integer or cast").ErrorLevel(errgen.NORMAL)
+			errgen.AddError(e.filePath, indexable.Start.Line, indexable.End.Line, indexable.Index.StartPos().Column, indexable.Index.EndPos().Column, fmt.Sprintf("cannot use type '%s' to index string\n", tcValueToString(index)) + errgen.TreeFormatString("type must be a valid signed integer")).ErrorLevel(errgen.NORMAL)
 		}
 		return NewInt(8, false)
 	case Map:

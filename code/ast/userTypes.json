@@ -2248,45 +2248,86 @@
             "Body": {
                 "Contents": [
                     {
-                        "Caller": {
-                            "Object": {
-                                "Name": "p",
+                        "Variables": [
+                            {
+                                "Identifier": {
+                                    "Name": "name",
+                                    "Start": {
+                                        "Line": 67,
+                                        "Column": 9,
+                                        "Index": 1247
+                                    },
+                                    "End": {
+                                        "Line": 67,
+                                        "Column": 13,
+                                        "Index": 1251
+                                    }
+                                },
+                                "Value": {
+                                    "Caller": {
+                                        "Object": {
+                                            "Name": "p",
+                                            "Start": {
+                                                "Line": 67,
+                                                "Column": 17,
+                                                "Index": 1255
+                                            },
+                                            "End": {
+                                                "Line": 67,
+                                                "Column": 18,
+                                                "Index": 1256
+                                            }
+                                        },
+                                        "Property": {
+                                            "Name": "getName",
+                                            "Start": {
+                                                "Line": 67,
+                                                "Column": 19,
+                                                "Index": 1257
+                                            },
+                                            "End": {
+                                                "Line": 67,
+                                                "Column": 26,
+                                                "Index": 1264
+                                            }
+                                        },
+                                        "Start": {
+                                            "Line": 67,
+                                            "Column": 17,
+                                            "Index": 1255
+                                        },
+                                        "End": {
+                                            "Line": 67,
+                                            "Column": 26,
+                                            "Index": 1264
+                                        }
+                                    },
+                                    "Arguments": null,
+                                    "Start": {
+                                        "Line": 67,
+                                        "Column": 17,
+                                        "Index": 1255
+                                    },
+                                    "End": {
+                                        "Line": 67,
+                                        "Column": 28,
+                                        "Index": 1266
+                                    }
+                                },
+                                "ExplicitType": null,
                                 "Start": {
                                     "Line": 67,
-                                    "Column": 5,
-                                    "Index": 1243
+                                    "Column": 9,
+                                    "Index": 1247
                                 },
                                 "End": {
                                     "Line": 67,
-                                    "Column": 6,
-                                    "Index": 1244
+                                    "Column": 28,
+                                    "Index": 1266
                                 }
-                            },
-                            "Property": {
-                                "Name": "getName",
-                                "Start": {
-                                    "Line": 67,
-                                    "Column": 7,
-                                    "Index": 1245
-                                },
-                                "End": {
-                                    "Line": 67,
-                                    "Column": 14,
-                                    "Index": 1252
-                                }
-                            },
-                            "Start": {
-                                "Line": 67,
-                                "Column": 5,
-                                "Index": 1243
-                            },
-                            "End": {
-                                "Line": 67,
-                                "Column": 14,
-                                "Index": 1252
                             }
-                        },
-                        "Arguments": null,
+                        ],
+                        "IsConst": false,
                         "Start": {
                             "Line": 67,
                             "Column": 5,
@@ -2294,8 +2335,8 @@
                         },
                         "End": {
                             "Line": 67,
-                            "Column": 16,
-                            "Index": 1254
+                            "Column": 29,
+                            "Index": 1267
                         }
                     }
                 ],
@@ -2307,7 +2348,7 @@
                 "End": {
                     "Line": 68,
                     "Column": 2,
-                    "Index": 1258
+                    "Index": 1270
                 }
             },
             "ReturnType": null,
@@ -2319,61 +2360,229 @@
             "End": {
                 "Line": 68,
                 "Column": 2,
-                "Index": 1258
+                "Index": 1270
+            }
+        },
+        {
+            "Variables": [
+                {
+                    "Identifier": {
+                        "Name": "arr",
+                        "Start": {
+                            "Line": 80,
+                            "Column": 5,
+                            "Index": 1650
+                        },
+                        "End": {
+                            "Line": 80,
+                            "Column": 8,
+                            "Index": 1653
+                        }
+                    },
+                    "Value": {
+                        "Values": [
+                            {
+                                "Value": "1",
+                                "BitSize": 32,
+                                "IsSigned": true,
+                                "Start": {
+                                    "Line": 80,
+                                    "Column": 13,
+                                    "Index": 1658
+                                },
+                                "End": {
+                                    "Line": 80,
+                                    "Column": 14,
+                                    "Index": 1659
+                                }
+                            },
+                            {
+                                "Value": "2",
+                                "BitSize": 32,
+                                "IsSigned": true,
+                                "Start": {
+                                    "Line": 80,
+                                    "Column": 16,
+                                    "Index": 1661
+                                },
+                                "End": {
+                                    "Line": 80,
+                                    "Column": 17,
+                                    "Index": 1662
+                                }
+                            },
+                            {
+                                "Value": "3",
+                                "BitSize": 32,
+                                "IsSigned": true,
+                                "Start": {
+                                    "Line": 80,
+                                    "Column": 19,
+                                    "Index": 1664
+                                },
+                                "End": {
+                                    "Line": 80,
+                                    "Column": 20,
+                                    "Index": 1665
+                                }
+                            },
+                            {
+                                "Value": "4",
+                                "BitSize": 32,
+                                "IsSigned": true,
+                                "Start": {
+                                    "Line": 80,
+                                    "Column": 22,
+                                    "Index": 1667
+                                },
+                                "End": {
+                                    "Line": 80,
+                                    "Column": 23,
+                                    "Index": 1668
+                                }
+                            },
+                            {
+                                "Value": "5",
+                                "BitSize": 32,
+                                "IsSigned": true,
+                                "Start": {
+                                    "Line": 80,
+                                    "Column": 25,
+                                    "Index": 1670
+                                },
+                                "End": {
+                                    "Line": 80,
+                                    "Column": 26,
+                                    "Index": 1671
+                                }
+                            }
+                        ],
+                        "Start": {
+                            "Line": 80,
+                            "Column": 12,
+                            "Index": 1657
+                        },
+                        "End": {
+                            "Line": 80,
+                            "Column": 27,
+                            "Index": 1672
+                        }
+                    },
+                    "ExplicitType": null,
+                    "Start": {
+                        "Line": 80,
+                        "Column": 5,
+                        "Index": 1650
+                    },
+                    "End": {
+                        "Line": 80,
+                        "Column": 27,
+                        "Index": 1672
+                    }
+                }
+            ],
+            "IsConst": false,
+            "Start": {
+                "Line": 80,
+                "Column": 1,
+                "Index": 1646
+            },
+            "End": {
+                "Line": 80,
+                "Column": 28,
+                "Index": 1673
+            }
+        },
+        {
+            "Index": {
+                "Name": "user",
+                "Start": {
+                    "Line": 81,
+                    "Column": 5,
+                    "Index": 1679
+                },
+                "End": {
+                    "Line": 81,
+                    "Column": 9,
+                    "Index": 1683
+                }
+            },
+            "Container": {
+                "Name": "arr",
+                "Start": {
+                    "Line": 81,
+                    "Column": 1,
+                    "Index": 1675
+                },
+                "End": {
+                    "Line": 81,
+                    "Column": 4,
+                    "Index": 1678
+                }
+            },
+            "Start": {
+                "Line": 81,
+                "Column": 1,
+                "Index": 1675
+            },
+            "End": {
+                "Line": 81,
+                "Column": 10,
+                "Index": 1684
             }
         },
         {
             "Caller": {
                 "Name": "ShowInfo",
                 "Start": {
-                    "Line": 80,
+                    "Line": 83,
                     "Column": 1,
-                    "Index": 1634
+                    "Index": 1689
                 },
                 "End": {
-                    "Line": 80,
+                    "Line": 83,
                     "Column": 9,
-                    "Index": 1642
+                    "Index": 1697
                 }
             },
             "Arguments": [
                 {
                     "Name": "user",
                     "Start": {
-                        "Line": 80,
+                        "Line": 83,
                         "Column": 10,
-                        "Index": 1643
+                        "Index": 1698
                     },
                     "End": {
-                        "Line": 80,
+                        "Line": 83,
                         "Column": 14,
-                        "Index": 1647
+                        "Index": 1702
                     }
                 }
             ],
             "Start": {
-                "Line": 80,
+                "Line": 83,
                 "Column": 1,
-                "Index": 1634
+                "Index": 1689
             },
             "End": {
-                "Line": 80,
+                "Line": 83,
                 "Column": 15,
-                "Index": 1648
+                "Index": 1703
             }
         },
         {
             "Caller": {
                 "Name": "ShowInfo",
                 "Start": {
-                    "Line": 81,
+                    "Line": 84,
                     "Column": 1,
-                    "Index": 1651
+                    "Index": 1706
                 },
                 "End": {
-                    "Line": 81,
+                    "Line": 84,
                     "Column": 9,
-                    "Index": 1659
+                    "Index": 1714
                 }
             },
             "Arguments": [
@@ -2381,14 +2590,14 @@
                     "Identifier": {
                         "Name": "Banana",
                         "Start": {
-                            "Line": 81,
+                            "Line": 84,
                             "Column": 11,
-                            "Index": 1661
+                            "Index": 1716
                         },
                         "End": {
-                            "Line": 81,
+                            "Line": 84,
                             "Column": 17,
-                            "Index": 1667
+                            "Index": 1722
                         }
                     },
                     "Properties": [
@@ -2396,27 +2605,27 @@
                             "Prop": {
                                 "Name": "name",
                                 "Start": {
-                                    "Line": 81,
+                                    "Line": 84,
                                     "Column": 18,
-                                    "Index": 1668
+                                    "Index": 1723
                                 },
                                 "End": {
-                                    "Line": 81,
+                                    "Line": 84,
                                     "Column": 22,
-                                    "Index": 1672
+                                    "Index": 1727
                                 }
                             },
                             "Value": {
                                 "Value": "Cavendish",
                                 "Start": {
-                                    "Line": 81,
+                                    "Line": 84,
                                     "Column": 24,
-                                    "Index": 1674
+                                    "Index": 1729
                                 },
                                 "End": {
-                                    "Line": 81,
+                                    "Line": 84,
                                     "Column": 35,
-                                    "Index": 1685
+                                    "Index": 1740
                                 }
                             }
                         },
@@ -2424,14 +2633,14 @@
                             "Prop": {
                                 "Name": "price",
                                 "Start": {
-                                    "Line": 81,
+                                    "Line": 84,
                                     "Column": 37,
-                                    "Index": 1687
+                                    "Index": 1742
                                 },
                                 "End": {
-                                    "Line": 81,
+                                    "Line": 84,
                                     "Column": 42,
-                                    "Index": 1692
+                                    "Index": 1747
                                 }
                             },
                             "Value": {
@@ -2439,39 +2648,39 @@
                                 "BitSize": 32,
                                 "IsSigned": true,
                                 "Start": {
-                                    "Line": 81,
+                                    "Line": 84,
                                     "Column": 44,
-                                    "Index": 1694
+                                    "Index": 1749
                                 },
                                 "End": {
-                                    "Line": 81,
+                                    "Line": 84,
                                     "Column": 46,
-                                    "Index": 1696
+                                    "Index": 1751
                                 }
                             }
                         }
                     ],
                     "Start": {
-                        "Line": 81,
+                        "Line": 84,
                         "Column": 10,
-                        "Index": 1660
+                        "Index": 1715
                     },
                     "End": {
-                        "Line": 81,
+                        "Line": 84,
                         "Column": 47,
-                        "Index": 1697
+                        "Index": 1752
                     }
                 }
             ],
             "Start": {
-                "Line": 81,
+                "Line": 84,
                 "Column": 1,
-                "Index": 1651
+                "Index": 1706
             },
             "End": {
-                "Line": 81,
+                "Line": 84,
                 "Column": 48,
-                "Index": 1698
+                "Index": 1753
             }
         }
     ],

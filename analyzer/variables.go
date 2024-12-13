@@ -81,7 +81,6 @@ func checkVariableDeclaration(node ast.VarDeclStmt, env *TypeEnvironment) TcValu
 		}
 
 		if varToDecl.Value != nil && varToDecl.ExplicitType != nil {
-			//providedValue := parseNodeValue(node.Value, env)
 			providedValue := parseNodeValue(varToDecl.Value, env)
 			err := matchTypes(expectedTypeInterface, providedValue)
 			if err != nil {

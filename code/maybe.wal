@@ -13,7 +13,6 @@ let res: i32 = 12;
 let z : i32 = (res = 4);
 z = (res = 4);
 
-
 //safe access
 safe a {
     //a is i32 here
