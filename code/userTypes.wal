@@ -78,4 +78,4 @@ fn ShowInfo(p: IPerson) {
 }*/
 
 ShowInfo(user);
-ShowInfo(@Banana{name: "Cavendish", price: 10, getName: ""});
+ShowInfo(@Banana{name: "Cavendish", price: 10});

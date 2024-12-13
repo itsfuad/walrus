@@ -13,7 +13,7 @@ func parseImplementStmt(p *Parser) ast.Node {
 
 	p.expect(lexer.OPEN_CURLY)
 
-	methods := make(map[string]ast.ImplMethod)
+	methods := make([]ast.ImplMethod, 0)
 
 	for p.hasToken() && p.currentTokenKind() != lexer.CLOSE_CURLY {
 
@@ -54,7 +54,7 @@ func parseImplementStmt(p *Parser) ast.Node {
 			},
 		}
 
-		methods[fnName.Value] = method
+		methods = append(methods, method)
 	}
 
 	end := p.expect(lexer.CLOSE_CURLY).End

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"walrus/ast"
 	"walrus/errgen"
+	"walrus/utils"
 )
 
 func checkStructLiteral(structLit ast.StructLiteral, env *TypeEnvironment) TcValue {
@@ -22,36 +23,11 @@ func checkStructLiteral(structLit ast.StructLiteral, env *TypeEnvironment) TcVal
 	}
 
 	// now we match the defined props with the provided props
-	for propname, prop := range structLit.Properties {
-		//check if the property is defined
-		if _, ok := structType.StructScope.variables[propname]; !ok {
-			errgen.AddError(env.filePath, prop.Prop.Start.Line, prop.Prop.End.Line, prop.Prop.Start.Column, prop.Prop.End.Column, fmt.Sprintf("property '%s' is not defined on struct '%s'", propname, sName.Name)).ErrorLevel(errgen.CRITICAL)
-		}
-
-		//check if the property type matches the defined type
-		providedType := parseNodeValue(prop.Value, env)
-
-		expectedType := structType.StructScope.variables[propname].(StructProperty).Type
-
-		err := matchTypes(expectedType, providedType)
-		if err != nil {
-			errgen.AddError(env.filePath, prop.Prop.StartPos().Column, prop.Value.EndPos().Line, prop.Prop.StartPos().Column, prop.Value.EndPos().Column, err.Error()).ErrorLevel(errgen.NORMAL)
-		}
-	}
-
+	checkPropsType(structType, structLit, env)
 	// check if any required property is missing
-	for propname := range structType.StructScope.variables {
-		// skip methods and 'this' variable
-		if propname == "this" {
-			continue
-		}
-		if _, ok := structType.StructScope.variables[propname].(StructMethod); ok {
-			continue
-		}
-		if _, ok := structLit.Properties[propname]; !ok {
-			errgen.AddError(env.filePath, structLit.StartPos().Line, structLit.EndPos().Line, structLit.StartPos().Column, structLit.EndPos().Column, fmt.Sprintf("property '%s' is missing on @%s", propname, sName.Name)).ErrorLevel(errgen.NORMAL)
-		}
-	}
+	missingProps := checkMissingProps(structType, structLit)
+	// if there are missing properties, we compose the error
+	composeErrors(structLit, missingProps, env)
 
 	structValue := Struct{
 		DataType:    STRUCT_TYPE,
@@ -63,6 +39,63 @@ func checkStructLiteral(structLit ast.StructLiteral, env *TypeEnvironment) TcVal
 		DataType: USER_DEFINED_TYPE,
 		TypeName: sName.Name,
 		TypeDef:  structValue,
+	}
+}
+
+func composeErrors(structLit ast.StructLiteral, missingProps []string, env *TypeEnvironment) {
+	if len(missingProps) == 0 {
+		return
+	}
+	errMsg := fmt.Sprintf("incomplete struct literal for struct '%s'\n", structLit.Identifier.Name)
+	errMsg += utils.TreeFormatString(missingProps...)
+	errgen.AddError(env.filePath, structLit.StartPos().Line, structLit.EndPos().Line, structLit.StartPos().Column, structLit.EndPos().Column, errMsg).ErrorLevel(errgen.NORMAL)
+}
+
+func checkMissingProps(structType Struct, structLit ast.StructLiteral) []string {
+	//check for missing properties
+	missingProps := []string{}
+
+	for propname := range structType.StructScope.variables {
+		// skip methods and 'this' variable
+		if propname == "this" {
+			continue
+		}
+		if _, ok := structType.StructScope.variables[propname].(StructMethod); ok {
+			continue
+		}
+		//find the missing properties
+		toHaveProps := structLit.Properties //slice of provided properties
+		found := false
+		for _, prop := range toHaveProps {
+			if prop.Prop.Name == propname {
+				found = true
+				break
+			}
+		}
+		if !found {
+			missingProps = append(missingProps, fmt.Sprintf("missing property '%s'", propname))
+		}
+	}
+
+	return missingProps
+}
+
+func checkPropsType(structType Struct, structLit ast.StructLiteral, env *TypeEnvironment) {
+	for _, structProp := range structLit.Properties {
+		//check if the property is defined
+		if _, ok := structType.StructScope.variables[structProp.Prop.Name]; !ok {
+			errgen.AddError(env.filePath, structProp.Prop.Start.Line, structProp.Prop.End.Line, structProp.Prop.Start.Column, structProp.Prop.End.Column, fmt.Sprintf("property '%s' is not defined on struct '%s'", structProp.Prop.Name, structLit.Identifier.Name)).ErrorLevel(errgen.CRITICAL)
+		}
+
+		//check if the property type matches the defined type
+		providedType := parseNodeValue(structProp.Value, env)
+
+		expectedType := structType.StructScope.variables[structProp.Prop.Name].(StructProperty).Type
+
+		err := matchTypes(expectedType, providedType)
+		if err != nil {
+			errgen.AddError(env.filePath, structProp.Prop.StartPos().Column, structProp.Value.EndPos().Line, structProp.Prop.StartPos().Column, structProp.Value.EndPos().Column, err.Error()).ErrorLevel(errgen.NORMAL)
+		}
 	}
 }
 
@@ -86,11 +119,12 @@ func checkPropertyAccess(expr ast.StructPropertyAccessExpr, env *TypeEnvironment
 		structEnv = t.StructScope
 	case Interface:
 		//prop must be a method
-		if _, ok := t.Methods[prop.Name]; !ok {
-			errgen.AddError(env.filePath, prop.Start.Line, prop.End.Line, prop.Start.Column, prop.End.Column, fmt.Sprintf("interface '%s' does not have a method '%s'", t.InterfaceName, prop.Name)).ErrorLevel(errgen.CRITICAL)
-			return NewVoid() // unreachable but needed to avoid accidental nil pointer dereference
+		for _, method := range t.Methods {
+			if method.Name == prop.Name {
+				return method.Method
+			}
 		}
-		return t.Methods[prop.Name]
+		errgen.AddError(env.filePath, prop.Start.Line, prop.End.Line, prop.Start.Column, prop.End.Column, fmt.Sprintf("interface '%s' does not have a method '%s'", t.InterfaceName, prop.Name)).ErrorLevel(errgen.CRITICAL)
 	}
 
 	propType := ""
@@ -127,16 +161,16 @@ func checkStructTypeDecl(name string, structType ast.StructType, env *TypeEnviro
 
 	structEnv := NewTypeENV(env, STRUCT_SCOPE, name, env.filePath)
 
-	for propname, propval := range structType.Properties {
+	for _, propval := range structType.Properties {
 		propType := evaluateTypeName(propval.PropType, env)
 		property := StructProperty{
 			IsPrivate: propval.IsPrivate,
 			Type:      propType,
 		}
 		//declare the property on the struct environment
-		err := structEnv.declareVar(propname, property, false, false)
+		err := structEnv.declareVar(propval.Prop.Name, property, false, false)
 		if err != nil {
-			errgen.AddError(env.filePath, propval.PropType.StartPos().Line, propval.PropType.EndPos().Line, propval.PropType.StartPos().Column, propval.PropType.EndPos().Column, fmt.Sprintf("error declaring property '%s': %s", propname, err.Error())).ErrorLevel(errgen.CRITICAL)
+			errgen.AddError(env.filePath, propval.PropType.StartPos().Line, propval.PropType.EndPos().Line, propval.PropType.StartPos().Column, propval.PropType.EndPos().Column, fmt.Sprintf("error declaring property '%s': %s", propval.Prop.Name, err.Error())).ErrorLevel(errgen.CRITICAL)
 		}
 	}
 

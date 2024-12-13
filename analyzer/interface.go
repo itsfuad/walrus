@@ -1,16 +1,18 @@
 package analyzer
 
 import (
+	"fmt"
 	"walrus/ast"
+	"walrus/errgen"
 )
 
 func checkInterfaceTypeDecl(interfaceName string, interfaceNode ast.InterfaceType, env *TypeEnvironment) Interface {
 
-	methods := make(map[string]Fn)
+	methods := make([]InterfaceMethod, 0)
 
-	for name, method := range interfaceNode.Methods {
+	for _, method := range interfaceNode.Methods {
 
-		fnEnv := NewTypeENV(env, FUNCTION_SCOPE, name, env.filePath)
+		fnEnv := NewTypeENV(env, FUNCTION_SCOPE, method.Identifier.Name, env.filePath)
 
 		params := make([]FnParam, 0)
 
@@ -25,14 +27,23 @@ func checkInterfaceTypeDecl(interfaceName string, interfaceNode ast.InterfaceTyp
 
 		returns := evaluateTypeName(method.ReturnType, fnEnv)
 
-		method := Fn{
-			DataType:      FUNCTION_TYPE,
-			Params:        params,
-			Returns:       returns,
-			FunctionScope: *fnEnv,
+		//check if the method already exists
+		for _, m := range methods {
+			if m.Name == method.Identifier.Name {
+				errgen.AddError(env.filePath, method.Identifier.Start.Line, method.Identifier.End.Line, method.Identifier.Start.Column, method.Identifier.End.Column,
+					fmt.Sprintf("method '%s' already exists in interface '%s'", method.Identifier.Name, interfaceName)).ErrorLevel(errgen.CRITICAL)
+			}
 		}
 
-		methods[name] = method
+		methods = append(methods, InterfaceMethod{
+			Name:  method.Identifier.Name,
+			Method: Fn{
+				DataType:      FUNCTION_TYPE,
+				Params:        params,
+				Returns:       returns,
+				FunctionScope: *fnEnv,
+			},
+		})
 	}
 
 	return Interface{

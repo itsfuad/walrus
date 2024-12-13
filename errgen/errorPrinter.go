@@ -110,9 +110,9 @@ func printError(e *WalrusError) {
 		utils.RED.Print("Error: ")
 	}
 
-	utils.RED.Println(e.err.Error())
+	utils.RED.Print(e.err.Error())
 
-	utils.GREY.Printf("└─ at: %s:%d:%d\n", e.filePath, e.lineStart, e.colStart)
+	utils.GREY.Printf("└─ at: %s:%d:%d\n\n", e.filePath, e.lineStart, e.colStart)
 
 	if len(e.hints) > 0 {
 		utils.GREEN.Println("Hint:")

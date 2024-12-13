@@ -128,7 +128,7 @@ type StructPropType struct {
 
 type StructType struct {
 	TypeName   builtins.PARSER_TYPE
-	Properties map[string]StructPropType
+	Properties []StructPropType
 	Location
 }
 
@@ -149,7 +149,7 @@ type InterfaceMethod struct {
 
 type InterfaceType struct {
 	TypeName builtins.PARSER_TYPE
-	Methods  map[string]InterfaceMethod
+	Methods  []InterfaceMethod
 	Location
 }
 
