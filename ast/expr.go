@@ -288,7 +288,7 @@ type StructProp struct {
 
 type StructLiteral struct {
 	Identifier IdentifierExpr
-	Properties map[string]StructProp
+	Properties []StructProp
 	Location
 }
 

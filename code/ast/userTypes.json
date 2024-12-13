@@ -1548,8 +1548,37 @@
         {
             "UDType": {
                 "TypeName": "struct",
-                "Properties": {
-                    "age": {
+                "Properties": [
+                    {
+                        "Prop": {
+                            "Name": "name",
+                            "Start": {
+                                "Line": 41,
+                                "Column": 10,
+                                "Index": 879
+                            },
+                            "End": {
+                                "Line": 41,
+                                "Column": 14,
+                                "Index": 883
+                            }
+                        },
+                        "PropType": {
+                            "TypeName": "str",
+                            "Start": {
+                                "Line": 41,
+                                "Column": 16,
+                                "Index": 885
+                            },
+                            "End": {
+                                "Line": 41,
+                                "Column": 19,
+                                "Index": 888
+                            }
+                        },
+                        "IsPrivate": true
+                    },
+                    {
                         "Prop": {
                             "Name": "age",
                             "Start": {
@@ -1579,37 +1608,8 @@
                             }
                         },
                         "IsPrivate": false
-                    },
-                    "name": {
-                        "Prop": {
-                            "Name": "name",
-                            "Start": {
-                                "Line": 41,
-                                "Column": 10,
-                                "Index": 879
-                            },
-                            "End": {
-                                "Line": 41,
-                                "Column": 14,
-                                "Index": 883
-                            }
-                        },
-                        "PropType": {
-                            "TypeName": "str",
-                            "Start": {
-                                "Line": 41,
-                                "Column": 16,
-                                "Index": 885
-                            },
-                            "End": {
-                                "Line": 41,
-                                "Column": 19,
-                                "Index": 888
-                            }
-                        },
-                        "IsPrivate": true
                     }
-                },
+                ],
                 "Start": {
                     "Line": 40,
                     "Column": 18,
@@ -1663,8 +1663,36 @@
                                 "Index": 946
                             }
                         },
-                        "Properties": {
-                            "age": {
+                        "Properties": [
+                            {
+                                "Prop": {
+                                    "Name": "name",
+                                    "Start": {
+                                        "Line": 46,
+                                        "Column": 5,
+                                        "Index": 953
+                                    },
+                                    "End": {
+                                        "Line": 46,
+                                        "Column": 9,
+                                        "Index": 957
+                                    }
+                                },
+                                "Value": {
+                                    "Value": "John",
+                                    "Start": {
+                                        "Line": 46,
+                                        "Column": 11,
+                                        "Index": 959
+                                    },
+                                    "End": {
+                                        "Line": 46,
+                                        "Column": 17,
+                                        "Index": 965
+                                    }
+                                }
+                            },
+                            {
                                 "Prop": {
                                     "Name": "age",
                                     "Start": {
@@ -1693,36 +1721,8 @@
                                         "Index": 979
                                     }
                                 }
-                            },
-                            "name": {
-                                "Prop": {
-                                    "Name": "name",
-                                    "Start": {
-                                        "Line": 46,
-                                        "Column": 5,
-                                        "Index": 953
-                                    },
-                                    "End": {
-                                        "Line": 46,
-                                        "Column": 9,
-                                        "Index": 957
-                                    }
-                                },
-                                "Value": {
-                                    "Value": "John",
-                                    "Start": {
-                                        "Line": 46,
-                                        "Column": 11,
-                                        "Index": 959
-                                    },
-                                    "End": {
-                                        "Line": 46,
-                                        "Column": 17,
-                                        "Index": 965
-                                    }
-                                }
                             }
-                        },
+                        ],
                         "Start": {
                             "Line": 45,
                             "Column": 13,
@@ -1841,37 +1841,8 @@
         {
             "UDType": {
                 "TypeName": "struct",
-                "Properties": {
-                    "getName": {
-                        "Prop": {
-                            "Name": "getName",
-                            "Start": {
-                                "Line": 56,
-                                "Column": 5,
-                                "Index": 1073
-                            },
-                            "End": {
-                                "Line": 56,
-                                "Column": 12,
-                                "Index": 1080
-                            }
-                        },
-                        "PropType": {
-                            "TypeName": "str",
-                            "Start": {
-                                "Line": 56,
-                                "Column": 14,
-                                "Index": 1082
-                            },
-                            "End": {
-                                "Line": 56,
-                                "Column": 17,
-                                "Index": 1085
-                            }
-                        },
-                        "IsPrivate": false
-                    },
-                    "name": {
+                "Properties": [
+                    {
                         "Prop": {
                             "Name": "name",
                             "Start": {
@@ -1900,7 +1871,7 @@
                         },
                         "IsPrivate": false
                     },
-                    "price": {
+                    {
                         "Prop": {
                             "Name": "price",
                             "Start": {
@@ -1930,8 +1901,37 @@
                             }
                         },
                         "IsPrivate": false
+                    },
+                    {
+                        "Prop": {
+                            "Name": "getName",
+                            "Start": {
+                                "Line": 56,
+                                "Column": 5,
+                                "Index": 1073
+                            },
+                            "End": {
+                                "Line": 56,
+                                "Column": 12,
+                                "Index": 1080
+                            }
+                        },
+                        "PropType": {
+                            "TypeName": "str",
+                            "Start": {
+                                "Line": 56,
+                                "Column": 14,
+                                "Index": 1082
+                            },
+                            "End": {
+                                "Line": 56,
+                                "Column": 17,
+                                "Index": 1085
+                            }
+                        },
+                        "IsPrivate": false
                     }
-                },
+                ],
                 "Start": {
                     "Line": 53,
                     "Column": 20,
@@ -2083,48 +2083,8 @@
         {
             "UDType": {
                 "TypeName": "interface",
-                "Methods": {
-                    "getName": {
-                        "Identifier": {
-                            "Name": "getName",
-                            "Start": {
-                                "Line": 63,
-                                "Column": 8,
-                                "Index": 1187
-                            },
-                            "End": {
-                                "Line": 63,
-                                "Column": 15,
-                                "Index": 1194
-                            }
-                        },
-                        "TypeName": "fn",
-                        "Parameters": null,
-                        "ReturnType": {
-                            "TypeName": "str",
-                            "Start": {
-                                "Line": 63,
-                                "Column": 21,
-                                "Index": 1200
-                            },
-                            "End": {
-                                "Line": 63,
-                                "Column": 24,
-                                "Index": 1203
-                            }
-                        },
-                        "Start": {
-                            "Line": 63,
-                            "Column": 5,
-                            "Index": 1184
-                        },
-                        "End": {
-                            "Line": 63,
-                            "Column": 24,
-                            "Index": 1203
-                        }
-                    },
-                    "someMethod": {
+                "Methods": [
+                    {
                         "Identifier": {
                             "Name": "someMethod",
                             "Start": {
@@ -2163,8 +2123,48 @@
                             "Column": 21,
                             "Index": 1178
                         }
+                    },
+                    {
+                        "Identifier": {
+                            "Name": "getName",
+                            "Start": {
+                                "Line": 63,
+                                "Column": 8,
+                                "Index": 1187
+                            },
+                            "End": {
+                                "Line": 63,
+                                "Column": 15,
+                                "Index": 1194
+                            }
+                        },
+                        "TypeName": "fn",
+                        "Parameters": null,
+                        "ReturnType": {
+                            "TypeName": "str",
+                            "Start": {
+                                "Line": 63,
+                                "Column": 21,
+                                "Index": 1200
+                            },
+                            "End": {
+                                "Line": 63,
+                                "Column": 24,
+                                "Index": 1203
+                            }
+                        },
+                        "Start": {
+                            "Line": 63,
+                            "Column": 5,
+                            "Index": 1184
+                        },
+                        "End": {
+                            "Line": 63,
+                            "Column": 24,
+                            "Index": 1203
+                        }
                     }
-                },
+                ],
                 "Start": {
                     "Line": 61,
                     "Column": 14,
@@ -2391,36 +2391,8 @@
                             "Index": 1667
                         }
                     },
-                    "Properties": {
-                        "getName": {
-                            "Prop": {
-                                "Name": "getName",
-                                "Start": {
-                                    "Line": 81,
-                                    "Column": 48,
-                                    "Index": 1698
-                                },
-                                "End": {
-                                    "Line": 81,
-                                    "Column": 55,
-                                    "Index": 1705
-                                }
-                            },
-                            "Value": {
-                                "Value": "",
-                                "Start": {
-                                    "Line": 81,
-                                    "Column": 57,
-                                    "Index": 1707
-                                },
-                                "End": {
-                                    "Line": 81,
-                                    "Column": 59,
-                                    "Index": 1709
-                                }
-                            }
-                        },
-                        "name": {
+                    "Properties": [
+                        {
                             "Prop": {
                                 "Name": "name",
                                 "Start": {
@@ -2448,7 +2420,7 @@
                                 }
                             }
                         },
-                        "price": {
+                        {
                             "Prop": {
                                 "Name": "price",
                                 "Start": {
@@ -2478,7 +2450,7 @@
                                 }
                             }
                         }
-                    },
+                    ],
                     "Start": {
                         "Line": 81,
                         "Column": 10,
@@ -2486,8 +2458,8 @@
                     },
                     "End": {
                         "Line": 81,
-                        "Column": 60,
-                        "Index": 1710
+                        "Column": 47,
+                        "Index": 1697
                     }
                 }
             ],
@@ -2498,8 +2470,8 @@
             },
             "End": {
                 "Line": 81,
-                "Column": 61,
-                "Index": 1711
+                "Column": 48,
+                "Index": 1698
             }
         }
     ],

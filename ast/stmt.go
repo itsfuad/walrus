@@ -189,7 +189,7 @@ type ImplMethod struct {
 
 type ImplStmt struct {
 	ImplFor IdentifierExpr
-	Methods map[string]ImplMethod
+	Methods []ImplMethod
 	Location
 }
 

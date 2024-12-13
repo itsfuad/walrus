@@ -26,11 +26,9 @@ func checkImplStmt(implStmt ast.ImplStmt, env *TypeEnvironment) TcValue {
 		errgen.AddError(env.filePath, implStmt.Start.Line, implStmt.End.Line, implStmt.Start.Column, implStmt.End.Column, "only structs can be implemented").ErrorLevel(errgen.CRITICAL)
 	}
 
-	//fmt.Printf("Implementing type %s\n", valueTypeInterfaceToString(implForType))
-
 	//add the methods to the struct's environment
-	for name, method := range implStmt.Methods {
-
+	for _, method := range implStmt.Methods {
+		name := method.Identifier.Name
 		// if the method name is in the struct's elements, throw an error
 		if _, ok := implForType.StructScope.variables[name]; ok {
 			errgen.AddError(env.filePath, method.Start.Line, method.End.Line, method.Start.Column, method.End.Column, fmt.Sprintf("name '%s' already exists in struct", name)).ErrorLevel(errgen.CRITICAL)
@@ -57,7 +55,7 @@ func checkImplStmt(implStmt ast.ImplStmt, env *TypeEnvironment) TcValue {
 		//declare the method on the struct's environment and then check the body
 		err := implForType.StructScope.declareVar(name, methodToDeclare, false, false)
 		if err != nil {
-			errgen.AddError(env.filePath, method.Start.Line, method.End.Line, method.Start.Column, method.End.Column, fmt.Sprintf("cannot declare method '%s': %s", method.Identifier.Name, err.Error())).ErrorLevel(errgen.CRITICAL)
+			errgen.AddError(env.filePath, method.Start.Line, method.End.Line, method.Start.Column, method.End.Column, fmt.Sprintf("cannot declare method '%s'\n└── %s", method.Identifier.Name, err.Error())).ErrorLevel(errgen.CRITICAL)
 		}
 
 		//check the function body

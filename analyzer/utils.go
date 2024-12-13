@@ -188,10 +188,7 @@ func matchTypes(expectedType, providedType TcValue) error {
 		errs := checkMethodsImplementations(unwrappedExpected, unwrappedProvided)
 		if len(errs) > 0 {
 			msgs := fmt.Sprintf("cannot use type '%s' as interface '%s'\n", tcValueToString(providedType), tcValueToString(expectedType))
-			for _, err := range errs {
-				msgs += utils.ORANGE.Sprintln(" - " + err.Error())
-			}
-			return errors.New(msgs)
+			return errors.New(msgs + utils.TreeFormatError(errs...).Error())
 		}
 		return nil
 	case Maybe:
@@ -273,13 +270,13 @@ func checkMethodsImplementations(expected, provided TcValue) []error {
 	}
 
 	// check if all methods are implemented
-	for methodName, method := range interfaceType.Methods {
+	for _, interfaceMethod := range interfaceType.Methods {
 		// check if method is present in the struct's variables
-		methodVal, ok := structType.StructScope.variables[methodName]
+		methodVal, ok := structType.StructScope.variables[interfaceMethod.Name]
 		if !ok {
 			//return fmt.Errorf("struct '%s' did not implement method '%s' of interface '%s'",
 			//	structType.StructName, methodName, interfaceType.InterfaceName)
-			errs = append(errs, fmt.Errorf("method '%s' is not implemented for interface '%s'", methodName, interfaceType.InterfaceName))
+			errs = append(errs, fmt.Errorf("method '%s' is not implemented for interface '%s'", interfaceMethod.Name, interfaceType.InterfaceName))
 			continue
 		}
 
@@ -288,26 +285,26 @@ func checkMethodsImplementations(expected, provided TcValue) []error {
 		if !ok {
 			//return fmt.Errorf("'%s' on struct '%s' is not a valid method for interface '%s'",
 			//	methodName, structType.StructName, interfaceType.InterfaceName)
-			errs = append(errs, fmt.Errorf("'%s' is expected to be a method", methodName))
+			errs = append(errs, fmt.Errorf("'%s' is expected to be a method", interfaceMethod.Name))
 			continue
 		}
 
 		// check the return type and parameters
-		for i, param := range method.Params {
+		for i, param := range interfaceMethod.Method.Params {
 			expectedParam := tcValueToString(param.Type)
 			providedParam := tcValueToString(methodFn.Fn.Params[i].Type)
 			if expectedParam != providedParam {
 				//return fmt.Errorf("method '%s' found for interface '%s' but parameter missmatch", methodName, interfaceType.InterfaceName)
-				errs = append(errs, fmt.Errorf("method '%s' found for interface '%s' but parameter missmatch", methodName, interfaceType.InterfaceName))
+				errs = append(errs, fmt.Errorf("method '%s' found for interface '%s' but parameter missmatch", interfaceMethod.Name, interfaceType.InterfaceName))
 			}
 		}
 
 		//check the return type
-		expectedReturn := tcValueToString(method.Returns)
+		expectedReturn := tcValueToString(interfaceMethod.Method.Returns)
 		providedReturn := tcValueToString(methodFn.Fn.Returns)
 		if expectedReturn != providedReturn {
 			//return fmt.Errorf("method '%s' found for interface '%s' but return type mismatched", methodName, interfaceType.InterfaceName)
-			errs = append(errs, fmt.Errorf("method '%s' found for interface '%s' but return type mismatched", methodName, interfaceType.InterfaceName))
+			errs = append(errs, fmt.Errorf("method '%s' found for interface '%s' but return type mismatched", interfaceMethod.Name, interfaceType.InterfaceName))
 		}
 	}
 

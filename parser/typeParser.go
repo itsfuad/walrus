@@ -365,7 +365,7 @@ func parseStructType(p *Parser) ast.DataType {
 
 	identifier := p.advance() // eat struct token
 
-	props := make(map[string]ast.StructPropType)
+	props := make([]ast.StructPropType, 0)
 
 	start := p.expect(lexer.OPEN_CURLY).Start
 
@@ -380,10 +380,6 @@ func parseStructType(p *Parser) ast.DataType {
 
 		iden := p.expect(lexer.IDENTIFIER_TOKEN)
 
-		if _, ok := props[iden.Value]; ok {
-			errgen.AddError(p.FilePath, iden.Start.Line, iden.End.Line, iden.Start.Column, iden.End.Column, fmt.Sprintf("property '%s' already defined", iden.Value)).ErrorLevel(errgen.SYNTAX)
-		}
-
 		idenExpr := ast.IdentifierExpr{
 			Name: iden.Value,
 			Location: ast.Location{
@@ -396,11 +392,11 @@ func parseStructType(p *Parser) ast.DataType {
 
 		typeName := parseType(p, DEFAULT_BP)
 
-		props[iden.Value] = ast.StructPropType{
+		props = append(props, ast.StructPropType{
 			Prop:      idenExpr,
 			PropType:  typeName,
 			IsPrivate: isPrivate,
-		}
+		})
 
 		if p.currentTokenKind() != lexer.CLOSE_CURLY {
 			p.expect(lexer.COMMA_TOKEN)
@@ -431,7 +427,7 @@ func parseInterfaceType(p *Parser) ast.DataType {
 
 	p.expect(lexer.OPEN_CURLY)
 
-	methods := make(map[string]ast.InterfaceMethod)
+	methods := make([]ast.InterfaceMethod, 0)
 
 	for p.hasToken() && p.currentTokenKind() != lexer.CLOSE_CURLY {
 
@@ -445,12 +441,7 @@ func parseInterfaceType(p *Parser) ast.DataType {
 
 		dataType, params, returnType := getFunctionTypeSignature(p)
 
-		if _, ok := methods[name.Value]; ok {
-			msg := fmt.Sprintf("method %s already defined", name.Value)
-			errgen.AddError(p.FilePath, name.Start.Line, name.End.Line, name.Start.Column, name.End.Column, msg).ErrorLevel(errgen.SYNTAX)
-		}
-
-		methods[name.Value] = ast.InterfaceMethod{
+		methods = append(methods, ast.InterfaceMethod{
 			Identifier: ast.IdentifierExpr{
 				Name: name.Value,
 				Location: ast.Location{
@@ -467,7 +458,7 @@ func parseInterfaceType(p *Parser) ast.DataType {
 					End:   returnType.EndPos(),
 				},
 			},
-		}
+		})
 
 		if p.currentTokenKind() != lexer.CLOSE_CURLY {
 			p.expect(lexer.SEMI_COLON_TOKEN)
