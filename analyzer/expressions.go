@@ -9,7 +9,7 @@ import (
 	"walrus/utils"
 )
 
-func checkIncrementalExpr(node ast.IncrementalInterface, env *TypeEnvironment) TcValue {
+func checkIncrementalExpr(node ast.IncrementalInterface, env *TypeEnvironment) ExprType {
 	op := node.Op()
 	arg := node.Arg()
 	// the argument must be an identifier evaluated to a number
@@ -25,14 +25,14 @@ func checkIncrementalExpr(node ast.IncrementalInterface, env *TypeEnvironment) T
 	return typeVal
 }
 
-func logCastSuccess(originalType TcValue, toCast TcValue) {
+func logCastSuccess(originalType ExprType, toCast ExprType) {
 	utils.ORANGE.Print("casted type ")
 	utils.PURPLE.Print(string(originalType.DType()))
 	fmt.Print(" to ")
 	utils.PURPLE.Println(string(toCast.DType()))
 }
 
-func checkTypeCast(node ast.TypeCastExpr, env *TypeEnvironment) TcValue {
+func checkTypeCast(node ast.TypeCastExpr, env *TypeEnvironment) ExprType {
 
 	originalType := parseNodeValue(node.Expression, env)
 	toCast := evaluateTypeName(node.ToCast, env)
@@ -52,7 +52,7 @@ func checkTypeCast(node ast.TypeCastExpr, env *TypeEnvironment) TcValue {
 	return originalType
 }
 
-func checkUnaryExpr(node ast.UnaryExpr, env *TypeEnvironment) TcValue {
+func checkUnaryExpr(node ast.UnaryExpr, env *TypeEnvironment) ExprType {
 	op := node.Operator
 	arg := node.Argument
 	//evaluate argument. must be evaluated to number or boolean for ! (not)
@@ -77,7 +77,7 @@ func checkUnaryExpr(node ast.UnaryExpr, env *TypeEnvironment) TcValue {
 	return typeVal
 }
 
-func checkBinaryExpr(node ast.BinaryExpr, env *TypeEnvironment) TcValue {
+func checkBinaryExpr(node ast.BinaryExpr, env *TypeEnvironment) ExprType {
 	op := node.Operator
 
 	left := parseNodeValue(node.Left, env)
@@ -123,7 +123,7 @@ func checkBinaryExpr(node ast.BinaryExpr, env *TypeEnvironment) TcValue {
 	return left
 }
 
-func checkComparison(node ast.BinaryExpr, left TcValue, right TcValue, env *TypeEnvironment) TcValue {
+func checkComparison(node ast.BinaryExpr, left ExprType, right ExprType, env *TypeEnvironment) ExprType {
 
 	leftType := tcValueToString(left)
 	rightType := tcValueToString(right)
@@ -151,7 +151,7 @@ func checkComparison(node ast.BinaryExpr, left TcValue, right TcValue, env *Type
 	return left
 }
 
-func checkAdditionAndConcat(node ast.BinaryExpr, left TcValue, right TcValue, env *TypeEnvironment) TcValue {
+func checkAdditionAndConcat(node ast.BinaryExpr, left ExprType, right ExprType, env *TypeEnvironment) ExprType {
 
 	leftType := tcValueToString(left)
 	rightType := tcValueToString(right)

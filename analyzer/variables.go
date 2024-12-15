@@ -17,7 +17,7 @@ import (
 //
 // Returns:
 // - ValueTypeInterface: the type of the value being assigned.
-func checkVariableAssignment(node ast.VarAssignmentExpr, env *TypeEnvironment) TcValue {
+func checkVariableAssignment(node ast.VarAssignmentExpr, env *TypeEnvironment) ExprType {
 
 	Assignee := node.Assignee
 	valueToAssign := node.Value
@@ -57,7 +57,7 @@ func checkVariableAssignment(node ast.VarAssignmentExpr, env *TypeEnvironment) T
 //  5. Declares the variable in the type environment and reports any errors that occur.
 //  6. Prints a message indicating whether the variable is a constant and its type.
 //  7. Returns a Void type indicating the end of the declaration process.
-func checkVariableDeclaration(node ast.VarDeclStmt, env *TypeEnvironment) TcValue {
+func checkVariableDeclaration(node ast.VarDeclStmt, env *TypeEnvironment) ExprType {
 
 	varsToDecl := node.Variables
 
@@ -66,7 +66,7 @@ func checkVariableDeclaration(node ast.VarDeclStmt, env *TypeEnvironment) TcValu
 		utils.BLUE.Print("Declaring variable ")
 		utils.RED.Println(varToDecl.Identifier.Name)
 
-		var expectedTypeInterface TcValue
+		var expectedTypeInterface ExprType
 
 		// let a : int = 5;
 

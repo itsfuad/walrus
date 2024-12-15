@@ -6,7 +6,7 @@ import (
 	"walrus/errgen"
 )
 
-func checkReturnStmt(returnNode ast.ReturnStmt, env *TypeEnvironment) TcValue {
+func checkReturnStmt(returnNode ast.ReturnStmt, env *TypeEnvironment) ExprType {
 	//check if the function is declared
 	if !env.isInFunctionScope() {
 		errgen.Add(env.filePath, returnNode.StartPos().Line, returnNode.EndPos().Line, returnNode.StartPos().Column, returnNode.EndPos().Column, "return statement outside function").Level(errgen.NORMAL)

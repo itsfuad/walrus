@@ -52,7 +52,7 @@ func checkLValue(node ast.Node, env *TypeEnvironment) error {
 	}
 }
 
-func isNumberType(operand TcValue) bool {
+func isNumberType(operand ExprType) bool {
 	switch operand.(type) {
 	case Int, Float:
 		return true
@@ -61,7 +61,7 @@ func isNumberType(operand TcValue) bool {
 	}
 }
 
-func isIntType(operand TcValue) bool {
+func isIntType(operand ExprType) bool {
 	switch operand.(type) {
 	case Int:
 		return true
@@ -85,7 +85,7 @@ func isIntType(operand TcValue) bool {
 //  2. If the dtype is a FunctionType, it evaluates the parameter types and return type, creates a new function scope, and returns a Fn.
 //  3. If the dtype is nil, it returns a Void type.
 //  4. For other types, it attempts to create a ValueTypeInterface and handles any errors that occur.
-func evaluateTypeName(dtype ast.DataType, env *TypeEnvironment) TcValue {
+func evaluateTypeName(dtype ast.DataType, env *TypeEnvironment) ExprType {
 	switch t := dtype.(type) {
 	case ast.ArrayType:
 		return evalArray(t, env)
@@ -104,7 +104,7 @@ func evaluateTypeName(dtype ast.DataType, env *TypeEnvironment) TcValue {
 	}
 }
 
-func evalDefaultType(defaultType ast.DataType, env *TypeEnvironment) TcValue {
+func evalDefaultType(defaultType ast.DataType, env *TypeEnvironment) ExprType {
 	val, err := getTypeDefinition(string(defaultType.Type())) // need to get the most deep type
 	if err != nil || val == nil {
 		errgen.Add(env.filePath, defaultType.StartPos().Line, defaultType.EndPos().Line, defaultType.StartPos().Column, defaultType.EndPos().Column, err.Error()).Level(errgen.CRITICAL)
@@ -112,7 +112,7 @@ func evalDefaultType(defaultType ast.DataType, env *TypeEnvironment) TcValue {
 	return val
 }
 
-func evalUD(analyzedUD ast.UserDefinedType, env *TypeEnvironment) TcValue {
+func evalUD(analyzedUD ast.UserDefinedType, env *TypeEnvironment) ExprType {
 	typename := analyzedUD.AliasName
 	val, err := getTypeDefinition(typename) // need to get the most deep type
 	if err != nil || val == nil {
@@ -121,7 +121,7 @@ func evalUD(analyzedUD ast.UserDefinedType, env *TypeEnvironment) TcValue {
 	return val
 }
 
-func evalArray(analyzedArray ast.ArrayType, env *TypeEnvironment) TcValue {
+func evalArray(analyzedArray ast.ArrayType, env *TypeEnvironment) ExprType {
 	val := evaluateTypeName(analyzedArray.ArrayType, env)
 	arr := Array{
 		DataType:  builtins.ARRAY,
@@ -130,7 +130,7 @@ func evalArray(analyzedArray ast.ArrayType, env *TypeEnvironment) TcValue {
 	return arr
 }
 
-func evalFn(analyzedFunctionType ast.FunctionType, env *TypeEnvironment) TcValue {
+func evalFn(analyzedFunctionType ast.FunctionType, env *TypeEnvironment) ExprType {
 	var params []FnParam
 	for _, param := range analyzedFunctionType.Parameters {
 		//check if the parameter is already declared
@@ -161,7 +161,7 @@ func evalFn(analyzedFunctionType ast.FunctionType, env *TypeEnvironment) TcValue
 	}
 }
 
-func evalMap(analyzedMap ast.MapType, env *TypeEnvironment) TcValue {
+func evalMap(analyzedMap ast.MapType, env *TypeEnvironment) ExprType {
 	if analyzedMap.Map.Name == "map" {
 		keyType := evaluateTypeName(analyzedMap.KeyType, env)
 		valueType := evaluateTypeName(analyzedMap.ValueType, env)
@@ -183,7 +183,7 @@ func evalMap(analyzedMap ast.MapType, env *TypeEnvironment) TcValue {
 	}
 }
 
-func matchTypes(expectedType, providedType TcValue) error {
+func matchTypes(expectedType, providedType ExprType) error {
 
 	unwrappedExpected := unwrapType(expectedType)
 	unwrappedProvided := unwrapType(providedType)
@@ -212,7 +212,7 @@ func matchTypes(expectedType, providedType TcValue) error {
 	return nil
 }
 
-func tcValueToString(val TcValue) string {
+func tcValueToString(val ExprType) string {
 	switch t := val.(type) {
 	case Array:
 		return fmt.Sprintf("[]%s", tcValueToString(t.ArrayType))
@@ -257,7 +257,7 @@ func functionSignatureString(fn Fn) string {
 	return fmt.Sprintf("fn(%s)%s", ParamStrs, ReturnStr)
 }
 
-func checkMethodsImplementations(expected, provided TcValue) []error {
+func checkMethodsImplementations(expected, provided ExprType) []error {
 
 	//check if the provided type implements the interface
 	errs := []error{}

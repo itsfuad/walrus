@@ -18,7 +18,7 @@ const (
 	LOOP_SCOPE
 )
 
-var typeDefinitions = map[string]TcValue{
+var typeDefinitions = map[string]ExprType{
 	string(INT8_TYPE):    NewInt(8, true),
 	string(INT16_TYPE):   NewInt(16, true),
 	string(INT32_TYPE):   NewInt(32, true),
@@ -42,7 +42,7 @@ type TypeEnvironment struct {
 	parent     *TypeEnvironment
 	scopeType  SCOPE_TYPE
 	scopeName  string
-	variables  map[string]TcValue
+	variables  map[string]ExprType
 	constants  map[string]bool
 	isOptional map[string]bool
 	interfaces map[string]Interface
@@ -58,7 +58,7 @@ func ProgramEnv(filepath string) *TypeEnvironment {
 	return env
 }
 
-func initVar(env *TypeEnvironment, name string, typeVar TcValue, isConst bool, isOptional bool) {
+func initVar(env *TypeEnvironment, name string, typeVar ExprType, isConst bool, isOptional bool) {
 	err := env.declareVar(name, typeVar, isConst, isOptional)
 	if err != nil {
 		utils.RED.Println(err)
@@ -76,7 +76,7 @@ func NewTypeENV(parent *TypeEnvironment, scope SCOPE_TYPE, scopeName string, fil
 		scopeType:  scope,
 		scopeName:  scopeName,
 		filePath:   filePath,
-		variables:  make(map[string]TcValue),
+		variables:  make(map[string]ExprType),
 		constants:  make(map[string]bool),
 		isOptional: make(map[string]bool),
 		interfaces: make(map[string]Interface),
@@ -128,7 +128,7 @@ func (t *TypeEnvironment) resolveVar(name string) (*TypeEnvironment, error) {
 	return t.parent.resolveVar(name)
 }
 
-func (t *TypeEnvironment) declareVar(name string, typeVar TcValue, isConst bool, isOptional bool) error {
+func (t *TypeEnvironment) declareVar(name string, typeVar ExprType, isConst bool, isOptional bool) error {
 
 	if _, ok := typeDefinitions[name]; ok && name != "null" && name != "void" {
 		return fmt.Errorf("type name '%s' cannot be used as variable name", name)
@@ -150,7 +150,7 @@ func (t *TypeEnvironment) declareVar(name string, typeVar TcValue, isConst bool,
 	return nil
 }
 
-func declareType(name string, typeType TcValue) error {
+func declareType(name string, typeType ExprType) error {
 	if _, ok := typeDefinitions[name]; ok {
 		return fmt.Errorf("type '%s' is already defined", name)
 	}
@@ -165,7 +165,7 @@ func (t *TypeEnvironment) isDeclared(name string) bool {
 	return false
 }
 
-func getTypeDefinition(name string) (TcValue, error) {
+func getTypeDefinition(name string) (ExprType, error) {
 	if typ, ok := typeDefinitions[name]; !ok {
 		return nil, fmt.Errorf("unknown type '%s'", name)
 	} else {
@@ -173,7 +173,7 @@ func getTypeDefinition(name string) (TcValue, error) {
 	}
 }
 
-func unwrapType(value TcValue) TcValue {
+func unwrapType(value ExprType) ExprType {
 	switch t := value.(type) {
 	case UserDefined:
 		return unwrapType(t.TypeDef)

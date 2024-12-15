@@ -20,12 +20,12 @@ import (
 // 2. Ensures that the index expression evaluates to an integer type. If not, it generates an error with a hint that the index must be a valid integer.
 //
 // If both checks pass, the function returns the type of the elements contained in the array.
-func evaluateIndexableAccess(indexable ast.Indexable, e *TypeEnvironment) TcValue {
+func evaluateIndexableAccess(indexable ast.Indexable, e *TypeEnvironment) ExprType {
 
 	container := parseNodeValue(indexable.Container, e)
 	index := parseNodeValue(indexable.Index, e)
 
-	var indexedValueType TcValue
+	var indexedValueType ExprType
 
 	switch t := container.(type) {
 	case Array:
@@ -60,8 +60,8 @@ func evaluateIndexableAccess(indexable ast.Indexable, e *TypeEnvironment) TcValu
 //
 // Returns:
 // - ValueTypeInterface: The type of the array, which includes the data type and the type of the array elements.
-func evaluateArrayExpr(array ast.ArrayLiteral, env *TypeEnvironment) TcValue {
-	var expectedType TcValue
+func evaluateArrayExpr(array ast.ArrayLiteral, env *TypeEnvironment) ExprType {
+	var expectedType ExprType
 	for i, value := range array.Values {
 		v := parseNodeValue(value, env)
 		if i == 0 {

@@ -5,14 +5,14 @@ import (
 	"walrus/errgen"
 )
 
-func checkConditionBlock(block ast.BlockStmt, env *TypeEnvironment) TcValue {
+func checkConditionBlock(block ast.BlockStmt, env *TypeEnvironment) ExprType {
 	for _, stmt := range block.Contents {
 		CheckAST(stmt, env)
 	}
 	return NewVoid()
 }
 
-func checkIfStmt(ifNode ast.IfStmt, env *TypeEnvironment) TcValue {
+func checkIfStmt(ifNode ast.IfStmt, env *TypeEnvironment) ExprType {
 	//condition
 	cond := parseNodeValue(ifNode.Condition, env)
 	if cond.DType() != BOOLEAN_TYPE {

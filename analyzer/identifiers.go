@@ -5,7 +5,7 @@ import (
 	"walrus/errgen"
 )
 
-func checkIdentifier(node ast.IdentifierExpr, env *TypeEnvironment) TcValue {
+func checkIdentifier(node ast.IdentifierExpr, env *TypeEnvironment) ExprType {
 
 	name := node.Name
 
