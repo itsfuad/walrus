@@ -66,18 +66,32 @@ fn ShowInfo(p: IPerson) {
     let name := p.getName();
 }
 
+type mytype struct {
+    name: str,
+};
+
 // To pass any User and Banana to ShowInfo function, they must implement IPerson interface's every method
 // in simple words, they must have a method called getName that returns a string. The structs can have any more fields or methods but they must have getName method in this case.
-
-
 impl Banana {
     fn getName() -> str {
         ret this.name;
     }
+    fn someMethod(a: i32) {
+        // do something
+    }
+}
+
+impl User {
+    fn getName() -> str {
+        ret this.name;
+    }
+    fn someMethod(a: i32) {
+        // do something
+    }
 }
 
 let arr := [1, 2, 3, 4, 5];
-arr[user];
+arr[1];
 
 ShowInfo(user);
 ShowInfo(@Banana{name: "Cavendish", price: 10});
