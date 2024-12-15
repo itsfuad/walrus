@@ -83,7 +83,7 @@ func parseNodeValue(node ast.Node, env *TypeEnvironment) ExprType {
 	case nil:
 		return NewNull() // value
 	default:
-		errgen.Add(env.filePath, node.StartPos().Line, node.EndPos().Line, node.StartPos().Column, node.EndPos().Column, fmt.Sprintf("<%T> node is not implemented yet to check", node)).Level(errgen.CRITICAL)
+		errgen.Add(env.filePath, node.StartPos().Line, node.EndPos().Line, node.StartPos().Column, node.EndPos().Column, fmt.Sprintf("<%T> node is not implemented yet to check", node)).Level(errgen.CRITICAL_ERROR)
 		return NewVoid()
 	}
 }

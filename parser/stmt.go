@@ -27,8 +27,14 @@ func parseUserDefinedTypeStmt(p *Parser) ast.Node {
 	p.expect(lexer.SEMI_COLON_TOKEN)
 
 	return ast.TypeDeclStmt{
-		UDType:     udType,
-		UDTypeName: typeName.Value,
+		UDTypeValue: udType,
+		UDTypeName:  ast.IdentifierExpr{
+			Name: typeName.Value,
+			Location: ast.Location{
+				Start: typeName.Start,
+				End:   typeName.End,
+			},
+		},
 		Location: ast.Location{
 			Start: start,
 			End:   udType.EndPos(),

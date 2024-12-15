@@ -16,7 +16,7 @@ func checkIfStmt(ifNode ast.IfStmt, env *TypeEnvironment) ExprType {
 	//condition
 	cond := parseNodeValue(ifNode.Condition, env)
 	if cond.DType() != BOOLEAN_TYPE {
-		errgen.Add(env.filePath, ifNode.Condition.StartPos().Line, ifNode.Condition.EndPos().Line, ifNode.Condition.StartPos().Column, ifNode.Condition.EndPos().Column, "Condition must be a boolean expression").Level(errgen.NORMAL)
+		errgen.Add(env.filePath, ifNode.Condition.StartPos().Line, ifNode.Condition.EndPos().Line, ifNode.Condition.StartPos().Column, ifNode.Condition.EndPos().Column, "Condition must be a boolean expression").Level(errgen.NORMAL_ERROR)
 	}
 
 	//then block

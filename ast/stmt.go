@@ -43,8 +43,8 @@ func (a VarDeclStmt) EndPos() lexer.Position {
 }
 
 type TypeDeclStmt struct {
-	UDType     DataType
-	UDTypeName string
+	UDTypeValue DataType
+	UDTypeName  IdentifierExpr
 	Location
 }
 

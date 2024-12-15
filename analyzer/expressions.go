@@ -16,11 +16,11 @@ func checkIncrementalExpr(node ast.IncrementalInterface, env *TypeEnvironment) E
 	typeVal := parseNodeValue(arg, env)
 	if !isNumberType(typeVal) {
 
-		errgen.Add(env.filePath, arg.StartPos().Line, arg.EndPos().Line, arg.StartPos().Column, arg.EndPos().Column, "invalid prefix operation with non-numeric type").Level(errgen.NORMAL)
+		errgen.Add(env.filePath, arg.StartPos().Line, arg.EndPos().Line, arg.StartPos().Column, arg.EndPos().Column, "invalid prefix operation with non-numeric type").Level(errgen.NORMAL_ERROR)
 	}
 	if op.Kind != lexer.PLUS_PLUS_TOKEN && op.Kind != lexer.MINUS_MINUS_TOKEN {
 
-		errgen.Add(env.filePath, op.Start.Line, op.End.Line, op.Start.Column, op.End.Column, "invalid prefix operation").Level(errgen.NORMAL)
+		errgen.Add(env.filePath, op.Start.Line, op.End.Line, op.Start.Column, op.End.Column, "invalid prefix operation").Level(errgen.NORMAL_ERROR)
 	}
 	return typeVal
 }
@@ -47,7 +47,7 @@ func checkTypeCast(node ast.TypeCastExpr, env *TypeEnvironment) ExprType {
 		return toCast
 	}
 
-	errgen.Add(env.filePath, node.Start.Line, node.End.Line, node.Start.Column, node.End.Column, fmt.Sprintf("cannot cast '%s' to '%s'", originalType.DType(), toCast.DType())).Level(errgen.NORMAL)
+	errgen.Add(env.filePath, node.Start.Line, node.End.Line, node.Start.Column, node.End.Column, fmt.Sprintf("cannot cast '%s' to '%s'", originalType.DType(), toCast.DType())).Level(errgen.NORMAL_ERROR)
 
 	return originalType
 }
@@ -63,15 +63,15 @@ func checkUnaryExpr(node ast.UnaryExpr, env *TypeEnvironment) ExprType {
 		//allow - only
 		if op.Kind != lexer.MINUS_TOKEN {
 
-			errgen.Add(env.filePath, op.Start.Line, op.End.Line, op.Start.Column, op.End.Column, "invalid unary operation with numeric types").Level(errgen.NORMAL)
+			errgen.Add(env.filePath, op.Start.Line, op.End.Line, op.Start.Column, op.End.Column, "invalid unary operation with numeric types").Level(errgen.NORMAL_ERROR)
 		}
 	case Bool:
 		if op.Kind != lexer.NOT_TOKEN {
 
-			errgen.Add(env.filePath, op.Start.Line, op.End.Line, op.Start.Column, op.End.Column, "invalid unary operation with boolean types").Level(errgen.NORMAL)
+			errgen.Add(env.filePath, op.Start.Line, op.End.Line, op.Start.Column, op.End.Column, "invalid unary operation with boolean types").Level(errgen.NORMAL_ERROR)
 		}
 	default:
-		errgen.Add(env.filePath, op.Start.Line, op.End.Line, op.Start.Column, op.End.Column, fmt.Sprintf("this unary operation is not supported with %s types", t.DType())).Level(errgen.NORMAL)
+		errgen.Add(env.filePath, op.Start.Line, op.End.Line, op.Start.Column, op.End.Column, fmt.Sprintf("this unary operation is not supported with %s types", t.DType())).Level(errgen.NORMAL_ERROR)
 	}
 
 	return typeVal
@@ -119,7 +119,7 @@ func checkBinaryExpr(node ast.BinaryExpr, env *TypeEnvironment) ExprType {
 		errEnd = op.End.Column
 	}
 
-	errgen.Add(env.filePath, errLineStart, errLineEnd, errStart, errEnd, errMsg).Level(errgen.NORMAL)
+	errgen.Add(env.filePath, errLineStart, errLineEnd, errStart, errEnd, errMsg).Level(errgen.NORMAL_ERROR)
 	return left
 }
 
@@ -147,7 +147,7 @@ func checkComparison(node ast.BinaryExpr, left ExprType, right ExprType, env *Ty
 	}
 	errMsg := fmt.Sprintf("invalid compare operation between '%s' and '%s'", leftType, rightType)
 
-	errgen.Add(env.filePath, node.Start.Line, node.End.Line, node.Start.Column, node.End.Column, errMsg).Level(errgen.NORMAL)
+	errgen.Add(env.filePath, node.Start.Line, node.End.Line, node.Start.Column, node.End.Column, errMsg).Level(errgen.NORMAL_ERROR)
 	return left
 }
 
@@ -182,6 +182,6 @@ func checkAdditionAndConcat(node ast.BinaryExpr, left ExprType, right ExprType, 
 		errEnd = node.EndPos().Column
 	}
 
-	errgen.Add(env.filePath, errLineStart, errLineEnd, errStart, errEnd, errMsg).Level(errgen.NORMAL)
+	errgen.Add(env.filePath, errLineStart, errLineEnd, errStart, errEnd, errMsg).Level(errgen.NORMAL_ERROR)
 	return left
 }
