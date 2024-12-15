@@ -11,12 +11,12 @@ import (
 type PROBLEM_TYPE string
 
 const (
-	NULL           PROBLEM_TYPE = ""
-	CRITICAL_ERROR PROBLEM_TYPE = "critical error" // Stops compilation immediately
-	SYNTAX_ERROR   PROBLEM_TYPE = "syntax error"   // Syntax error, also stops compilation
-	NORMAL_ERROR   PROBLEM_TYPE = "error"          // Regular error that doesn't halt compilation
+	NULL           	PROBLEM_TYPE = ""
+	CRITICAL_ERROR 	PROBLEM_TYPE = "critical error" // Stops compilation immediately
+	SYNTAX_ERROR   	PROBLEM_TYPE = "syntax error"   // Syntax error, also stops compilation
+	NORMAL_ERROR   	PROBLEM_TYPE = "error"          // Regular error that doesn't halt compilation
 
-	WARNING PROBLEM_TYPE = "warning" // Indicates potential issues
+	WARNING 		PROBLEM_TYPE = "warning" // Indicates potential issues
 )
 
 // global errors are arrays of error pointers
