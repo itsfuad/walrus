@@ -30,22 +30,22 @@ func evaluateIndexableAccess(indexable ast.Indexable, e *TypeEnvironment) TcValu
 	switch t := container.(type) {
 	case Array:
 		if !isIntType(index) {
-			errgen.AddError(e.filePath, indexable.Start.Line, indexable.End.Line, indexable.Index.StartPos().Column, indexable.Index.EndPos().Column, fmt.Sprintf("cannot use type '%s' to index array\n", tcValueToString(index)) + errgen.TreeFormatString("type must be a valid signed integer")).ErrorLevel(errgen.NORMAL)
+			errgen.Add(e.filePath, indexable.Start.Line, indexable.End.Line, indexable.Index.StartPos().Column, indexable.Index.EndPos().Column, fmt.Sprintf("cannot use type '%s' to index array\n", tcValueToString(index))+errgen.TreeFormatString("type must be a valid signed integer")).Level(errgen.NORMAL)
 		}
 		indexedValueType = t.ArrayType
 	case Str:
 		if !isIntType(index) {
-			errgen.AddError(e.filePath, indexable.Start.Line, indexable.End.Line, indexable.Index.StartPos().Column, indexable.Index.EndPos().Column, fmt.Sprintf("cannot use type '%s' to index string\n", tcValueToString(index)) + errgen.TreeFormatString("type must be a valid signed integer")).ErrorLevel(errgen.NORMAL)
+			errgen.Add(e.filePath, indexable.Start.Line, indexable.End.Line, indexable.Index.StartPos().Column, indexable.Index.EndPos().Column, fmt.Sprintf("cannot use type '%s' to index string\n", tcValueToString(index))+errgen.TreeFormatString("type must be a valid signed integer")).Level(errgen.NORMAL)
 		}
 		return NewInt(8, false)
 	case Map:
 		//if key is interface then error
 		if unwrapType(t.KeyType).DType() == INTERFACE_TYPE {
-			errgen.AddError(e.filePath, indexable.Start.Line, indexable.End.Line, indexable.Index.StartPos().Column, indexable.Index.EndPos().Column, fmt.Sprintf("cannot access index of type %s", INTERFACE_TYPE)).ErrorLevel(errgen.NORMAL)
+			errgen.Add(e.filePath, indexable.Start.Line, indexable.End.Line, indexable.Index.StartPos().Column, indexable.Index.EndPos().Column, fmt.Sprintf("cannot access index of type %s", INTERFACE_TYPE)).Level(errgen.NORMAL)
 		}
 		indexedValueType = t.ValueType
 	default:
-		errgen.AddError(e.filePath, indexable.Start.Line, indexable.End.Line, indexable.Container.StartPos().Column, indexable.Container.EndPos().Column, fmt.Sprintf("cannot access index of type %s", container.DType())).ErrorLevel(errgen.CRITICAL)
+		errgen.Add(e.filePath, indexable.Start.Line, indexable.End.Line, indexable.Container.StartPos().Column, indexable.Container.EndPos().Column, fmt.Sprintf("cannot access index of type %s", container.DType())).Level(errgen.CRITICAL)
 	}
 
 	return indexedValueType
@@ -70,7 +70,7 @@ func evaluateArrayExpr(array ast.ArrayLiteral, env *TypeEnvironment) TcValue {
 		//check every type is same or not
 		err := matchTypes(expectedType, v)
 		if err != nil {
-			errgen.AddError(env.filePath, array.Start.Line, array.End.Line, array.Values[i].StartPos().Column, array.Values[i].EndPos().Column, err.Error()).ErrorLevel(errgen.NORMAL)
+			errgen.Add(env.filePath, array.Start.Line, array.End.Line, array.Values[i].StartPos().Column, array.Values[i].EndPos().Column, err.Error()).Level(errgen.NORMAL)
 		}
 	}
 

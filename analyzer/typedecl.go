@@ -32,7 +32,7 @@ func checkTypeDeclaration(node ast.TypeDeclStmt, env *TypeEnvironment) TcValue {
 
 	err := declareType(node.UDTypeName, typeVal)
 	if err != nil {
-		errgen.AddError(env.filePath, node.Start.Line, node.End.Line, node.Start.Column, node.End.Column, err.Error()).ErrorLevel(errgen.NORMAL)
+		errgen.Add(env.filePath, node.Start.Line, node.End.Line, node.Start.Column, node.End.Column, err.Error()).Level(errgen.NORMAL)
 	}
 
 	utils.GREEN.Print("Declared Type ")

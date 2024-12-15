@@ -107,7 +107,7 @@ func evaluateTypeName(dtype ast.DataType, env *TypeEnvironment) TcValue {
 func evalDefaultType(defaultType ast.DataType, env *TypeEnvironment) TcValue {
 	val, err := getTypeDefinition(string(defaultType.Type())) // need to get the most deep type
 	if err != nil || val == nil {
-		errgen.AddError(env.filePath, defaultType.StartPos().Line, defaultType.EndPos().Line, defaultType.StartPos().Column, defaultType.EndPos().Column, err.Error()).ErrorLevel(errgen.CRITICAL)
+		errgen.Add(env.filePath, defaultType.StartPos().Line, defaultType.EndPos().Line, defaultType.StartPos().Column, defaultType.EndPos().Column, err.Error()).Level(errgen.CRITICAL)
 	}
 	return val
 }
@@ -116,7 +116,7 @@ func evalUD(analyzedUD ast.UserDefinedType, env *TypeEnvironment) TcValue {
 	typename := analyzedUD.AliasName
 	val, err := getTypeDefinition(typename) // need to get the most deep type
 	if err != nil || val == nil {
-		errgen.AddError(env.filePath, analyzedUD.StartPos().Line, analyzedUD.EndPos().Line, analyzedUD.StartPos().Column, analyzedUD.EndPos().Column, err.Error()).ErrorLevel(errgen.CRITICAL)
+		errgen.Add(env.filePath, analyzedUD.StartPos().Line, analyzedUD.EndPos().Line, analyzedUD.StartPos().Column, analyzedUD.EndPos().Column, err.Error()).Level(errgen.CRITICAL)
 	}
 	return val
 }
@@ -137,8 +137,8 @@ func evalFn(analyzedFunctionType ast.FunctionType, env *TypeEnvironment) TcValue
 		if utils.Some(params, func(p FnParam) bool {
 			return p.Name == param.Identifier.Name
 		}) {
-			errgen.AddError(env.filePath, param.Identifier.Start.Line, param.Identifier.End.Line, param.Identifier.Start.Column, param.Identifier.End.Column,
-				fmt.Sprintf("parameter '%s' is already defined", param.Identifier.Name)).ErrorLevel(errgen.CRITICAL)
+			errgen.Add(env.filePath, param.Identifier.Start.Line, param.Identifier.End.Line, param.Identifier.Start.Column, param.Identifier.End.Column,
+				fmt.Sprintf("parameter '%s' is already defined", param.Identifier.Name)).Level(errgen.CRITICAL)
 		}
 
 		paramType := evaluateTypeName(param.Type, env)
@@ -170,14 +170,14 @@ func evalMap(analyzedMap ast.MapType, env *TypeEnvironment) TcValue {
 		//find the name in the type definition
 		val, err := getTypeDefinition(analyzedMap.Map.Name) // need to get the most deep type
 		if err != nil {
-			errgen.AddError(env.filePath, analyzedMap.StartPos().Line, analyzedMap.EndPos().Line, analyzedMap.StartPos().Column, analyzedMap.EndPos().Column, err.Error()).ErrorLevel(errgen.NORMAL)
+			errgen.Add(env.filePath, analyzedMap.StartPos().Line, analyzedMap.EndPos().Line, analyzedMap.StartPos().Column, analyzedMap.EndPos().Column, err.Error()).Level(errgen.NORMAL)
 		}
 
 		if mapVal, ok := val.(Map); ok {
 			return NewMap(mapVal.KeyType, mapVal.ValueType)
 		}
 
-		errgen.AddError(env.filePath, analyzedMap.StartPos().Line, analyzedMap.EndPos().Line, analyzedMap.StartPos().Column, analyzedMap.EndPos().Column, fmt.Sprintf("'%s' is not a map", analyzedMap.Map.Name)).ErrorLevel(errgen.CRITICAL)
+		errgen.Add(env.filePath, analyzedMap.StartPos().Line, analyzedMap.EndPos().Line, analyzedMap.StartPos().Column, analyzedMap.EndPos().Column, fmt.Sprintf("'%s' is not a map", analyzedMap.Map.Name)).Level(errgen.CRITICAL)
 
 		return NewVoid()
 	}
@@ -274,14 +274,12 @@ func checkMethodsImplementations(expected, provided TcValue) []error {
 		return []error{fmt.Errorf("type must be a struct")}
 	}
 
-	// check if all methods are implemented
+	// check if all methods are present
 	for _, interfaceMethod := range interfaceType.Methods {
 		// check if method is present in the struct's variables
 		methodVal, ok := structType.StructScope.variables[interfaceMethod.Name]
 		if !ok {
-			//return fmt.Errorf("struct '%s' did not implement method '%s' of interface '%s'",
-			//	structType.StructName, methodName, interfaceType.InterfaceName)
-			errs = append(errs, fmt.Errorf("method '%s' is not implemented for interface '%s'", interfaceMethod.Name, interfaceType.InterfaceName))
+			errs = append(errs, fmt.Errorf("missing method '%s' on '%s'", interfaceMethod.Name, structType.StructName))
 			continue
 		}
 
@@ -300,7 +298,7 @@ func checkMethodsImplementations(expected, provided TcValue) []error {
 			providedParam := tcValueToString(methodFn.Fn.Params[i].Type)
 			if expectedParam != providedParam {
 				//return fmt.Errorf("method '%s' found for interface '%s' but parameter missmatch", methodName, interfaceType.InterfaceName)
-				errs = append(errs, fmt.Errorf("method '%s' found for interface '%s' but parameter missmatch", interfaceMethod.Name, interfaceType.InterfaceName))
+				errs = append(errs, fmt.Errorf("method '%s', but parameter missmatch", interfaceMethod.Name))
 			}
 		}
 
@@ -309,7 +307,7 @@ func checkMethodsImplementations(expected, provided TcValue) []error {
 		providedReturn := tcValueToString(methodFn.Fn.Returns)
 		if expectedReturn != providedReturn {
 			//return fmt.Errorf("method '%s' found for interface '%s' but return type mismatched", methodName, interfaceType.InterfaceName)
-			errs = append(errs, fmt.Errorf("method '%s' found for interface '%s' but return type mismatched", interfaceMethod.Name, interfaceType.InterfaceName))
+			errs = append(errs, fmt.Errorf("method '%s' found, but return type mismatched", interfaceMethod.Name))
 		}
 	}
 

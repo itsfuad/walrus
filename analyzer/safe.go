@@ -24,17 +24,17 @@ func checkSafeStmt(node ast.SafeStmt, env *TypeEnvironment) TcValue {
 	maybeVar := parseNodeValue(node.Value, env)
 
 	if maybeVar.DType() != MAYBE_TYPE {
-		errgen.AddError(env.filePath, node.Value.Start.Line, node.Value.End.Line, node.Value.Start.Column, node.Value.End.Column, "safe-otherwise can only be used with 'maybe' types").ErrorLevel(errgen.CRITICAL)
+		errgen.Add(env.filePath, node.Value.Start.Line, node.Value.End.Line, node.Value.Start.Column, node.Value.End.Column, "safe-otherwise can only be used with 'maybe' types").Level(errgen.CRITICAL)
 	}
 
 	// check the safe block where the maybe type is the type of the defined type
 	err := checkSafeBlock(env, node.Value.Name, node.SafeBlock, maybeVar.(Maybe))
 	if err != nil {
-		errgen.AddError(env.filePath, node.SafeBlock.StartPos().Line, node.SafeBlock.EndPos().Line, node.SafeBlock.StartPos().Column, node.SafeBlock.EndPos().Column, err.Error()).ErrorLevel(errgen.NORMAL)
+		errgen.Add(env.filePath, node.SafeBlock.StartPos().Line, node.SafeBlock.EndPos().Line, node.SafeBlock.StartPos().Column, node.SafeBlock.EndPos().Column, err.Error()).Level(errgen.NORMAL)
 	}
 	err = checkOtherwiseBlock(env, node.Value.Name, node.UnsafeBlock)
 	if err != nil {
-		errgen.AddError(env.filePath, node.UnsafeBlock.StartPos().Line, node.UnsafeBlock.EndPos().Line, node.UnsafeBlock.StartPos().Column, node.UnsafeBlock.EndPos().Column, err.Error()).ErrorLevel(errgen.NORMAL)
+		errgen.Add(env.filePath, node.UnsafeBlock.StartPos().Line, node.UnsafeBlock.EndPos().Line, node.UnsafeBlock.StartPos().Column, node.UnsafeBlock.EndPos().Column, err.Error()).Level(errgen.NORMAL)
 	}
 
 	return NewVoid()
