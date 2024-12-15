@@ -5,15 +5,15 @@ import (
 	"walrus/lexer"
 )
 
-func parseImplementStmt(p *Parser) ast.Node {
+func parseImplStmt(p *Parser) ast.Node {
 
-	start := p.advance().Start // eat impl token
+	start := p.advance().Start
 
 	typeName := p.expect(lexer.IDENTIFIER_TOKEN)
 
 	p.expect(lexer.OPEN_CURLY)
 
-	methods := make([]ast.ImplMethod, 0)
+	methods := make([]ast.MethodToImplement, 0)
 
 	for p.hasToken() && p.currentTokenKind() != lexer.CLOSE_CURLY {
 
@@ -32,7 +32,7 @@ func parseImplementStmt(p *Parser) ast.Node {
 
 		body := parseBlock(p)
 
-		method := ast.ImplMethod{
+		method := ast.MethodToImplement{
 			IsPrivate: IsPrivate,
 			FunctionDeclStmt: ast.FunctionDeclStmt{
 				Identifier: ast.IdentifierExpr{

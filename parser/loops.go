@@ -108,7 +108,7 @@ func parseForStmt(p *Parser) ast.Node {
 			},
 		}
 	} else {
-		errgen.AddError(p.FilePath, loopType.Start.Line, loopType.End.Line, loopType.Start.Column, loopType.End.Column, "Expected 'for' or 'foreach' keyword").ErrorLevel(errgen.SYNTAX)
+		errgen.Add(p.FilePath, loopType.Start.Line, loopType.End.Line, loopType.Start.Column, loopType.End.Column, "Expected 'for' or 'foreach' keyword").Level(errgen.SYNTAX)
 	}
 
 	return nil

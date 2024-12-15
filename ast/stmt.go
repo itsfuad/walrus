@@ -182,14 +182,14 @@ func (a ReturnStmt) EndPos() lexer.Position {
 	return a.Location.End
 }
 
-type ImplMethod struct {
+type MethodToImplement struct {
 	IsPrivate bool
 	FunctionDeclStmt
 }
 
 type ImplStmt struct {
 	ImplFor IdentifierExpr
-	Methods []ImplMethod
+	Methods []MethodToImplement
 	Location
 }
 

@@ -8,15 +8,15 @@ import (
 	"walrus/utils"
 )
 
-type ERROR_LEVEL string
+type ERROR_TYPE string
 
 const (
-	NULL ERROR_LEVEL = ""
-	CRITICAL ERROR_LEVEL = "critical error" // Stops compilation immediately
-	SYNTAX ERROR_LEVEL = "syntax error" // Syntax error, also stops compilation
-	NORMAL ERROR_LEVEL = "error"                      // Regular error that doesn't halt compilation
-	WARNING ERROR_LEVEL = "warning"                     // Indicates potential issues
-	INFO ERROR_LEVEL = "info"                        // Informational messages
+	NULL ERROR_TYPE = ""
+	CRITICAL ERROR_TYPE = "critical error" // Stops compilation immediately
+	SYNTAX ERROR_TYPE = "syntax error" // Syntax error, also stops compilation
+	NORMAL ERROR_TYPE = "error"                      // Regular error that doesn't halt compilation
+	WARNING ERROR_TYPE = "warning"                     // Indicates potential issues
+	INFO ERROR_TYPE = "info"                        // Informational messages
 )
 
 type WalrusError struct {
@@ -27,7 +27,7 @@ type WalrusError struct {
 	colEnd    int
 	err       error
 	hints     []string
-	level     ERROR_LEVEL
+	level     ERROR_TYPE
 }
 
 // printError formats and displays error information for a WalrusError.
@@ -162,25 +162,23 @@ func makeError(filePath string, lineStart, lineEnd int, colStart, colEnd int, er
 var globalErrors []*WalrusError
 
 // make an errorlist to add all errors and display later
-func AddError(filePath string, lineStart, lineEnd int, colStart, colEnd int, err string) *WalrusError {
+func Add(filePath string, lineStart, lineEnd int, colStart, colEnd int, err string) *WalrusError {
 	errItem := makeError(filePath, lineStart, lineEnd, colStart, colEnd, err)
 	utils.YELLOW.Printf("Error added on %s:%d:%d. %d errors available\n", filePath, lineStart, colStart, len(globalErrors))
 	return errItem
 }
 
-
-
-func (e *WalrusError) ErrorLevel(level ERROR_LEVEL) {
+func (e *WalrusError) Level(level ERROR_TYPE) {
 	if level == NULL {
 		panic("call ErrorLevel() method with valid Error level")
 	}
 	e.level = level
 	if level == CRITICAL || level == SYNTAX {
-		DisplayErrors()
+		DisplayAll()
 	}
 }
 
-func DisplayErrors() {
+func DisplayAll() {
 	if len(globalErrors) == 0 {
 		utils.GREEN.Println("------- Passed --------")
 		return

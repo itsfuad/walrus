@@ -53,7 +53,6 @@ let emp := user.age;
 type Banana struct {
     name: str,
     price: i32,
-    getName: str,
 };
 
 type Fn fn(a: i32, b: i32) -> i32;
@@ -71,11 +70,11 @@ fn ShowInfo(p: IPerson) {
 // in simple words, they must have a method called getName that returns a string. The structs can have any more fields or methods but they must have getName method in this case.
 
 
-/*impl Banana {
+impl Banana {
     fn getName() -> str {
         ret this.name;
     }
-}*/
+}
 
 let arr := [1, 2, 3, 4, 5];
 arr[user];

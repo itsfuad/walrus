@@ -30,5 +30,5 @@ func main() {
 
 	analyzer.CheckAST(tree, anz)
 
-	errgen.DisplayErrors()
+	errgen.DisplayAll()
 }

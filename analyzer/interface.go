@@ -28,8 +28,8 @@ func checkInterfaceTypeDecl(interfaceName string, interfaceNode ast.InterfaceTyp
 			if utils.Some(params, func(p FnParam) bool {
 				return p.Name == fnParam.Name
 			}) {
-				errgen.AddError(env.filePath, param.Identifier.Start.Line, param.Identifier.End.Line, param.Identifier.Start.Column, param.Identifier.End.Column,
-					fmt.Sprintf("parameter '%s' is already defined for method '%s'", fnParam.Name, method.Identifier.Name)).ErrorLevel(errgen.CRITICAL)
+				errgen.Add(env.filePath, param.Identifier.Start.Line, param.Identifier.End.Line, param.Identifier.Start.Column, param.Identifier.End.Column,
+					fmt.Sprintf("parameter '%s' is already defined for method '%s'", fnParam.Name, method.Identifier.Name)).Level(errgen.CRITICAL)
 			}
 
 			params = append(params, fnParam)
@@ -41,8 +41,8 @@ func checkInterfaceTypeDecl(interfaceName string, interfaceNode ast.InterfaceTyp
 		if utils.Some(methods, func(m InterfaceMethodType) bool {
 			return m.Name == method.Identifier.Name
 		}) {
-			errgen.AddError(env.filePath, method.Identifier.Start.Line, method.Identifier.End.Line, method.Identifier.Start.Column, method.Identifier.End.Column,
-				fmt.Sprintf("method '%s' already exists in interface '%s'", method.Identifier.Name, interfaceName)).ErrorLevel(errgen.CRITICAL)
+			errgen.Add(env.filePath, method.Identifier.Start.Line, method.Identifier.End.Line, method.Identifier.Start.Column, method.Identifier.End.Column,
+				fmt.Sprintf("method '%s' already exists in interface '%s'", method.Identifier.Name, interfaceName)).Level(errgen.CRITICAL)
 		}
 
 		methods = append(methods, InterfaceMethodType{

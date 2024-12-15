@@ -128,7 +128,6 @@ func bindLookupHandlers() {
 	stmt(lexer.FOREACH_TOKEN, parseForStmt)           // foreach statement
 	stmt(lexer.FUNCTION_TOKEN, parseFunctionDeclStmt) // function declaration
 	stmt(lexer.RETURN_TOKEN, parseReturnStmt)         // return statement
-	//implement keyword
-	stmt(lexer.IMPLEMENT_TOKEN, parseImplementStmt)
+	stmt(lexer.IMPL_TOKEN, parseImplStmt)
 	stmt(lexer.SAFE_TOKEN, parseSafeStmt)
 }
