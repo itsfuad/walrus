@@ -6,7 +6,7 @@ import (
 	"walrus/errgen"
 )
 
-func checkImplStmt(implStmt ast.ImplStmt, env *TypeEnvironment) TcValue {
+func checkImplStmt(implStmt ast.ImplStmt, env *TypeEnvironment) ExprType {
 
 	//scope must be global
 	if env.scopeType != GLOBAL_SCOPE {

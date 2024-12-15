@@ -6,14 +6,14 @@ import (
 	"walrus/utils"
 )
 
-func checkTypeDeclaration(node ast.TypeDeclStmt, env *TypeEnvironment) TcValue {
+func checkTypeDeclaration(node ast.TypeDeclStmt, env *TypeEnvironment) ExprType {
 
 	typeName := node.UDType
 
 	utils.BLUE.Print("declaring type ")
 	utils.PURPLE.Println(node.UDTypeName)
 
-	var val TcValue
+	var val ExprType
 
 	switch t := typeName.(type) {
 	case ast.StructType:

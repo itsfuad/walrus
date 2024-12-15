@@ -67,7 +67,7 @@ func TestFunctionSignatureString(t *testing.T) {
 func TestTcValueToString(t *testing.T) {
 	tests := []struct {
 		name     string
-		val      TcValue
+		val      ExprType
 		expected string
 	}{
 		{
@@ -216,7 +216,7 @@ func TestDefaultToString(t *testing.T) {
 func TestIsNumberType(t *testing.T) {
 	tests := []struct {
 		name     string
-		val      TcValue
+		val      ExprType
 		expected bool
 	}{
 		{
@@ -258,7 +258,7 @@ func TestIsNumberType(t *testing.T) {
 func TestIsIntType(t *testing.T) {
 	tests := []struct {
 		name     string
-		val      TcValue
+		val      ExprType
 		expected bool
 	}{
 		{
@@ -297,5 +297,3 @@ func TestIsIntType(t *testing.T) {
 		})
 	}
 }
-
-

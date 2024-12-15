@@ -1,7 +1,6 @@
 package analyzer
 
 import (
-	"walrus/ast"
 	"walrus/builtins"
 )
 
@@ -32,8 +31,13 @@ const (
 	RETURN_TYPE       builtins.TC_TYPE = "return"
 )
 
-type TcValue interface {
+type AnalyzerNode interface {
+	INodeResult()
+}
+
+type ExprType interface {
 	DType() builtins.TC_TYPE
+	INodeResult()
 }
 
 type Int struct {
@@ -46,6 +50,8 @@ func (t Int) DType() builtins.TC_TYPE {
 	return t.DataType
 }
 
+func (t Int) INodeResult() {} //empty function to implement interface
+
 type Float struct {
 	DataType builtins.TC_TYPE
 	BitSize  uint8
@@ -55,6 +61,8 @@ func (t Float) DType() builtins.TC_TYPE {
 	return t.DataType
 }
 
+func (t Float) INodeResult() {} //empty function to implement interface
+
 type Str struct {
 	DataType builtins.TC_TYPE
 }
@@ -62,6 +70,8 @@ type Str struct {
 func (t Str) DType() builtins.TC_TYPE {
 	return t.DataType
 }
+
+func (t Str) INodeResult() {} //empty function to implement interface
 
 type Bool struct {
 	DataType builtins.TC_TYPE
@@ -71,6 +81,8 @@ func (t Bool) DType() builtins.TC_TYPE {
 	return t.DataType
 }
 
+func (t Bool) INodeResult() {} //empty function to implement interface
+
 type Null struct {
 	DataType builtins.TC_TYPE
 }
@@ -78,6 +90,8 @@ type Null struct {
 func (t Null) DType() builtins.TC_TYPE {
 	return t.DataType
 }
+
+func (t Null) INodeResult() {} //empty function to implement interface
 
 type Void struct {
 	DataType builtins.TC_TYPE
@@ -87,27 +101,31 @@ func (t Void) DType() builtins.TC_TYPE {
 	return t.DataType
 }
 
+func (t Void) INodeResult() {} //empty function to implement interface
+
 type Map struct {
 	DataType  builtins.TC_TYPE
-	KeyType   TcValue
-	ValueType TcValue
+	KeyType   ExprType
+	ValueType ExprType
 }
 
 func (t Map) DType() builtins.TC_TYPE {
 	return t.DataType
 }
 
+func (t Map) INodeResult() {} //empty function to implement interface
+
 type FnParam struct {
 	Name       string
 	IsOptional bool
 	//DefaultValueType ValueTypeInterface
-	Type TcValue
+	Type ExprType
 }
 
 type Fn struct {
 	DataType      builtins.TC_TYPE
 	Params        []FnParam
-	Returns       TcValue
+	Returns       ExprType
 	FunctionScope TypeEnvironment
 }
 
@@ -115,10 +133,12 @@ func (t Fn) DType() builtins.TC_TYPE {
 	return t.DataType
 }
 
+func (t Fn) INodeResult() {} //empty function to implement interface
+
 type ConditionBranch struct {
 	DataType builtins.TC_TYPE
-	Next     TcValue
-	Returns  TcValue
+	Next     ExprType
+	Returns  ExprType
 }
 
 type ConditionStmt struct {
@@ -130,14 +150,18 @@ func (t ConditionStmt) DType() builtins.TC_TYPE {
 	return t.DataType
 }
 
+func (t ConditionStmt) INodeResult() {} //empty function to implement interface
+
 type StructProperty struct {
 	IsPrivate bool
-	Type      TcValue
+	Type      ExprType
 }
 
 func (t StructProperty) DType() builtins.TC_TYPE {
 	return t.Type.DType()
 }
+
+func (t StructProperty) INodeResult() {} //empty function to implement interface
 
 type StructMethod struct {
 	IsPrivate bool
@@ -147,6 +171,8 @@ type StructMethod struct {
 func (t StructMethod) DType() builtins.TC_TYPE {
 	return t.DataType
 }
+
+func (t StructMethod) INodeResult() {} //empty function to implement interface
 
 type Struct struct {
 	DataType    builtins.TC_TYPE
@@ -158,43 +184,41 @@ func (t Struct) DType() builtins.TC_TYPE {
 	return t.DataType
 }
 
+func (t Struct) INodeResult() {} //empty function to implement interface
+
 type Array struct {
 	DataType  builtins.TC_TYPE
-	ArrayType TcValue
+	ArrayType ExprType
 }
 
 func (t Array) DType() builtins.TC_TYPE {
 	return t.DataType
 }
 
+func (t Array) INodeResult() {} //empty function to implement interface
+
 type UserDefined struct {
 	DataType builtins.TC_TYPE
 	TypeName string
-	TypeDef  TcValue
+	TypeDef  ExprType
 }
 
 func (t UserDefined) DType() builtins.TC_TYPE {
 	return t.DataType
 }
 
+func (t UserDefined) INodeResult() {} //empty function to implement interface
+
 type ReturnType struct {
 	DataType   builtins.TC_TYPE
-	Expression TcValue
+	Expression ExprType
 }
 
 func (t ReturnType) DType() builtins.TC_TYPE {
 	return t.DataType
 }
 
-type Block struct {
-	DataType builtins.TC_TYPE
-	Returns  TcValue
-	Node     ast.Node
-}
-
-func (t Block) DType() builtins.TC_TYPE {
-	return t.DataType
-}
+func (t ReturnType) INodeResult() {} //empty function to implement interface
 
 type InterfaceMethodType struct {
 	Name   string
@@ -211,11 +235,15 @@ func (t Interface) DType() builtins.TC_TYPE {
 	return t.DataType
 }
 
+func (t Interface) INodeResult() {} //empty function to implement interface
+
 type Maybe struct {
 	DataType  builtins.TC_TYPE
-	MaybeType TcValue
+	MaybeType ExprType
 }
 
 func (t Maybe) DType() builtins.TC_TYPE {
 	return t.DataType
 }
+
+func (t Maybe) INodeResult() {} //empty function to implement interface

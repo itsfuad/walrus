@@ -5,7 +5,7 @@ import (
 	"walrus/errgen"
 )
 
-func checkForStmt(forStmt ast.ForStmt, env *TypeEnvironment) TcValue {
+func checkForStmt(forStmt ast.ForStmt, env *TypeEnvironment) ExprType {
 
 	// for loop can be infinite loop or have a start, end and step
 

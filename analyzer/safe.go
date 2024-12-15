@@ -19,7 +19,7 @@ import (
 // Errors:
 // - Adds a critical error if the node's value is not of 'maybe' type.
 // - Adds normal errors if there are issues within the safe or unsafe blocks.
-func checkSafeStmt(node ast.SafeStmt, env *TypeEnvironment) TcValue {
+func checkSafeStmt(node ast.SafeStmt, env *TypeEnvironment) ExprType {
 
 	maybeVar := parseNodeValue(node.Value, env)
 

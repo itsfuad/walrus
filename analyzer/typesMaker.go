@@ -47,10 +47,10 @@ func NewVoid() Void {
 	return Void{DataType: VOID_TYPE}
 }
 
-func NewMap(keyType TcValue, valueType TcValue) Map {
+func NewMap(keyType ExprType, valueType ExprType) Map {
 	return Map{DataType: MAP_TYPE, KeyType: keyType, ValueType: valueType}
 }
 
-func NewMaybe(valueType TcValue) Maybe {
+func NewMaybe(valueType ExprType) Maybe {
 	return Maybe{DataType: MAYBE_TYPE, MaybeType: valueType}
 }
