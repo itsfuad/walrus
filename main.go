@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"os"
 
-	"walrus/analyzer"
 	"walrus/errgen"
-	"walrus/lexer"
-	"walrus/parser"
-	"walrus/helpers"
+	"walrus/frontend/helpers"
+	"walrus/frontend/lexer"
+	"walrus/frontend/parser"
+	"walrus/frontend/typechecker"
 )
 
 func main() {
@@ -26,9 +26,9 @@ func main() {
 		os.Exit(-1)
 	}
 
-	anz := analyzer.ProgramEnv(filePath)
+	typeCheckerEnv := typechecker.ProgramEnv(filePath)
 
-	analyzer.CheckAST(tree, anz)
+	typechecker.CheckAST(tree, typeCheckerEnv)
 
 	errgen.DisplayAll()
 }

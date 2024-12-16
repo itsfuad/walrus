@@ -11,12 +11,12 @@ import (
 type PROBLEM_TYPE string
 
 const (
-	NULL           	PROBLEM_TYPE = ""
-	CRITICAL_ERROR 	PROBLEM_TYPE = "critical error" // Stops compilation immediately
-	SYNTAX_ERROR   	PROBLEM_TYPE = "syntax error"   // Syntax error, also stops compilation
-	NORMAL_ERROR   	PROBLEM_TYPE = "error"          // Regular error that doesn't halt compilation
+	NULL           PROBLEM_TYPE = ""
+	CRITICAL_ERROR PROBLEM_TYPE = "critical error" // Stops compilation immediately
+	SYNTAX_ERROR   PROBLEM_TYPE = "syntax error"   // Syntax error, also stops compilation
+	NORMAL_ERROR   PROBLEM_TYPE = "error"          // Regular error that doesn't halt compilation
 
-	WARNING 		PROBLEM_TYPE = "warning" // Indicates potential issues
+	WARNING PROBLEM_TYPE = "warning" // Indicates potential issues
 )
 
 // global errors are arrays of error pointers
@@ -114,7 +114,6 @@ func markUnderline(e *Problem, underLine string) {
 	}
 }
 
-
 // Hint appends a hint message to the error's hints slice.
 // If the provided message is empty, it returns the error without modification.
 // Each hint provides additional context or suggestions about the error.
@@ -177,10 +176,10 @@ func (e *Problem) Level(level PROBLEM_TYPE) {
 func DisplayAll() {
 	//recover if panics
 	defer func() {
-		if problems[CRITICAL_ERROR] == 0 && problems[NORMAL_ERROR] == 0 {
-			utils.GREEN.Println("-------- Passed --------")
-		}
 		displayProblemCount()
+		if problems[CRITICAL_ERROR] == 0 && problems[NORMAL_ERROR] == 0 {
+			utils.GREEN.Println("------------ Passed ------------")
+		}
 		if r := recover(); r != nil {
 			utils.BOLD_RED.Println(r)
 			os.Exit(-1)
@@ -196,25 +195,18 @@ func DisplayAll() {
 
 func displayProblemCount() {
 	//show errors and warnings separately
-
-	if problems[WARNING] > 0 {
-		str := fmt.Sprintf("%d warning", problems[WARNING])
-		if problems[WARNING] > 1 {
-			str += "s"
-		}
-		utils.YELLOW.Print(str)
+	warningCount := problems[WARNING]
+	if warningCount > 0 {
+		utils.ORANGE.Printf("%d %s", warningCount, utils.Plural("warning", "warnings, ", warningCount))
 	}
 
-	if problems[NORMAL_ERROR]+problems[CRITICAL_ERROR] > 0 {
-		if problems[WARNING] > 0 {
-			utils.YELLOW.Print(", ")
-		}
-		str := fmt.Sprintf("%d error", problems[NORMAL_ERROR] + problems[CRITICAL_ERROR])
-		if problems[NORMAL_ERROR] > 1 {
-			str += "s"
-		}
-		utils.RED.Println(str)
+	probCount := problems[NORMAL_ERROR] + problems[CRITICAL_ERROR]
+
+	if probCount > 0 {
+		utils.RED.Sprintf("%d %s", probCount, utils.Plural("error", "errors", probCount))
 	}
+
+	println()
 }
 
 // func Tree print with one or more strings
