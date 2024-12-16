@@ -14,7 +14,7 @@ We support the following versions of Walrus with security updates. Only versions
 
 If you discover a security vulnerability, please report it promptly. Here's how to report a vulnerability:
 
-1. **Email:** Send a detailed report to [security@walrus-lang.com](mailto:fuad.cs22@gmail.com). Include as much information as possible to help us understand and reproduce the issue.
+1. **Email:** Send a detailed report to [fuad.cs22@gmail.com](mailto:fuad.cs22@gmail.com). Include as much information as possible to help us understand and reproduce the issue.
 2. **Response Time:** We will acknowledge receipt of your report within 48 hours and begin investigating. Depending on the complexity of the issue, we will provide updates at least once every week until the issue is resolved.
 3. **What to Expect:**
    - If the vulnerability is confirmed, we will prioritize fixing it and release an update as soon as possible.
