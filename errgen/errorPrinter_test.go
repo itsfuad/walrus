@@ -3,6 +3,7 @@ package errgen
 import (
 	"errors"
 	"testing"
+
 	"walrus/utils"
 )
 
@@ -30,6 +31,7 @@ var tests = []struct {
 		expected: "",
 	},
 }
+
 func TestTreeFormatString(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -60,7 +62,7 @@ func TestTreeFormatError(t *testing.T) {
 	}
 }
 
-//test panic and recover
+// test panic and recover
 func TestPanicRecover(t *testing.T) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -73,7 +75,6 @@ func TestPanicRecover(t *testing.T) {
 	// Trigger the panic by passing a non-primitive value (e.g., a struct or a slice)
 	Panicable(1, []int{2, 3})
 }
-
 
 func Panicable(data ...any) {
 	//panic if data is not primitive
