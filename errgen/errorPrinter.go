@@ -11,13 +11,23 @@ import (
 type PROBLEM_TYPE string
 
 const (
-	NULL           PROBLEM_TYPE = ""
-	CRITICAL_ERROR PROBLEM_TYPE = "critical error" // Stops compilation immediately
-	SYNTAX_ERROR   PROBLEM_TYPE = "syntax error"   // Syntax error, also stops compilation
-	NORMAL_ERROR   PROBLEM_TYPE = "error"          // Regular error that doesn't halt compilation
+	NULL           	PROBLEM_TYPE = ""
+	CRITICAL_ERROR 	PROBLEM_TYPE = "critical error" // Stops compilation immediately
+	SYNTAX_ERROR   	PROBLEM_TYPE = "syntax error"   // Syntax error, also stops compilation
+	NORMAL_ERROR   	PROBLEM_TYPE = "error"          // Regular error that doesn't halt compilation
 
-	WARNING PROBLEM_TYPE = "warning" // Indicates potential issues
+	WARNING 		PROBLEM_TYPE = "warning" // Indicates potential issues
+	INFO   			PROBLEM_TYPE = "info"    // Informational message
 )
+
+//var colorMap = make(map[PROBLEM_TYPE]utils.COLOR)
+var colorMap = map[PROBLEM_TYPE]utils.COLOR{
+	CRITICAL_ERROR: utils.BOLD_RED,
+	SYNTAX_ERROR:   utils.RED,
+	NORMAL_ERROR:   utils.RED,
+	WARNING:        utils.ORANGE,
+	INFO:           utils.BLUE,
+}
 
 // global errors are arrays of error pointers
 var globalProblems []*Problem
@@ -54,6 +64,9 @@ type Problem struct {
 //
 // If file reading fails, the function will panic.
 func printProblem(e *Problem) {
+
+	utils.GREY.Printf("%s:%d:%d: ", e.filePath, e.lineStart, e.colStart)
+
 	fileData, err := os.ReadFile(e.filePath)
 	if err != nil {
 		panic(err)
@@ -73,46 +86,46 @@ func printProblem(e *Problem) {
 	}
 
 	lineNumber := fmt.Sprintf("%d | ", e.lineStart)
-	utils.GREY.Print(lineNumber)
-	fmt.Println(line)
-	underLine := fmt.Sprintf("%s^%s\n", strings.Repeat(" ", (e.colStart-1)+len(lineNumber)), strings.Repeat("~", hLen))
+	snippet := utils.GREY.Sprint(lineNumber) + fmt.Sprintln(line)
+	underline := fmt.Sprintf("%s^%s\n", strings.Repeat(" ", (e.colStart-1)+len(lineNumber)), strings.Repeat("~", hLen))
 
-	markUnderline(e, underLine)
-
-	utils.GREY.Printf("at: %s:%d:%d\n", e.filePath, e.lineStart, e.colStart)
-
-	if len(e.hints) > 0 {
-		utils.YELLOW.Println("Hint:")
-		for _, hint := range e.hints {
-			utils.YELLOW.Printf("- %s\n", hint)
-		}
+	if e.level == WARNING {
+		colorMap[WARNING].Print("Warning: ")
+		colorMap[WARNING].Print(e.err.Error() + "\n")
+		fmt.Print(snippet)
+		colorMap[WARNING].Print(underline)
 	} else {
-		fmt.Println()
+		if e.level == CRITICAL_ERROR {
+			//stop further execution
+			colorMap[CRITICAL_ERROR].Print("Critical Error: ")
+		} else if e.level == SYNTAX_ERROR {
+			colorMap[SYNTAX_ERROR].Print("Syntax Error: ")
+		} else {
+			colorMap[NORMAL_ERROR].Print("Error: ")
+		}
+		utils.RED.Print(e.err.Error() + "\n")
+		fmt.Print(snippet)
+		utils.RED.Print(underline)
 	}
+
+	showHints(e, hLen)
 
 	if e.level == CRITICAL_ERROR || e.level == SYNTAX_ERROR {
 		panic(fmt.Sprintf("Compilation halted due to %s\n", e.level))
 	}
 }
 
-func markUnderline(e *Problem, underLine string) {
-	if e.level == WARNING {
-		utils.YELLOW.Print(underLine)
-		utils.YELLOW.Print("Warning: ")
-		utils.YELLOW.Print(e.err.Error() + "\n")
-	} else {
-		utils.RED.Print(underLine)
-		if e.level == CRITICAL_ERROR {
-			//stop further execution
-			utils.BOLD_RED.Print("Critical Error: ")
-		} else if e.level == SYNTAX_ERROR {
-			utils.BOLD_RED.Print("Syntax Error: ")
-		} else {
-			utils.RED.Print("Error: ")
+func showHints(e *Problem, padding int) {
+	if len(e.hints) > 0 {
+		utils.YELLOW.Printf("%sHint:\n", strings.Repeat(" ", padding))
+		for _, hint := range e.hints {
+			utils.YELLOW.Printf("%s- %s\n", strings.Repeat(" ", padding), hint)
 		}
-		utils.RED.Print(e.err.Error() + "\n")
+	} else {
+		fmt.Println()
 	}
 }
+
 
 // Hint appends a hint message to the error's hints slice.
 // If the provided message is empty, it returns the error without modification.
@@ -196,14 +209,17 @@ func DisplayAll() {
 func displayProblemCount() {
 	//show errors and warnings separately
 	warningCount := problems[WARNING]
-	if warningCount > 0 {
-		utils.ORANGE.Printf("%d %s", warningCount, utils.Plural("warning", "warnings, ", warningCount))
-	}
-
 	probCount := problems[NORMAL_ERROR] + problems[CRITICAL_ERROR]
 
+	if warningCount > 0 {
+		colorMap[WARNING].Printf("%d %s", warningCount, utils.Plural("warning", "warnings ", warningCount))
+		if probCount > 0 {
+			utils.ORANGE.Printf(", ")
+		}
+	}
+
 	if probCount > 0 {
-		utils.RED.Sprintf("%d %s", probCount, utils.Plural("error", "errors", probCount))
+		colorMap[NORMAL_ERROR].Printf("%d %s", probCount, utils.Plural("error", "errors", probCount))
 	}
 
 	println()
