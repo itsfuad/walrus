@@ -90,8 +90,8 @@ impl User {
     }
 }
 
-let arr := [1, 2, 3, 4, 5];
-arr[1];
+let arr := [1, 2, 3.3, 4, 5];
+arr[1.6];
 
 ShowInfo(user);
 ShowInfo(@Banana{name: "Cavendish", price: 10});
