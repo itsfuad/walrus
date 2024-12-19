@@ -1,3 +1,4 @@
+
 //variable declartion with let allows value to be changed later
 let a : i32 = 1; //variable a is declared with type i32 and value 1
 //declare constant variable with const
@@ -17,3 +18,5 @@ let isTrue := a == b;
 //But you cannot compare different types (except for some cases like integer and floats because they are generally numeric types)
 let isFalse := a == 1.0; //this will not give an error
 //let isTrue2 := a == [1, 2, 3]; //this will give an error
+
+let p := y = 5; // Now it will work fine
