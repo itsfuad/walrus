@@ -64,7 +64,7 @@ func parseVarDeclStmt(p *Parser) ast.Node {
 			if assignmentToken.Kind == lexer.COLON_TOKEN {
 				p.expect(lexer.EQUALS_TOKEN)
 			}
-			value = parseExpr(p, ASSIGNMENT_BP)
+			value = parseExpr(p, DEFAULT_BP)
 		}
 
 		//if const, we must have a value
@@ -93,7 +93,7 @@ func parseVarDeclStmt(p *Parser) ast.Node {
 			break
 		}
 
-		p.expectError(lexer.COMMA_TOKEN, fmt.Errorf("expected ';' or ',' for multiple variable declarations"))
+		p.expectError(lexer.COMMA_TOKEN, fmt.Errorf("expected ';' or, ',' for multiple variable declarations but found %s", p.currentToken().Value))
 	}
 
 	end := p.expect(lexer.SEMI_COLON_TOKEN).End
