@@ -89,30 +89,27 @@ func printReport(e *Report) {
 	snippet := utils.GREY.Sprint(lineNumber) + fmt.Sprintln(line)
 	underline := fmt.Sprintf("%s^%s\n", strings.Repeat(" ", (e.colStart-1)+len(lineNumber)), strings.Repeat("~", hLen))
 
-	
-	if e.level == WARNING {
-		colorMap[WARNING].Print("Warning: ")
-		colorMap[WARNING].Print(e.msg + "\n")
-		fmt.Print(snippet)
-		colorMap[WARNING].Print(underline)
-	} else if e.level == INFO {
-		colorMap[INFO].Print("Info: ")
-		colorMap[INFO].Print(e.msg + "\n")
-		fmt.Print(snippet)
-		colorMap[INFO].Print(underline)
-	} else {
-		if e.level == CRITICAL_ERROR {
-			//stop further execution
-			colorMap[CRITICAL_ERROR].Print("Critical Error: ")
-		} else if e.level == SYNTAX_ERROR {
-			colorMap[SYNTAX_ERROR].Print("Syntax Error: ")
-		} else {
-			colorMap[NORMAL_ERROR].Print("Error: ")
-		}
-		utils.RED.Print(e.msg + "\n")
-		fmt.Print(snippet)
-		utils.RED.Print(underline)
+	var reportMsg string
+
+	switch e.level {
+	case WARNING:
+		reportMsg = "Warning: "
+	case INFO:
+		reportMsg = "Info: "
+	case CRITICAL_ERROR:
+		reportMsg = "Critical Error: "
+	case SYNTAX_ERROR:
+		reportMsg = "Syntax Error: "
+	case NORMAL_ERROR:
+		reportMsg = "Error: "
 	}
+
+	reportColor := colorMap[e.level]
+	reportColor.Print(reportMsg)
+	reportColor.Print(e.msg + "\n")
+
+	fmt.Print(snippet)
+	reportColor.Print(underline)
 
 	showHints(e, hLen)
 
