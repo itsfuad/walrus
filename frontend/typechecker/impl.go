@@ -8,7 +8,7 @@ import (
 	"walrus/report"
 )
 
-func checkImplStmt(implStmt ast.ImplStmt, env *TypeEnvironment) ExprType {
+func checkImplStmt(implStmt ast.ImplStmt, env *TypeEnvironment) Tc {
 
 	//scope must be global
 	if env.scopeType != GLOBAL_SCOPE {

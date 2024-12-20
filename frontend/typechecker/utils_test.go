@@ -67,7 +67,7 @@ func TestFunctionSignatureString(t *testing.T) {
 func TestTcValueToString(t *testing.T) {
 	tests := []struct {
 		name     string
-		val      ExprType
+		val      Tc
 		expected string
 	}{
 		{
@@ -127,7 +127,7 @@ func TestTcValueToString(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			result := tcValueToString(tt.val)
+			result := TcToString(tt.val)
 			if result != tt.expected {
 				t.Errorf(exp, tt.expected, result)
 			}
@@ -139,7 +139,7 @@ func TestArrayToString(t *testing.T) {
 		ArrayType: Int{builtins.INT32, 32, true},
 	}
 	expected := "[]i32"
-	result := tcValueToString(val)
+	result := TcToString(val)
 	if result != expected {
 		t.Errorf(exp, expected, result)
 	}
@@ -150,7 +150,7 @@ func TestStructToString(t *testing.T) {
 		StructName: "MyStruct",
 	}
 	expected := "MyStruct"
-	result := tcValueToString(val)
+	result := TcToString(val)
 	if result != expected {
 		t.Errorf(exp, expected, result)
 	}
@@ -161,7 +161,7 @@ func TestInterfaceToString(t *testing.T) {
 		InterfaceName: "MyInterface",
 	}
 	expected := "MyInterface"
-	result := tcValueToString(val)
+	result := TcToString(val)
 	if result != expected {
 		t.Errorf(exp, expected, result)
 	}
@@ -176,7 +176,7 @@ func TestFunctionToString(t *testing.T) {
 		Returns: Int{builtins.INT32, 32, true},
 	}
 	expected := "fn(a: i32, b?: f64) -> i32"
-	result := tcValueToString(val)
+	result := TcToString(val)
 	if result != expected {
 		t.Errorf(exp, expected, result)
 	}
@@ -188,7 +188,7 @@ func TestMapToString(t *testing.T) {
 		ValueType: Float{builtins.FLOAT64, 64},
 	}
 	expected := "map[i32]f64"
-	result := tcValueToString(val)
+	result := TcToString(val)
 	if result != expected {
 		t.Errorf(exp, expected, result)
 	}
@@ -199,7 +199,7 @@ func TestUserDefinedToString(t *testing.T) {
 		TypeDef: Int{builtins.INT32, 32, true},
 	}
 	expected := "i32"
-	result := tcValueToString(val)
+	result := TcToString(val)
 	if result != expected {
 		t.Errorf(exp, expected, result)
 	}
@@ -208,7 +208,7 @@ func TestUserDefinedToString(t *testing.T) {
 func TestDefaultToString(t *testing.T) {
 	val := Int{builtins.INT32, 32, true}
 	expected := "i32"
-	result := tcValueToString(val)
+	result := TcToString(val)
 	if result != expected {
 		t.Errorf(exp, expected, result)
 	}
@@ -216,7 +216,7 @@ func TestDefaultToString(t *testing.T) {
 func TestIsNumberType(t *testing.T) {
 	tests := []struct {
 		name     string
-		val      ExprType
+		val      Tc
 		expected bool
 	}{
 		{
@@ -258,7 +258,7 @@ func TestIsNumberType(t *testing.T) {
 func TestIsIntType(t *testing.T) {
 	tests := []struct {
 		name     string
-		val      ExprType
+		val      Tc
 		expected bool
 	}{
 		{

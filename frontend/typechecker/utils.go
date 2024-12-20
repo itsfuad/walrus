@@ -54,7 +54,7 @@ func checkLValue(node ast.Node, env *TypeEnvironment) error {
 	}
 }
 
-func isNumberType(operand ExprType) bool {
+func isNumberType(operand Tc) bool {
 	switch operand.(type) {
 	case Int, Float:
 		return true
@@ -63,7 +63,7 @@ func isNumberType(operand ExprType) bool {
 	}
 }
 
-func isIntType(operand ExprType) bool {
+func isIntType(operand Tc) bool {
 	switch operand.(type) {
 	case Int:
 		return true
@@ -87,7 +87,7 @@ func isIntType(operand ExprType) bool {
 //  2. If the dtype is a FunctionType, it evaluates the parameter types and return type, creates a new function scope, and returns a Fn.
 //  3. If the dtype is nil, it returns a Void type.
 //  4. For other types, it attempts to create a ValueTypeInterface and handles any errors that occur.
-func evaluateTypeName(dtype ast.DataType, env *TypeEnvironment) ExprType {
+func evaluateTypeName(dtype ast.DataType, env *TypeEnvironment) Tc {
 	switch t := dtype.(type) {
 	case ast.ArrayType:
 		return evalArray(t, env)
@@ -106,7 +106,7 @@ func evaluateTypeName(dtype ast.DataType, env *TypeEnvironment) ExprType {
 	}
 }
 
-func evalDefaultType(defaultType ast.DataType, env *TypeEnvironment) ExprType {
+func evalDefaultType(defaultType ast.DataType, env *TypeEnvironment) Tc {
 	val, err := getTypeDefinition(string(defaultType.Type())) // need to get the most deep type
 	if err != nil || val == nil {
 		report.Add(env.filePath, defaultType.StartPos().Line, defaultType.EndPos().Line, defaultType.StartPos().Column, defaultType.EndPos().Column, err.Error()).Level(report.CRITICAL_ERROR)
@@ -114,7 +114,7 @@ func evalDefaultType(defaultType ast.DataType, env *TypeEnvironment) ExprType {
 	return val
 }
 
-func evalUD(analyzedUD ast.UserDefinedType, env *TypeEnvironment) ExprType {
+func evalUD(analyzedUD ast.UserDefinedType, env *TypeEnvironment) Tc {
 	typename := analyzedUD.AliasName
 	val, err := getTypeDefinition(typename) // need to get the most deep type
 	if err != nil || val == nil {
@@ -123,7 +123,7 @@ func evalUD(analyzedUD ast.UserDefinedType, env *TypeEnvironment) ExprType {
 	return val
 }
 
-func evalArray(analyzedArray ast.ArrayType, env *TypeEnvironment) ExprType {
+func evalArray(analyzedArray ast.ArrayType, env *TypeEnvironment) Tc {
 	val := evaluateTypeName(analyzedArray.ArrayType, env)
 	arr := Array{
 		DataType:  builtins.ARRAY,
@@ -132,7 +132,7 @@ func evalArray(analyzedArray ast.ArrayType, env *TypeEnvironment) ExprType {
 	return arr
 }
 
-func evalFn(analyzedFunctionType ast.FunctionType, env *TypeEnvironment) ExprType {
+func evalFn(analyzedFunctionType ast.FunctionType, env *TypeEnvironment) Tc {
 	var params []FnParam
 	for _, param := range analyzedFunctionType.Parameters {
 		//check if the parameter is already declared
@@ -163,7 +163,7 @@ func evalFn(analyzedFunctionType ast.FunctionType, env *TypeEnvironment) ExprTyp
 	}
 }
 
-func evalMap(analyzedMap ast.MapType, env *TypeEnvironment) ExprType {
+func evalMap(analyzedMap ast.MapType, env *TypeEnvironment) Tc {
 	if analyzedMap.Map.Name == "map" {
 		keyType := evaluateTypeName(analyzedMap.KeyType, env)
 		valueType := evaluateTypeName(analyzedMap.ValueType, env)
@@ -185,7 +185,7 @@ func evalMap(analyzedMap ast.MapType, env *TypeEnvironment) ExprType {
 	}
 }
 
-func matchTypes(expectedType, providedType ExprType) error {
+func matchTypes(expectedType, providedType Tc) error {
 
 	unwrappedExpected := unwrapType(expectedType)
 	unwrappedProvided := unwrapType(providedType)
@@ -194,7 +194,7 @@ func matchTypes(expectedType, providedType ExprType) error {
 	case Interface:
 		errs := checkMethodsImplementations(unwrappedExpected, unwrappedProvided)
 		if len(errs) > 0 {
-			msgs := fmt.Sprintf("cannot use type '%s' as interface '%s'\n", tcValueToString(providedType), tcValueToString(expectedType))
+			msgs := fmt.Sprintf("cannot use type '%s' as interface '%s'\n", TcToString(providedType), TcToString(expectedType))
 			return errors.New(msgs + report.TreeFormatError(errs...).Error())
 		}
 		return nil
@@ -204,8 +204,8 @@ func matchTypes(expectedType, providedType ExprType) error {
 		}
 	}
 
-	expectedStr := tcValueToString(unwrappedExpected)
-	providedStr := tcValueToString(unwrappedProvided)
+	expectedStr := TcToString(unwrappedExpected)
+	providedStr := TcToString(unwrappedProvided)
 
 	if expectedStr != providedStr {
 		return fmt.Errorf("cannot assign value of type '%s' to type '%s'", providedStr, expectedStr)
@@ -214,10 +214,10 @@ func matchTypes(expectedType, providedType ExprType) error {
 	return nil
 }
 
-func tcValueToString(val ExprType) string {
+func TcToString(val Tc) string {
 	switch t := val.(type) {
 	case Array:
-		return fmt.Sprintf("[]%s", tcValueToString(t.ArrayType))
+		return fmt.Sprintf("[]%s", TcToString(t.ArrayType))
 	case Struct:
 		return t.StructName
 	case Interface:
@@ -225,11 +225,11 @@ func tcValueToString(val ExprType) string {
 	case Fn:
 		return functionSignatureString(t)
 	case Map:
-		return fmt.Sprintf("map[%s]%s", tcValueToString(t.KeyType), tcValueToString(t.ValueType))
+		return fmt.Sprintf("map[%s]%s", TcToString(t.KeyType), TcToString(t.ValueType))
 	case Maybe:
-		return fmt.Sprintf("maybe{%s}", tcValueToString(t.MaybeType))
+		return fmt.Sprintf("maybe{%s}", TcToString(t.MaybeType))
 	case UserDefined:
-		return tcValueToString(unwrapType(t.TypeDef))
+		return TcToString(unwrapType(t.TypeDef))
 	default:
 		if t == nil {
 			return "void"
@@ -247,19 +247,19 @@ func functionSignatureString(fn Fn) string {
 		} else {
 			ParamStrs += ": "
 		}
-		ParamStrs += string(tcValueToString(param.Type))
+		ParamStrs += string(TcToString(param.Type))
 		if i != len(fn.Params)-1 {
 			ParamStrs += ", "
 		}
 	}
-	ReturnStr := string(tcValueToString(fn.Returns))
+	ReturnStr := string(TcToString(fn.Returns))
 	if ReturnStr != "" {
 		ReturnStr = " -> " + ReturnStr
 	}
 	return fmt.Sprintf("fn(%s)%s", ParamStrs, ReturnStr)
 }
 
-func checkMethodsImplementations(expected, provided ExprType) []error {
+func checkMethodsImplementations(expected, provided Tc) []error {
 
 	//check if the provided type implements the interface
 	errs := []error{}
@@ -296,8 +296,8 @@ func checkMethodsImplementations(expected, provided ExprType) []error {
 
 		// check the return type and parameters
 		for i, param := range interfaceMethod.Method.Params {
-			expectedParam := tcValueToString(param.Type)
-			providedParam := tcValueToString(methodFn.Fn.Params[i].Type)
+			expectedParam := TcToString(param.Type)
+			providedParam := TcToString(methodFn.Fn.Params[i].Type)
 			if expectedParam != providedParam {
 				//return fmt.Errorf("method '%s' found for interface '%s' but parameter missmatch", methodName, interfaceType.InterfaceName)
 				errs = append(errs, fmt.Errorf("method '%s', but parameter missmatch", interfaceMethod.Name))
@@ -305,8 +305,8 @@ func checkMethodsImplementations(expected, provided ExprType) []error {
 		}
 
 		//check the return type
-		expectedReturn := tcValueToString(interfaceMethod.Method.Returns)
-		providedReturn := tcValueToString(methodFn.Fn.Returns)
+		expectedReturn := TcToString(interfaceMethod.Method.Returns)
+		providedReturn := TcToString(methodFn.Fn.Returns)
 		if expectedReturn != providedReturn {
 			//return fmt.Errorf("method '%s' found for interface '%s' but return type mismatched", methodName, interfaceType.InterfaceName)
 			errs = append(errs, fmt.Errorf("method '%s' found, but return type mismatched", interfaceMethod.Name))

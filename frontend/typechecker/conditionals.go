@@ -6,14 +6,14 @@ import (
 	"walrus/report"
 )
 
-func checkConditionBlock(block ast.BlockStmt, env *TypeEnvironment) ExprType {
+func checkConditionBlock(block ast.BlockStmt, env *TypeEnvironment) Tc {
 	for _, stmt := range block.Contents {
 		CheckAST(stmt, env)
 	}
 	return NewVoid()
 }
 
-func checkIfStmt(ifNode ast.IfStmt, env *TypeEnvironment) ExprType {
+func checkIfStmt(ifNode ast.IfStmt, env *TypeEnvironment) Tc {
 	//condition
 	cond := parseNodeValue(ifNode.Condition, env)
 	if cond.DType() != BOOLEAN_TYPE {

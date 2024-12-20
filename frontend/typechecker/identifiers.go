@@ -6,7 +6,7 @@ import (
 	"walrus/report"
 )
 
-func checkIdentifier(node ast.IdentifierExpr, env *TypeEnvironment) ExprType {
+func checkIdentifier(node ast.IdentifierExpr, env *TypeEnvironment) Tc {
 
 	name := node.Name
 

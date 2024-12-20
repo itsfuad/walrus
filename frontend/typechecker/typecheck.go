@@ -9,7 +9,7 @@ import (
 	"walrus/utils"
 )
 
-func EvaluateProgram(program ast.ProgramStmt, env *TypeEnvironment) ExprType {
+func EvaluateProgram(program ast.ProgramStmt, env *TypeEnvironment) Tc {
 	utils.PURPLE.Println("### Running type checker ###")
 	for _, item := range program.Contents {
 		CheckAST(item, env)
@@ -21,7 +21,7 @@ func EvaluateProgram(program ast.ProgramStmt, env *TypeEnvironment) ExprType {
 	return NewVoid()
 }
 
-func CheckAST(node ast.Node, env *TypeEnvironment) ExprType {
+func CheckAST(node ast.Node, env *TypeEnvironment) Tc {
 	switch t := node.(type) {
 	case ast.ProgramStmt:
 		return EvaluateProgram(t, env)
@@ -44,7 +44,7 @@ func CheckAST(node ast.Node, env *TypeEnvironment) ExprType {
 	}
 }
 
-func parseNodeValue(node ast.Node, env *TypeEnvironment) ExprType {
+func parseNodeValue(node ast.Node, env *TypeEnvironment) Tc {
 	switch t := node.(type) {
 	case ast.VarAssignmentExpr:
 		return checkVariableAssignment(t, env) // value

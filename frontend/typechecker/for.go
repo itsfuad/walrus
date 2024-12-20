@@ -6,7 +6,7 @@ import (
 	"walrus/report"
 )
 
-func checkForStmt(forStmt ast.ForStmt, env *TypeEnvironment) ExprType {
+func checkForStmt(forStmt ast.ForStmt, env *TypeEnvironment) Tc {
 
 	// for loop can be infinite loop or have a start, end and step
 

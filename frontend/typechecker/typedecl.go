@@ -6,7 +6,7 @@ import (
 	"walrus/utils"
 )
 
-func checkTypeDeclaration(node ast.TypeDeclStmt, env *TypeEnvironment) ExprType {
+func checkTypeDeclaration(node ast.TypeDeclStmt, env *TypeEnvironment) Tc {
 
 	typeName := node.UDTypeValue
 
@@ -18,7 +18,7 @@ func checkTypeDeclaration(node ast.TypeDeclStmt, env *TypeEnvironment) ExprType 
 		report.Add(env.filePath, node.UDTypeName.Start.Line, node.UDTypeName.Start.Line, node.UDTypeName.Start.Column, node.UDTypeName.Start.Column, "User defined type name should be capitalized").Hint("Make the first letter uppercase").Level(report.INFO)
 	}
 
-	var val ExprType
+	var val Tc
 
 	switch t := typeName.(type) {
 	case ast.StructType:

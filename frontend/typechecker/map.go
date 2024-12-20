@@ -6,7 +6,7 @@ import (
 	"walrus/report"
 )
 
-func checkMapLiteral(node ast.MapLiteral, env *TypeEnvironment) ExprType {
+func checkMapLiteral(node ast.MapLiteral, env *TypeEnvironment) Tc {
 
 	//get the map definitions
 	evaluatedMapType := evaluateTypeName(node.MapType, env)

@@ -22,22 +22,22 @@ import (
 // 2. Ensures that the index expression evaluates to an integer type. If not, it generates an error with a hint that the index must be a valid integer.
 //
 // If both checks pass, the function returns the type of the elements contained in the array.
-func evaluateIndexableAccess(indexable ast.Indexable, e *TypeEnvironment) ExprType {
+func evaluateIndexableAccess(indexable ast.Indexable, e *TypeEnvironment) Tc {
 
 	container := parseNodeValue(indexable.Container, e)
 	index := parseNodeValue(indexable.Index, e)
 
-	var indexedValueType ExprType
+	var indexedValueType Tc
 
 	switch t := container.(type) {
 	case Array:
 		if !isIntType(index) {
-			report.Add(e.filePath, indexable.Start.Line, indexable.End.Line, indexable.Index.StartPos().Column, indexable.Index.EndPos().Column, fmt.Sprintf("cannot use type '%s' to index array\n", tcValueToString(index))+report.TreeFormatString("type must be a valid signed integer")).Level(report.NORMAL_ERROR)
+			report.Add(e.filePath, indexable.Start.Line, indexable.End.Line, indexable.Index.StartPos().Column, indexable.Index.EndPos().Column, fmt.Sprintf("cannot use type '%s' to index array\n", TcToString(index))+report.TreeFormatString("type must be a valid signed integer")).Level(report.NORMAL_ERROR)
 		}
 		indexedValueType = t.ArrayType
 	case Str:
 		if !isIntType(index) {
-			report.Add(e.filePath, indexable.Start.Line, indexable.End.Line, indexable.Index.StartPos().Column, indexable.Index.EndPos().Column, fmt.Sprintf("cannot use type '%s' to index string\n", tcValueToString(index))+report.TreeFormatString("type must be a valid signed integer")).Level(report.NORMAL_ERROR)
+			report.Add(e.filePath, indexable.Start.Line, indexable.End.Line, indexable.Index.StartPos().Column, indexable.Index.EndPos().Column, fmt.Sprintf("cannot use type '%s' to index string\n", TcToString(index))+report.TreeFormatString("type must be a valid signed integer")).Level(report.NORMAL_ERROR)
 		}
 		return NewInt(8, false)
 	case Map:
@@ -62,8 +62,8 @@ func evaluateIndexableAccess(indexable ast.Indexable, e *TypeEnvironment) ExprTy
 //
 // Returns:
 // - ValueTypeInterface: The type of the array, which includes the data type and the type of the array elements.
-func evaluateArrayExpr(array ast.ArrayLiteral, env *TypeEnvironment) ExprType {
-	var expectedType ExprType
+func evaluateArrayExpr(array ast.ArrayLiteral, env *TypeEnvironment) Tc {
+	var expectedType Tc
 	for i, value := range array.Values {
 		v := parseNodeValue(value, env)
 		if i == 0 {

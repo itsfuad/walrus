@@ -31,7 +31,7 @@ const (
 	RETURN_TYPE       builtins.TC_TYPE = "return"
 )
 
-type ExprType interface {
+type Tc interface {
 	DType() builtins.TC_TYPE
 }
 
@@ -88,8 +88,8 @@ func (t Void) DType() builtins.TC_TYPE {
 
 type Map struct {
 	DataType  builtins.TC_TYPE
-	KeyType   ExprType
-	ValueType ExprType
+	KeyType   Tc
+	ValueType Tc
 }
 
 func (t Map) DType() builtins.TC_TYPE {
@@ -100,13 +100,13 @@ type FnParam struct {
 	Name       string
 	IsOptional bool
 	//DefaultValueType ValueTypeInterface
-	Type ExprType
+	Type Tc
 }
 
 type Fn struct {
 	DataType      builtins.TC_TYPE
 	Params        []FnParam
-	Returns       ExprType
+	Returns       Tc
 	FunctionScope TypeEnvironment
 }
 
@@ -116,8 +116,8 @@ func (t Fn) DType() builtins.TC_TYPE {
 
 type ConditionBranch struct {
 	DataType builtins.TC_TYPE
-	Next     ExprType
-	Returns  ExprType
+	Next     Tc
+	Returns  Tc
 }
 
 type ConditionStmt struct {
@@ -131,7 +131,7 @@ func (t ConditionStmt) DType() builtins.TC_TYPE {
 
 type StructProperty struct {
 	IsPrivate bool
-	Type      ExprType
+	Type      Tc
 }
 
 func (t StructProperty) DType() builtins.TC_TYPE {
@@ -159,7 +159,7 @@ func (t Struct) DType() builtins.TC_TYPE {
 
 type Array struct {
 	DataType  builtins.TC_TYPE
-	ArrayType ExprType
+	ArrayType Tc
 }
 
 func (t Array) DType() builtins.TC_TYPE {
@@ -169,7 +169,7 @@ func (t Array) DType() builtins.TC_TYPE {
 type UserDefined struct {
 	DataType builtins.TC_TYPE
 	TypeName string
-	TypeDef  ExprType
+	TypeDef  Tc
 }
 
 func (t UserDefined) DType() builtins.TC_TYPE {
@@ -178,7 +178,7 @@ func (t UserDefined) DType() builtins.TC_TYPE {
 
 type ReturnType struct {
 	DataType   builtins.TC_TYPE
-	Expression ExprType
+	Expression Tc
 }
 
 func (t ReturnType) DType() builtins.TC_TYPE {
@@ -202,7 +202,7 @@ func (t Interface) DType() builtins.TC_TYPE {
 
 type Maybe struct {
 	DataType  builtins.TC_TYPE
-	MaybeType ExprType
+	MaybeType Tc
 }
 
 func (t Maybe) DType() builtins.TC_TYPE {
