@@ -16,7 +16,7 @@ func EvaluateProgram(program ast.ProgramStmt, env *TypeEnvironment) Tc {
 	}
 
 	//print the file path
-	utils.BLUE.Printf("Evaluated File: %s\n", env.filePath)
+	utils.BLUE.Printf("------------ Evaluated File: %s ------------\n\n", env.filePath)
 
 	return NewVoid()
 }
