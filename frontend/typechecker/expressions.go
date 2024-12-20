@@ -29,9 +29,9 @@ func checkIncrementalExpr(node ast.IncrementalInterface, env *TypeEnvironment) T
 
 func logCastSuccess(originalType Tc, toCast Tc) {
 	utils.ORANGE.Print("casted type ")
-	utils.PURPLE.Print(string(originalType.DType()))
+	utils.PURPLE.Print(tcToString(originalType))
 	fmt.Print(" to ")
-	utils.PURPLE.Println(string(toCast.DType()))
+	utils.PURPLE.Println(tcToString(toCast))
 }
 
 func checkTypeCast(node ast.TypeCastExpr, env *TypeEnvironment) Tc {
@@ -39,19 +39,30 @@ func checkTypeCast(node ast.TypeCastExpr, env *TypeEnvironment) Tc {
 	originalType := parseNodeValue(node.Expression, env)
 	toCast := evaluateTypeName(node.ToCast, env)
 
-	if originalType.DType() == toCast.DType() {
-		logCastSuccess(originalType, toCast)
-		return originalType
-	}
-
-	if isNumberType(originalType) && isNumberType(toCast) {
+	if err := isCompatibleType(originalType, toCast); err == nil {
 		logCastSuccess(originalType, toCast)
 		return toCast
+	} else {
+		report.Add(env.filePath, node.Start.Line, node.End.Line, node.Start.Column, node.End.Column, err.Error()).Level(report.NORMAL_ERROR)
 	}
 
-	report.Add(env.filePath, node.Start.Line, node.End.Line, node.Start.Column, node.End.Column, fmt.Sprintf("cannot cast '%s' to '%s'", originalType.DType(), toCast.DType())).Level(report.NORMAL_ERROR)
-
 	return originalType
+}
+
+func isCompatibleType(src, dest Tc) error {
+	srcStr := tcToString(src)
+	destStr := tcToString(dest)
+	switch src.(type) {
+	case Int, Float:
+		if isNumberType(dest) {
+			return nil
+		}
+	default:
+		if srcStr == destStr {
+			return nil
+		}
+	}
+	return fmt.Errorf("cannot cast '%s' to '%s'", srcStr, destStr)
 }
 
 func checkUnaryExpr(node ast.UnaryExpr, env *TypeEnvironment) Tc {
@@ -73,7 +84,7 @@ func checkUnaryExpr(node ast.UnaryExpr, env *TypeEnvironment) Tc {
 			report.Add(env.filePath, op.Start.Line, op.End.Line, op.Start.Column, op.End.Column, "invalid unary operation with boolean types").Level(report.NORMAL_ERROR)
 		}
 	default:
-		report.Add(env.filePath, op.Start.Line, op.End.Line, op.Start.Column, op.End.Column, fmt.Sprintf("this unary operation is not supported with %s types", t.DType())).Level(report.NORMAL_ERROR)
+		report.Add(env.filePath, op.Start.Line, op.End.Line, op.Start.Column, op.End.Column, fmt.Sprintf("this unary operation is not supported with %s types", tcToString(t))).Level(report.NORMAL_ERROR)
 	}
 
 	return typeVal
@@ -85,8 +96,8 @@ func checkBinaryExpr(node ast.BinaryExpr, env *TypeEnvironment) Tc {
 	left := parseNodeValue(node.Left, env)
 	right := parseNodeValue(node.Right, env)
 
-	leftType := TcToString(left)
-	rightType := TcToString(right)
+	leftType := tcToString(left)
+	rightType := tcToString(right)
 
 	var errLineStart, errLineEnd, errStart, errEnd int
 	var errMsg string
@@ -127,8 +138,8 @@ func checkBinaryExpr(node ast.BinaryExpr, env *TypeEnvironment) Tc {
 
 func checkComparison(node ast.BinaryExpr, left Tc, right Tc, env *TypeEnvironment) Tc {
 
-	leftType := TcToString(left)
-	rightType := TcToString(right)
+	leftType := tcToString(left)
+	rightType := tcToString(right)
 
 	op := node.Operator
 
@@ -155,8 +166,8 @@ func checkComparison(node ast.BinaryExpr, left Tc, right Tc, env *TypeEnvironmen
 
 func checkAdditionAndConcat(node ast.BinaryExpr, left Tc, right Tc, env *TypeEnvironment) Tc {
 
-	leftType := TcToString(left)
-	rightType := TcToString(right)
+	leftType := tcToString(left)
+	rightType := tcToString(right)
 
 	var errLineStart, errLineEnd, errStart, errEnd int
 	var errMsg string

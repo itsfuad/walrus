@@ -32,7 +32,7 @@ func checkVariableAssignment(node ast.VarAssignmentExpr, env *TypeEnvironment) T
 	expectedType := parseNodeValue(Assignee, env)
 	providedType := parseNodeValue(valueToAssign, env)
 
-	err := matchTypes(expectedType, providedType)
+	err := validateTypeCompatibility(expectedType, providedType)
 	if err != nil {
 		report.Add(env.filePath, valueToAssign.StartPos().Line, valueToAssign.EndPos().Line, valueToAssign.StartPos().Column, valueToAssign.EndPos().Column, err.Error()).Level(report.NORMAL_ERROR)
 	}
@@ -72,13 +72,13 @@ func checkVariableDeclaration(node ast.VarDeclStmt, env *TypeEnvironment) Tc {
 		expectedTypeInterface := parseExpectedType(varToDecl.ExplicitType, varToDecl.Value, env)
 
 		// do not allow void type
-		if expectedTypeInterface.DType() == VOID_TYPE {
+		if _, ok := expectedTypeInterface.(Void); ok {
 			report.Add(env.filePath, varToDecl.Identifier.StartPos().Line, varToDecl.Identifier.EndPos().Line, varToDecl.Identifier.StartPos().Column, varToDecl.Identifier.EndPos().Column, "cannot declare variable of type void\n"+report.TreeFormatString("a variable must have a non void type")).Level(report.CRITICAL_ERROR)
 		}
 
 		if varToDecl.Value != nil && varToDecl.ExplicitType != nil {
 			providedValue := parseNodeValue(varToDecl.Value, env)
-			err := matchTypes(expectedTypeInterface, providedValue)
+			err := validateTypeCompatibility(expectedTypeInterface, providedValue)
 			if err != nil {
 				report.Add(env.filePath, varToDecl.Value.StartPos().Line, varToDecl.Value.EndPos().Line, varToDecl.Value.StartPos().Column, varToDecl.Value.EndPos().Column, fmt.Sprintf("error declaring variable '%s'. %s", varToDecl.Identifier.Name, err.Error())).Level(report.NORMAL_ERROR)
 			}
@@ -93,12 +93,12 @@ func checkVariableDeclaration(node ast.VarDeclStmt, env *TypeEnvironment) Tc {
 			utils.GREEN.Print("Declared constant variable ")
 			utils.RED.Print(varToDecl.Identifier.Name)
 			fmt.Print(" of type ")
-			utils.PURPLE.Println(TcToString(expectedTypeInterface))
+			utils.PURPLE.Println(tcToString(expectedTypeInterface))
 		} else {
 			utils.GREEN.Print("Declared variable ")
 			utils.RED.Print(varToDecl.Identifier.Name)
 			fmt.Print(" of type ")
-			utils.PURPLE.Println(TcToString(expectedTypeInterface))
+			utils.PURPLE.Println(tcToString(expectedTypeInterface))
 		}
 	}
 	return NewVoid()
@@ -110,11 +110,11 @@ func parseExpectedType(explicitType ast.DataType, value ast.Node, env *TypeEnvir
 	if explicitType != nil {
 		expectedTypeInterface = evaluateTypeName(explicitType, env)
 		fmt.Print("Explicit type: ")
-		utils.PURPLE.Println(TcToString(expectedTypeInterface))
+		utils.PURPLE.Println(tcToString(expectedTypeInterface))
 	} else {
 		expectedTypeInterface = parseNodeValue(value, env)
 		utils.ORANGE.Print("Auto detected type: ")
-		utils.PURPLE.Println(TcToString(expectedTypeInterface))
+		utils.PURPLE.Println(tcToString(expectedTypeInterface))
 	}
 
 	return expectedTypeInterface

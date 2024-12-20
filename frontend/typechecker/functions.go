@@ -82,7 +82,7 @@ func checkOptionalParameter(param ast.FunctionParam, i int, params []ast.Functio
 
 	defaultValue := parseNodeValue(param.DefaultValue, fnEnv)
 
-	err := matchTypes(paramType, defaultValue)
+	err := validateTypeCompatibility(paramType, defaultValue)
 	if err != nil {
 		report.Add(fnEnv.filePath, param.DefaultValue.StartPos().Line, param.DefaultValue.EndPos().Line, param.DefaultValue.StartPos().Column, param.DefaultValue.EndPos().Column, fmt.Sprintf("error defining parameter. %s", err.Error())).Level(report.CRITICAL_ERROR)
 	}
@@ -117,7 +117,7 @@ func checkFunctionCall(callNode ast.FunctionCallExpr, env *TypeEnvironment) Tc {
 	//check if the arguments match the parameters
 	for i := 0; i < len(callNode.Arguments); i++ {
 		arg := parseNodeValue(callNode.Arguments[i], env)
-		err := matchTypes(fnParams[i].Type, arg)
+		err := validateTypeCompatibility(fnParams[i].Type, arg)
 		if err != nil {
 			report.Add(env.filePath, callNode.Arguments[i].StartPos().Line, callNode.Arguments[i].EndPos().Line, callNode.Arguments[i].StartPos().Column, callNode.Arguments[i].EndPos().Column, err.Error()).Level(report.NORMAL_ERROR)
 		}
@@ -136,7 +136,7 @@ func userDefinedToFn(ud Tc) (Fn, error) {
 	case UserDefined:
 		return userDefinedToFn(t.TypeDef)
 	default:
-		return Fn{}, fmt.Errorf("type of '%s' is not callable", ud.DType())
+		return Fn{}, fmt.Errorf("type of '%s' is not callable", tcToString(ud))
 	}
 }
 

@@ -25,7 +25,7 @@ func checkSafeStmt(node ast.SafeStmt, env *TypeEnvironment) Tc {
 
 	maybeVar := parseNodeValue(node.Value, env)
 
-	if maybeVar.DType() != MAYBE_TYPE {
+	if _, ok := maybeVar.(Maybe); !ok {
 		report.Add(env.filePath, node.Value.Start.Line, node.Value.End.Line, node.Value.Start.Column, node.Value.End.Column, "safe-otherwise can only be used with 'maybe' types").Level(report.CRITICAL_ERROR)
 	}
 

@@ -42,10 +42,29 @@ type User struct {
     age: i32,
 };
 
+type User2 User;
+
 let user := @User{
     name: "John",
     age: 10,
 };
+
+let user2 := @User2{
+    name: "John",
+    age: 10,
+};
+
+let user3 : User2 = @User2{
+    name: "John",
+    age: 10,
+};
+
+
+let user4 : User =  @User2{
+    name: "John",
+    age: 10,
+};
+
 
 let emp := user.age;
 
@@ -101,5 +120,7 @@ fn voidFn() -> void {
     // do something
     ret 0;
 }
+
+let bbb := user as Banana;
 
 let Void := voidFn();

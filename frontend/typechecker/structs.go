@@ -33,7 +33,7 @@ func checkStructLiteral(structLit ast.StructLiteral, env *TypeEnvironment) Tc {
 
 	structValue := Struct{
 		DataType:    STRUCT_TYPE,
-		StructName:  TcToString(Type),
+		StructName:  tcToString(Type),
 		StructScope: structType.StructScope,
 	}
 
@@ -90,7 +90,7 @@ func checkPropsType(structType Struct, structLit ast.StructLiteral, env *TypeEnv
 
 		expectedType := structType.StructScope.variables[structProp.Prop.Name].(StructProperty).Type
 
-		err := matchTypes(expectedType, providedType)
+		err := validateTypeCompatibility(expectedType, providedType)
 		if err != nil {
 			report.Add(env.filePath, structProp.Prop.StartPos().Column, structProp.Value.EndPos().Line, structProp.Prop.StartPos().Column, structProp.Value.EndPos().Column, err.Error()).Level(report.NORMAL_ERROR)
 		}
@@ -105,7 +105,7 @@ func checkPropertyAccess(expr ast.StructPropertyAccessExpr, env *TypeEnvironment
 
 	prop := expr.Property
 
-	objName := TcToString(object)
+	objName := tcToString(object)
 
 	var structEnv TypeEnvironment
 
