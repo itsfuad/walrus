@@ -16,11 +16,11 @@ func checkMapLiteral(node ast.MapLiteral, env *TypeEnvironment) Tc {
 		keyType := parseNodeValue(value.Key, env)
 		valueType := parseNodeValue(value.Value, env)
 
-		err := matchTypes(evaluatedMapType.(Map).KeyType, keyType)
+		err := validateTypeCompatibility(evaluatedMapType.(Map).KeyType, keyType)
 		if err != nil {
 			report.Add(env.filePath, value.Key.StartPos().Line, value.Key.EndPos().Line, value.Key.StartPos().Column, value.Key.EndPos().Column, "incorrect map key. "+err.Error()).Level(report.NORMAL_ERROR)
 		}
-		err = matchTypes(evaluatedMapType.(Map).ValueType, valueType)
+		err = validateTypeCompatibility(evaluatedMapType.(Map).ValueType, valueType)
 		if err != nil {
 			report.Add(env.filePath, value.Value.StartPos().Line, value.Value.EndPos().Line, value.Value.StartPos().Column, value.Value.EndPos().Column, "incorrect map value. "+err.Error()).Level(report.NORMAL_ERROR)
 		}

@@ -27,7 +27,7 @@ func checkForStmt(forStmt ast.ForStmt, env *TypeEnvironment) Tc {
 		cond := parseNodeValue(forStmt.Condition, forLoopEnv)
 
 		//must be a boolean if !cond -> error, if !cond.Type == bool -> error
-		if cond == nil || cond.DType() != BOOLEAN_TYPE {
+		if _, ok := cond.(Bool); !ok {
 			report.Add(env.filePath, forStmt.StartPos().Line, forStmt.EndPos().Line, forStmt.StartPos().Column, forStmt.EndPos().Column, "for loop condition must be a boolean expression").Level(report.CRITICAL_ERROR)
 		}
 

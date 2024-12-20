@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"math/rand"
+	"reflect"
 	"time"
 
 	//Walrus packages
@@ -185,7 +186,7 @@ func evalMap(analyzedMap ast.MapType, env *TypeEnvironment) Tc {
 	}
 }
 
-func matchTypes(expectedType, providedType Tc) error {
+func validateTypeCompatibility(expectedType, providedType Tc) error {
 
 	unwrappedExpected := unwrapType(expectedType)
 	unwrappedProvided := unwrapType(providedType)
@@ -194,18 +195,22 @@ func matchTypes(expectedType, providedType Tc) error {
 	case Interface:
 		errs := checkMethodsImplementations(unwrappedExpected, unwrappedProvided)
 		if len(errs) > 0 {
-			msgs := fmt.Sprintf("cannot use type '%s' as interface '%s'\n", TcToString(providedType), TcToString(expectedType))
+			msgs := fmt.Sprintf("cannot use type '%s' as interface '%s'\n", tcToString(providedType), tcToString(expectedType))
 			return errors.New(msgs + report.TreeFormatError(errs...).Error())
 		}
 		return nil
 	case Maybe:
-		if unwrapType(t.MaybeType).DType() == unwrappedProvided.DType() || unwrappedProvided.DType() == builtins.NULL {
+		if _, ok := unwrappedProvided.(Null); ok {
+			return nil
+		}
+
+		if reflect.TypeOf(t.MaybeType) == reflect.TypeOf(unwrappedProvided) {
 			return nil
 		}
 	}
 
-	expectedStr := TcToString(unwrappedExpected)
-	providedStr := TcToString(unwrappedProvided)
+	expectedStr := tcToString(unwrappedExpected)
+	providedStr := tcToString(unwrappedProvided)
 
 	if expectedStr != providedStr {
 		return fmt.Errorf("cannot assign value of type '%s' to type '%s'", providedStr, expectedStr)
@@ -214,10 +219,10 @@ func matchTypes(expectedType, providedType Tc) error {
 	return nil
 }
 
-func TcToString(val Tc) string {
+func tcToString(val Tc) string {
 	switch t := val.(type) {
 	case Array:
-		return fmt.Sprintf("[]%s", TcToString(t.ArrayType))
+		return fmt.Sprintf("[]%s", tcToString(t.ArrayType))
 	case Struct:
 		return t.StructName
 	case Interface:
@@ -225,11 +230,11 @@ func TcToString(val Tc) string {
 	case Fn:
 		return functionSignatureString(t)
 	case Map:
-		return fmt.Sprintf("map[%s]%s", TcToString(t.KeyType), TcToString(t.ValueType))
+		return fmt.Sprintf("map[%s]%s", tcToString(t.KeyType), tcToString(t.ValueType))
 	case Maybe:
-		return fmt.Sprintf("maybe{%s}", TcToString(t.MaybeType))
+		return fmt.Sprintf("maybe{%s}", tcToString(t.MaybeType))
 	case UserDefined:
-		return TcToString(unwrapType(t.TypeDef))
+		return tcToString(unwrapType(t.TypeDef))
 	default:
 		if t == nil {
 			return "void"
@@ -247,12 +252,12 @@ func functionSignatureString(fn Fn) string {
 		} else {
 			ParamStrs += ": "
 		}
-		ParamStrs += string(TcToString(param.Type))
+		ParamStrs += string(tcToString(param.Type))
 		if i != len(fn.Params)-1 {
 			ParamStrs += ", "
 		}
 	}
-	ReturnStr := string(TcToString(fn.Returns))
+	ReturnStr := string(tcToString(fn.Returns))
 	if ReturnStr != "" {
 		ReturnStr = " -> " + ReturnStr
 	}
@@ -296,8 +301,8 @@ func checkMethodsImplementations(expected, provided Tc) []error {
 
 		// check the return type and parameters
 		for i, param := range interfaceMethod.Method.Params {
-			expectedParam := TcToString(param.Type)
-			providedParam := TcToString(methodFn.Fn.Params[i].Type)
+			expectedParam := tcToString(param.Type)
+			providedParam := tcToString(methodFn.Fn.Params[i].Type)
 			if expectedParam != providedParam {
 				//return fmt.Errorf("method '%s' found for interface '%s' but parameter missmatch", methodName, interfaceType.InterfaceName)
 				errs = append(errs, fmt.Errorf("method '%s', but parameter missmatch", interfaceMethod.Name))
@@ -305,8 +310,8 @@ func checkMethodsImplementations(expected, provided Tc) []error {
 		}
 
 		//check the return type
-		expectedReturn := TcToString(interfaceMethod.Method.Returns)
-		providedReturn := TcToString(methodFn.Fn.Returns)
+		expectedReturn := tcToString(interfaceMethod.Method.Returns)
+		providedReturn := tcToString(methodFn.Fn.Returns)
 		if expectedReturn != providedReturn {
 			//return fmt.Errorf("method '%s' found for interface '%s' but return type mismatched", methodName, interfaceType.InterfaceName)
 			errs = append(errs, fmt.Errorf("method '%s' found, but return type mismatched", interfaceMethod.Name))
