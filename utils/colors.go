@@ -13,10 +13,12 @@ const (
 	BOLD_RED 	COLOR 	= 	"\033[38;05;196m"
     GREEN  		COLOR 	= 	"\033[32m"
     YELLOW 		COLOR 	= 	"\033[33m"
+	BOLD_YELLOW COLOR 	= 	"\033[38;05;226m"
 	ORANGE 		COLOR 	= 	"\033[38;05;166m"
 	BROWN 		COLOR 	= 	"\033[38;05;130m"
 	BRIGHT_BROWN COLOR 	= 	"\033[38;05;136m"
     BLUE   		COLOR 	= 	"\033[34m"
+	BOLD_BLUE 	COLOR 	= 	"\033[38;05;27m"
     PURPLE 		COLOR 	= 	"\033[35m"
     CYAN   		COLOR 	= 	"\033[36m"
     WHITE  		COLOR 	= 	"\033[37m"
@@ -50,4 +52,12 @@ func (c COLOR) Sprintln(args ...interface{}) string {
 
 func (c COLOR) Sprint(args ...interface{}) string {
 	return string(c) + fmt.Sprint(args...) + string(RESET)
+}
+
+func PrintWithColor(color COLOR, args ...interface{}) {
+	color.Print(args...)
+}
+
+func SprintWithColor(color COLOR, args ...interface{}) string {
+	return color.Sprint(args...)
 }

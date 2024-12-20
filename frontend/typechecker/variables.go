@@ -1,9 +1,12 @@
 package typechecker
 
 import (
+	//Standard packages
 	"fmt"
-	"walrus/errgen"
+
+	//Walrus packages
 	"walrus/frontend/ast"
+	"walrus/report"
 	"walrus/utils"
 )
 
@@ -23,7 +26,7 @@ func checkVariableAssignment(node ast.VarAssignmentExpr, env *TypeEnvironment) E
 	valueToAssign := node.Value
 
 	if err := checkLValue(Assignee, env); err != nil {
-		errgen.Add(env.filePath, Assignee.StartPos().Line, Assignee.EndPos().Line, Assignee.StartPos().Column, Assignee.EndPos().Column, fmt.Sprintf("cannot assign to %s", err.Error())).Level(errgen.CRITICAL_ERROR)
+		report.Add(env.filePath, Assignee.StartPos().Line, Assignee.EndPos().Line, Assignee.StartPos().Column, Assignee.EndPos().Column, fmt.Sprintf("cannot assign to %s", err.Error())).Level(report.CRITICAL_ERROR)
 	}
 
 	expectedType := parseNodeValue(Assignee, env)
@@ -31,7 +34,7 @@ func checkVariableAssignment(node ast.VarAssignmentExpr, env *TypeEnvironment) E
 
 	err := matchTypes(expectedType, providedType)
 	if err != nil {
-		errgen.Add(env.filePath, valueToAssign.StartPos().Line, valueToAssign.EndPos().Line, valueToAssign.StartPos().Column, valueToAssign.EndPos().Column, err.Error()).Level(errgen.NORMAL_ERROR)
+		report.Add(env.filePath, valueToAssign.StartPos().Line, valueToAssign.EndPos().Line, valueToAssign.StartPos().Column, valueToAssign.EndPos().Column, err.Error()).Level(report.NORMAL_ERROR)
 	}
 
 	return providedType
@@ -84,13 +87,13 @@ func checkVariableDeclaration(node ast.VarDeclStmt, env *TypeEnvironment) ExprTy
 			providedValue := parseNodeValue(varToDecl.Value, env)
 			err := matchTypes(expectedTypeInterface, providedValue)
 			if err != nil {
-				errgen.Add(env.filePath, varToDecl.Value.StartPos().Line, varToDecl.Value.EndPos().Line, varToDecl.Value.StartPos().Column, varToDecl.Value.EndPos().Column, fmt.Sprintf("error declaring variable '%s'. %s", varToDecl.Identifier.Name, err.Error())).Level(errgen.NORMAL_ERROR)
+				report.Add(env.filePath, varToDecl.Value.StartPos().Line, varToDecl.Value.EndPos().Line, varToDecl.Value.StartPos().Column, varToDecl.Value.EndPos().Column, fmt.Sprintf("error declaring variable '%s'. %s", varToDecl.Identifier.Name, err.Error())).Level(report.NORMAL_ERROR)
 			}
 		}
 
 		err := env.declareVar(varToDecl.Identifier.Name, expectedTypeInterface, node.IsConst, false)
 		if err != nil {
-			errgen.Add(env.filePath, varToDecl.Identifier.StartPos().Line, varToDecl.Identifier.EndPos().Line, varToDecl.Identifier.StartPos().Column, varToDecl.Identifier.EndPos().Column, err.Error()).Level(errgen.CRITICAL_ERROR)
+			report.Add(env.filePath, varToDecl.Identifier.StartPos().Line, varToDecl.Identifier.EndPos().Line, varToDecl.Identifier.StartPos().Column, varToDecl.Identifier.EndPos().Column, err.Error()).Level(report.CRITICAL_ERROR)
 		}
 
 		if node.IsConst {

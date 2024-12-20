@@ -1,8 +1,9 @@
 package typechecker
 
 import (
-	"walrus/errgen"
+	//Walrus packages
 	"walrus/frontend/ast"
+	"walrus/report"
 )
 
 func checkMapLiteral(node ast.MapLiteral, env *TypeEnvironment) ExprType {
@@ -17,11 +18,11 @@ func checkMapLiteral(node ast.MapLiteral, env *TypeEnvironment) ExprType {
 
 		err := matchTypes(evaluatedMapType.(Map).KeyType, keyType)
 		if err != nil {
-			errgen.Add(env.filePath, value.Key.StartPos().Line, value.Key.EndPos().Line, value.Key.StartPos().Column, value.Key.EndPos().Column, "incorrect map key. "+err.Error()).Level(errgen.NORMAL_ERROR)
+			report.Add(env.filePath, value.Key.StartPos().Line, value.Key.EndPos().Line, value.Key.StartPos().Column, value.Key.EndPos().Column, "incorrect map key. "+err.Error()).Level(report.NORMAL_ERROR)
 		}
 		err = matchTypes(evaluatedMapType.(Map).ValueType, valueType)
 		if err != nil {
-			errgen.Add(env.filePath, value.Value.StartPos().Line, value.Value.EndPos().Line, value.Value.StartPos().Column, value.Value.EndPos().Column, "incorrect map value. "+err.Error()).Level(errgen.NORMAL_ERROR)
+			report.Add(env.filePath, value.Value.StartPos().Line, value.Value.EndPos().Line, value.Value.StartPos().Column, value.Value.EndPos().Column, "incorrect map value. "+err.Error()).Level(report.NORMAL_ERROR)
 		}
 	}
 

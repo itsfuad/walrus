@@ -1,8 +1,9 @@
 package typechecker
 
 import (
-	"walrus/errgen"
+	//Walrus packages
 	"walrus/frontend/ast"
+	"walrus/report"
 )
 
 func checkForStmt(forStmt ast.ForStmt, env *TypeEnvironment) ExprType {
@@ -20,21 +21,21 @@ func checkForStmt(forStmt ast.ForStmt, env *TypeEnvironment) ExprType {
 		case ast.VarAssignmentExpr:
 			checkVariableAssignment(t, forLoopEnv)
 		default:
-			errgen.Add(env.filePath, forStmt.StartPos().Line, forStmt.EndPos().Line, forStmt.StartPos().Column, forStmt.EndPos().Column, "for loop initialization must be a variable declaration or assignment").Level(errgen.CRITICAL_ERROR)
+			report.Add(env.filePath, forStmt.StartPos().Line, forStmt.EndPos().Line, forStmt.StartPos().Column, forStmt.EndPos().Column, "for loop initialization must be a variable declaration or assignment").Level(report.CRITICAL_ERROR)
 		}
 
 		cond := parseNodeValue(forStmt.Condition, forLoopEnv)
 
 		//must be a boolean if !cond -> error, if !cond.Type == bool -> error
 		if cond == nil || cond.DType() != BOOLEAN_TYPE {
-			errgen.Add(env.filePath, forStmt.StartPos().Line, forStmt.EndPos().Line, forStmt.StartPos().Column, forStmt.EndPos().Column, "for loop condition must be a boolean expression").Level(errgen.CRITICAL_ERROR)
+			report.Add(env.filePath, forStmt.StartPos().Line, forStmt.EndPos().Line, forStmt.StartPos().Column, forStmt.EndPos().Column, "for loop condition must be a boolean expression").Level(report.CRITICAL_ERROR)
 		}
 
 		incr := parseNodeValue(forStmt.Increment, forLoopEnv)
 
 		//must be assignment
 		if _, ok := incr.(ast.IncrementalInterface); !ok {
-			errgen.Add(env.filePath, forStmt.StartPos().Line, forStmt.EndPos().Line, forStmt.StartPos().Column, forStmt.EndPos().Column, "for loop increment must be incremental assignment").Level(errgen.CRITICAL_ERROR)
+			report.Add(env.filePath, forStmt.StartPos().Line, forStmt.EndPos().Line, forStmt.StartPos().Column, forStmt.EndPos().Column, "for loop increment must be incremental assignment").Level(report.CRITICAL_ERROR)
 		}
 	}
 

@@ -1,15 +1,18 @@
 package parser
 
 import (
+	//Standard packages
 	"encoding/json"
 	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
-	"walrus/errgen"
+
+	//Walrus packages
 	"walrus/frontend/ast"
 	"walrus/frontend/builtins"
 	"walrus/frontend/lexer"
+	"walrus/report"
 	"walrus/utils"
 )
 
@@ -47,7 +50,7 @@ func (p *Parser) expectError(expectedKind builtins.TOKEN_KIND, err error) lexer.
 
 	if kind != expectedKind {
 		if err != nil {
-			errgen.Add(p.FilePath, start.Line, end.Line, start.Column, end.Column, err.Error()).Level(errgen.SYNTAX_ERROR)
+			report.Add(p.FilePath, start.Line, end.Line, start.Column, end.Column, err.Error()).Level(report.SYNTAX_ERROR)
 		} else {
 			var msg string
 			if lexer.IsKeyword(token.Value) {
@@ -55,7 +58,7 @@ func (p *Parser) expectError(expectedKind builtins.TOKEN_KIND, err error) lexer.
 			} else {
 				msg = fmt.Sprintf("unexpected token '%s' found. expected '%s'", token.Value, expectedKind)
 			}
-			errgen.Add(p.FilePath, start.Line, end.Line, start.Column, end.Column, msg).Level(errgen.SYNTAX_ERROR)
+			report.Add(p.FilePath, start.Line, end.Line, start.Column, end.Column, msg).Level(report.SYNTAX_ERROR)
 		}
 	}
 	return p.advance()

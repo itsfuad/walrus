@@ -1,0 +1,11 @@
+mod main;
+
+import utils;
+
+let main := "Main";
+
+print(logger); //from logger.wal file
+
+print(utils::formatter); //from formatter.wal file
+
+print(utils::printer); //from printer.wal file

@@ -1,8 +1,9 @@
 package typechecker
 
 import (
-	"walrus/errgen"
+	//Walrus packages
 	"walrus/frontend/ast"
+	"walrus/report"
 )
 
 func checkConditionBlock(block ast.BlockStmt, env *TypeEnvironment) ExprType {
@@ -16,7 +17,7 @@ func checkIfStmt(ifNode ast.IfStmt, env *TypeEnvironment) ExprType {
 	//condition
 	cond := parseNodeValue(ifNode.Condition, env)
 	if cond.DType() != BOOLEAN_TYPE {
-		errgen.Add(env.filePath, ifNode.Condition.StartPos().Line, ifNode.Condition.EndPos().Line, ifNode.Condition.StartPos().Column, ifNode.Condition.EndPos().Column, "Condition must be a boolean expression").Level(errgen.NORMAL_ERROR)
+		report.Add(env.filePath, ifNode.Condition.StartPos().Line, ifNode.Condition.EndPos().Line, ifNode.Condition.StartPos().Column, ifNode.Condition.EndPos().Column, "Condition must be a boolean expression").Level(report.NORMAL_ERROR)
 	}
 
 	//then block

@@ -1,8 +1,8 @@
 package typechecker
 
 import (
-	"walrus/errgen"
 	"walrus/frontend/ast"
+	"walrus/report"
 	"walrus/utils"
 )
 
@@ -15,7 +15,7 @@ func checkTypeDeclaration(node ast.TypeDeclStmt, env *TypeEnvironment) ExprType 
 
 	//if typename is small case
 	if !utils.IsCapitalized(node.UDTypeName.Name) {
-		errgen.Add(env.filePath, node.UDTypeName.Start.Line, node.UDTypeName.End.Line, node.UDTypeName.Start.Column, node.UDTypeName.End.Column, "User defined type name should be capitalized").Hint("Make the first letter uppercase").Level(errgen.WARNING)
+		report.Add(env.filePath, node.UDTypeName.Start.Line, node.UDTypeName.Start.Line, node.UDTypeName.Start.Column, node.UDTypeName.Start.Column, "User defined type name should be capitalized").Hint("Make the first letter uppercase").Level(report.INFO)
 	}
 
 	var val ExprType
@@ -37,7 +37,7 @@ func checkTypeDeclaration(node ast.TypeDeclStmt, env *TypeEnvironment) ExprType 
 
 	err := declareType(node.UDTypeName.Name, typeVal)
 	if err != nil {
-		errgen.Add(env.filePath, node.Start.Line, node.End.Line, node.Start.Column, node.End.Column, err.Error()).Level(errgen.NORMAL_ERROR)
+		report.Add(env.filePath, node.Start.Line, node.End.Line, node.Start.Column, node.End.Column, err.Error()).Level(report.NORMAL_ERROR)
 	}
 
 	utils.GREEN.Print("Declared Type ")

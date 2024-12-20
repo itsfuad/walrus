@@ -1,10 +1,13 @@
 package parser
 
 import (
+	//Standard packages
 	"fmt"
-	"walrus/errgen"
+
+	//Walrus packages
 	"walrus/frontend/ast"
 	"walrus/frontend/lexer"
+	"walrus/report"
 )
 
 // parseForStmt parses a 'for' statement in the source code.
@@ -108,7 +111,7 @@ func parseForStmt(p *Parser) ast.Node {
 			},
 		}
 	} else {
-		errgen.Add(p.FilePath, loopType.Start.Line, loopType.End.Line, loopType.Start.Column, loopType.End.Column, "Expected 'for' or 'foreach' keyword").Level(errgen.SYNTAX_ERROR)
+		report.Add(p.FilePath, loopType.Start.Line, loopType.End.Line, loopType.Start.Column, loopType.End.Column, "Expected 'for' or 'foreach' keyword").Level(report.SYNTAX_ERROR)
 	}
 
 	return nil

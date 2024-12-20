@@ -1,10 +1,13 @@
 package parser
 
 import (
+	//Standard packages
 	"errors"
-	"walrus/errgen"
+
+	//Walrus packages
 	"walrus/frontend/ast"
 	"walrus/frontend/lexer"
+	"walrus/report"
 )
 
 // parseLambdaFunction parses a lambda function expression from the input and returns an AST node representing the function.
@@ -111,7 +114,7 @@ func parseFunctionSignature(p *Parser) ([]ast.FunctionParam, ast.DataType) {
 		currentToken := p.currentToken()
 
 		if currentToken.Kind != lexer.COLON_TOKEN && currentToken.Kind != lexer.OPTIONAL_TOKEN {
-			errgen.Add(p.FilePath, currentToken.Start.Line, currentToken.End.Line, currentToken.Start.Column, currentToken.End.Column, "expected : or ?:").Level(errgen.SYNTAX_ERROR)
+			report.Add(p.FilePath, currentToken.Start.Line, currentToken.End.Line, currentToken.Start.Column, currentToken.End.Column, "expected : or ?:").Level(report.SYNTAX_ERROR)
 		}
 
 		p.advance()
