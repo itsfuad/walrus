@@ -1,4 +1,4 @@
-package errgen
+package report
 
 import (
 	"errors"
@@ -8,43 +8,43 @@ import (
 	"walrus/utils"
 )
 
-type PROBLEM_TYPE string
+type REPORT_TYPE string
 
 const (
-	NULL           	PROBLEM_TYPE = ""
-	CRITICAL_ERROR 	PROBLEM_TYPE = "critical error" // Stops compilation immediately
-	SYNTAX_ERROR   	PROBLEM_TYPE = "syntax error"   // Syntax error, also stops compilation
-	NORMAL_ERROR   	PROBLEM_TYPE = "error"          // Regular error that doesn't halt compilation
+	NULL           	REPORT_TYPE = ""
+	CRITICAL_ERROR 	REPORT_TYPE = "critical error" // Stops compilation immediately
+	SYNTAX_ERROR   	REPORT_TYPE = "syntax error"   // Syntax error, also stops compilation
+	NORMAL_ERROR   	REPORT_TYPE = "error"          // Regular error that doesn't halt compilation
 
-	WARNING 		PROBLEM_TYPE = "warning" // Indicates potential issues
-	INFO   			PROBLEM_TYPE = "info"    // Informational message
+	WARNING 		REPORT_TYPE = "warning" // Indicates potential issues
+	INFO   			REPORT_TYPE = "info"    // Informational message
 )
 
-//var colorMap = make(map[PROBLEM_TYPE]utils.COLOR)
-var colorMap = map[PROBLEM_TYPE]utils.COLOR{
+//var colorMap = make(map[REPORT_TYPE]utils.COLOR)
+var colorMap = map[REPORT_TYPE]utils.COLOR{
 	CRITICAL_ERROR: utils.BOLD_RED,
 	SYNTAX_ERROR:   utils.RED,
 	NORMAL_ERROR:   utils.RED,
-	WARNING:        utils.ORANGE,
+	WARNING:        utils.YELLOW,
 	INFO:           utils.BLUE,
 }
 
 // global errors are arrays of error pointers
-var globalProblems []*Problem
-var problems = make(map[PROBLEM_TYPE]int)
+var globalReports []*Report
+var reports = make(map[REPORT_TYPE]int)
 
-type Problem struct {
+type Report struct {
 	filePath  string
 	lineStart int
 	lineEnd   int
 	colStart  int
 	colEnd    int
-	err       error
+	msg       string
 	hints     []string
-	level     PROBLEM_TYPE
+	level     REPORT_TYPE
 }
 
-// printProblem formats and displays error information for a WalrusError.
+// printReport formats and displays error information for a WalrusError.
 // It prints the error location, the relevant code line, and visual indicators
 // showing where the error occurred. For critical errors, it will terminate
 // program execution.
@@ -63,7 +63,7 @@ type Problem struct {
 //   - Exits program if error is critical
 //
 // If file reading fails, the function will panic.
-func printProblem(e *Problem) {
+func printReport(e *Report) {
 
 	utils.GREY.Printf("%s:%d:%d: ", e.filePath, e.lineStart, e.colStart)
 
@@ -89,11 +89,17 @@ func printProblem(e *Problem) {
 	snippet := utils.GREY.Sprint(lineNumber) + fmt.Sprintln(line)
 	underline := fmt.Sprintf("%s^%s\n", strings.Repeat(" ", (e.colStart-1)+len(lineNumber)), strings.Repeat("~", hLen))
 
+	
 	if e.level == WARNING {
 		colorMap[WARNING].Print("Warning: ")
-		colorMap[WARNING].Print(e.err.Error() + "\n")
+		colorMap[WARNING].Print(e.msg + "\n")
 		fmt.Print(snippet)
 		colorMap[WARNING].Print(underline)
+	} else if e.level == INFO {
+		colorMap[INFO].Print("Info: ")
+		colorMap[INFO].Print(e.msg + "\n")
+		fmt.Print(snippet)
+		colorMap[INFO].Print(underline)
 	} else {
 		if e.level == CRITICAL_ERROR {
 			//stop further execution
@@ -103,7 +109,7 @@ func printProblem(e *Problem) {
 		} else {
 			colorMap[NORMAL_ERROR].Print("Error: ")
 		}
-		utils.RED.Print(e.err.Error() + "\n")
+		utils.RED.Print(e.msg + "\n")
 		fmt.Print(snippet)
 		utils.RED.Print(underline)
 	}
@@ -115,7 +121,7 @@ func printProblem(e *Problem) {
 	}
 }
 
-func showHints(e *Problem, padding int) {
+func showHints(e *Report, padding int) {
 	if len(e.hints) > 0 {
 		utils.YELLOW.Printf("%sHint:\n", strings.Repeat(" ", padding))
 		for _, hint := range e.hints {
@@ -136,7 +142,7 @@ func showHints(e *Problem, padding int) {
 //
 // Returns:
 //   - *WalrusError: Returns the error instance to allow for method chaining
-func (e *Problem) Hint(msg string) *Problem {
+func (e *Report) Hint(msg string) *Report {
 
 	if msg == "" {
 		return e
@@ -146,7 +152,7 @@ func (e *Problem) Hint(msg string) *Problem {
 	return e
 }
 
-func Add(filePath string, lineStart, lineEnd int, colStart, colEnd int, errMsg string) *Problem {
+func Add(filePath string, lineStart, lineEnd int, colStart, colEnd int, msg string) *Report {
 	if lineStart < 1 {
 		lineStart = 1
 	}
@@ -160,27 +166,27 @@ func Add(filePath string, lineStart, lineEnd int, colStart, colEnd int, errMsg s
 		colEnd = 1
 	}
 
-	err := &Problem{
+	report := &Report{
 		filePath:  filePath,
 		lineStart: lineStart,
 		lineEnd:   lineEnd,
 		colStart:  colStart,
 		colEnd:    colEnd,
-		err:       errors.New(errMsg),
+		msg:       msg,
 		level:     NULL,
 	}
 
-	globalProblems = append(globalProblems, err)
+	globalReports = append(globalReports, report)
 
-	return err
+	return report
 }
 
-func (e *Problem) Level(level PROBLEM_TYPE) {
+func (e *Report) Level(level REPORT_TYPE) {
 	if level == NULL {
 		panic("call ErrorLevel() method with valid Error level")
 	}
 	e.level = level
-	problems[level]++
+	reports[level]++
 	if level == CRITICAL_ERROR || level == SYNTAX_ERROR {
 		DisplayAll()
 	}
@@ -190,7 +196,7 @@ func DisplayAll() {
 	//recover if panics
 	defer func() {
 		displayProblemCount()
-		if problems[CRITICAL_ERROR] == 0 && problems[NORMAL_ERROR] == 0 {
+		if reports[CRITICAL_ERROR] == 0 && reports[NORMAL_ERROR] == 0 {
 			utils.GREEN.Println("------------ Passed ------------")
 		}
 		if r := recover(); r != nil {
@@ -198,18 +204,18 @@ func DisplayAll() {
 			os.Exit(-1)
 		}
 	}()
-	for _, err := range globalProblems {
+	for _, err := range globalReports {
 		if err.level == NULL {
 			panic("call Level() method with valid Error level")
 		}
-		printProblem(err)
+		printReport(err)
 	}
 }
 
 func displayProblemCount() {
 	//show errors and warnings separately
-	warningCount := problems[WARNING]
-	probCount := problems[NORMAL_ERROR] + problems[CRITICAL_ERROR]
+	warningCount := reports[WARNING]
+	probCount := reports[NORMAL_ERROR] + reports[CRITICAL_ERROR]
 
 	if warningCount > 0 {
 		colorMap[WARNING].Printf("%d %s", warningCount, utils.Plural("warning", "warnings ", warningCount))

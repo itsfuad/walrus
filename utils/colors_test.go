@@ -78,3 +78,5 @@ func TestMultipleColors(t *testing.T) {
 		t.Errorf("Expected RESET escape code in combined text, got: %s", combined)
 	}
 }
+
+

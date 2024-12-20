@@ -1,13 +1,15 @@
 package lexer
 
 import (
+	//Standard packages
 	"fmt"
 	"os"
 	"regexp"
 	"strings"
 
-	"walrus/errgen"
+	//Walrus packages
 	"walrus/frontend/builtins"
+	"walrus/report"
 	"walrus/utils"
 )
 
@@ -52,7 +54,7 @@ func createLexer(filePath *string) *Lexer {
 	fileText, err := os.ReadFile(*filePath)
 	if err != nil {
 		utils.RED.Println("error reading file")
-		fmt.Print(errgen.TreeFormatString(utils.BROWN.Sprint(err.Error())))
+		fmt.Print(report.TreeFormatString(utils.BROWN.Sprint(err.Error())))
 		os.Exit(-1)
 	}
 
@@ -247,7 +249,7 @@ func Tokenize(filename string, debug bool) []Token {
 
 		if !matched {
 			errStr := fmt.Sprintf("lexer:unexpected charecter: '%c'", lex.at())
-			errgen.Add(filename, lex.Position.Line, lex.Position.Line, lex.Position.Column, lex.Position.Column, errStr).Level(errgen.CRITICAL_ERROR)
+			report.Add(filename, lex.Position.Line, lex.Position.Line, lex.Position.Column, lex.Position.Column, errStr).Level(report.CRITICAL_ERROR)
 			return nil
 		}
 	}

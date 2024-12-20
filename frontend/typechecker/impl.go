@@ -1,29 +1,31 @@
 package typechecker
 
 import (
+	//Standard packages
 	"fmt"
-	"walrus/errgen"
+	//Walrus packages
 	"walrus/frontend/ast"
+	"walrus/report"
 )
 
 func checkImplStmt(implStmt ast.ImplStmt, env *TypeEnvironment) ExprType {
 
 	//scope must be global
 	if env.scopeType != GLOBAL_SCOPE {
-		errgen.Add(env.filePath, implStmt.Start.Line, implStmt.End.Line, implStmt.Start.Column, implStmt.End.Column, "implement statement must be at global scope").Level(errgen.CRITICAL_ERROR)
+		report.Add(env.filePath, implStmt.Start.Line, implStmt.End.Line, implStmt.Start.Column, implStmt.End.Column, "implement statement must be at global scope").Level(report.CRITICAL_ERROR)
 		return NewVoid()
 	}
 
 	// check if the type to implement exists
 	structValue, err := getTypeDefinition(implStmt.ImplFor.Name)
 	if err != nil {
-		errgen.Add(env.filePath, implStmt.Start.Line, implStmt.End.Line, implStmt.Start.Column, implStmt.End.Column, err.Error()).Level(errgen.CRITICAL_ERROR)
+		report.Add(env.filePath, implStmt.Start.Line, implStmt.End.Line, implStmt.Start.Column, implStmt.End.Column, err.Error()).Level(report.CRITICAL_ERROR)
 	}
 
 	// type must be a struct
 	implForType, ok := structValue.(Struct)
 	if !ok {
-		errgen.Add(env.filePath, implStmt.Start.Line, implStmt.End.Line, implStmt.Start.Column, implStmt.End.Column, "only structs can be implemented").Level(errgen.CRITICAL_ERROR)
+		report.Add(env.filePath, implStmt.Start.Line, implStmt.End.Line, implStmt.Start.Column, implStmt.End.Column, "only structs can be implemented").Level(report.CRITICAL_ERROR)
 	}
 
 	//add the methods to the struct's environment
@@ -31,7 +33,7 @@ func checkImplStmt(implStmt ast.ImplStmt, env *TypeEnvironment) ExprType {
 		name := method.Identifier.Name
 		// if the method name is in the struct's elements, throw an error
 		if _, ok := implForType.StructScope.variables[name]; ok {
-			errgen.Add(env.filePath, method.Start.Line, method.End.Line, method.Start.Column, method.End.Column, fmt.Sprintf("'%s' is already defined in struct '%s'", name, implForType.StructName)).Level(errgen.CRITICAL_ERROR)
+			report.Add(env.filePath, method.Start.Line, method.End.Line, method.Start.Column, method.End.Column, fmt.Sprintf("'%s' is already defined in struct '%s'", name, implForType.StructName)).Level(report.CRITICAL_ERROR)
 		}
 
 		fnEnv := NewTypeENV(&implForType.StructScope, FUNCTION_SCOPE, name, implForType.StructScope.filePath)
@@ -55,7 +57,7 @@ func checkImplStmt(implStmt ast.ImplStmt, env *TypeEnvironment) ExprType {
 		//declare the method on the struct's environment and then check the body
 		err := implForType.StructScope.declareVar(name, methodToDeclare, false, false)
 		if err != nil {
-			errgen.Add(env.filePath, method.Start.Line, method.End.Line, method.Start.Column, method.End.Column, fmt.Sprintf("cannot declare method '%s'\n└── %s", method.Identifier.Name, err.Error())).Level(errgen.CRITICAL_ERROR)
+			report.Add(env.filePath, method.Start.Line, method.End.Line, method.Start.Column, method.End.Column, fmt.Sprintf("cannot declare method '%s'\n└── %s", method.Identifier.Name, err.Error())).Level(report.CRITICAL_ERROR)
 		}
 
 		//check the function body

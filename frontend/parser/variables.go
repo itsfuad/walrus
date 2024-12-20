@@ -1,10 +1,12 @@
 package parser
 
 import (
+	//Standard packages
 	"fmt"
-	"walrus/errgen"
+	//Walrus packages
 	"walrus/frontend/ast"
 	"walrus/frontend/lexer"
+	"walrus/report"
 )
 
 // parseVarDeclStmt parses a variable declaration statement in the source code.
@@ -56,7 +58,7 @@ func parseVarDeclStmt(p *Parser) ast.Node {
 			explicitType = parseType(p, DEFAULT_BP)
 		} else if assignmentToken.Kind != lexer.WALRUS_TOKEN {
 			msg := "Invalid variable declaration syntax. Expected : or :="
-			errgen.Add(p.FilePath, assignmentToken.Start.Line, assignmentToken.End.Line, assignmentToken.Start.Column, assignmentToken.End.Column, msg).Level(errgen.SYNTAX_ERROR)
+			report.Add(p.FilePath, assignmentToken.Start.Line, assignmentToken.End.Line, assignmentToken.Start.Column, assignmentToken.End.Column, msg).Level(report.SYNTAX_ERROR)
 		}
 
 		if p.currentTokenKind() != lexer.COMMA_TOKEN && p.currentTokenKind() != lexer.SEMI_COLON_TOKEN {
@@ -70,7 +72,7 @@ func parseVarDeclStmt(p *Parser) ast.Node {
 		//if const, we must have a value
 		if isConst && value == nil {
 			msg := "constants must have value when declared"
-			errgen.Add(p.FilePath, p.currentToken().Start.Line, p.currentToken().End.Line, p.currentToken().Start.Column, p.currentToken().End.Column, msg).Level(errgen.SYNTAX_ERROR)
+			report.Add(p.FilePath, p.currentToken().Start.Line, p.currentToken().End.Line, p.currentToken().Start.Column, p.currentToken().End.Column, msg).Level(report.SYNTAX_ERROR)
 		}
 
 		variables = append(variables, ast.VarDeclStmtVar{

@@ -1,14 +1,16 @@
 package typechecker
 
 import (
+	//Standard packages
 	"errors"
 	"fmt"
 	"math/rand"
 	"time"
 
-	"walrus/errgen"
+	//Walrus packages
 	"walrus/frontend/ast"
 	"walrus/frontend/builtins"
+	"walrus/report"
 	"walrus/utils"
 )
 
@@ -107,7 +109,7 @@ func evaluateTypeName(dtype ast.DataType, env *TypeEnvironment) ExprType {
 func evalDefaultType(defaultType ast.DataType, env *TypeEnvironment) ExprType {
 	val, err := getTypeDefinition(string(defaultType.Type())) // need to get the most deep type
 	if err != nil || val == nil {
-		errgen.Add(env.filePath, defaultType.StartPos().Line, defaultType.EndPos().Line, defaultType.StartPos().Column, defaultType.EndPos().Column, err.Error()).Level(errgen.CRITICAL_ERROR)
+		report.Add(env.filePath, defaultType.StartPos().Line, defaultType.EndPos().Line, defaultType.StartPos().Column, defaultType.EndPos().Column, err.Error()).Level(report.CRITICAL_ERROR)
 	}
 	return val
 }
@@ -116,7 +118,7 @@ func evalUD(analyzedUD ast.UserDefinedType, env *TypeEnvironment) ExprType {
 	typename := analyzedUD.AliasName
 	val, err := getTypeDefinition(typename) // need to get the most deep type
 	if err != nil || val == nil {
-		errgen.Add(env.filePath, analyzedUD.StartPos().Line, analyzedUD.EndPos().Line, analyzedUD.StartPos().Column, analyzedUD.EndPos().Column, err.Error()).Level(errgen.CRITICAL_ERROR)
+		report.Add(env.filePath, analyzedUD.StartPos().Line, analyzedUD.EndPos().Line, analyzedUD.StartPos().Column, analyzedUD.EndPos().Column, err.Error()).Level(report.CRITICAL_ERROR)
 	}
 	return val
 }
@@ -137,8 +139,8 @@ func evalFn(analyzedFunctionType ast.FunctionType, env *TypeEnvironment) ExprTyp
 		if utils.Some(params, func(p FnParam) bool {
 			return p.Name == param.Identifier.Name
 		}) {
-			errgen.Add(env.filePath, param.Identifier.Start.Line, param.Identifier.End.Line, param.Identifier.Start.Column, param.Identifier.End.Column,
-				fmt.Sprintf("parameter '%s' is already defined", param.Identifier.Name)).Level(errgen.CRITICAL_ERROR)
+			report.Add(env.filePath, param.Identifier.Start.Line, param.Identifier.End.Line, param.Identifier.Start.Column, param.Identifier.End.Column,
+				fmt.Sprintf("parameter '%s' is already defined", param.Identifier.Name)).Level(report.CRITICAL_ERROR)
 		}
 
 		paramType := evaluateTypeName(param.Type, env)
@@ -170,14 +172,14 @@ func evalMap(analyzedMap ast.MapType, env *TypeEnvironment) ExprType {
 		//find the name in the type definition
 		val, err := getTypeDefinition(analyzedMap.Map.Name) // need to get the most deep type
 		if err != nil {
-			errgen.Add(env.filePath, analyzedMap.StartPos().Line, analyzedMap.EndPos().Line, analyzedMap.StartPos().Column, analyzedMap.EndPos().Column, err.Error()).Level(errgen.NORMAL_ERROR)
+			report.Add(env.filePath, analyzedMap.StartPos().Line, analyzedMap.EndPos().Line, analyzedMap.StartPos().Column, analyzedMap.EndPos().Column, err.Error()).Level(report.NORMAL_ERROR)
 		}
 
 		if mapVal, ok := val.(Map); ok {
 			return NewMap(mapVal.KeyType, mapVal.ValueType)
 		}
 
-		errgen.Add(env.filePath, analyzedMap.StartPos().Line, analyzedMap.EndPos().Line, analyzedMap.StartPos().Column, analyzedMap.EndPos().Column, fmt.Sprintf("'%s' is not a map", analyzedMap.Map.Name)).Level(errgen.CRITICAL_ERROR)
+		report.Add(env.filePath, analyzedMap.StartPos().Line, analyzedMap.EndPos().Line, analyzedMap.StartPos().Column, analyzedMap.EndPos().Column, fmt.Sprintf("'%s' is not a map", analyzedMap.Map.Name)).Level(report.CRITICAL_ERROR)
 
 		return NewVoid()
 	}
@@ -193,7 +195,7 @@ func matchTypes(expectedType, providedType ExprType) error {
 		errs := checkMethodsImplementations(unwrappedExpected, unwrappedProvided)
 		if len(errs) > 0 {
 			msgs := fmt.Sprintf("cannot use type '%s' as interface '%s'\n", tcValueToString(providedType), tcValueToString(expectedType))
-			return errors.New(msgs + errgen.TreeFormatError(errs...).Error())
+			return errors.New(msgs + report.TreeFormatError(errs...).Error())
 		}
 		return nil
 	case Maybe:

@@ -1,9 +1,11 @@
 package typechecker
 
 import (
+	//Standard packages
 	"fmt"
-	"walrus/errgen"
+	//Walrus packages
 	"walrus/frontend/ast"
+	"walrus/report"
 	"walrus/utils"
 )
 
@@ -83,7 +85,7 @@ func parseNodeValue(node ast.Node, env *TypeEnvironment) ExprType {
 	case nil:
 		return NewNull() // value
 	default:
-		errgen.Add(env.filePath, node.StartPos().Line, node.EndPos().Line, node.StartPos().Column, node.EndPos().Column, fmt.Sprintf("<%T> node is not implemented yet to check", node)).Level(errgen.CRITICAL_ERROR)
+		report.Add(env.filePath, node.StartPos().Line, node.EndPos().Line, node.StartPos().Column, node.EndPos().Column, fmt.Sprintf("<%T> node is not implemented yet to check", node)).Level(report.CRITICAL_ERROR)
 		return NewVoid()
 	}
 }

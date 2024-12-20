@@ -1,4 +1,4 @@
-package errgen
+package report
 
 import (
 	"errors"

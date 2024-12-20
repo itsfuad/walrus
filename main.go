@@ -1,19 +1,21 @@
 package main
 
 import (
+	//Standard packages
 	"fmt"
 	"os"
 
-	"walrus/errgen"
+	//Walrus packages
 	"walrus/frontend/helpers"
 	"walrus/frontend/lexer"
 	"walrus/frontend/parser"
 	"walrus/frontend/typechecker"
+	"walrus/report"
 )
 
 func main() {
 
-	fileName := "variables"
+	fileName := "userTypes"
 	folder := "code"
 	filePath := fmt.Sprintf("%s/%s.wal", folder, fileName)
 	tokens := lexer.Tokenize(filePath, true)
@@ -22,7 +24,7 @@ func main() {
 	//write the tree to a file named 'expressions.json' in 'code/ast' folder
 	err := helpers.Serialize(&tree, folder, fileName)
 	if err != nil {
-		fmt.Println(errgen.TreeFormatString("compilation halted", "Error serializing AST", err.Error()))
+		fmt.Println(report.TreeFormatString("compilation halted", "Error serializing AST", err.Error()))
 		os.Exit(-1)
 	}
 
@@ -30,5 +32,5 @@ func main() {
 
 	typechecker.CheckAST(tree, typeCheckerEnv)
 
-	errgen.DisplayAll()
+	report.DisplayAll()
 }
