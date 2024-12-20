@@ -96,3 +96,10 @@ arr[1];
 
 ShowInfo(user);
 ShowInfo(@Banana{name: "Cavendish", price: 10});
+
+fn voidFn() -> void {
+    // do something
+    ret 0;
+}
+
+let Void := voidFn();

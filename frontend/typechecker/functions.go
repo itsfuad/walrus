@@ -167,7 +167,6 @@ func getFunctionReturnValue(env *TypeEnvironment, returnNode ast.Node) ExprType 
 	case StructMethod:
 		return fn.Fn.Returns
 	default:
-
 		report.Add(env.filePath, returnNode.StartPos().Line, returnNode.EndPos().Line, returnNode.StartPos().Column, returnNode.EndPos().Column, fmt.Sprintf("'%s' is not a function", fnName)).Level(report.NORMAL_ERROR)
 		return NewVoid()
 	}

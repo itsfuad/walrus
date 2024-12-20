@@ -44,7 +44,6 @@ type Report struct {
 	level     REPORT_TYPE
 }
 
-// printReport formats and displays error information for a WalrusError.
 // It prints the error location, the relevant code line, and visual indicators
 // showing where the error occurred. For critical errors, it will terminate
 // program execution.
@@ -63,35 +62,15 @@ type Report struct {
 //   - Exits program if error is critical
 //
 // If file reading fails, the function will panic.
-func printReport(e *Report) {
+func printReport(r *Report) {
 
-	utils.GREY.Printf("%s:%d:%d: ", e.filePath, e.lineStart, e.colStart)
+	utils.GREY.Printf("%s:%d:%d: ", r.filePath, r.lineStart, r.colStart)
 
-	fileData, err := os.ReadFile(e.filePath)
-	if err != nil {
-		panic(err)
-	}
-
-	lines := strings.Split(string(fileData), "\n")
-	line := lines[e.lineStart-1]
-	hLen := 0
-	if e.lineStart == e.lineEnd {
-		hLen = (e.colEnd - e.colStart) - 1
-	} else {
-		//full line
-		hLen = len(line) - 2
-	}
-	if hLen < 0 {
-		hLen = 0
-	}
-
-	lineNumber := fmt.Sprintf("%d | ", e.lineStart)
-	snippet := utils.GREY.Sprint(lineNumber) + fmt.Sprintln(line)
-	underline := fmt.Sprintf("%s^%s\n", strings.Repeat(" ", (e.colStart-1)+len(lineNumber)), strings.Repeat("~", hLen))
+	snippet, underline, hLen := makeParts(r)
 
 	var reportMsg string
 
-	switch e.level {
+	switch r.level {
 	case WARNING:
 		reportMsg = "Warning: "
 	case INFO:
@@ -104,24 +83,52 @@ func printReport(e *Report) {
 		reportMsg = "Error: "
 	}
 
-	reportColor := colorMap[e.level]
+	reportColor := colorMap[r.level]
 	reportColor.Print(reportMsg)
-	reportColor.Print(e.msg + "\n")
+	reportColor.Print(r.msg + "\n")
 
 	fmt.Print(snippet)
 	reportColor.Print(underline)
 
-	showHints(e, hLen)
+	showHints(r, hLen)
 
-	if e.level == CRITICAL_ERROR || e.level == SYNTAX_ERROR {
-		panic(fmt.Sprintf("Compilation halted due to %s\n", e.level))
+	if r.level == CRITICAL_ERROR || r.level == SYNTAX_ERROR {
+		panic(fmt.Sprintf("Compilation halted due to %s\n", r.level))
 	}
 }
 
-func showHints(e *Report, padding int) {
-	if len(e.hints) > 0 {
+func makeParts(r *Report) (snippet, underline string, hLen int) {
+	fileData, err := os.ReadFile(r.filePath)
+	if err != nil {
+		panic(err)
+	}
+
+	lines := strings.Split(string(fileData), "\n")
+	line := lines[r.lineStart-1]
+	
+	hLen = 0
+
+	if r.lineStart == r.lineEnd {
+		hLen = (r.colEnd - r.colStart) - 1
+	} else {
+		//full line
+		hLen = len(line) - 2
+	}
+	if hLen < 0 {
+		hLen = 0
+	}
+
+	lineNumber := fmt.Sprintf("%d | ", r.lineStart)
+	snippet = utils.GREY.Sprint(lineNumber) + fmt.Sprintln(line)
+	underline = fmt.Sprintf("%s^%s\n", strings.Repeat(" ", (r.colStart-1)+len(lineNumber)), strings.Repeat("~", hLen))
+
+	return snippet, underline, hLen
+}
+
+func showHints(r *Report, padding int) {
+	if len(r.hints) > 0 {
 		utils.YELLOW.Printf("%sHint:\n", strings.Repeat(" ", padding))
-		for _, hint := range e.hints {
+		for _, hint := range r.hints {
 			utils.YELLOW.Printf("%s- %s\n", strings.Repeat(" ", padding), hint)
 		}
 	} else {
@@ -139,14 +146,14 @@ func showHints(e *Report, padding int) {
 //
 // Returns:
 //   - *WalrusError: Returns the error instance to allow for method chaining
-func (e *Report) Hint(msg string) *Report {
+func (r *Report) Hint(msg string) *Report {
 
 	if msg == "" {
-		return e
+		return r
 	}
 
-	e.hints = append(e.hints, msg)
-	return e
+	r.hints = append(r.hints, msg)
+	return r
 }
 
 func Add(filePath string, lineStart, lineEnd int, colStart, colEnd int, msg string) *Report {
@@ -192,14 +199,18 @@ func (e *Report) Level(level REPORT_TYPE) {
 func DisplayAll() {
 	//recover if panics
 	defer func() {
-		displayProblemCount()
+
 		if reports[CRITICAL_ERROR] == 0 && reports[NORMAL_ERROR] == 0 {
-			utils.GREEN.Println("------------ Passed ------------")
+			showStatus(true, "Compilation successful with")
+			return
 		}
+
 		if r := recover(); r != nil {
 			utils.BOLD_RED.Println(r)
-			os.Exit(-1)
 		}
+
+		showStatus(false, "Compilation failed with")
+		os.Exit(-1)
 	}()
 	for _, err := range globalReports {
 		if err.level == NULL {
@@ -209,23 +220,37 @@ func DisplayAll() {
 	}
 }
 
-func displayProblemCount() {
+func showStatus(passed bool, msg string) {
+
 	//show errors and warnings separately
 	warningCount := reports[WARNING]
 	probCount := reports[NORMAL_ERROR] + reports[CRITICAL_ERROR]
 
+	var messageColor utils.COLOR
+
+	if passed {
+		messageColor = utils.GREEN
+		messageColor.Printf("------------- %s ", msg)
+	} else {
+		messageColor = utils.RED
+		messageColor.Printf("------------- %s ", msg)
+	}
+
+	totalProblemsString := ""
+
 	if warningCount > 0 {
-		colorMap[WARNING].Printf("%d %s", warningCount, utils.Plural("warning", "warnings ", warningCount))
+		totalProblemsString += colorMap[WARNING].Sprintf("%d %s", warningCount, utils.Plural("warning", "warnings ", warningCount))
 		if probCount > 0 {
-			utils.ORANGE.Printf(", ")
+			totalProblemsString += utils.ORANGE.Sprintf(", ")
 		}
 	}
 
 	if probCount > 0 {
-		colorMap[NORMAL_ERROR].Printf("%d %s", probCount, utils.Plural("error", "errors", probCount))
+		totalProblemsString += colorMap[NORMAL_ERROR].Sprintf("%d %s", probCount, utils.Plural("error", "errors", probCount))
 	}
 
-	println()
+	messageColor.Print(totalProblemsString)
+	messageColor.Println(" -------------")
 }
 
 // func Tree print with one or more strings

@@ -3280,6 +3280,154 @@
                 "Column": 48,
                 "Index": 1973
             }
+        },
+        {
+            "Identifier": {
+                "Name": "voidFn",
+                "Start": {
+                    "Line": 100,
+                    "Column": 4,
+                    "Index": 1981
+                },
+                "End": {
+                    "Line": 100,
+                    "Column": 10,
+                    "Index": 1987
+                }
+            },
+            "Params": null,
+            "Body": {
+                "Contents": [
+                    {
+                        "Value": {
+                            "Value": "0",
+                            "BitSize": 32,
+                            "IsSigned": true,
+                            "Start": {
+                                "Line": 102,
+                                "Column": 9,
+                                "Index": 2030
+                            },
+                            "End": {
+                                "Line": 102,
+                                "Column": 10,
+                                "Index": 2031
+                            }
+                        },
+                        "Start": {
+                            "Line": 102,
+                            "Column": 5,
+                            "Index": 2026
+                        },
+                        "End": {
+                            "Line": 102,
+                            "Column": 11,
+                            "Index": 2032
+                        }
+                    }
+                ],
+                "Start": {
+                    "Line": 100,
+                    "Column": 21,
+                    "Index": 1998
+                },
+                "End": {
+                    "Line": 103,
+                    "Column": 2,
+                    "Index": 2035
+                }
+            },
+            "ReturnType": {
+                "TypeName": "user_defined",
+                "AliasName": "void",
+                "Start": {
+                    "Line": 100,
+                    "Column": 16,
+                    "Index": 1993
+                },
+                "End": {
+                    "Line": 100,
+                    "Column": 20,
+                    "Index": 1997
+                }
+            },
+            "Start": {
+                "Line": 100,
+                "Column": 1,
+                "Index": 1978
+            },
+            "End": {
+                "Line": 103,
+                "Column": 2,
+                "Index": 2035
+            }
+        },
+        {
+            "Variables": [
+                {
+                    "Identifier": {
+                        "Name": "Void",
+                        "Start": {
+                            "Line": 105,
+                            "Column": 5,
+                            "Index": 2043
+                        },
+                        "End": {
+                            "Line": 105,
+                            "Column": 9,
+                            "Index": 2047
+                        }
+                    },
+                    "Value": {
+                        "Caller": {
+                            "Name": "voidFn",
+                            "Start": {
+                                "Line": 105,
+                                "Column": 13,
+                                "Index": 2051
+                            },
+                            "End": {
+                                "Line": 105,
+                                "Column": 19,
+                                "Index": 2057
+                            }
+                        },
+                        "Arguments": null,
+                        "Start": {
+                            "Line": 105,
+                            "Column": 13,
+                            "Index": 2051
+                        },
+                        "End": {
+                            "Line": 105,
+                            "Column": 21,
+                            "Index": 2059
+                        }
+                    },
+                    "ExplicitType": null,
+                    "Start": {
+                        "Line": 105,
+                        "Column": 5,
+                        "Index": 2043
+                    },
+                    "End": {
+                        "Line": 105,
+                        "Column": 21,
+                        "Index": 2059
+                    }
+                }
+            ],
+            "IsConst": false,
+            "Start": {
+                "Line": 105,
+                "Column": 1,
+                "Index": 2039
+            },
+            "End": {
+                "Line": 105,
+                "Column": 22,
+                "Index": 2060
+            }
         }
     ],
     "Start": {
