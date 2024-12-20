@@ -9,7 +9,7 @@ import (
 	"walrus/utils"
 )
 
-func checkStructLiteral(structLit ast.StructLiteral, env *TypeEnvironment) ExprType {
+func checkStructLiteral(structLit ast.StructLiteral, env *TypeEnvironment) Tc {
 
 	sName := structLit.Identifier
 
@@ -33,7 +33,7 @@ func checkStructLiteral(structLit ast.StructLiteral, env *TypeEnvironment) ExprT
 
 	structValue := Struct{
 		DataType:    STRUCT_TYPE,
-		StructName:  tcValueToString(Type),
+		StructName:  TcToString(Type),
 		StructScope: structType.StructScope,
 	}
 
@@ -97,7 +97,7 @@ func checkPropsType(structType Struct, structLit ast.StructLiteral, env *TypeEnv
 	}
 }
 
-func checkPropertyAccess(expr ast.StructPropertyAccessExpr, env *TypeEnvironment) ExprType {
+func checkPropertyAccess(expr ast.StructPropertyAccessExpr, env *TypeEnvironment) Tc {
 
 	fmt.Printf("Property Access: %s\n", expr.Property.Name)
 
@@ -105,7 +105,7 @@ func checkPropertyAccess(expr ast.StructPropertyAccessExpr, env *TypeEnvironment
 
 	prop := expr.Property
 
-	objName := tcValueToString(object)
+	objName := TcToString(object)
 
 	var structEnv TypeEnvironment
 

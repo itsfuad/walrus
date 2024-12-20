@@ -11,7 +11,7 @@ import (
 	"walrus/utils"
 )
 
-func checkIncrementalExpr(node ast.IncrementalInterface, env *TypeEnvironment) ExprType {
+func checkIncrementalExpr(node ast.IncrementalInterface, env *TypeEnvironment) Tc {
 	op := node.Op()
 	arg := node.Arg()
 	// the argument must be an identifier evaluated to a number
@@ -27,14 +27,14 @@ func checkIncrementalExpr(node ast.IncrementalInterface, env *TypeEnvironment) E
 	return typeVal
 }
 
-func logCastSuccess(originalType ExprType, toCast ExprType) {
+func logCastSuccess(originalType Tc, toCast Tc) {
 	utils.ORANGE.Print("casted type ")
 	utils.PURPLE.Print(string(originalType.DType()))
 	fmt.Print(" to ")
 	utils.PURPLE.Println(string(toCast.DType()))
 }
 
-func checkTypeCast(node ast.TypeCastExpr, env *TypeEnvironment) ExprType {
+func checkTypeCast(node ast.TypeCastExpr, env *TypeEnvironment) Tc {
 
 	originalType := parseNodeValue(node.Expression, env)
 	toCast := evaluateTypeName(node.ToCast, env)
@@ -54,7 +54,7 @@ func checkTypeCast(node ast.TypeCastExpr, env *TypeEnvironment) ExprType {
 	return originalType
 }
 
-func checkUnaryExpr(node ast.UnaryExpr, env *TypeEnvironment) ExprType {
+func checkUnaryExpr(node ast.UnaryExpr, env *TypeEnvironment) Tc {
 	op := node.Operator
 	arg := node.Argument
 	//evaluate argument. must be evaluated to number or boolean for ! (not)
@@ -79,14 +79,14 @@ func checkUnaryExpr(node ast.UnaryExpr, env *TypeEnvironment) ExprType {
 	return typeVal
 }
 
-func checkBinaryExpr(node ast.BinaryExpr, env *TypeEnvironment) ExprType {
+func checkBinaryExpr(node ast.BinaryExpr, env *TypeEnvironment) Tc {
 	op := node.Operator
 
 	left := parseNodeValue(node.Left, env)
 	right := parseNodeValue(node.Right, env)
 
-	leftType := tcValueToString(left)
-	rightType := tcValueToString(right)
+	leftType := TcToString(left)
+	rightType := TcToString(right)
 
 	var errLineStart, errLineEnd, errStart, errEnd int
 	var errMsg string
@@ -125,10 +125,10 @@ func checkBinaryExpr(node ast.BinaryExpr, env *TypeEnvironment) ExprType {
 	return left
 }
 
-func checkComparison(node ast.BinaryExpr, left ExprType, right ExprType, env *TypeEnvironment) ExprType {
+func checkComparison(node ast.BinaryExpr, left Tc, right Tc, env *TypeEnvironment) Tc {
 
-	leftType := tcValueToString(left)
-	rightType := tcValueToString(right)
+	leftType := TcToString(left)
+	rightType := TcToString(right)
 
 	op := node.Operator
 
@@ -153,10 +153,10 @@ func checkComparison(node ast.BinaryExpr, left ExprType, right ExprType, env *Ty
 	return left
 }
 
-func checkAdditionAndConcat(node ast.BinaryExpr, left ExprType, right ExprType, env *TypeEnvironment) ExprType {
+func checkAdditionAndConcat(node ast.BinaryExpr, left Tc, right Tc, env *TypeEnvironment) Tc {
 
-	leftType := tcValueToString(left)
-	rightType := tcValueToString(right)
+	leftType := TcToString(left)
+	rightType := TcToString(right)
 
 	var errLineStart, errLineEnd, errStart, errEnd int
 	var errMsg string

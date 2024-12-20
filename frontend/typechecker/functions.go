@@ -8,7 +8,7 @@ import (
 	"walrus/report"
 )
 
-func checkFunctionExpr(funcNode ast.FunctionLiteral, env *TypeEnvironment) ExprType {
+func checkFunctionExpr(funcNode ast.FunctionLiteral, env *TypeEnvironment) Tc {
 	name := fmt.Sprintf("_FN_%s", RandStringRunes(10))
 	return CheckAndDeclareFunction(funcNode, name, env)
 }
@@ -73,7 +73,7 @@ func checkAndDeclareSingleParameter(param ast.FunctionParam, i int, params []ast
 	})
 }
 
-func checkOptionalParameter(param ast.FunctionParam, i int, params []ast.FunctionParam, fnEnv *TypeEnvironment, paramType ExprType) {
+func checkOptionalParameter(param ast.FunctionParam, i int, params []ast.FunctionParam, fnEnv *TypeEnvironment, paramType Tc) {
 	for j := i + 1; j < len(params); j++ {
 		if !params[j].IsOptional {
 			report.Add(fnEnv.filePath, params[j].Identifier.Start.Line, params[j].Identifier.End.Line, params[j].Identifier.Start.Column, params[j].Identifier.End.Column, fmt.Sprintf("parameter '%s' cannot be non-optional after an optional parameter", params[j].Identifier.Name)).Level(report.CRITICAL_ERROR)
@@ -88,7 +88,7 @@ func checkOptionalParameter(param ast.FunctionParam, i int, params []ast.Functio
 	}
 }
 
-func checkFunctionCall(callNode ast.FunctionCallExpr, env *TypeEnvironment) ExprType {
+func checkFunctionCall(callNode ast.FunctionCallExpr, env *TypeEnvironment) Tc {
 	//check if the function is declared
 	caller := parseNodeValue(callNode.Caller, env)
 	fn, err := userDefinedToFn(caller)
@@ -126,7 +126,7 @@ func checkFunctionCall(callNode ast.FunctionCallExpr, env *TypeEnvironment) Expr
 	return fn.Returns
 }
 
-func userDefinedToFn(ud ExprType) (Fn, error) {
+func userDefinedToFn(ud Tc) (Fn, error) {
 	// if UserDefined then chain until Fn or error
 	switch t := ud.(type) {
 	case Fn:
@@ -140,7 +140,7 @@ func userDefinedToFn(ud ExprType) (Fn, error) {
 	}
 }
 
-func checkFunctionDeclStmt(funcNode ast.FunctionDeclStmt, env *TypeEnvironment) ExprType {
+func checkFunctionDeclStmt(funcNode ast.FunctionDeclStmt, env *TypeEnvironment) Tc {
 
 	// check if function is already declared
 	funcName := funcNode.Identifier.Name
@@ -152,7 +152,7 @@ func checkFunctionDeclStmt(funcNode ast.FunctionDeclStmt, env *TypeEnvironment) 
 	return CheckAndDeclareFunction(funcNode.FunctionLiteral, funcName, env)
 }
 
-func getFunctionReturnValue(env *TypeEnvironment, returnNode ast.Node) ExprType {
+func getFunctionReturnValue(env *TypeEnvironment, returnNode ast.Node) Tc {
 	funcParent, err := env.resolveFunctionEnv()
 
 	if err != nil {
