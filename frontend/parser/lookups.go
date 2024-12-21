@@ -90,6 +90,7 @@ func bindLookupHandlers() {
 	led(lexer.MINUS_MINUS_TOKEN, UNARY_BP, parsePostfixExpr) // a--
 
 	nud(lexer.IDENTIFIER_TOKEN, parsePrimaryExpr)  // identifier
+	nud(lexer.TYPEOF_TOKEN, parseTypeofExpr)
 	nud(lexer.INT8_TOKEN, parsePrimaryExpr)        // int literal, 8 bit
 	nud(lexer.INT16_TOKEN, parsePrimaryExpr)       // int literal, 16 bit
 	nud(lexer.INT32_TOKEN, parsePrimaryExpr)       // int literal, 32 bit

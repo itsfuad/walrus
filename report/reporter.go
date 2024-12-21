@@ -200,7 +200,7 @@ func DisplayAll() {
 	//recover if panics
 	defer func() {
 
-		if reports[CRITICAL_ERROR] == 0 && reports[NORMAL_ERROR] == 0 {
+		if reports[CRITICAL_ERROR] == 0 && reports[NORMAL_ERROR] == 0 && reports[SYNTAX_ERROR] == 0 {
 			showStatus(true, "Compilation successful with")
 			return
 		}
@@ -224,7 +224,7 @@ func showStatus(passed bool, msg string) {
 
 	//show errors and warnings separately
 	warningCount := reports[WARNING]
-	probCount := reports[NORMAL_ERROR] + reports[CRITICAL_ERROR]
+	probCount := reports[NORMAL_ERROR] + reports[CRITICAL_ERROR] + reports[SYNTAX_ERROR]
 
 	var messageColor utils.COLOR
 

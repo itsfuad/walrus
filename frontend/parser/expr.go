@@ -172,7 +172,7 @@ func parsePrefixExpr(p *Parser) ast.Node {
 	operator := p.advance()
 	argument := p.expect(lexer.IDENTIFIER_TOKEN)
 	return ast.PrefixExpr{
-		Operator: operator,
+		OP: operator,
 		Argument: ast.IdentifierExpr{
 			Name: argument.Value,
 			Location: ast.Location{
@@ -241,12 +241,24 @@ func parseBinaryExpr(p *Parser, left ast.Node, bp BINDING_POWER) ast.Node {
 	right := parseExpr(p, bp)
 
 	return ast.BinaryExpr{
-		Operator: op,
-		Left:     left,
-		Right:    right,
+		Binop: op,
+		Left:  left,
+		Right: right,
 		Location: ast.Location{
 			Start: left.StartPos(),
 			End:   right.EndPos(),
+		},
+	}
+}
+
+func parseTypeofExpr(p *Parser) ast.Node {
+	start := p.advance().Start
+	expr := parseExpr(p, DEFAULT_BP)
+	return ast.TypeofExpr{
+		Expression: expr,
+		Location: ast.Location{
+			Start: start,
+			End: expr.EndPos(),
 		},
 	}
 }

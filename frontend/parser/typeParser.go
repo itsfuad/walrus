@@ -297,7 +297,13 @@ func parseType(p *Parser, bp BINDING_POWER) ast.DataType {
 
 	if !exists {
 		//panic(fmt.Sprintf("TYPE NUD handler expected for token %s\n", tokenKind))
-		report.Add(p.FilePath, p.currentToken().Start.Line, p.currentToken().End.Line, p.currentToken().Start.Column, p.currentToken().End.Column, fmt.Sprintf("unexpected token '%s'\n", tokenKind)).Level(report.SYNTAX_ERROR)
+		var tokStr string
+		if lexer.IsKeyword(string(tokenKind)) {
+			tokStr = fmt.Sprintf("keyword '%s'", tokenKind)
+		} else {
+			tokStr = fmt.Sprintf("token '%s'", tokenKind)
+		}
+		report.Add(p.FilePath, p.currentToken().Start.Line, p.currentToken().End.Line, p.currentToken().Start.Column, p.currentToken().End.Column, fmt.Sprintf("unexpected %s\n", tokStr)).Level(report.SYNTAX_ERROR)
 		return nil
 	}
 

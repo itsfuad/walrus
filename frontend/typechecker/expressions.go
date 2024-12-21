@@ -34,6 +34,11 @@ func logCastSuccess(originalType Tc, toCast Tc) {
 	utils.PURPLE.Println(tcToString(toCast))
 }
 
+func checkTypeof(node ast.TypeofExpr, env *TypeEnvironment) Tc {
+	parseNodeValue(node.Expression, env)
+	return NewStr()
+}
+
 func checkTypeCast(node ast.TypeCastExpr, env *TypeEnvironment) Tc {
 
 	originalType := parseNodeValue(node.Expression, env)
@@ -91,7 +96,7 @@ func checkUnaryExpr(node ast.UnaryExpr, env *TypeEnvironment) Tc {
 }
 
 func checkBinaryExpr(node ast.BinaryExpr, env *TypeEnvironment) Tc {
-	op := node.Operator
+	op := node.Binop
 
 	left := parseNodeValue(node.Left, env)
 	right := parseNodeValue(node.Right, env)
@@ -141,7 +146,7 @@ func checkComparison(node ast.BinaryExpr, left Tc, right Tc, env *TypeEnvironmen
 	leftType := tcToString(left)
 	rightType := tcToString(right)
 
-	op := node.Operator
+	op := node.Binop
 
 	boolean := NewBool()
 

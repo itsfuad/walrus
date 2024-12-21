@@ -22,6 +22,7 @@ const (
 	RETURN_TOKEN     builtins.TOKEN_KIND = "ret"
 	IN_TOKEN         builtins.TOKEN_KIND = "in"
 	AS_TOKEN         builtins.TOKEN_KIND = "as"
+	TYPEOF_TOKEN	 builtins.TOKEN_KIND = "typeof"
 	SAFE_TOKEN       builtins.TOKEN_KIND = "safe"
 	OTHERWISE_TOKEN  builtins.TOKEN_KIND = "otherwise"
 	//data types
@@ -105,6 +106,7 @@ var keyWordsMap map[string]builtins.TOKEN_KIND = map[string]builtins.TOKEN_KIND{
 	"fn":        FUNCTION_TOKEN,
 	"map":       MAP_TOKEN,
 	"maybe":     MAYBE_TOKEN,
+	"typeof":    TYPEOF_TOKEN,
 	"safe":      SAFE_TOKEN,
 	"otherwise": OTHERWISE_TOKEN,
 	"ret":       RETURN_TOKEN,
