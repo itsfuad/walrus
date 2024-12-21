@@ -123,4 +123,6 @@ fn voidFn() -> void {
 
 let bbb := user as Banana;
 
-let Void := voidFn();
+//let Void := voidFn();
+
+let dynamic := typeof arr[1]; // dynamic = "str"

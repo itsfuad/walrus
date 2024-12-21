@@ -48,6 +48,8 @@ func parseNodeValue(node ast.Node, env *TypeEnvironment) Tc {
 	switch t := node.(type) {
 	case ast.VarAssignmentExpr:
 		return checkVariableAssignment(t, env) // value
+	case ast.TypeofExpr:
+		return checkTypeof(t, env)
 	case ast.TypeCastExpr:
 		return checkTypeCast(t, env) // value
 	case ast.IdentifierExpr:

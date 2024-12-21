@@ -353,7 +353,7 @@
                             "Contents": [
                                 {
                                     "Value": {
-                                        "Operator": {
+                                        "Binop": {
                                             "Kind": "+",
                                             "Value": "+",
                                             "Start": {
@@ -3889,67 +3889,93 @@
             "Variables": [
                 {
                     "Identifier": {
-                        "Name": "Void",
+                        "Name": "dynamic",
                         "Start": {
-                            "Line": 126,
+                            "Line": 128,
                             "Column": 5,
-                            "Index": 2294
+                            "Index": 2321
                         },
                         "End": {
-                            "Line": 126,
-                            "Column": 9,
-                            "Index": 2298
+                            "Line": 128,
+                            "Column": 12,
+                            "Index": 2328
                         }
                     },
                     "Value": {
-                        "Caller": {
-                            "Name": "voidFn",
+                        "Expression": {
+                            "Index": {
+                                "Value": "1",
+                                "BitSize": 32,
+                                "IsSigned": true,
+                                "Start": {
+                                    "Line": 128,
+                                    "Column": 27,
+                                    "Index": 2343
+                                },
+                                "End": {
+                                    "Line": 128,
+                                    "Column": 28,
+                                    "Index": 2344
+                                }
+                            },
+                            "Container": {
+                                "Name": "arr",
+                                "Start": {
+                                    "Line": 128,
+                                    "Column": 23,
+                                    "Index": 2339
+                                },
+                                "End": {
+                                    "Line": 128,
+                                    "Column": 26,
+                                    "Index": 2342
+                                }
+                            },
                             "Start": {
-                                "Line": 126,
-                                "Column": 13,
-                                "Index": 2302
+                                "Line": 128,
+                                "Column": 23,
+                                "Index": 2339
                             },
                             "End": {
-                                "Line": 126,
-                                "Column": 19,
-                                "Index": 2308
+                                "Line": 128,
+                                "Column": 29,
+                                "Index": 2345
                             }
                         },
-                        "Arguments": null,
                         "Start": {
-                            "Line": 126,
-                            "Column": 13,
-                            "Index": 2302
+                            "Line": 128,
+                            "Column": 16,
+                            "Index": 2332
                         },
                         "End": {
-                            "Line": 126,
-                            "Column": 21,
-                            "Index": 2310
+                            "Line": 128,
+                            "Column": 29,
+                            "Index": 2345
                         }
                     },
                     "ExplicitType": null,
                     "Start": {
-                        "Line": 126,
+                        "Line": 128,
                         "Column": 5,
-                        "Index": 2294
+                        "Index": 2321
                     },
                     "End": {
-                        "Line": 126,
-                        "Column": 21,
-                        "Index": 2310
+                        "Line": 128,
+                        "Column": 29,
+                        "Index": 2345
                     }
                 }
             ],
             "IsConst": false,
             "Start": {
-                "Line": 126,
+                "Line": 128,
                 "Column": 1,
-                "Index": 2290
+                "Index": 2317
             },
             "End": {
-                "Line": 126,
-                "Column": 22,
-                "Index": 2311
+                "Line": 128,
+                "Column": 30,
+                "Index": 2346
             }
         }
     ],

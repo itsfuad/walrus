@@ -166,10 +166,26 @@ func (a TypeCastExpr) EndPos() lexer.Position {
 	return a.Location.End
 }
 
+type TypeofExpr struct {
+	Expression Node
+	Location
+}
+
+func (a TypeofExpr) INode() {
+	//empty method implements Node interface
+}
+func (a TypeofExpr) StartPos() lexer.Position {
+	return a.Location.Start
+}
+
+func (a TypeofExpr) EndPos() lexer.Position {
+	return a.Location.End
+}
+
 type BinaryExpr struct {
-	Operator lexer.Token
-	Left     Node
-	Right    Node
+	Binop lexer.Token
+	Left  Node
+	Right Node
 	Location
 }
 
@@ -179,7 +195,7 @@ type IncrementalInterface interface {
 }
 
 type PrefixExpr struct {
-	Operator lexer.Token
+	OP       lexer.Token
 	Argument IdentifierExpr
 	Location
 }
@@ -197,7 +213,7 @@ func (a PrefixExpr) Arg() IdentifierExpr {
 	return a.Argument
 }
 func (a PrefixExpr) Op() lexer.Token {
-	return a.Operator
+	return a.OP
 }
 
 type PostfixExpr struct {
@@ -280,9 +296,8 @@ func (a Indexable) EndPos() lexer.Position {
 	return a.Location.End
 }
 
-
 type StructProp struct {
-	Prop IdentifierExpr
+	Prop  IdentifierExpr
 	Value Node
 }
 
