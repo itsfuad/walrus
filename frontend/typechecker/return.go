@@ -11,7 +11,7 @@ import (
 func checkReturnStmt(returnNode ast.ReturnStmt, env *TypeEnvironment) Tc {
 	//check if the function is declared
 	if !env.isInFunctionScope() {
-		report.Add(env.filePath, returnNode.StartPos().Line, returnNode.EndPos().Line, returnNode.StartPos().Column, returnNode.EndPos().Column, "return statement outside function").Level(report.NORMAL_ERROR)
+		report.Add(env.filePath, returnNode.StartPos().Line, returnNode.EndPos().Line, returnNode.StartPos().Column, returnNode.EndPos().Column, "return statement outside function", report.NORMAL_ERROR)
 	}
 
 	//check if the return type matches the function return type
@@ -21,7 +21,7 @@ func checkReturnStmt(returnNode ast.ReturnStmt, env *TypeEnvironment) Tc {
 
 	err := validateTypeCompatibility(fnReturns, returnType)
 	if err != nil {
-		report.Add(env.filePath, returnNode.StartPos().Line, returnNode.EndPos().Line, returnNode.StartPos().Column, returnNode.EndPos().Column, fmt.Sprintf("cannot return '%s' from this scope\n"+report.TreeFormatString(fmt.Sprintf("expected return type '%s'", tcToString(fnReturns))), tcToString(returnType))).Level(report.NORMAL_ERROR)
+		report.Add(env.filePath, returnNode.StartPos().Line, returnNode.EndPos().Line, returnNode.StartPos().Column, returnNode.EndPos().Column, fmt.Sprintf("cannot return '%s' from this scope\n"+report.TreeFormatString(fmt.Sprintf("expected return type '%s'", tcToString(fnReturns))), tcToString(returnType)), report.NORMAL_ERROR)
 	}
 
 	return ReturnType{

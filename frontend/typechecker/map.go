@@ -18,11 +18,11 @@ func checkMapLiteral(node ast.MapLiteral, env *TypeEnvironment) Tc {
 
 		err := validateTypeCompatibility(evaluatedMapType.(Map).KeyType, keyType)
 		if err != nil {
-			report.Add(env.filePath, value.Key.StartPos().Line, value.Key.EndPos().Line, value.Key.StartPos().Column, value.Key.EndPos().Column, "incorrect map key. "+err.Error()).Level(report.NORMAL_ERROR)
+			report.Add(env.filePath, value.Key.StartPos().Line, value.Key.EndPos().Line, value.Key.StartPos().Column, value.Key.EndPos().Column, "incorrect map key. "+err.Error(), report.NORMAL_ERROR)
 		}
 		err = validateTypeCompatibility(evaluatedMapType.(Map).ValueType, valueType)
 		if err != nil {
-			report.Add(env.filePath, value.Value.StartPos().Line, value.Value.EndPos().Line, value.Value.StartPos().Column, value.Value.EndPos().Column, "incorrect map value. "+err.Error()).Level(report.NORMAL_ERROR)
+			report.Add(env.filePath, value.Value.StartPos().Line, value.Value.EndPos().Line, value.Value.StartPos().Column, value.Value.EndPos().Column, "incorrect map value. "+err.Error(), report.NORMAL_ERROR)
 		}
 	}
 

@@ -11,7 +11,6 @@ import (
 type REPORT_TYPE string
 
 const (
-	NULL           	REPORT_TYPE = ""
 	CRITICAL_ERROR 	REPORT_TYPE = "critical error" // Stops compilation immediately
 	SYNTAX_ERROR   	REPORT_TYPE = "syntax error"   // Syntax error, also stops compilation
 	NORMAL_ERROR   	REPORT_TYPE = "error"          // Regular error that doesn't halt compilation
@@ -40,7 +39,7 @@ type Report struct {
 	colStart  int
 	colEnd    int
 	msg       string
-	level     REPORT_TYPE
+	reportType     REPORT_TYPE
 }
 
 // It prints the error location, the relevant code line, and visual indicators
@@ -67,7 +66,7 @@ func printReport(r *Report) {
 
 	var reportMsg string
 
-	switch r.level {
+	switch r.reportType {
 	case WARNING:
 		reportMsg = "Warning: "
 	case INFO:
@@ -80,14 +79,14 @@ func printReport(r *Report) {
 		reportMsg = "Error: "
 	}
 
-	reportColor := colorMap[r.level]
+	reportColor := colorMap[r.reportType]
 	reportColor.Print(reportMsg)
 	reportColor.Print(r.msg + "\n")
 
 	makeParts(r, reportColor)
 
-	if r.level == CRITICAL_ERROR || r.level == SYNTAX_ERROR {
-		panic(fmt.Sprintf("Compilation halted due to %s\n", r.level))
+	if r.reportType == CRITICAL_ERROR || r.reportType == SYNTAX_ERROR {
+		panic(fmt.Sprintf("Compilation halted due to %s\n", r.reportType))
 	}
 }
 
@@ -130,7 +129,7 @@ func handleMultiLineError(lines []string, r *Report, color utils.COLOR) {
 	}
 }
 
-func Add(filePath string, lineStart, lineEnd int, colStart, colEnd int, msg string) *Report {
+func Add(filePath string, lineStart, lineEnd int, colStart, colEnd int, msg string, reportType REPORT_TYPE) *Report {
 	if lineStart < 1 {
 		lineStart = 1
 	}
@@ -151,7 +150,7 @@ func Add(filePath string, lineStart, lineEnd int, colStart, colEnd int, msg stri
 		colStart:  colStart,
 		colEnd:    colEnd,
 		msg:       msg,
-		level:     NULL,
+		reportType:     reportType,
 	}
 
 	globalReports = append(globalReports, report)
@@ -160,10 +159,7 @@ func Add(filePath string, lineStart, lineEnd int, colStart, colEnd int, msg stri
 }
 
 func (e *Report) Level(level REPORT_TYPE) {
-	if level == NULL {
-		panic("call ErrorLevel() method with valid Error level")
-	}
-	e.level = level
+	e.reportType = level
 	reports[level]++
 	if level == CRITICAL_ERROR || level == SYNTAX_ERROR {
 		DisplayAll()
@@ -187,9 +183,6 @@ func DisplayAll() {
 		os.Exit(-1)
 	}()
 	for _, err := range globalReports {
-		if err.level == NULL {
-			panic("call Level() method with valid Error level")
-		}
 		printReport(err)
 	}
 }

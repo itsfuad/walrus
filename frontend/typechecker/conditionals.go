@@ -17,7 +17,7 @@ func checkBlock(block ast.BlockStmt, env *TypeEnvironment) Block {
 		if _, ok := val.(ReturnType); ok {
 			//if has any more statements after return
 			if i < len(block.Contents)-1 {
-				report.Add(env.filePath, stmt.StartPos().Line, stmt.EndPos().Line, stmt.StartPos().Column, stmt.EndPos().Column, "unreachable code").Level(report.NORMAL_ERROR)
+				report.Add(env.filePath, stmt.StartPos().Line, stmt.EndPos().Line, stmt.StartPos().Column, stmt.EndPos().Column, "unreachable code", report.NORMAL_ERROR)
 			}
 			blockInfo.IsSatisfied = true
 			return blockInfo
@@ -36,7 +36,7 @@ func checkIfStmt(ifNode ast.IfStmt, env *TypeEnvironment) Block {
 	//condition
 	cond := parseNodeValue(ifNode.Condition, env)
 	if _, ok := cond.(Bool); !ok {
-		report.Add(env.filePath, ifNode.Condition.StartPos().Line, ifNode.Condition.EndPos().Line, ifNode.Condition.StartPos().Column, ifNode.Condition.EndPos().Column, "Condition must be a boolean expression").Level(report.NORMAL_ERROR)
+		report.Add(env.filePath, ifNode.Condition.StartPos().Line, ifNode.Condition.EndPos().Line, ifNode.Condition.StartPos().Column, ifNode.Condition.EndPos().Column, "Condition must be a boolean expression", report.NORMAL_ERROR)
 	}
 
 	var block Block
@@ -60,8 +60,6 @@ func checkIfStmt(ifNode ast.IfStmt, env *TypeEnvironment) Block {
 			block.ProblemLocation = altBranchValue.ProblemLocation
 		}
 
-
-
 	} else {
 		block.IsSatisfied = ifBranchValue.IsSatisfied
 	}
@@ -72,7 +70,7 @@ func checkIfStmt(ifNode ast.IfStmt, env *TypeEnvironment) Block {
 // func checkElseifStmt(elseifNode ast.IfStmt, env *TypeEnvironment) Block {
 // 	cond := parseNodeValue(elseifNode.Condition, env)
 // 	if _, ok := cond.(Bool); !ok {
-// 		report.Add(env.filePath, elseifNode.Condition.StartPos().Line, elseifNode.Condition.EndPos().Line, elseifNode.Condition.StartPos().Column, elseifNode.Condition.EndPos().Column, "Condition must be a boolean expression").Level(report.NORMAL_ERROR)
+// 		report.Add(env.filePath, elseifNode.Condition.StartPos().Line, elseifNode.Condition.EndPos().Line, elseifNode.Condition.StartPos().Column, elseifNode.Condition.EndPos().Column, "Condition must be a boolean expression", report.NORMAL_ERROR)
 // 	}
 
 // 	var block Block
