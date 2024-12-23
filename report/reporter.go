@@ -107,7 +107,7 @@ func makeParts(r *Report, color utils.COLOR){
 	}
 }
 
-func handleSingleLineError(line string, r *Report, underlineLength int, color utils.COLOR, start bool) {
+func handleSingleLineError(line string, r *Report, underlineLength int, color utils.COLOR, underline bool) {
 	if underlineLength < 0 {
 		underlineLength = 0
 	}
@@ -115,21 +115,18 @@ func handleSingleLineError(line string, r *Report, underlineLength int, color ut
 	utils.GREY.Print(lineNumber)
 	fmt.Println(line)
 
-	var firstChar rune
-	if start {
-		firstChar = '^'
-	} else {
-		firstChar = '~'
+	if !underline {
+		return
 	}
 
-	color.Printf("%s%c%s\n", strings.Repeat(" ", (r.colStart-1)+len(lineNumber)), firstChar, strings.Repeat("~", underlineLength))
+	color.Printf("%s^%s\n", strings.Repeat(" ", (r.colStart-1)+len(lineNumber)), strings.Repeat("~", underlineLength))
 }
 
 func handleMultiLineError(lines []string, r *Report, color utils.COLOR) {
 	codeLines := lines[r.lineStart-1 : r.lineEnd]
 	for i, line := range codeLines {
 		underlineLength := len(line) - r.colStart + 1
-		handleSingleLineError(line, r, underlineLength, color, i == 0)
+		handleSingleLineError(line, r, underlineLength, color, i == len(codeLines)-1)
 	}
 }
 
