@@ -3,6 +3,7 @@ package parser
 import (
 	"walrus/frontend/ast"
 	"walrus/frontend/lexer"
+	"walrus/position"
 )
 
 // parseArrayExpr parses an array expression from the input tokens.
@@ -34,7 +35,7 @@ func parseArrayExpr(p *Parser) ast.Node {
 
 	return ast.ArrayLiteral{
 		Values: values,
-		Location: ast.Location{
+		Location: position.Location{
 			Start: start,
 			End:   end,
 		},
@@ -60,7 +61,7 @@ func parseIndexable(p *Parser, left ast.Node, bp BINDING_POWER) ast.Node {
 	return ast.Indexable{
 		Container: left,
 		Index:     index,
-		Location: ast.Location{
+		Location: position.Location{
 			Start: left.StartPos(),
 			End:   end,
 		},

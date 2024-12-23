@@ -116,13 +116,32 @@ arr[1];
 ShowInfo(user);
 ShowInfo(@Banana{name: "Cavendish", price: 10});
 
-fn voidFn() -> void {
+fn voidFn() {
     // do something
-    ret 0;
+    ret;
 }
 
-let bbb := user as Banana;
+//let bbb := user as Banana;
 
 //let Void := voidFn();
 
 let dynamic := typeof arr[1]; // dynamic = "str"
+
+
+let f := fn() -> i32 {
+    // do something
+    if true {
+        ret 10;
+    } else if true {
+        if true {
+            ret 20;
+        } else {
+            //ret 30;
+        }
+        //ret 5;
+    } else {
+        ret 20;
+    }
+
+    //ret 30;
+};

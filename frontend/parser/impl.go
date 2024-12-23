@@ -3,6 +3,7 @@ package parser
 import (
 	"walrus/frontend/ast"
 	"walrus/frontend/lexer"
+	"walrus/position"
 )
 
 func parseImplStmt(p *Parser) ast.Node {
@@ -37,7 +38,7 @@ func parseImplStmt(p *Parser) ast.Node {
 			FunctionDeclStmt: ast.FunctionDeclStmt{
 				Identifier: ast.IdentifierExpr{
 					Name: fnName.Value,
-					Location: ast.Location{
+					Location: position.Location{
 						Start: fnName.Start,
 						End:   fnName.End,
 					},
@@ -46,7 +47,7 @@ func parseImplStmt(p *Parser) ast.Node {
 					Params:     params,
 					ReturnType: ret,
 					Body:       body,
-					Location: ast.Location{
+					Location: position.Location{
 						Start: fnName.Start,
 						End:   body.End,
 					},
@@ -62,13 +63,13 @@ func parseImplStmt(p *Parser) ast.Node {
 	return ast.ImplStmt{
 		ImplFor: ast.IdentifierExpr{
 			Name: typeName.Value,
-			Location: ast.Location{
+			Location: position.Location{
 				Start: typeName.Start,
 				End:   typeName.End,
 			},
 		},
 		Methods: methods,
-		Location: ast.Location{
+		Location: position.Location{
 			Start: start,
 			End:   end,
 		},

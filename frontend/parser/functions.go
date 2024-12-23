@@ -7,6 +7,7 @@ import (
 	//Walrus packages
 	"walrus/frontend/ast"
 	"walrus/frontend/lexer"
+	"walrus/position"
 	"walrus/report"
 )
 
@@ -32,7 +33,7 @@ func parseLambdaFunction(p *Parser) ast.Node {
 		Params:     params,
 		ReturnType: returnType,
 		Body:       block,
-		Location: ast.Location{
+		Location: position.Location{
 			Start: start,
 			End:   block.End,
 		},
@@ -66,7 +67,7 @@ func parseFunctionDeclStmt(p *Parser) ast.Node {
 	return ast.FunctionDeclStmt{
 		Identifier: ast.IdentifierExpr{
 			Name: nameToken.Value,
-			Location: ast.Location{
+			Location: position.Location{
 				Start: nameToken.Start,
 				End:   nameToken.End,
 			},
@@ -75,7 +76,7 @@ func parseFunctionDeclStmt(p *Parser) ast.Node {
 			Params:     params,
 			ReturnType: returnType,
 			Body:       block,
-			Location: ast.Location{
+			Location: position.Location{
 				Start: start,
 				End:   block.End,
 			},
@@ -104,7 +105,7 @@ func parseFunctionSignature(p *Parser) ([]ast.FunctionParam, ast.DataType) {
 		paramToken := p.expect(lexer.IDENTIFIER_TOKEN)
 		param := ast.IdentifierExpr{
 			Name: paramToken.Value,
-			Location: ast.Location{
+			Location: position.Location{
 				Start: paramToken.Start,
 				End:   paramToken.End,
 			},
@@ -135,7 +136,7 @@ func parseFunctionSignature(p *Parser) ([]ast.FunctionParam, ast.DataType) {
 			Type:         paramType,
 			IsOptional:   isOptional,
 			DefaultValue: defaultValue,
-			Location: ast.Location{
+			Location: position.Location{
 				Start: param.Start,
 				End:   paramType.EndPos(),
 			},
@@ -190,7 +191,7 @@ func parseCallExpr(p *Parser, left ast.Node, bp BINDING_POWER) ast.Node {
 	return ast.FunctionCallExpr{
 		Caller:    left,
 		Arguments: args,
-		Location: ast.Location{
+		Location: position.Location{
 			Start: startPos,
 			End:   endPos,
 		},

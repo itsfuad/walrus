@@ -1,8 +1,10 @@
 package parser
 
 import (
+	"fmt"
 	"walrus/frontend/ast"
 	"walrus/frontend/lexer"
+	"walrus/position"
 )
 
 // parseIfStmt parses an if statement from the input and returns an AST node representing the if statement.
@@ -30,24 +32,39 @@ func parseIfStmt(p *Parser) ast.Node {
 	//parse block
 	consequentBlock := parseBlock(p)
 
+	var end position.Coordinate
+
 	var alternate ast.Node
 
 	if p.hasToken() && p.currentTokenKind() == lexer.ELSE_TOKEN {
-		p.advance() // eat else token
+		altStart := p.advance() // eat else token
 		if p.hasToken() && p.currentTokenKind() == lexer.IF_TOKEN {
 			alternate = parseIfStmt(p)
+			if alt, ok := alternate.(ast.IfStmt); ok {
+				fmt.Printf("previous: %v\n", alternate.StartPos())
+				alt.Location.Start = altStart.Start
+				alternate = alt
+				fmt.Printf("new: %v\n", alternate.StartPos())
+			}
 		} else {
 			alternate = parseBlock(p)
+			if alt, ok := alternate.(ast.BlockStmt); ok {
+				alt.Location.Start = altStart.Start
+				alternate = alt
+			}
 		}
+		end = alternate.EndPos()
+	} else {
+		end = consequentBlock.EndPos()
 	}
 
 	return ast.IfStmt{
 		Condition:      condition,
 		Block:          consequentBlock,
 		AlternateBlock: alternate,
-		Location: ast.Location{
+		Location: position.Location{
 			Start: start,
-			End:   consequentBlock.End,
+			End:   end,
 		},
 	}
 }

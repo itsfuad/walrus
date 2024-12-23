@@ -2,6 +2,8 @@ mod main;
 
 import utils;
 
+import utils;
+
 let main := "Main";
 
 print(logger); //from logger.wal file

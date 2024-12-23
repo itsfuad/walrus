@@ -7,6 +7,7 @@ import (
 	"walrus/frontend/ast"
 	"walrus/frontend/builtins"
 	"walrus/frontend/lexer"
+	"walrus/position"
 	"walrus/report"
 )
 
@@ -70,7 +71,7 @@ func parsePrimaryExpr(p *Parser) ast.Node {
 
 	rawValue := primaryToken.Value
 
-	loc := ast.Location{
+	loc := position.Location{
 		Start: startpos,
 		End:   endpos,
 	}
@@ -148,7 +149,7 @@ func parsePostfixExpr(p *Parser, left ast.Node, bp BINDING_POWER) ast.Node {
 	return ast.PostfixExpr{
 		Operator: operator,
 		Argument: left.(ast.IdentifierExpr),
-		Location: ast.Location{
+		Location: position.Location{
 			Start: start,
 			End:   operator.End,
 		},
@@ -175,12 +176,12 @@ func parsePrefixExpr(p *Parser) ast.Node {
 		OP: operator,
 		Argument: ast.IdentifierExpr{
 			Name: argument.Value,
-			Location: ast.Location{
+			Location: position.Location{
 				Start: argument.Start,
 				End:   argument.End,
 			},
 		},
-		Location: ast.Location{
+		Location: position.Location{
 			Start: start,
 			End:   argument.End,
 		},
@@ -216,7 +217,7 @@ func parseUnaryExpr(p *Parser) ast.Node {
 	return ast.UnaryExpr{
 		Operator: operator,
 		Argument: argument,
-		Location: ast.Location{
+		Location: position.Location{
 			Start: start,
 			End:   argument.EndPos(),
 		},
@@ -244,7 +245,7 @@ func parseBinaryExpr(p *Parser, left ast.Node, bp BINDING_POWER) ast.Node {
 		Binop: op,
 		Left:  left,
 		Right: right,
-		Location: ast.Location{
+		Location: position.Location{
 			Start: left.StartPos(),
 			End:   right.EndPos(),
 		},
@@ -256,9 +257,9 @@ func parseTypeofExpr(p *Parser) ast.Node {
 	expr := parseExpr(p, DEFAULT_BP)
 	return ast.TypeofExpr{
 		Expression: expr,
-		Location: ast.Location{
+		Location: position.Location{
 			Start: start,
-			End: expr.EndPos(),
+			End:   expr.EndPos(),
 		},
 	}
 }
@@ -271,7 +272,7 @@ func parseTypeCastExpr(p *Parser, left ast.Node, bp BINDING_POWER) ast.Node {
 	return ast.TypeCastExpr{
 		Expression: left,
 		ToCast:     castType,
-		Location: ast.Location{
+		Location: position.Location{
 			Start: start,
 			End:   castType.EndPos(),
 		},

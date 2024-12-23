@@ -3,6 +3,7 @@ package parser
 import (
 	"walrus/frontend/ast"
 	"walrus/frontend/lexer"
+	"walrus/position"
 )
 
 // parseSafeStmt parses a safe statement in the source code.
@@ -45,14 +46,14 @@ func parseSafeStmt(p *Parser) ast.Node {
 	return ast.SafeStmt{
 		Value: ast.IdentifierExpr{
 			Name: varName.Value,
-			Location: ast.Location{
+			Location: position.Location{
 				Start: varName.Start,
 				End:   varName.End,
 			},
 		},
 		SafeBlock:   safeBody,
 		UnsafeBlock: unsafeBody,
-		Location: ast.Location{
+		Location: position.Location{
 			Start: start,
 			End:   unsafeBody.End,
 		},

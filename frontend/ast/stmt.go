@@ -1,21 +1,19 @@
 package ast
 
-import (
-	"walrus/frontend/lexer"
-)
+import "walrus/position"
 
 type ProgramStmt struct {
 	Contents []Node
-	Location
+	position.Location
 }
 
 func (a ProgramStmt) INode() {
 	//empty method implements Node interface
 }
-func (a ProgramStmt) StartPos() lexer.Position {
+func (a ProgramStmt) StartPos() position.Coordinate {
 	return a.Location.Start
 }
-func (a ProgramStmt) EndPos() lexer.Position {
+func (a ProgramStmt) EndPos() position.Coordinate {
 	return a.Location.End
 }
 
@@ -23,53 +21,53 @@ type VarDeclStmtVar struct {
 	Identifier   IdentifierExpr
 	Value        Node
 	ExplicitType DataType
-	Location
+	position.Location
 }
 
 type VarDeclStmt struct {
 	Variables []VarDeclStmtVar
 	IsConst   bool
-	Location
+	position.Location
 }
 
 func (a VarDeclStmt) INode() {
 	//empty method implements Node interface
 }
-func (a VarDeclStmt) StartPos() lexer.Position {
+func (a VarDeclStmt) StartPos() position.Coordinate {
 	return a.Location.Start
 }
-func (a VarDeclStmt) EndPos() lexer.Position {
+func (a VarDeclStmt) EndPos() position.Coordinate {
 	return a.Location.End
 }
 
 type TypeDeclStmt struct {
 	UDTypeValue DataType
 	UDTypeName  IdentifierExpr
-	Location
+	position.Location
 }
 
 func (a TypeDeclStmt) INode() {
 	//empty method implements Node interface
 }
-func (a TypeDeclStmt) StartPos() lexer.Position {
+func (a TypeDeclStmt) StartPos() position.Coordinate {
 	return a.Location.Start
 }
-func (a TypeDeclStmt) EndPos() lexer.Position {
+func (a TypeDeclStmt) EndPos() position.Coordinate {
 	return a.Location.End
 }
 
 type BlockStmt struct {
 	Contents []Node
-	Location
+	position.Location
 }
 
 func (a BlockStmt) INode() {
 	//empty method implements Node interface
 }
-func (a BlockStmt) StartPos() lexer.Position {
+func (a BlockStmt) StartPos() position.Coordinate {
 	return a.Location.Start
 }
-func (a BlockStmt) EndPos() lexer.Position {
+func (a BlockStmt) EndPos() position.Coordinate {
 	return a.Location.End
 }
 
@@ -77,16 +75,16 @@ type IfStmt struct {
 	Condition      Node
 	Block          BlockStmt
 	AlternateBlock interface{}
-	Location
+	position.Location
 }
 
 func (a IfStmt) INode() {
 	//empty method implements Node interface
 }
-func (a IfStmt) StartPos() lexer.Position {
+func (a IfStmt) StartPos() position.Coordinate {
 	return a.Location.Start
 }
-func (a IfStmt) EndPos() lexer.Position {
+func (a IfStmt) EndPos() position.Coordinate {
 	return a.Location.End
 }
 
@@ -95,16 +93,16 @@ type ForStmt struct {
 	Condition Node
 	Increment Node
 	Block     BlockStmt
-	Location
+	position.Location
 }
 
 func (a ForStmt) INode() {
 	//empty method implements Node interface
 }
-func (a ForStmt) StartPos() lexer.Position {
+func (a ForStmt) StartPos() position.Coordinate {
 	return a.Location.Start
 }
-func (a ForStmt) EndPos() lexer.Position {
+func (a ForStmt) EndPos() position.Coordinate {
 	return a.Location.End
 }
 
@@ -113,18 +111,18 @@ type ForEachStmt struct {
 	Value    Node
 	Iterable Node
 	Block    BlockStmt
-	Location
+	position.Location
 }
 
 func (a ForEachStmt) INode() {
 	//empty method implements Node interface
 }
 
-func (a ForEachStmt) StartPos() lexer.Position {
+func (a ForEachStmt) StartPos() position.Coordinate {
 	return a.Location.Start
 }
 
-func (a ForEachStmt) EndPos() lexer.Position {
+func (a ForEachStmt) EndPos() position.Coordinate {
 	return a.Location.End
 }
 
@@ -133,18 +131,18 @@ type FunctionParam struct {
 	Type         DataType
 	IsOptional   bool
 	DefaultValue Node
-	Location
+	position.Location
 }
 
 func (a FunctionParam) INode() {
 	//empty method implements Node interface
 }
 
-func (a FunctionParam) StartPos() lexer.Position {
+func (a FunctionParam) StartPos() position.Coordinate {
 	return a.Location.Start
 }
 
-func (a FunctionParam) EndPos() lexer.Position {
+func (a FunctionParam) EndPos() position.Coordinate {
 	return a.Location.End
 }
 
@@ -157,28 +155,28 @@ func (a FunctionDeclStmt) INode() {
 	//empty method implements Node interface
 }
 
-func (a FunctionDeclStmt) StartPos() lexer.Position {
+func (a FunctionDeclStmt) StartPos() position.Coordinate {
 	return a.Location.Start
 }
 
-func (a FunctionDeclStmt) EndPos() lexer.Position {
+func (a FunctionDeclStmt) EndPos() position.Coordinate {
 	return a.Location.End
 }
 
 type ReturnStmt struct {
 	Value Node
-	Location
+	position.Location
 }
 
 func (a ReturnStmt) INode() {
 	//empty method implements Node interface
 }
 
-func (a ReturnStmt) StartPos() lexer.Position {
+func (a ReturnStmt) StartPos() position.Coordinate {
 	return a.Location.Start
 }
 
-func (a ReturnStmt) EndPos() lexer.Position {
+func (a ReturnStmt) EndPos() position.Coordinate {
 	return a.Location.End
 }
 
@@ -190,18 +188,18 @@ type MethodToImplement struct {
 type ImplStmt struct {
 	ImplFor IdentifierExpr
 	Methods []MethodToImplement
-	Location
+	position.Location
 }
 
 func (a ImplStmt) INode() {
 	//empty method implements Node interface
 }
 
-func (a ImplStmt) StartPos() lexer.Position {
+func (a ImplStmt) StartPos() position.Coordinate {
 	return a.Location.Start
 }
 
-func (a ImplStmt) EndPos() lexer.Position {
+func (a ImplStmt) EndPos() position.Coordinate {
 	return a.Location.End
 }
 
@@ -209,17 +207,17 @@ type SafeStmt struct {
 	Value       IdentifierExpr
 	SafeBlock   BlockStmt
 	UnsafeBlock BlockStmt
-	Location
+	position.Location
 }
 
 func (a SafeStmt) INode() {
 	//empty method implements Node interface
 }
 
-func (a SafeStmt) StartPos() lexer.Position {
+func (a SafeStmt) StartPos() position.Coordinate {
 	return a.Location.Start
 }
 
-func (a SafeStmt) EndPos() lexer.Position {
+func (a SafeStmt) EndPos() position.Coordinate {
 	return a.Location.End
 }

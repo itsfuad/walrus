@@ -3,6 +3,7 @@ package parser
 import (
 	"walrus/frontend/ast"
 	"walrus/frontend/lexer"
+	"walrus/position"
 )
 
 func parseMapLiteral(p *Parser) ast.Node {
@@ -40,7 +41,7 @@ func parseMapLiteral(p *Parser) ast.Node {
 	return ast.MapLiteral{
 		MapType: mapType.(ast.MapType),
 		Values:  values,
-		Location: ast.Location{
+		Location: position.Location{
 			Start: mapType.StartPos(),
 			End:   end,
 		},

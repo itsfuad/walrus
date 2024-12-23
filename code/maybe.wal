@@ -9,12 +9,12 @@ let b := 34;
 //now let's try to access the value
 //let x := 2 + a; // cannot add i32 and maybe{i32}
 
-let res: i32 = 12;
 //safe access
 safe a {
     //a is i32 here
-    res = 2 + a + 5; // allowed
+    let safeVar := 2 + a; // allowed
 } otherwise {
     //a is null here
     //res = a; // not allowed
+    let unsafeVar := a; // allowed
 }

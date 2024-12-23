@@ -113,13 +113,13 @@ func checkBinaryExpr(node ast.BinaryExpr, env *TypeEnvironment) Tc {
 	case lexer.MINUS_TOKEN, lexer.MUL_TOKEN, lexer.DIV_TOKEN, lexer.MOD_TOKEN, lexer.EXP_TOKEN:
 		//must have to be numeric type on both side
 		if leftType != builtins.INT32 && leftType != builtins.FLOAT32 {
-			errMsg = fmt.Sprintf("cannot perform numeric operation between type '%s' and '%s'. left hand side expression must be evaluated to a numeric type.", leftType, rightType)
+			errMsg = fmt.Sprintf("cannot perform numeric operation between type '%s' and '%s'\n", leftType, rightType) + report.TreeFormatString("left hand side expression must be evaluated to a numeric type")
 			errLineStart = node.Left.StartPos().Line
 			errLineEnd = node.Left.EndPos().Line
 			errStart = node.Left.StartPos().Column
 			errEnd = node.Left.EndPos().Column
 		} else if rightType != builtins.INT32 && rightType != builtins.FLOAT32 {
-			errMsg = fmt.Sprintf("cannot perform numeric operation between type '%s' and '%s'. right hand side expression must be evaluated to a numeric type.", leftType, rightType)
+			errMsg = fmt.Sprintf("cannot perform numeric operation between type '%s' and '%s'", leftType, rightType) + report.TreeFormatString("right hand side expression must be evaluated to a numeric type")
 			errLineStart = node.Right.StartPos().Line
 			errLineEnd = node.Right.EndPos().Line
 			errStart = node.Right.StartPos().Column
@@ -136,7 +136,7 @@ func checkBinaryExpr(node ast.BinaryExpr, env *TypeEnvironment) Tc {
 		errStart = op.Start.Column
 		errEnd = op.End.Column
 	}
-
+	
 	report.Add(env.filePath, errLineStart, errLineEnd, errStart, errEnd, errMsg).Level(report.NORMAL_ERROR)
 	return left
 }
@@ -180,7 +180,7 @@ func checkAdditionAndConcat(node ast.BinaryExpr, left Tc, right Tc, env *TypeEnv
 	if leftType == builtins.INT32 || leftType == builtins.FLOAT32 {
 		//right has to be int or float
 		if rightType != builtins.INT32 && rightType != builtins.FLOAT32 {
-			errMsg = fmt.Sprintf("cannot perform numeric operation between type '%s' and '%s'. right hand side expression must be evaluated to a numeric type.", leftType, rightType)
+			errMsg = fmt.Sprintf("cannot perform numeric operation between type '%s' and '%s'\n", leftType, rightType) + report.TreeFormatString("right hand side expression must be evaluated to a numeric type")
 			errLineStart = node.Right.StartPos().Line
 			errLineEnd = node.Right.EndPos().Line
 			errStart = node.Right.StartPos().Column

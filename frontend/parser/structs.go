@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"walrus/frontend/ast"
 	"walrus/frontend/lexer"
+	"walrus/position"
 )
 
 // parseStructLiteral parses a struct literal from the input tokens.
@@ -34,7 +35,7 @@ func parseStructLiteral(p *Parser) ast.Node {
 
 	identidier := ast.IdentifierExpr{
 		Name: idetifierToken.Value,
-		Location: ast.Location{
+		Location: position.Location{
 			Start: idetifierToken.Start,
 			End:   idetifierToken.End,
 		},
@@ -56,7 +57,7 @@ func parseStructLiteral(p *Parser) ast.Node {
 		props = append(props, ast.StructProp{
 			Prop: ast.IdentifierExpr{
 				Name: iden.Value,
-				Location: ast.Location{
+				Location: position.Location{
 					Start: iden.Start,
 					End:   iden.End,
 				},
@@ -76,7 +77,7 @@ func parseStructLiteral(p *Parser) ast.Node {
 	structVal := ast.StructLiteral{
 		Identifier: identidier,
 		Properties: props,
-		Location: ast.Location{
+		Location: position.Location{
 			Start: start,
 			End:   end,
 		},
@@ -104,7 +105,7 @@ func parsePropertyExpr(p *Parser, left ast.Node, bp BINDING_POWER) ast.Node {
 
 	property := ast.IdentifierExpr{
 		Name: identifier.Value,
-		Location: ast.Location{
+		Location: position.Location{
 			Start: identifier.Start,
 			End:   identifier.End,
 		},
@@ -113,7 +114,7 @@ func parsePropertyExpr(p *Parser, left ast.Node, bp BINDING_POWER) ast.Node {
 	return ast.StructPropertyAccessExpr{
 		Object:   left,
 		Property: property,
-		Location: ast.Location{
+		Location: position.Location{
 			Start: left.StartPos(),
 			End:   property.End,
 		},

@@ -5,9 +5,8 @@ import (
 	"path/filepath"
 	"testing"
 
-
 	"walrus/frontend/ast"
-	"walrus/frontend/lexer"
+	"walrus/position"
 )
 
 func TestSerialize(t *testing.T) {
@@ -37,31 +36,31 @@ func TestSerialize(t *testing.T) {
 					{
 						Identifier: ast.IdentifierExpr{
 							Name: "x",
-							Location: ast.Location{
-								Start: lexer.Position{Line: 1, Column: 1},
-								End:   lexer.Position{Line: 1, Column: 2},
+							Location: position.Location{
+								Start: position.Coordinate{Line: 1, Column: 1},
+								End:   position.Coordinate{Line: 1, Column: 2},
 							},
 						},
 						Value: ast.IntegerLiteralExpr{
 							Value:   "10",
 							BitSize: 64,
-							Location: ast.Location{
-								Start: lexer.Position{Line: 1, Column: 5},
-								End:   lexer.Position{Line: 1, Column: 6},
+							Location: position.Location{
+								Start: position.Coordinate{Line: 1, Column: 5},
+								End:   position.Coordinate{Line: 1, Column: 6},
 							},
 							IsSigned: true,
 						},
 						ExplicitType: nil,
-						Location: ast.Location{
-							Start: lexer.Position{Line: 1, Column: 1},
-							End:   lexer.Position{Line: 1, Column: 6},
+						Location: position.Location{
+							Start: position.Coordinate{Line: 1, Column: 1},
+							End:   position.Coordinate{Line: 1, Column: 6},
 						},
 					},
 				},
 				IsConst: false,
-				Location: ast.Location{
-					Start: lexer.Position{Line: 1, Column: 1},
-					End:   lexer.Position{Line: 1, Column: 6},
+				Location: position.Location{
+					Start: position.Coordinate{Line: 1, Column: 1},
+					End:   position.Coordinate{Line: 1, Column: 6},
 				},
 			},
 		},

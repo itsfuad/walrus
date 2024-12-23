@@ -3,6 +3,7 @@ package parser
 import (
 	"walrus/frontend/ast"
 	"walrus/frontend/lexer"
+	"walrus/position"
 )
 
 // parseUserDefinedTypeStmt parses a user-defined type statement in the source code.
@@ -30,12 +31,12 @@ func parseUserDefinedTypeStmt(p *Parser) ast.Node {
 		UDTypeValue: udType,
 		UDTypeName: ast.IdentifierExpr{
 			Name: typeName.Value,
-			Location: ast.Location{
+			Location: position.Location{
 				Start: typeName.Start,
 				End:   typeName.End,
 			},
 		},
-		Location: ast.Location{
+		Location: position.Location{
 			Start: start,
 			End:   udType.EndPos(),
 		},
@@ -66,7 +67,7 @@ func parseBlock(p *Parser) ast.BlockStmt {
 
 	return ast.BlockStmt{
 		Contents: body,
-		Location: ast.Location{
+		Location: position.Location{
 			Start: start,
 			End:   end,
 		},
@@ -97,7 +98,7 @@ func parseReturnStmt(p *Parser) ast.Node {
 
 	return ast.ReturnStmt{
 		Value: value,
-		Location: ast.Location{
+		Location: position.Location{
 			Start: start,
 			End:   end,
 		},

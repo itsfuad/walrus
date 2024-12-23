@@ -6,6 +6,7 @@ import (
 	//Walrus packages
 	"walrus/frontend/ast"
 	"walrus/frontend/lexer"
+	"walrus/position"
 	"walrus/report"
 )
 
@@ -78,14 +79,14 @@ func parseVarDeclStmt(p *Parser) ast.Node {
 		variables = append(variables, ast.VarDeclStmtVar{
 			Identifier: ast.IdentifierExpr{
 				Name: identifier.Value,
-				Location: ast.Location{
+				Location: position.Location{
 					Start: identifier.Start,
 					End:   identifier.End,
 				},
 			},
 			Value:        value,
 			ExplicitType: explicitType,
-			Location: ast.Location{
+			Location: position.Location{
 				Start: identifier.Start,
 				End:   p.currentToken().Start,
 			},
@@ -103,7 +104,7 @@ func parseVarDeclStmt(p *Parser) ast.Node {
 	node := ast.VarDeclStmt{
 		Variables: variables,
 		IsConst:   isConst,
-		Location: ast.Location{
+		Location: position.Location{
 			Start: declToken.Start,
 			End:   end,
 		},
@@ -138,7 +139,7 @@ func parseVarAssignmentExpr(p *Parser, left ast.Node, bp BINDING_POWER) ast.Node
 		Assignee: left,
 		Value:    right,
 		Operator: operator,
-		Location: ast.Location{
+		Location: position.Location{
 			Start: left.StartPos(),
 			End:   endPos,
 		},

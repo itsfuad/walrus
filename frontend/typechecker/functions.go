@@ -34,8 +34,37 @@ func CheckAndDeclareFunction(funcNode ast.FunctionLiteral, name string, env *Typ
 		report.Add(env.filePath, funcNode.Start.Line, funcNode.End.Line, funcNode.Start.Column, funcNode.End.Column, "error declaring function. "+err.Error()).Level(report.CRITICAL_ERROR)
 	}
 	//check the function body
+
+	var fnSatisfied bool
+
+	//return type is void, fnSatisfied is true by default
+	if _, ok := returnType.(Void); ok {
+		fnSatisfied = true
+	}
+
+	unsatisfiedBlocks := make([]Block, 0)
+
 	for _, stmt := range funcNode.Body.Contents {
-		CheckAST(stmt, fnEnv)
+		val := CheckAST(stmt, fnEnv)
+		switch v := val.(type) {
+		case ReturnType:
+			fnSatisfied = true
+			fmt.Printf("Found return statement: %v\n", fnSatisfied)
+		case Block:
+			if !v.IsSatisfied {
+				unsatisfiedBlocks = append(unsatisfiedBlocks, v)
+				//report.Add(env.filePath, v.Location.Start.Line, v.Location.End.Line, v.Location.Start.Column, v.Location.End.Column, "missing return").Level(report.NORMAL_ERROR)
+			}
+		}
+	}
+
+	if len(unsatisfiedBlocks) > 0 {
+		for _, block := range unsatisfiedBlocks {
+			fnSatisfied = fnSatisfied || block.IsSatisfied
+			if !fnSatisfied {
+				report.Add(env.filePath, block.ProblemLocation.Start.Line, block.ProblemLocation.End.Line, block.ProblemLocation.Start.Column, block.ProblemLocation.End.Column, "missing return").Level(report.NORMAL_ERROR)
+			}
+		}
 	}
 
 	return fn

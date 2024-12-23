@@ -7,6 +7,7 @@ import (
 	//Walrus packages
 	"walrus/frontend/ast"
 	"walrus/frontend/lexer"
+	"walrus/position"
 	"walrus/report"
 )
 
@@ -41,7 +42,7 @@ func parseForStmt(p *Parser) ast.Node {
 				Condition: nil,
 				Increment: nil,
 				Block:     block,
-				Location: ast.Location{
+				Location: position.Location{
 					Start: loopType.Start,
 					End:   block.EndPos(),
 				},
@@ -71,7 +72,7 @@ func parseForStmt(p *Parser) ast.Node {
 			Condition: cond,
 			Increment: incr,
 			Block:     block,
-			Location: ast.Location{
+			Location: position.Location{
 				Start: loopType.Start,
 				End:   block.EndPos(),
 			},
@@ -105,7 +106,7 @@ func parseForStmt(p *Parser) ast.Node {
 			Value:    second,
 			Iterable: array,
 			Block:    block,
-			Location: ast.Location{
+			Location: position.Location{
 				Start: loopType.Start,
 				End:   block.EndPos(),
 			},

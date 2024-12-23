@@ -2,6 +2,7 @@ package typechecker
 
 import (
 	"walrus/frontend/builtins"
+	"walrus/position"
 )
 
 const (
@@ -114,18 +115,13 @@ func (t Fn) DType() builtins.TC_TYPE {
 	return t.DataType
 }
 
-type ConditionBranch struct {
-	DataType builtins.TC_TYPE
-	Next     Tc
-	Returns  Tc
+type Block struct {
+	DataType        builtins.TC_TYPE
+	IsSatisfied     bool
+	ProblemLocation position.Location
 }
 
-type ConditionStmt struct {
-	DataType builtins.TC_TYPE
-	Branches []ConditionBranch
-}
-
-func (t ConditionStmt) DType() builtins.TC_TYPE {
+func (t Block) DType() builtins.TC_TYPE {
 	return t.DataType
 }
 

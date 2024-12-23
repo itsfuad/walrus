@@ -1,114 +1,117 @@
 package ast
 
-import "walrus/frontend/lexer"
+import (
+	"walrus/frontend/lexer"
+	"walrus/position"
+)
 
 // Any word which is not a keyword or literal
 type IdentifierExpr struct {
 	Name string
-	Location
+	position.Location
 }
 
 func (a IdentifierExpr) INode() {
 	//empty method implements Node interface
 }
-func (a IdentifierExpr) StartPos() lexer.Position {
+func (a IdentifierExpr) StartPos() position.Coordinate {
 	return a.Location.Start
 }
-func (a IdentifierExpr) EndPos() lexer.Position {
+func (a IdentifierExpr) EndPos() position.Coordinate {
 	return a.Location.End
 }
 
-//Literals or Raw values like: 1,2,3,4.6, "hello world", 'a' ...etc
+// Literals or Raw values like: 1,2,3,4.6, "hello world", 'a' ...etc
 type IntegerLiteralExpr struct {
 	Value    string
 	BitSize  uint8
 	IsSigned bool
-	Location
+	position.Location
 }
 
 func (a IntegerLiteralExpr) INode() {
 	//empty method implements Node interface
 }
-func (a IntegerLiteralExpr) StartPos() lexer.Position {
+func (a IntegerLiteralExpr) StartPos() position.Coordinate {
 	return a.Location.Start
 }
-func (a IntegerLiteralExpr) EndPos() lexer.Position {
+func (a IntegerLiteralExpr) EndPos() position.Coordinate {
 	return a.Location.End
 }
 
 type FloatLiteralExpr struct {
 	Value   string
 	BitSize uint8
-	Location
+	position.Location
 }
 
 func (a FloatLiteralExpr) INode() {
 	//empty method implements Node interface
 }
-func (a FloatLiteralExpr) StartPos() lexer.Position {
+func (a FloatLiteralExpr) StartPos() position.Coordinate {
 	return a.Location.Start
 }
-func (a FloatLiteralExpr) EndPos() lexer.Position {
+func (a FloatLiteralExpr) EndPos() position.Coordinate {
 	return a.Location.End
 }
 
 type StringLiteralExpr struct {
 	Value string
-	Location
+	position.Location
 }
 
 func (a StringLiteralExpr) INode() {
 	//empty method implements Node interface
 }
-func (a StringLiteralExpr) StartPos() lexer.Position {
+func (a StringLiteralExpr) StartPos() position.Coordinate {
 	return a.Location.Start
 }
-func (a StringLiteralExpr) EndPos() lexer.Position {
+func (a StringLiteralExpr) EndPos() position.Coordinate {
 	return a.Location.End
 }
 
 type ByteLiteralExpr struct {
 	Value string
-	Location
+	position.Location
 }
 
 func (a ByteLiteralExpr) INode() {
 	//empty method implements Node interface
 }
-func (a ByteLiteralExpr) StartPos() lexer.Position {
+func (a ByteLiteralExpr) StartPos() position.Coordinate {
 	return a.Location.Start
 }
-func (a ByteLiteralExpr) EndPos() lexer.Position {
+func (a ByteLiteralExpr) EndPos() position.Coordinate {
 	return a.Location.End
 }
 
 type BooleanLiteralExpr struct {
 	Value string
-	Location
+	position.Location
 }
 
 func (a BooleanLiteralExpr) INode() {
 	//empty method implements Node interface
 }
-func (a BooleanLiteralExpr) StartPos() lexer.Position {
+func (a BooleanLiteralExpr) StartPos() position.Coordinate {
 	return a.Location.Start
 }
-func (a BooleanLiteralExpr) EndPos() lexer.Position {
+func (a BooleanLiteralExpr) EndPos() position.Coordinate {
 	return a.Location.End
 }
 
 type NullLiteralExpr struct {
 	Value string
-	Location
+	position.Location
 }
 
 func (a NullLiteralExpr) INode() {
 	//empty method implements Node interface
 }
-func (a NullLiteralExpr) StartPos() lexer.Position {
+func (a NullLiteralExpr) StartPos() position.Coordinate {
 	return a.Location.Start
 }
-func (a NullLiteralExpr) EndPos() lexer.Position {
+func (a NullLiteralExpr) EndPos() position.Coordinate {
 	return a.Location.End
 }
 
@@ -120,65 +123,65 @@ type MapProp struct {
 type MapLiteral struct {
 	MapType
 	Values []MapProp
-	Location
+	position.Location
 }
 
 func (a MapLiteral) INode() {
 	//empty method implements Node interface
 }
-func (a MapLiteral) StartPos() lexer.Position {
+func (a MapLiteral) StartPos() position.Coordinate {
 	return a.Location.Start
 }
-func (a MapLiteral) EndPos() lexer.Position {
+func (a MapLiteral) EndPos() position.Coordinate {
 	return a.Location.End
 }
 
 type UnaryExpr struct {
 	Operator lexer.Token
 	Argument Node
-	Location
+	position.Location
 }
 
 func (a UnaryExpr) INode() {
 	//empty method implements Node interface
 }
-func (a UnaryExpr) StartPos() lexer.Position {
+func (a UnaryExpr) StartPos() position.Coordinate {
 	return a.Location.Start
 }
-func (a UnaryExpr) EndPos() lexer.Position {
+func (a UnaryExpr) EndPos() position.Coordinate {
 	return a.Location.End
 }
 
 type TypeCastExpr struct {
 	Expression Node
 	ToCast     DataType
-	Location
+	position.Location
 }
 
 func (a TypeCastExpr) INode() {
 	//empty method implements Node interface
 }
-func (a TypeCastExpr) StartPos() lexer.Position {
+func (a TypeCastExpr) StartPos() position.Coordinate {
 	return a.Location.Start
 }
 
-func (a TypeCastExpr) EndPos() lexer.Position {
+func (a TypeCastExpr) EndPos() position.Coordinate {
 	return a.Location.End
 }
 
 type TypeofExpr struct {
 	Expression Node
-	Location
+	position.Location
 }
 
 func (a TypeofExpr) INode() {
 	//empty method implements Node interface
 }
-func (a TypeofExpr) StartPos() lexer.Position {
+func (a TypeofExpr) StartPos() position.Coordinate {
 	return a.Location.Start
 }
 
-func (a TypeofExpr) EndPos() lexer.Position {
+func (a TypeofExpr) EndPos() position.Coordinate {
 	return a.Location.End
 }
 
@@ -186,7 +189,7 @@ type BinaryExpr struct {
 	Binop lexer.Token
 	Left  Node
 	Right Node
-	Location
+	position.Location
 }
 
 type IncrementalInterface interface {
@@ -197,16 +200,16 @@ type IncrementalInterface interface {
 type PrefixExpr struct {
 	OP       lexer.Token
 	Argument IdentifierExpr
-	Location
+	position.Location
 }
 
 func (a PrefixExpr) INode() {
 	//empty method implements Node interface
 }
-func (a PrefixExpr) StartPos() lexer.Position {
+func (a PrefixExpr) StartPos() position.Coordinate {
 	return a.Location.Start
 }
-func (a PrefixExpr) EndPos() lexer.Position {
+func (a PrefixExpr) EndPos() position.Coordinate {
 	return a.Location.End
 }
 func (a PrefixExpr) Arg() IdentifierExpr {
@@ -219,16 +222,16 @@ func (a PrefixExpr) Op() lexer.Token {
 type PostfixExpr struct {
 	Operator lexer.Token
 	Argument IdentifierExpr
-	Location
+	position.Location
 }
 
 func (a PostfixExpr) INode() {
 	//empty method implements Node interface
 }
-func (a PostfixExpr) StartPos() lexer.Position {
+func (a PostfixExpr) StartPos() position.Coordinate {
 	return a.Location.Start
 }
-func (a PostfixExpr) EndPos() lexer.Position {
+func (a PostfixExpr) EndPos() position.Coordinate {
 	return a.Location.End
 }
 func (a PostfixExpr) Arg() IdentifierExpr {
@@ -241,10 +244,10 @@ func (a PostfixExpr) Op() lexer.Token {
 func (a BinaryExpr) INode() {
 	//empty method implements Node interface
 }
-func (a BinaryExpr) StartPos() lexer.Position {
+func (a BinaryExpr) StartPos() position.Coordinate {
 	return a.Location.Start
 }
-func (a BinaryExpr) EndPos() lexer.Position {
+func (a BinaryExpr) EndPos() position.Coordinate {
 	return a.Location.End
 }
 
@@ -252,47 +255,47 @@ type VarAssignmentExpr struct {
 	Assignee Node // Check later if we should use IdentifierExpr instead
 	Value    Node
 	Operator lexer.Token // Looks odd right? Well, we know the operator must be '='. But what about +=, -=, *= and so on?😀
-	Location
+	position.Location
 }
 
 func (a VarAssignmentExpr) INode() {
 	//empty method implements Node interface
 }
-func (a VarAssignmentExpr) StartPos() lexer.Position {
+func (a VarAssignmentExpr) StartPos() position.Coordinate {
 	return a.Location.Start
 }
-func (a VarAssignmentExpr) EndPos() lexer.Position {
+func (a VarAssignmentExpr) EndPos() position.Coordinate {
 	return a.Location.End
 }
 
 type ArrayLiteral struct {
 	Values []Node
-	Location
+	position.Location
 }
 
 func (a ArrayLiteral) INode() {
 	//empty method implements Node interface
 }
-func (a ArrayLiteral) StartPos() lexer.Position {
+func (a ArrayLiteral) StartPos() position.Coordinate {
 	return a.Location.Start
 }
-func (a ArrayLiteral) EndPos() lexer.Position {
+func (a ArrayLiteral) EndPos() position.Coordinate {
 	return a.Location.End
 }
 
 type Indexable struct {
 	Index     Node
 	Container Node
-	Location
+	position.Location
 }
 
 func (a Indexable) INode() {
 	//empty method implements Node interface
 }
-func (a Indexable) StartPos() lexer.Position {
+func (a Indexable) StartPos() position.Coordinate {
 	return a.Location.Start
 }
-func (a Indexable) EndPos() lexer.Position {
+func (a Indexable) EndPos() position.Coordinate {
 	return a.Location.End
 }
 
@@ -304,48 +307,48 @@ type StructProp struct {
 type StructLiteral struct {
 	Identifier IdentifierExpr
 	Properties []StructProp
-	Location
+	position.Location
 }
 
 func (a StructLiteral) INode() {
 	//empty method implements Node interface
 }
-func (a StructLiteral) StartPos() lexer.Position {
+func (a StructLiteral) StartPos() position.Coordinate {
 	return a.Location.Start
 }
-func (a StructLiteral) EndPos() lexer.Position {
+func (a StructLiteral) EndPos() position.Coordinate {
 	return a.Location.End
 }
 
 type StructPropertyAccessExpr struct {
 	Object   Node
 	Property IdentifierExpr
-	Location
+	position.Location
 }
 
 func (a StructPropertyAccessExpr) INode() {
 	//empty method implements Node interface
 }
-func (a StructPropertyAccessExpr) StartPos() lexer.Position {
+func (a StructPropertyAccessExpr) StartPos() position.Coordinate {
 	return a.Location.Start
 }
-func (a StructPropertyAccessExpr) EndPos() lexer.Position {
+func (a StructPropertyAccessExpr) EndPos() position.Coordinate {
 	return a.Location.End
 }
 
 type FunctionCallExpr struct {
 	Caller    Node
 	Arguments []Node
-	Location
+	position.Location
 }
 
 func (a FunctionCallExpr) INode() {
 	//empty method implements Node interface
 }
-func (a FunctionCallExpr) StartPos() lexer.Position {
+func (a FunctionCallExpr) StartPos() position.Coordinate {
 	return a.Location.Start
 }
-func (a FunctionCallExpr) EndPos() lexer.Position {
+func (a FunctionCallExpr) EndPos() position.Coordinate {
 	return a.Location.End
 }
 
@@ -353,17 +356,17 @@ type FunctionLiteral struct {
 	Params     []FunctionParam
 	Body       BlockStmt
 	ReturnType DataType
-	Location
+	position.Location
 }
 
 func (a FunctionLiteral) INode() {
 	//empty method implements Node interface
 }
 
-func (a FunctionLiteral) StartPos() lexer.Position {
+func (a FunctionLiteral) StartPos() position.Coordinate {
 	return a.Location.Start
 }
 
-func (a FunctionLiteral) EndPos() lexer.Position {
+func (a FunctionLiteral) EndPos() position.Coordinate {
 	return a.Location.End
 }

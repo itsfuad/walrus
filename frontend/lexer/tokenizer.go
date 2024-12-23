@@ -9,6 +9,7 @@ import (
 
 	//Walrus packages
 	"walrus/frontend/builtins"
+	"walrus/position"
 	"walrus/report"
 	"walrus/utils"
 )
@@ -23,7 +24,7 @@ type regexPattern struct {
 type Lexer struct {
 	Errors     []error
 	Tokens     []Token
-	Position   Position
+	Position   position.Coordinate
 	sourceCode []byte
 	patterns   []regexPattern
 	FilePath   string
@@ -61,7 +62,7 @@ func createLexer(filePath *string) *Lexer {
 	lex := &Lexer{
 		sourceCode: fileText,
 		Tokens:     make([]Token, 0),
-		Position: Position{
+		Position: position.Coordinate{
 			Line:   1,
 			Column: 1,
 			Index:  0,

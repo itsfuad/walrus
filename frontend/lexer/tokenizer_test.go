@@ -3,6 +3,7 @@ package lexer
 import (
 	"os"
 	"testing"
+	"walrus/position"
 )
 
 func TestTokenize(t *testing.T) {
@@ -15,38 +16,38 @@ func TestTokenize(t *testing.T) {
 			name:  "Empty file",
 			input: "",
 			expected: []Token{
-				NewToken(EOF_TOKEN, "eof", Position{Line: 1, Column: 1, Index: 0}, Position{Line: 1, Column: 1, Index: 0}),
+				NewToken(EOF_TOKEN, "eof", position.Coordinate{Line: 1, Column: 1, Index: 0}, position.Coordinate{Line: 1, Column: 1, Index: 0}),
 			},
 		},
 		{
 			name:  "Single line comment",
 			input: "// this is a comment",
 			expected: []Token{
-				NewToken(EOF_TOKEN, "eof", Position{Line: 1, Column: 21, Index: 20}, Position{Line: 1, Column: 21, Index: 20}),
+				NewToken(EOF_TOKEN, "eof", position.Coordinate{Line: 1, Column: 21, Index: 20}, position.Coordinate{Line: 1, Column: 21, Index: 20}),
 			},
 		},
 		{
 			name:  "Simple identifier",
 			input: "var",
 			expected: []Token{
-				NewToken(IDENTIFIER_TOKEN, "var", Position{Line: 1, Column: 1, Index: 0}, Position{Line: 1, Column: 4, Index: 3}),
-				NewToken(EOF_TOKEN, "eof", Position{Line: 1, Column: 4, Index: 3}, Position{Line: 1, Column: 4, Index: 3}),
+				NewToken(IDENTIFIER_TOKEN, "var", position.Coordinate{Line: 1, Column: 1, Index: 0}, position.Coordinate{Line: 1, Column: 4, Index: 3}),
+				NewToken(EOF_TOKEN, "eof", position.Coordinate{Line: 1, Column: 4, Index: 3}, position.Coordinate{Line: 1, Column: 4, Index: 3}),
 			},
 		},
 		{
 			name:  "String literal",
 			input: `"hello"`,
 			expected: []Token{
-				NewToken(STR_TOKEN, "hello", Position{Line: 1, Column: 1, Index: 0}, Position{Line: 1, Column: 8, Index: 7}),
-				NewToken(EOF_TOKEN, "eof", Position{Line: 1, Column: 8, Index: 7}, Position{Line: 1, Column: 8, Index: 7}),
+				NewToken(STR_TOKEN, "hello", position.Coordinate{Line: 1, Column: 1, Index: 0}, position.Coordinate{Line: 1, Column: 8, Index: 7}),
+				NewToken(EOF_TOKEN, "eof", position.Coordinate{Line: 1, Column: 8, Index: 7}, position.Coordinate{Line: 1, Column: 8, Index: 7}),
 			},
 		},
 		{
 			name:  "Number literal",
 			input: "123",
 			expected: []Token{
-				NewToken(INT32_TOKEN, "123", Position{Line: 1, Column: 1, Index: 0}, Position{Line: 1, Column: 4, Index: 3}),
-				NewToken(EOF_TOKEN, "eof", Position{Line: 1, Column: 4, Index: 3}, Position{Line: 1, Column: 4, Index: 3}),
+				NewToken(INT32_TOKEN, "123", position.Coordinate{Line: 1, Column: 1, Index: 0}, position.Coordinate{Line: 1, Column: 4, Index: 3}),
+				NewToken(EOF_TOKEN, "eof", position.Coordinate{Line: 1, Column: 4, Index: 3}, position.Coordinate{Line: 1, Column: 4, Index: 3}),
 			},
 		},
 	}

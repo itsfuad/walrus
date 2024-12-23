@@ -2,9 +2,10 @@ package lexer
 
 import (
 	"fmt"
-	
-	"walrus/utils"
+
 	"walrus/frontend/builtins"
+	"walrus/position"
+	"walrus/utils"
 )
 
 const (
@@ -22,7 +23,7 @@ const (
 	RETURN_TOKEN     builtins.TOKEN_KIND = "ret"
 	IN_TOKEN         builtins.TOKEN_KIND = "in"
 	AS_TOKEN         builtins.TOKEN_KIND = "as"
-	TYPEOF_TOKEN	 builtins.TOKEN_KIND = "typeof"
+	TYPEOF_TOKEN     builtins.TOKEN_KIND = "typeof"
 	SAFE_TOKEN       builtins.TOKEN_KIND = "safe"
 	OTHERWISE_TOKEN  builtins.TOKEN_KIND = "otherwise"
 	//data types
@@ -124,8 +125,8 @@ func IsKeyword(token string) bool {
 type Token struct {
 	Kind  builtins.TOKEN_KIND
 	Value string
-	Start Position
-	End   Position
+	Start position.Coordinate
+	End   position.Coordinate
 }
 
 func (t *Token) Debug(filename string) {
@@ -137,7 +138,7 @@ func (t *Token) Debug(filename string) {
 	}
 }
 
-func NewToken(kind builtins.TOKEN_KIND, value string, start Position, end Position) Token {
+func NewToken(kind builtins.TOKEN_KIND, value string, start position.Coordinate, end position.Coordinate) Token {
 	return Token{
 		Kind:  kind,
 		Value: value,

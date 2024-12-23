@@ -40,7 +40,6 @@ type Report struct {
 	colStart  int
 	colEnd    int
 	msg       string
-	hints     []string
 	level     REPORT_TYPE
 }
 
@@ -66,8 +65,6 @@ func printReport(r *Report) {
 
 	utils.GREY.Printf("%s:%d:%d: ", r.filePath, r.lineStart, r.colStart)
 
-	snippet, underline, hLen := makeParts(r)
-
 	var reportMsg string
 
 	switch r.level {
@@ -87,73 +84,53 @@ func printReport(r *Report) {
 	reportColor.Print(reportMsg)
 	reportColor.Print(r.msg + "\n")
 
-	fmt.Print(snippet)
-	reportColor.Print(underline)
-
-	showHints(r, hLen)
+	makeParts(r, reportColor)
 
 	if r.level == CRITICAL_ERROR || r.level == SYNTAX_ERROR {
 		panic(fmt.Sprintf("Compilation halted due to %s\n", r.level))
 	}
 }
 
-func makeParts(r *Report) (snippet, underline string, hLen int) {
+func makeParts(r *Report, color utils.COLOR){
 	fileData, err := os.ReadFile(r.filePath)
 	if err != nil {
 		panic(err)
 	}
 
 	lines := strings.Split(string(fileData), "\n")
-	line := lines[r.lineStart-1]
-	
-	hLen = 0
 
 	if r.lineStart == r.lineEnd {
-		hLen = (r.colEnd - r.colStart) - 1
+		underlineLength := (r.colEnd - r.colStart) - 1
+		handleSingleLineError(lines[r.lineStart - 1], r, underlineLength, color, true)
 	} else {
-		//full line
-		hLen = len(line) - 2
+		handleMultiLineError(lines, r, color)
 	}
-	if hLen < 0 {
-		hLen = 0
-	}
+}
 
+func handleSingleLineError(line string, r *Report, underlineLength int, color utils.COLOR, start bool) {
+	if underlineLength < 0 {
+		underlineLength = 0
+	}
 	lineNumber := fmt.Sprintf("%d | ", r.lineStart)
-	snippet = utils.GREY.Sprint(lineNumber) + fmt.Sprintln(line)
-	underline = fmt.Sprintf("%s^%s\n", strings.Repeat(" ", (r.colStart-1)+len(lineNumber)), strings.Repeat("~", hLen))
+	utils.GREY.Print(lineNumber)
+	fmt.Println(line)
 
-	return snippet, underline, hLen
-}
-
-func showHints(r *Report, padding int) {
-	if len(r.hints) > 0 {
-		utils.YELLOW.Printf("%sHint:\n", strings.Repeat(" ", padding))
-		for _, hint := range r.hints {
-			utils.YELLOW.Printf("%s- %s\n", strings.Repeat(" ", padding), hint)
-		}
+	var firstChar rune
+	if start {
+		firstChar = '^'
 	} else {
-		fmt.Println()
+		firstChar = '~'
 	}
+
+	color.Printf("%s%c%s\n", strings.Repeat(" ", (r.colStart-1)+len(lineNumber)), firstChar, strings.Repeat("~", underlineLength))
 }
 
-
-// Hint appends a hint message to the error's hints slice.
-// If the provided message is empty, it returns the error without modification.
-// Each hint provides additional context or suggestions about the error.
-//
-// Parameters:
-//   - msg: The hint message to add
-//
-// Returns:
-//   - *WalrusError: Returns the error instance to allow for method chaining
-func (r *Report) Hint(msg string) *Report {
-
-	if msg == "" {
-		return r
+func handleMultiLineError(lines []string, r *Report, color utils.COLOR) {
+	codeLines := lines[r.lineStart-1 : r.lineEnd]
+	for i, line := range codeLines {
+		underlineLength := len(line) - r.colStart + 1
+		handleSingleLineError(line, r, underlineLength, color, i == 0)
 	}
-
-	r.hints = append(r.hints, msg)
-	return r
 }
 
 func Add(filePath string, lineStart, lineEnd int, colStart, colEnd int, msg string) *Report {
@@ -247,6 +224,8 @@ func showStatus(passed bool, msg string) {
 
 	if probCount > 0 {
 		totalProblemsString += colorMap[NORMAL_ERROR].Sprintf("%d %s", probCount, utils.Plural("error", "errors", probCount))
+	} else {
+		totalProblemsString += messageColor.Sprint("no issues found")
 	}
 
 	messageColor.Print(totalProblemsString)

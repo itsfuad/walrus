@@ -15,7 +15,7 @@ func checkTypeDeclaration(node ast.TypeDeclStmt, env *TypeEnvironment) Tc {
 
 	//if typename is small case
 	if !utils.IsCapitalized(node.UDTypeName.Name) {
-		report.Add(env.filePath, node.UDTypeName.Start.Line, node.UDTypeName.Start.Line, node.UDTypeName.Start.Column, node.UDTypeName.Start.Column, "User defined type name should be capitalized").Hint("Make the first letter uppercase").Level(report.INFO)
+		report.Add(env.filePath, node.UDTypeName.Start.Line, node.UDTypeName.Start.Line, node.UDTypeName.Start.Column, node.UDTypeName.Start.Column, "User defined type name should be capitalized so that you know what's built in and what's not").Level(report.INFO)
 	}
 
 	var val Tc

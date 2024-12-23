@@ -1,7 +1,7 @@
-package lexer
+package position
 
-// Position represents a specific location in the source code with line, column, and index information.
-type Position struct {
+// Coordinate represents a specific location in the source code with line, column, and index information.
+type Coordinate struct {
 	Line   int // Line number in the source code.
 	Column int // Column number in the source code.
 	Index  int // Index in the source code.
@@ -16,7 +16,7 @@ type Position struct {
 //
 // Returns:
 // - A pointer to the updated Position.
-func (p *Position) Advance(toSkip string) *Position {
+func (p *Coordinate) Advance(toSkip string) *Coordinate {
 	for _, char := range toSkip {
 		if char == '\n' {
 			p.Line++
@@ -27,4 +27,9 @@ func (p *Position) Advance(toSkip string) *Position {
 		p.Index++
 	}
 	return p
+}
+
+type Location struct {
+	Start Coordinate
+	End   Coordinate
 }

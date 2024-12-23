@@ -9,6 +9,7 @@ import (
 	"walrus/frontend/ast"
 	"walrus/frontend/builtins"
 	"walrus/frontend/lexer"
+	"walrus/position"
 	"walrus/report"
 )
 
@@ -43,7 +44,7 @@ func parseMaybeType(p *Parser) ast.DataType {
 	return ast.MaybeType{
 		TypeName:  builtins.PARSER_TYPE(builtins.MAYBE),
 		MaybeType: dataType,
-		Location: ast.Location{
+		Location: position.Location{
 			Start: start,
 			End:   end,
 		},
@@ -68,14 +69,14 @@ func parseMapType(p *Parser) ast.DataType {
 			TypeName: builtins.PARSER_TYPE(builtins.MAP),
 			Map: ast.IdentifierExpr{
 				Name: mapToken.Value,
-				Location: ast.Location{
+				Location: position.Location{
 					Start: mapToken.Start,
 					End:   mapToken.End,
 				},
 			},
 			KeyType:   nil,
 			ValueType: nil,
-			Location: ast.Location{
+			Location: position.Location{
 				Start: mapToken.Start,
 				End:   mapToken.End,
 			},
@@ -94,14 +95,14 @@ func parseMapType(p *Parser) ast.DataType {
 		TypeName: builtins.PARSER_TYPE(builtins.MAP),
 		Map: ast.IdentifierExpr{
 			Name: mapToken.Value,
-			Location: ast.Location{
+			Location: position.Location{
 				Start: mapToken.Start,
 				End:   mapToken.End,
 			},
 		},
 		KeyType:   keyType,
 		ValueType: valueType,
-		Location: ast.Location{
+		Location: position.Location{
 			Start: mapToken.Start,
 			End:   valueType.EndPos(),
 		},
@@ -114,7 +115,7 @@ func parseFunctionType(p *Parser) ast.DataType {
 
 	typeName, params, returnType := getFunctionTypeSignature(p)
 
-	loc := ast.Location{
+	loc := position.Location{
 		Start: start,
 		End:   returnType.EndPos(),
 	}
@@ -153,14 +154,14 @@ func getFunctionTypeSignature(p *Parser) (builtins.PARSER_TYPE, []ast.FunctionTy
 		params = append(params, ast.FunctionTypeParam{
 			Identifier: ast.IdentifierExpr{
 				Name: iden.Value,
-				Location: ast.Location{
+				Location: position.Location{
 					Start: iden.Start,
 					End:   iden.End,
 				},
 			},
 			Type:       typeName,
 			IsOptional: isOptional,
-			Location: ast.Location{
+			Location: position.Location{
 				Start: iden.Start,
 				End:   typeName.EndPos(),
 			},
@@ -181,7 +182,7 @@ func getFunctionTypeSignature(p *Parser) (builtins.PARSER_TYPE, []ast.FunctionTy
 	} else {
 		returnType = ast.VoidType{
 			TypeName: builtins.PARSER_TYPE(builtins.VOID),
-			Location: ast.Location{
+			Location: position.Location{
 				Start: p.currentToken().Start,
 				End:   p.currentToken().End,
 			},
@@ -207,7 +208,7 @@ func parseDataType(p *Parser) ast.DataType {
 
 	value := identifier.Value
 
-	loc := ast.Location{
+	loc := position.Location{
 		Start: identifier.Start,
 		End:   identifier.End,
 	}
@@ -271,7 +272,7 @@ func parseArrayType(p *Parser) ast.DataType {
 	return ast.ArrayType{
 		TypeName:  builtins.PARSER_TYPE(builtins.ARRAY),
 		ArrayType: elemType,
-		Location: ast.Location{
+		Location: position.Location{
 			Start: elemType.StartPos(),
 			End:   elemType.EndPos(),
 		},
@@ -385,7 +386,7 @@ func parseStructType(p *Parser) ast.DataType {
 
 		idenExpr := ast.IdentifierExpr{
 			Name: iden.Value,
-			Location: ast.Location{
+			Location: position.Location{
 				Start: iden.Start,
 				End:   iden.End,
 			},
@@ -408,7 +409,7 @@ func parseStructType(p *Parser) ast.DataType {
 
 	end := p.expect(lexer.CLOSE_CURLY).End
 
-	loc := ast.Location{
+	loc := position.Location{
 		Start: start,
 		End:   end,
 	}
@@ -447,7 +448,7 @@ func parseInterfaceType(p *Parser) ast.DataType {
 		methods = append(methods, ast.InterfaceMethod{
 			Identifier: ast.IdentifierExpr{
 				Name: name.Value,
-				Location: ast.Location{
+				Location: position.Location{
 					Start: name.Start,
 					End:   name.End,
 				},
@@ -456,7 +457,7 @@ func parseInterfaceType(p *Parser) ast.DataType {
 				TypeName:   dataType,
 				Parameters: params,
 				ReturnType: returnType,
-				Location: ast.Location{
+				Location: position.Location{
 					Start: start,
 					End:   returnType.EndPos(),
 				},
@@ -473,7 +474,7 @@ func parseInterfaceType(p *Parser) ast.DataType {
 	return ast.InterfaceType{
 		TypeName: builtins.PARSER_TYPE(builtins.INTERFACE),
 		Methods:  methods,
-		Location: ast.Location{
+		Location: position.Location{
 			Start: start,
 			End:   end,
 		},

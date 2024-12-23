@@ -13,6 +13,7 @@ import (
 	"walrus/report"
 )
 
+
 func main() {
 
 	fileName := "userTypes"
