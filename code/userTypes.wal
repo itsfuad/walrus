@@ -89,6 +89,24 @@ type mytype struct {
     name: str,
 };
 
+let f := fn() -> i32 {
+    // do something
+    if true {
+        //ret 10;
+    } else if true {
+        if true {
+            ret 20;
+        } else {
+            //ret 30;
+        }
+        //ret 5;
+    } else {
+        ret 20;
+    }
+
+    //ret 30;
+};
+
 // To pass any User and Banana to ShowInfo function, they must implement IPerson interface's every method
 // in simple words, they must have a method called getName that returns a string. The structs can have any more fields or methods but they must have getName method in this case.
 impl Banana {
@@ -106,6 +124,7 @@ impl User {
     }
     fn someMethod(a: i32) {
         // do something
+        ret;
     }
 }
 
@@ -127,21 +146,4 @@ fn voidFn() {
 
 let dynamic := typeof arr[1]; // dynamic = "str"
 
-
-let f := fn() -> i32 {
-    // do something
-    if true {
-        //ret 10;
-    } else if true {
-        if true {
-            ret 20;
-        } else {
-            //ret 30;
-        }
-        //ret 5;
-    } else {
-        ret 20;
-    }
-
-    //ret 30;
-};
+let nullableInt ?: i32 = 10;

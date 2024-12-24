@@ -2,6 +2,7 @@ package report
 
 import (
 	"errors"
+	"fmt"
 	"testing"
 
 	"walrus/utils"
@@ -9,6 +10,25 @@ import (
 
 const error1 = "error message 1"
 const error2 = "error message 2"
+
+const exptectedError = "Expected: %s, but got: %s"
+
+func TestMultiLineRightAlignMent(t *testing.T) {
+	
+	maxDigits := maxLineNumLen(99, 103)
+	lineStr := ""
+
+	// Create the right-aligned output
+	for _, num := range []int{99, 100, 101, 102, 103} {
+		lineStr += fmt.Sprintf("|%*d\n", maxDigits, num)
+	}
+
+	expected := "| 99\n|100\n|101\n|102\n|103\n"
+	if lineStr != expected {
+		t.Errorf(exptectedError, expected, lineStr)
+	}
+}
+
 
 var tests = []struct {
 	name     string
@@ -37,7 +57,7 @@ func TestTreeFormatString(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			result := TreeFormatString(tt.input...)
 			if result != tt.expected {
-				t.Errorf("expected %q\ngot %q", tt.expected, result)
+				t.Errorf(exptectedError, tt.expected, result)
 			}
 		})
 	}
@@ -56,7 +76,7 @@ func TestTreeFormatError(t *testing.T) {
 			result = TreeFormatError(errs...)
 			expected := tt.expected
 			if result.Error() != expected {
-				t.Errorf("expected %q\ngot %q", expected, result.Error())
+				t.Errorf(exptectedError, expected, result.Error())
 			}
 		})
 	}

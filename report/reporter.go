@@ -100,32 +100,44 @@ func makeParts(r *Report, color utils.COLOR){
 
 	if r.lineStart == r.lineEnd {
 		underlineLength := (r.colEnd - r.colStart) - 1
-		handleSingleLineError(lines[r.lineStart - 1], r.lineStart, r, underlineLength, color, true)
+		lineStr := fmt.Sprintf(" %d | ", r.lineStart)
+		handleSingleLineError(lines[r.lineStart - 1], lineStr, r, underlineLength, color, true)
 	} else {
 		handleMultiLineError(lines, r, color)
 	}
 }
 
-func handleSingleLineError(line string, lineNo int, r *Report, underlineLength int, color utils.COLOR, underline bool) {
+func handleSingleLineError(line string, lineNo string, r *Report, underlineLength int, color utils.COLOR, underline bool) {
 	if underlineLength < 0 {
 		underlineLength = 0
 	}
-	lineNumber := fmt.Sprintf("%d | ", lineNo)
-	utils.GREY.Print(lineNumber)
+	utils.GREY.Print(lineNo)
 	fmt.Println(line)
 
 	if !underline {
 		return
 	}
 
-	color.Printf("%s^%s\n", strings.Repeat(" ", (r.colStart-1)+len(lineNumber)), strings.Repeat("~", underlineLength))
+	color.Printf("%s^%s\n", strings.Repeat(" ", (r.colStart-1)+len(lineNo)), strings.Repeat("~", underlineLength))
+}
+
+func maxLineNumLen(start, end int) int {
+	maxDigits := 0
+	for i := start; i <= end; i++ {
+		if len := len(fmt.Sprintf("%d", i)); len > maxDigits {
+			maxDigits = len
+		}
+	}
+	return maxDigits
 }
 
 func handleMultiLineError(lines []string, r *Report, color utils.COLOR) {
 	codeLines := lines[r.lineStart-1 : r.lineEnd]
+	maxDigits := maxLineNumLen(r.lineStart, r.lineEnd)
 	for i, line := range codeLines {
 		underlineLength := len(line) - r.colStart + 1
-		handleSingleLineError(line, r.lineStart + i, r, underlineLength, color, i == len(codeLines)-1)
+		lineStr := fmt.Sprintf(" %*d | ", maxDigits, r.lineStart+i)
+		handleSingleLineError(line, lineStr, r, underlineLength, color, i == len(codeLines)-1)
 	}
 }
 
