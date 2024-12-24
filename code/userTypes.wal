@@ -131,7 +131,7 @@ let dynamic := typeof arr[1]; // dynamic = "str"
 let f := fn() -> i32 {
     // do something
     if true {
-        ret 10;
+        //ret 10;
     } else if true {
         if true {
             ret 20;

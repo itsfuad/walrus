@@ -1,7 +1,6 @@
 package parser
 
 import (
-	"fmt"
 	"walrus/frontend/ast"
 	"walrus/frontend/lexer"
 	"walrus/position"
@@ -41,10 +40,8 @@ func parseIfStmt(p *Parser) ast.Node {
 		if p.hasToken() && p.currentTokenKind() == lexer.IF_TOKEN {
 			alternate = parseIfStmt(p)
 			if alt, ok := alternate.(ast.IfStmt); ok {
-				fmt.Printf("previous: %v\n", alternate.StartPos())
 				alt.Location.Start = altStart.Start
 				alternate = alt
-				fmt.Printf("new: %v\n", alternate.StartPos())
 			}
 		} else {
 			alternate = parseBlock(p)

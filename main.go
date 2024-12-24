@@ -25,7 +25,7 @@ func main() {
 	//write the tree to a file named 'expressions.json' in 'code/ast' folder
 	err := helpers.Serialize(&tree, folder, fileName)
 	if err != nil {
-		fmt.Println(report.TreeFormatString("compilation halted", "Error serializing AST", err.Error()))
+		fmt.Println("compilation halted" + report.TreeFormatString("Error serializing AST", err.Error()))
 		os.Exit(-1)
 	}
 

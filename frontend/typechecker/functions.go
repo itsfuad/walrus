@@ -58,6 +58,13 @@ func CheckAndDeclareFunction(funcNode ast.FunctionLiteral, name string, env *Typ
 		}
 	}
 
+	checkSafeReturns(funcNode, unsatisfiedBlocks, fnSatisfied, fnEnv)
+
+	return fn
+}
+
+func checkSafeReturns(funcNode ast.FunctionLiteral, unsatisfiedBlocks []Block, fnSatisfied bool, env *TypeEnvironment){
+
 	if len(unsatisfiedBlocks) > 0 {
 		for _, block := range unsatisfiedBlocks {
 			fnSatisfied = fnSatisfied || block.IsSatisfied
@@ -67,7 +74,9 @@ func CheckAndDeclareFunction(funcNode ast.FunctionLiteral, name string, env *Typ
 		}
 	}
 
-	return fn
+	if !fnSatisfied {
+		report.Add(env.filePath, funcNode.Start.Line, funcNode.End.Line, funcNode.Start.Column, funcNode.End.Column, "function does not return a value", report.NORMAL_ERROR)
+	}
 }
 
 func checkandDeclareParamaters(params []ast.FunctionParam, fnEnv *TypeEnvironment) []FnParam {
