@@ -53,7 +53,6 @@ func CheckAndDeclareFunction(funcNode ast.FunctionLiteral, name string, env *Typ
 		case Block:
 			if !v.IsSatisfied {
 				unsatisfiedBlocks = append(unsatisfiedBlocks, v)
-				//report.Add(env.filePath, v.Location.Start.Line, v.Location.End.Line, v.Location.Start.Column, v.Location.End.Column, "missing return", report.NORMAL_ERROR)
 			}
 		}
 	}
@@ -69,7 +68,7 @@ func checkSafeReturns(funcNode ast.FunctionLiteral, unsatisfiedBlocks []Block, f
 		for _, block := range unsatisfiedBlocks {
 			fnSatisfied = fnSatisfied || block.IsSatisfied
 			if !fnSatisfied {
-				report.Add(env.filePath, block.ProblemLocation.Start.Line, block.ProblemLocation.End.Line, block.ProblemLocation.Start.Column, block.ProblemLocation.End.Column, "missing return", report.NORMAL_ERROR)
+				report.Add(env.filePath, block.ProblemLocation.Start.Line, block.ProblemLocation.End.Line, block.ProblemLocation.Start.Column, block.ProblemLocation.End.Column, "missing return in this block", report.NORMAL_ERROR)
 			}
 		}
 	}
