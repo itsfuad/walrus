@@ -1,0 +1,838 @@
+{
+    "Contents": [
+        {
+            "UDTypeValue": {
+                "TypeName": "struct",
+                "Properties": [
+                    {
+                        "Prop": {
+                            "Name": "name",
+                            "Start": {
+                                "Line": 2,
+                                "Column": 5,
+                                "Index": 26
+                            },
+                            "End": {
+                                "Line": 2,
+                                "Column": 9,
+                                "Index": 30
+                            }
+                        },
+                        "PropType": {
+                            "TypeName": "str",
+                            "Start": {
+                                "Line": 2,
+                                "Column": 11,
+                                "Index": 32
+                            },
+                            "End": {
+                                "Line": 2,
+                                "Column": 14,
+                                "Index": 35
+                            }
+                        },
+                        "IsPrivate": false
+                    },
+                    {
+                        "Prop": {
+                            "Name": "age",
+                            "Start": {
+                                "Line": 3,
+                                "Column": 5,
+                                "Index": 42
+                            },
+                            "End": {
+                                "Line": 3,
+                                "Column": 8,
+                                "Index": 45
+                            }
+                        },
+                        "PropType": {
+                            "TypeName": "i32",
+                            "BitSize": 32,
+                            "IsSigned": true,
+                            "Start": {
+                                "Line": 3,
+                                "Column": 10,
+                                "Index": 47
+                            },
+                            "End": {
+                                "Line": 3,
+                                "Column": 13,
+                                "Index": 50
+                            }
+                        },
+                        "IsPrivate": false
+                    }
+                ],
+                "Start": {
+                    "Line": 1,
+                    "Column": 20,
+                    "Index": 19
+                },
+                "End": {
+                    "Line": 4,
+                    "Column": 2,
+                    "Index": 54
+                }
+            },
+            "UDTypeName": {
+                "Name": "Person",
+                "Start": {
+                    "Line": 1,
+                    "Column": 6,
+                    "Index": 5
+                },
+                "End": {
+                    "Line": 1,
+                    "Column": 12,
+                    "Index": 11
+                }
+            },
+            "Start": {
+                "Line": 1,
+                "Column": 1,
+                "Index": 0
+            },
+            "End": {
+                "Line": 4,
+                "Column": 2,
+                "Index": 54
+            }
+        },
+        {
+            "Variables": [
+                {
+                    "Identifier": {
+                        "Name": "person",
+                        "Start": {
+                            "Line": 6,
+                            "Column": 5,
+                            "Index": 63
+                        },
+                        "End": {
+                            "Line": 6,
+                            "Column": 11,
+                            "Index": 69
+                        }
+                    },
+                    "Value": {
+                        "Identifier": {
+                            "Name": "Person",
+                            "Start": {
+                                "Line": 6,
+                                "Column": 24,
+                                "Index": 82
+                            },
+                            "End": {
+                                "Line": 6,
+                                "Column": 30,
+                                "Index": 88
+                            }
+                        },
+                        "Properties": [
+                            {
+                                "Prop": {
+                                    "Name": "name",
+                                    "Start": {
+                                        "Line": 7,
+                                        "Column": 5,
+                                        "Index": 96
+                                    },
+                                    "End": {
+                                        "Line": 7,
+                                        "Column": 9,
+                                        "Index": 100
+                                    }
+                                },
+                                "Value": {
+                                    "Value": "John",
+                                    "Start": {
+                                        "Line": 7,
+                                        "Column": 11,
+                                        "Index": 102
+                                    },
+                                    "End": {
+                                        "Line": 7,
+                                        "Column": 17,
+                                        "Index": 108
+                                    }
+                                }
+                            },
+                            {
+                                "Prop": {
+                                    "Name": "age",
+                                    "Start": {
+                                        "Line": 8,
+                                        "Column": 5,
+                                        "Index": 115
+                                    },
+                                    "End": {
+                                        "Line": 8,
+                                        "Column": 8,
+                                        "Index": 118
+                                    }
+                                },
+                                "Value": {
+                                    "Value": "25",
+                                    "BitSize": 32,
+                                    "IsSigned": true,
+                                    "Start": {
+                                        "Line": 8,
+                                        "Column": 10,
+                                        "Index": 120
+                                    },
+                                    "End": {
+                                        "Line": 8,
+                                        "Column": 12,
+                                        "Index": 122
+                                    }
+                                }
+                            }
+                        ],
+                        "Start": {
+                            "Line": 6,
+                            "Column": 23,
+                            "Index": 81
+                        },
+                        "End": {
+                            "Line": 9,
+                            "Column": 2,
+                            "Index": 125
+                        }
+                    },
+                    "ExplicitType": {
+                        "TypeName": "user_defined",
+                        "AliasName": "Person",
+                        "Start": {
+                            "Line": 6,
+                            "Column": 14,
+                            "Index": 72
+                        },
+                        "End": {
+                            "Line": 6,
+                            "Column": 20,
+                            "Index": 78
+                        }
+                    },
+                    "Start": {
+                        "Line": 6,
+                        "Column": 5,
+                        "Index": 63
+                    },
+                    "End": {
+                        "Line": 9,
+                        "Column": 2,
+                        "Index": 125
+                    }
+                }
+            ],
+            "IsConst": false,
+            "Start": {
+                "Line": 6,
+                "Column": 1,
+                "Index": 59
+            },
+            "End": {
+                "Line": 9,
+                "Column": 3,
+                "Index": 126
+            }
+        },
+        {
+            "UDTypeValue": {
+                "TypeName": "user_defined",
+                "AliasName": "Person",
+                "Start": {
+                    "Line": 11,
+                    "Column": 17,
+                    "Index": 146
+                },
+                "End": {
+                    "Line": 11,
+                    "Column": 23,
+                    "Index": 152
+                }
+            },
+            "UDTypeName": {
+                "Name": "PersonType",
+                "Start": {
+                    "Line": 11,
+                    "Column": 6,
+                    "Index": 135
+                },
+                "End": {
+                    "Line": 11,
+                    "Column": 16,
+                    "Index": 145
+                }
+            },
+            "Start": {
+                "Line": 11,
+                "Column": 1,
+                "Index": 130
+            },
+            "End": {
+                "Line": 11,
+                "Column": 23,
+                "Index": 152
+            }
+        },
+        {
+            "Variables": [
+                {
+                    "Identifier": {
+                        "Name": "person2",
+                        "Start": {
+                            "Line": 13,
+                            "Column": 5,
+                            "Index": 161
+                        },
+                        "End": {
+                            "Line": 13,
+                            "Column": 12,
+                            "Index": 168
+                        }
+                    },
+                    "Value": {
+                        "Identifier": {
+                            "Name": "PersonType",
+                            "Start": {
+                                "Line": 13,
+                                "Column": 17,
+                                "Index": 173
+                            },
+                            "End": {
+                                "Line": 13,
+                                "Column": 27,
+                                "Index": 183
+                            }
+                        },
+                        "Properties": [
+                            {
+                                "Prop": {
+                                    "Name": "name",
+                                    "Start": {
+                                        "Line": 14,
+                                        "Column": 5,
+                                        "Index": 191
+                                    },
+                                    "End": {
+                                        "Line": 14,
+                                        "Column": 9,
+                                        "Index": 195
+                                    }
+                                },
+                                "Value": {
+                                    "Value": "Doe",
+                                    "Start": {
+                                        "Line": 14,
+                                        "Column": 11,
+                                        "Index": 197
+                                    },
+                                    "End": {
+                                        "Line": 14,
+                                        "Column": 16,
+                                        "Index": 202
+                                    }
+                                }
+                            },
+                            {
+                                "Prop": {
+                                    "Name": "age",
+                                    "Start": {
+                                        "Line": 15,
+                                        "Column": 5,
+                                        "Index": 209
+                                    },
+                                    "End": {
+                                        "Line": 15,
+                                        "Column": 8,
+                                        "Index": 212
+                                    }
+                                },
+                                "Value": {
+                                    "Value": "30",
+                                    "BitSize": 32,
+                                    "IsSigned": true,
+                                    "Start": {
+                                        "Line": 15,
+                                        "Column": 10,
+                                        "Index": 214
+                                    },
+                                    "End": {
+                                        "Line": 15,
+                                        "Column": 12,
+                                        "Index": 216
+                                    }
+                                }
+                            }
+                        ],
+                        "Start": {
+                            "Line": 13,
+                            "Column": 16,
+                            "Index": 172
+                        },
+                        "End": {
+                            "Line": 16,
+                            "Column": 2,
+                            "Index": 219
+                        }
+                    },
+                    "ExplicitType": null,
+                    "Start": {
+                        "Line": 13,
+                        "Column": 5,
+                        "Index": 161
+                    },
+                    "End": {
+                        "Line": 16,
+                        "Column": 2,
+                        "Index": 219
+                    }
+                }
+            ],
+            "IsConst": false,
+            "Start": {
+                "Line": 13,
+                "Column": 1,
+                "Index": 157
+            },
+            "End": {
+                "Line": 16,
+                "Column": 3,
+                "Index": 220
+            }
+        },
+        {
+            "Variables": [
+                {
+                    "Identifier": {
+                        "Name": "userMap",
+                        "Start": {
+                            "Line": 18,
+                            "Column": 5,
+                            "Index": 228
+                        },
+                        "End": {
+                            "Line": 18,
+                            "Column": 12,
+                            "Index": 235
+                        }
+                    },
+                    "Value": {
+                        "TypeName": "map",
+                        "Map": {
+                            "Name": "map",
+                            "Start": {
+                                "Line": 18,
+                                "Column": 30,
+                                "Index": 253
+                            },
+                            "End": {
+                                "Line": 18,
+                                "Column": 33,
+                                "Index": 256
+                            }
+                        },
+                        "KeyType": {
+                            "TypeName": "str",
+                            "Start": {
+                                "Line": 18,
+                                "Column": 34,
+                                "Index": 257
+                            },
+                            "End": {
+                                "Line": 18,
+                                "Column": 37,
+                                "Index": 260
+                            }
+                        },
+                        "ValueType": {
+                            "TypeName": "i32",
+                            "BitSize": 32,
+                            "IsSigned": true,
+                            "Start": {
+                                "Line": 18,
+                                "Column": 38,
+                                "Index": 261
+                            },
+                            "End": {
+                                "Line": 18,
+                                "Column": 41,
+                                "Index": 264
+                            }
+                        },
+                        "Values": [
+                            {
+                                "Key": {
+                                    "Value": "John",
+                                    "Start": {
+                                        "Line": 19,
+                                        "Column": 5,
+                                        "Index": 272
+                                    },
+                                    "End": {
+                                        "Line": 19,
+                                        "Column": 11,
+                                        "Index": 278
+                                    }
+                                },
+                                "Value": {
+                                    "Value": "25",
+                                    "BitSize": 32,
+                                    "IsSigned": true,
+                                    "Start": {
+                                        "Line": 19,
+                                        "Column": 14,
+                                        "Index": 281
+                                    },
+                                    "End": {
+                                        "Line": 19,
+                                        "Column": 16,
+                                        "Index": 283
+                                    }
+                                }
+                            },
+                            {
+                                "Key": {
+                                    "Value": "Doe",
+                                    "Start": {
+                                        "Line": 20,
+                                        "Column": 5,
+                                        "Index": 290
+                                    },
+                                    "End": {
+                                        "Line": 20,
+                                        "Column": 10,
+                                        "Index": 295
+                                    }
+                                },
+                                "Value": {
+                                    "Value": "30",
+                                    "BitSize": 32,
+                                    "IsSigned": true,
+                                    "Start": {
+                                        "Line": 20,
+                                        "Column": 13,
+                                        "Index": 298
+                                    },
+                                    "End": {
+                                        "Line": 20,
+                                        "Column": 15,
+                                        "Index": 300
+                                    }
+                                }
+                            }
+                        ],
+                        "Start": {
+                            "Line": 18,
+                            "Column": 30,
+                            "Index": 253
+                        },
+                        "End": {
+                            "Line": 21,
+                            "Column": 2,
+                            "Index": 303
+                        }
+                    },
+                    "ExplicitType": {
+                        "TypeName": "map",
+                        "Map": {
+                            "Name": "map",
+                            "Start": {
+                                "Line": 18,
+                                "Column": 15,
+                                "Index": 238
+                            },
+                            "End": {
+                                "Line": 18,
+                                "Column": 18,
+                                "Index": 241
+                            }
+                        },
+                        "KeyType": {
+                            "TypeName": "str",
+                            "Start": {
+                                "Line": 18,
+                                "Column": 19,
+                                "Index": 242
+                            },
+                            "End": {
+                                "Line": 18,
+                                "Column": 22,
+                                "Index": 245
+                            }
+                        },
+                        "ValueType": {
+                            "TypeName": "i32",
+                            "BitSize": 32,
+                            "IsSigned": true,
+                            "Start": {
+                                "Line": 18,
+                                "Column": 23,
+                                "Index": 246
+                            },
+                            "End": {
+                                "Line": 18,
+                                "Column": 26,
+                                "Index": 249
+                            }
+                        },
+                        "Start": {
+                            "Line": 18,
+                            "Column": 15,
+                            "Index": 238
+                        },
+                        "End": {
+                            "Line": 18,
+                            "Column": 26,
+                            "Index": 249
+                        }
+                    },
+                    "Start": {
+                        "Line": 18,
+                        "Column": 5,
+                        "Index": 228
+                    },
+                    "End": {
+                        "Line": 21,
+                        "Column": 2,
+                        "Index": 303
+                    }
+                }
+            ],
+            "IsConst": false,
+            "Start": {
+                "Line": 18,
+                "Column": 1,
+                "Index": 224
+            },
+            "End": {
+                "Line": 21,
+                "Column": 3,
+                "Index": 304
+            }
+        },
+        {
+            "UDTypeValue": {
+                "TypeName": "map",
+                "Map": {
+                    "Name": "map",
+                    "Start": {
+                        "Line": 23,
+                        "Column": 14,
+                        "Index": 321
+                    },
+                    "End": {
+                        "Line": 23,
+                        "Column": 17,
+                        "Index": 324
+                    }
+                },
+                "KeyType": {
+                    "TypeName": "str",
+                    "Start": {
+                        "Line": 23,
+                        "Column": 18,
+                        "Index": 325
+                    },
+                    "End": {
+                        "Line": 23,
+                        "Column": 21,
+                        "Index": 328
+                    }
+                },
+                "ValueType": {
+                    "TypeName": "i32",
+                    "BitSize": 32,
+                    "IsSigned": true,
+                    "Start": {
+                        "Line": 23,
+                        "Column": 22,
+                        "Index": 329
+                    },
+                    "End": {
+                        "Line": 23,
+                        "Column": 25,
+                        "Index": 332
+                    }
+                },
+                "Start": {
+                    "Line": 23,
+                    "Column": 14,
+                    "Index": 321
+                },
+                "End": {
+                    "Line": 23,
+                    "Column": 25,
+                    "Index": 332
+                }
+            },
+            "UDTypeName": {
+                "Name": "UserMap",
+                "Start": {
+                    "Line": 23,
+                    "Column": 6,
+                    "Index": 313
+                },
+                "End": {
+                    "Line": 23,
+                    "Column": 13,
+                    "Index": 320
+                }
+            },
+            "Start": {
+                "Line": 23,
+                "Column": 1,
+                "Index": 308
+            },
+            "End": {
+                "Line": 23,
+                "Column": 25,
+                "Index": 332
+            }
+        },
+        {
+            "Variables": [
+                {
+                    "Identifier": {
+                        "Name": "userMap2",
+                        "Start": {
+                            "Line": 25,
+                            "Column": 5,
+                            "Index": 341
+                        },
+                        "End": {
+                            "Line": 25,
+                            "Column": 13,
+                            "Index": 349
+                        }
+                    },
+                    "Value": {
+                        "TypeName": "map",
+                        "Map": {
+                            "Name": "UserMap",
+                            "Start": {
+                                "Line": 25,
+                                "Column": 18,
+                                "Index": 354
+                            },
+                            "End": {
+                                "Line": 25,
+                                "Column": 25,
+                                "Index": 361
+                            }
+                        },
+                        "KeyType": null,
+                        "ValueType": null,
+                        "Values": [
+                            {
+                                "Key": {
+                                    "Value": "John",
+                                    "Start": {
+                                        "Line": 26,
+                                        "Column": 5,
+                                        "Index": 369
+                                    },
+                                    "End": {
+                                        "Line": 26,
+                                        "Column": 11,
+                                        "Index": 375
+                                    }
+                                },
+                                "Value": {
+                                    "Value": "25",
+                                    "BitSize": 32,
+                                    "IsSigned": true,
+                                    "Start": {
+                                        "Line": 26,
+                                        "Column": 14,
+                                        "Index": 378
+                                    },
+                                    "End": {
+                                        "Line": 26,
+                                        "Column": 16,
+                                        "Index": 380
+                                    }
+                                }
+                            },
+                            {
+                                "Key": {
+                                    "Value": "Doe",
+                                    "Start": {
+                                        "Line": 27,
+                                        "Column": 5,
+                                        "Index": 387
+                                    },
+                                    "End": {
+                                        "Line": 27,
+                                        "Column": 10,
+                                        "Index": 392
+                                    }
+                                },
+                                "Value": {
+                                    "Value": "30",
+                                    "BitSize": 32,
+                                    "IsSigned": true,
+                                    "Start": {
+                                        "Line": 27,
+                                        "Column": 13,
+                                        "Index": 395
+                                    },
+                                    "End": {
+                                        "Line": 27,
+                                        "Column": 15,
+                                        "Index": 397
+                                    }
+                                }
+                            }
+                        ],
+                        "Start": {
+                            "Line": 25,
+                            "Column": 18,
+                            "Index": 354
+                        },
+                        "End": {
+                            "Line": 28,
+                            "Column": 2,
+                            "Index": 400
+                        }
+                    },
+                    "ExplicitType": null,
+                    "Start": {
+                        "Line": 25,
+                        "Column": 5,
+                        "Index": 341
+                    },
+                    "End": {
+                        "Line": 28,
+                        "Column": 2,
+                        "Index": 400
+                    }
+                }
+            ],
+            "IsConst": false,
+            "Start": {
+                "Line": 25,
+                "Column": 1,
+                "Index": 337
+            },
+            "End": {
+                "Line": 28,
+                "Column": 3,
+                "Index": 401
+            }
+        }
+    ],
+    "Start": {
+        "Line": 0,
+        "Column": 0,
+        "Index": 0
+    },
+    "End": {
+        "Line": 0,
+        "Column": 0,
+        "Index": 0
+    }
+}

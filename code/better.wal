@@ -1,0 +1,28 @@
+type Person struct {
+    name: str,
+    age: i32,
+};
+
+let person : Person = @Person {
+    name: "John",
+    age: 25
+};
+
+type PersonType Person;
+
+let person2 := @PersonType {
+    name: "Doe",
+    age: 30
+};
+
+let userMap : map[str]i32 = $map[str]i32 {
+    "John" : 25,
+    "Doe" : 30
+};
+
+type UserMap map[str]i32;
+
+let userMap2 := $UserMap {
+    "John" : 25 
+    "Doe" : 30
+};

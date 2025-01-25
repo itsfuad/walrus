@@ -97,7 +97,7 @@ func parsePrimaryExpr(p *Parser) ast.Node {
 			Location: loc,
 		}
 	case lexer.IDENTIFIER_TOKEN:
-		return ast.IdentifierExpr{
+        return ast.IdentifierExpr{
 			Name:     rawValue,
 			Location: loc,
 		}
