@@ -1,5 +1,5 @@
 
-let a : maybe{i32} = 3; // a is i32 or null
+let a : maybe{i32} = 3; // a is iMAP32 or null
 
 a = 10; // allowed
 //a = 2.4; // not allowed
@@ -18,3 +18,18 @@ safe a {
     //a is null here
     //res = a; // not allowed
 }
+
+let pointer := &a; // pointer is *i32
+let pointer2 : *i32 = &b; // pointer2 is *i32
+
+
+type Point struct{
+    x: i32,
+    y: i32
+};
+
+let p := @Point{x: 1, y: 2};
+
+type MAP map[str]i32;
+
+let m := #MAP{"x": 1, "y": 2};

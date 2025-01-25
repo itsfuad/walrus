@@ -79,7 +79,6 @@ func createLexer(filePath *string) *Lexer {
 			{regexp.MustCompile(`\+\+`), defaultHandler(PLUS_PLUS_TOKEN, "++")},
 			{regexp.MustCompile(`\-\-`), defaultHandler(MINUS_MINUS_TOKEN, "--")},
 			{regexp.MustCompile(`\->`), defaultHandler(ARROW_TOKEN, "->")},
-			{regexp.MustCompile(`\=>`), defaultHandler(FAT_ARROW_TOKEN, "=>")},
 			{regexp.MustCompile(`@`), defaultHandler(AT_TOKEN, "@")},
 			{regexp.MustCompile(`\$`), defaultHandler(DOLLAR_TOKEN, "$")},
 			{regexp.MustCompile(`!=`), defaultHandler(NOT_EQUAL_TOKEN, "!=")},
