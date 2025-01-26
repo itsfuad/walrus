@@ -3,6 +3,7 @@ package parser
 import (
 	//Standard packages
 	"encoding/json"
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -23,7 +24,17 @@ type Parser struct {
 	index    int
 }
 
+func (p *Parser) peek(N int) lexer.Token {
+	if p.index+N < len(p.tokens) {
+		return p.tokens[p.index+N]
+	}
+	return lexer.Token{}
+}
+
 func (p *Parser) currentToken() lexer.Token {
+	if p.index >= len(p.tokens) {
+		return lexer.Token{} // for safety
+	}
 	return p.tokens[p.index]
 }
 
@@ -39,6 +50,11 @@ func (p *Parser) advance() lexer.Token {
 	token := p.currentToken()
 	p.index++
 	return token
+}
+
+// back by N tokens
+func (p *Parser) back(n int) {
+	p.index -= n
 }
 
 func (p *Parser) expectError(expectedKind builtins.TOKEN_KIND, err error) lexer.Token {
@@ -73,6 +89,8 @@ type I interface {
 }
 
 func parseNode(p *Parser) ast.Node {
+	
+	fmt.Printf("Parsing node %s\n", p.currentToken().Value)
 	// can be a statement or an expression
 	stmt_fn, exists := STMTLookup[p.currentTokenKind()]
 
@@ -83,7 +101,7 @@ func parseNode(p *Parser) ast.Node {
 	// if not a statement, then it must be an expression
 	expr := parseExpr(p, DEFAULT_BP)
 
-	p.expect(lexer.SEMI_COLON_TOKEN)
+	p.expectError(lexer.SEMI_COLON_TOKEN, errors.New("expected a semicolon at the end of statement"))
 
 	return expr
 }
