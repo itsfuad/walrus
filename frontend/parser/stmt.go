@@ -5,18 +5,7 @@ import (
 	"walrus/frontend/lexer"
 )
 
-// parseUserDefinedTypeStmt parses a user-defined type statement in the source code.
-// It expects the 'type' keyword followed by an identifier that starts with a capital letter.
-// If the identifier does not start with a capital letter, an error is generated with a hint.
-// The function then parses the user-defined type and expects a semicolon at the end.
-// It returns an AST node representing the type declaration statement.
-//
-// Parameters:
-// - p: A pointer to the Parser instance.
-//
-// Returns:
-// - ast.Node: An AST node representing the type declaration statement.
-func parseUserDefinedTypeStmt(p *Parser) ast.Node {
+func parseUserDefinedTypes(p *Parser) ast.Node {
 
 	start := p.advance().Start //eat type token
 

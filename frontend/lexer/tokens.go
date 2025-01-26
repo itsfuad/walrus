@@ -2,9 +2,9 @@ package lexer
 
 import (
 	"fmt"
-	
-	"walrus/utils"
+
 	"walrus/frontend/builtins"
+	"walrus/utils"
 )
 
 const (
@@ -22,7 +22,7 @@ const (
 	RETURN_TOKEN     builtins.TOKEN_KIND = "ret"
 	IN_TOKEN         builtins.TOKEN_KIND = "in"
 	AS_TOKEN         builtins.TOKEN_KIND = "as"
-	TYPEOF_TOKEN	 builtins.TOKEN_KIND = "typeof"
+	TYPEOF_TOKEN     builtins.TOKEN_KIND = "typeof"
 	SAFE_TOKEN       builtins.TOKEN_KIND = "safe"
 	OTHERWISE_TOKEN  builtins.TOKEN_KIND = "otherwise"
 	//data types
@@ -84,6 +84,7 @@ const (
 	DOT_TOKEN        builtins.TOKEN_KIND = "."
 	SEMI_COLON_TOKEN builtins.TOKEN_KIND = ";"
 	ARROW_TOKEN      builtins.TOKEN_KIND = "->"
+	FAT_ARROW_TOKEN  builtins.TOKEN_KIND = "=>"
 	OPTIONAL_TOKEN   builtins.TOKEN_KIND = "?:"
 	AT_TOKEN         builtins.TOKEN_KIND = "@"
 	DOLLAR_TOKEN     builtins.TOKEN_KIND = "$"

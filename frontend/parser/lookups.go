@@ -89,7 +89,7 @@ func bindLookupHandlers() {
 	led(lexer.PLUS_PLUS_TOKEN, UNARY_BP, parsePostfixExpr)   // a++
 	led(lexer.MINUS_MINUS_TOKEN, UNARY_BP, parsePostfixExpr) // a--
 
-	nud(lexer.IDENTIFIER_TOKEN, parsePrimaryExpr)  // identifier
+	nud(lexer.IDENTIFIER_TOKEN, parsePrimaryExpr) // identifier
 	nud(lexer.TYPEOF_TOKEN, parseTypeofExpr)
 	nud(lexer.INT8_TOKEN, parsePrimaryExpr)        // int literal, 8 bit
 	nud(lexer.INT16_TOKEN, parsePrimaryExpr)       // int literal, 16 bit
@@ -106,7 +106,9 @@ func bindLookupHandlers() {
 	nud(lexer.OPEN_BRACKET, parseArrayExpr)        // array literal [1,2,3]
 	nud(lexer.OPEN_PAREN, parseGroupingExpr)       // grouping expression a + (b+c)
 	nud(lexer.FUNCTION_TOKEN, parseLambdaFunction) // anonymous function
-	nud(lexer.AT_TOKEN, parseStructLiteral)
+
+	//nud(lexer.AT_TOKEN, parseStructLiteral)
+	nud(lexer.MAP_TOKEN, parseMapLiteral)
 
 	//Unary
 	nud(lexer.MINUS_TOKEN, parseUnaryExpr) // unary minus : -a
@@ -116,12 +118,10 @@ func bindLookupHandlers() {
 	nud(lexer.PLUS_PLUS_TOKEN, parsePrefixExpr)   // ++a
 	nud(lexer.MINUS_MINUS_TOKEN, parsePrefixExpr) // --a
 
-	nud(lexer.DOLLAR_TOKEN, parseMapLiteral)
-
 	//Statements
-	stmt(lexer.LET_TOKEN, parseVarDeclStmt)          // variable declaration
-	stmt(lexer.CONST_TOKEN, parseVarDeclStmt)        // constant declaration
-	stmt(lexer.TYPE_TOKEN, parseUserDefinedTypeStmt) // user defined type
+	stmt(lexer.LET_TOKEN, parseVarDeclStmt)       // variable declaration
+	stmt(lexer.CONST_TOKEN, parseVarDeclStmt)     // constant declaration
+	stmt(lexer.TYPE_TOKEN, parseUserDefinedTypes) // user defined type
 
 	stmt(lexer.IF_TOKEN, parseIfStmt)                 // if statement
 	stmt(lexer.FOR_TOKEN, parseForStmt)               // for statement
