@@ -24,13 +24,6 @@ type Parser struct {
 	index    int
 }
 
-func (p *Parser) peek(N int) lexer.Token {
-	if p.index+N < len(p.tokens) {
-		return p.tokens[p.index+N]
-	}
-	return lexer.Token{}
-}
-
 func (p *Parser) currentToken() lexer.Token {
 	if p.index >= len(p.tokens) {
 		return lexer.Token{} // for safety
@@ -46,14 +39,14 @@ func (p *Parser) hasToken() bool {
 	return p.index < len(p.tokens) && p.currentTokenKind() != lexer.EOF_TOKEN
 }
 
-func (p *Parser) advance() lexer.Token {
+func (p *Parser) eat() lexer.Token {
 	token := p.currentToken()
 	p.index++
 	return token
 }
 
-// back by N tokens
-func (p *Parser) back(n int) {
+// rollback by N tokens
+func (p *Parser) rollback(n int) {
 	p.index -= n
 }
 
@@ -77,7 +70,7 @@ func (p *Parser) expectError(expectedKind builtins.TOKEN_KIND, err error) lexer.
 			report.Add(p.FilePath, start.Line, end.Line, start.Column, end.Column, msg).Level(report.SYNTAX_ERROR)
 		}
 	}
-	return p.advance()
+	return p.eat()
 }
 
 func (p *Parser) expect(expectedKind builtins.TOKEN_KIND) lexer.Token {
@@ -89,7 +82,7 @@ type I interface {
 }
 
 func parseNode(p *Parser) ast.Node {
-	
+
 	fmt.Printf("Parsing node %s\n", p.currentToken().Value)
 	// can be a statement or an expression
 	stmt_fn, exists := STMTLookup[p.currentTokenKind()]

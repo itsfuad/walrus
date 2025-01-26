@@ -7,7 +7,7 @@ import (
 
 func parseImplStmt(p *Parser) ast.Node {
 
-	start := p.advance().Start
+	start := p.eat().Start
 
 	typeName := p.expect(lexer.IDENTIFIER_TOKEN)
 
@@ -21,7 +21,7 @@ func parseImplStmt(p *Parser) ast.Node {
 
 		if p.currentTokenKind() == lexer.PRIVATE_TOKEN {
 			IsPrivate = true
-			p.advance()
+			p.eat()
 		}
 
 		p.expect(lexer.FUNCTION_TOKEN)

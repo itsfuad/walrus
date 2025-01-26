@@ -35,7 +35,7 @@ func parseMapType(p *Parser) ast.DataType {
 	var mapToken lexer.Token
 
 	if p.currentTokenKind() == lexer.MAP_TOKEN {
-		mapToken = p.advance()
+		mapToken = p.eat()
 	} else {
 		//we expect an identifier
 		mapToken = p.expectError(lexer.IDENTIFIER_TOKEN, errors.New("expected 'map' keyword or the map type"))
@@ -85,7 +85,7 @@ func parseMapType(p *Parser) ast.DataType {
 
 func parseFunctionType(p *Parser) ast.DataType {
 
-	start := p.advance().Start // eat function token
+	start := p.eat().Start // eat function token
 
 	typeName, params, returnType := getFunctionTypeSignature(p)
 
@@ -102,7 +102,6 @@ func parseFunctionType(p *Parser) ast.DataType {
 	}
 }
 
-
 func getFunctionTypeSignature(p *Parser) (builtins.PARSER_TYPE, []ast.FunctionTypeParam, ast.DataType) {
 	p.expect(lexer.OPEN_PAREN)
 	var params []ast.FunctionTypeParam
@@ -115,7 +114,7 @@ func getFunctionTypeSignature(p *Parser) (builtins.PARSER_TYPE, []ast.FunctionTy
 			report.Add(p.FilePath, curentToken.Start.Line, curentToken.End.Line, curentToken.Start.Column, curentToken.End.Column, "expected : or ?:").Level(report.SYNTAX_ERROR)
 		}
 
-		isOptional := p.advance().Kind == lexer.OPTIONAL_TOKEN
+		isOptional := p.eat().Kind == lexer.OPTIONAL_TOKEN
 
 		typeName := parseType(p, DEFAULT_BP)
 
@@ -145,7 +144,7 @@ func getFunctionTypeSignature(p *Parser) (builtins.PARSER_TYPE, []ast.FunctionTy
 	var returnType ast.DataType
 
 	if p.currentTokenKind() == lexer.ARROW_TOKEN {
-		p.advance()
+		p.eat()
 		returnType = parseType(p, DEFAULT_BP)
 	} else {
 		returnType = ast.VoidType{
@@ -165,7 +164,7 @@ func getFunctionTypeSignature(p *Parser) (builtins.PARSER_TYPE, []ast.FunctionTy
 // Type must be a single token identifier
 func parseDataType(p *Parser) ast.DataType {
 
-	identifier := p.advance()
+	identifier := p.eat()
 
 	switch identifier.Kind {
 	case lexer.IDENTIFIER_TOKEN:
@@ -221,10 +220,9 @@ func parseDataType(p *Parser) ast.DataType {
 	}
 }
 
-
 func parseArrayType(p *Parser) ast.DataType {
 
-	p.advance()
+	p.eat()
 	p.expect(lexer.CLOSE_BRACKET)
 
 	elemType := parseType(p, DEFAULT_BP)
@@ -252,7 +250,7 @@ func parseType(p *Parser, bp BINDING_POWER) ast.DataType {
 		} else {
 			tokStr = fmt.Sprintf("token '%s'", tokenKind)
 		}
-		report.Add(p.FilePath, p.currentToken().Start.Line, p.currentToken().End.Line, p.currentToken().Start.Column, p.currentToken().End.Column, fmt.Sprintf("unexpected %s\n", tokStr)).Level(report.SYNTAX_ERROR)
+		report.Add(p.FilePath, p.currentToken().Start.Line, p.currentToken().End.Line, p.currentToken().Start.Column, p.currentToken().End.Column, fmt.Sprintf("%s cannot be used as type\n", tokStr)).Level(report.SYNTAX_ERROR)
 		return nil
 	}
 
@@ -274,7 +272,7 @@ func parseType(p *Parser, bp BINDING_POWER) ast.DataType {
 	return left
 }
 
-func parseUDTType(p *Parser) ast.DataType {
+func parseTypeDefinition(p *Parser) ast.DataType {
 	switch v := p.currentToken().Value; builtins.TOKEN_KIND(v) {
 	case builtins.STRUCT:
 		return parseStructType(p)
@@ -305,7 +303,7 @@ func parseUDTType(p *Parser) ast.DataType {
 // - If the struct is empty, an error is generated and displayed.
 func parseStructType(p *Parser) ast.DataType {
 
-	identifier := p.advance() // eat struct token
+	identifier := p.eat() // eat struct token
 
 	props := make([]ast.StructPropType, 0)
 
@@ -317,7 +315,7 @@ func parseStructType(p *Parser) ast.DataType {
 
 		if p.currentTokenKind() == lexer.PRIVATE_TOKEN {
 			isPrivate = true
-			p.advance()
+			p.eat()
 		}
 
 		iden := p.expect(lexer.IDENTIFIER_TOKEN)
@@ -365,7 +363,7 @@ func parseStructType(p *Parser) ast.DataType {
 
 func parseInterfaceType(p *Parser) ast.DataType {
 
-	start := p.advance().Start
+	start := p.eat().Start
 
 	p.expect(lexer.OPEN_CURLY)
 
@@ -403,7 +401,7 @@ func parseInterfaceType(p *Parser) ast.DataType {
 		})
 
 		if p.currentTokenKind() != lexer.CLOSE_CURLY {
-			p.expectError(lexer.COMMA_TOKEN, errors.New("expected , between method definitions\n" + report.TreeFormatString("no end of interface definition found")))
+			p.expectError(lexer.COMMA_TOKEN, errors.New("expected , between method definitions\n"+report.TreeFormatString("no end of interface definition found")))
 		}
 	}
 
