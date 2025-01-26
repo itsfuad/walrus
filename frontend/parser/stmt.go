@@ -7,11 +7,11 @@ import (
 
 func parseUserDefinedTypes(p *Parser) ast.Node {
 
-	start := p.advance().Start //eat type token
+	start := p.eat().Start //eat type token
 
 	typeName := p.expect(lexer.IDENTIFIER_TOKEN)
 
-	udType := parseUDTType(p)
+	udType := parseTypeDefinition(p)
 
 	p.expect(lexer.SEMI_COLON_TOKEN)
 
@@ -74,7 +74,7 @@ func parseBlock(p *Parser) ast.BlockStmt {
 //   - An ast.Node representing the return statement.
 func parseReturnStmt(p *Parser) ast.Node {
 
-	start := p.advance().Start // eat return token
+	start := p.eat().Start // eat return token
 
 	var value ast.Node
 

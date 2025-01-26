@@ -32,3 +32,11 @@ let userMap2 := UserMap {
     "John" => 25 
     "Doe" => 30
 };
+
+let iperson: struct {
+    name: str,
+    age: i32
+} = struct {
+    name: "John",
+    age: 25
+};

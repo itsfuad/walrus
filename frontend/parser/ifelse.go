@@ -23,7 +23,7 @@ import (
 // - An AST node representing the parsed if statement.
 func parseIfStmt(p *Parser) ast.Node {
 
-	start := p.advance().Start // eat if token
+	start := p.eat().Start // eat if token
 
 	condition := parseExpr(p, ASSIGNMENT_BP)
 
@@ -33,7 +33,7 @@ func parseIfStmt(p *Parser) ast.Node {
 	var alternate ast.Node
 
 	if p.hasToken() && p.currentTokenKind() == lexer.ELSE_TOKEN {
-		p.advance() // eat else token
+		p.eat() // eat else token
 		if p.hasToken() && p.currentTokenKind() == lexer.IF_TOKEN {
 			alternate = parseIfStmt(p)
 		} else {

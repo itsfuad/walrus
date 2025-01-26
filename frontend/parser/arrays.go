@@ -18,7 +18,7 @@ import (
 //   - ast.Node: An AST node representing the parsed array expression.
 func parseArrayExpr(p *Parser) ast.Node {
 
-	start := p.advance().Start //eat the [ token
+	start := p.eat().Start //eat the [ token
 
 	var values []ast.Node
 

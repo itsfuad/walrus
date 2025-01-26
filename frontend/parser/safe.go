@@ -29,7 +29,7 @@ import (
 func parseSafeStmt(p *Parser) ast.Node {
 	// safe block
 
-	start := p.advance().Start // eat safe token
+	start := p.eat().Start // eat safe token
 
 	varName := p.expect(lexer.IDENTIFIER_TOKEN)
 
