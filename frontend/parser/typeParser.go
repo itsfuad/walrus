@@ -401,7 +401,7 @@ func parseInterfaceType(p *Parser) ast.DataType {
 		})
 
 		if p.currentTokenKind() != lexer.CLOSE_CURLY {
-			p.expectError(lexer.COMMA_TOKEN, errors.New("expected , between method definitions\n"+report.TreeFormatString("no end of interface definition found")))
+			p.expect(lexer.COMMA_TOKEN)
 		}
 	}
 
