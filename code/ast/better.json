@@ -816,19 +816,97 @@
             }
         },
         {
+            "Identifier": {
+                "Name": "toStr",
+                "Start": {
+                    "Line": 31,
+                    "Column": 4,
+                    "Index": 424
+                },
+                "End": {
+                    "Line": 31,
+                    "Column": 9,
+                    "Index": 429
+                }
+            },
+            "Params": null,
+            "Body": {
+                "Contents": [
+                    {
+                        "Value": {
+                            "Value": "UserMap",
+                            "Start": {
+                                "Line": 32,
+                                "Column": 9,
+                                "Index": 450
+                            },
+                            "End": {
+                                "Line": 32,
+                                "Column": 18,
+                                "Index": 459
+                            }
+                        },
+                        "Start": {
+                            "Line": 32,
+                            "Column": 5,
+                            "Index": 446
+                        },
+                        "End": {
+                            "Line": 32,
+                            "Column": 19,
+                            "Index": 460
+                        }
+                    }
+                ],
+                "Start": {
+                    "Line": 31,
+                    "Column": 19,
+                    "Index": 439
+                },
+                "End": {
+                    "Line": 33,
+                    "Column": 2,
+                    "Index": 463
+                }
+            },
+            "ReturnType": {
+                "TypeName": "str",
+                "Start": {
+                    "Line": 31,
+                    "Column": 15,
+                    "Index": 435
+                },
+                "End": {
+                    "Line": 31,
+                    "Column": 18,
+                    "Index": 438
+                }
+            },
+            "Start": {
+                "Line": 31,
+                "Column": 1,
+                "Index": 421
+            },
+            "End": {
+                "Line": 33,
+                "Column": 2,
+                "Index": 463
+            }
+        },
+        {
             "Variables": [
                 {
                     "Identifier": {
                         "Name": "userMap2",
                         "Start": {
-                            "Line": 31,
+                            "Line": 35,
                             "Column": 5,
-                            "Index": 425
+                            "Index": 471
                         },
                         "End": {
-                            "Line": 31,
+                            "Line": 35,
                             "Column": 13,
-                            "Index": 433
+                            "Index": 479
                         }
                     },
                     "Value": {
@@ -836,14 +914,14 @@
                         "Map": {
                             "Name": "UserMap",
                             "Start": {
-                                "Line": 31,
+                                "Line": 35,
                                 "Column": 17,
-                                "Index": 437
+                                "Index": 483
                             },
                             "End": {
-                                "Line": 31,
+                                "Line": 35,
                                 "Column": 24,
-                                "Index": 444
+                                "Index": 490
                             }
                         },
                         "KeyType": null,
@@ -853,14 +931,14 @@
                                 "Key": {
                                     "Value": "John",
                                     "Start": {
-                                        "Line": 32,
+                                        "Line": 36,
                                         "Column": 5,
-                                        "Index": 452
+                                        "Index": 498
                                     },
                                     "End": {
-                                        "Line": 32,
+                                        "Line": 36,
                                         "Column": 11,
-                                        "Index": 458
+                                        "Index": 504
                                     }
                                 },
                                 "Value": {
@@ -868,14 +946,14 @@
                                     "BitSize": 32,
                                     "IsSigned": true,
                                     "Start": {
-                                        "Line": 32,
+                                        "Line": 36,
                                         "Column": 15,
-                                        "Index": 462
+                                        "Index": 508
                                     },
                                     "End": {
-                                        "Line": 32,
+                                        "Line": 36,
                                         "Column": 17,
-                                        "Index": 464
+                                        "Index": 510
                                     }
                                 }
                             },
@@ -883,14 +961,14 @@
                                 "Key": {
                                     "Value": "Doe",
                                     "Start": {
-                                        "Line": 33,
+                                        "Line": 37,
                                         "Column": 5,
-                                        "Index": 471
+                                        "Index": 517
                                     },
                                     "End": {
-                                        "Line": 33,
+                                        "Line": 37,
                                         "Column": 10,
-                                        "Index": 476
+                                        "Index": 522
                                     }
                                 },
                                 "Value": {
@@ -898,52 +976,95 @@
                                     "BitSize": 32,
                                     "IsSigned": true,
                                     "Start": {
-                                        "Line": 33,
+                                        "Line": 37,
                                         "Column": 14,
-                                        "Index": 480
+                                        "Index": 526
                                     },
                                     "End": {
-                                        "Line": 33,
+                                        "Line": 37,
                                         "Column": 16,
-                                        "Index": 482
+                                        "Index": 528
+                                    }
+                                }
+                            },
+                            {
+                                "Key": {
+                                    "Caller": {
+                                        "Name": "toStr",
+                                        "Start": {
+                                            "Line": 38,
+                                            "Column": 5,
+                                            "Index": 535
+                                        },
+                                        "End": {
+                                            "Line": 38,
+                                            "Column": 10,
+                                            "Index": 540
+                                        }
+                                    },
+                                    "Arguments": null,
+                                    "Start": {
+                                        "Line": 38,
+                                        "Column": 5,
+                                        "Index": 535
+                                    },
+                                    "End": {
+                                        "Line": 38,
+                                        "Column": 12,
+                                        "Index": 542
+                                    }
+                                },
+                                "Value": {
+                                    "Value": "0",
+                                    "BitSize": 32,
+                                    "IsSigned": true,
+                                    "Start": {
+                                        "Line": 38,
+                                        "Column": 16,
+                                        "Index": 546
+                                    },
+                                    "End": {
+                                        "Line": 38,
+                                        "Column": 17,
+                                        "Index": 547
                                     }
                                 }
                             }
                         ],
                         "Start": {
-                            "Line": 31,
+                            "Line": 35,
                             "Column": 17,
-                            "Index": 437
+                            "Index": 483
                         },
                         "End": {
-                            "Line": 34,
+                            "Line": 39,
                             "Column": 2,
-                            "Index": 485
+                            "Index": 550
                         }
                     },
                     "ExplicitType": null,
                     "Start": {
-                        "Line": 31,
+                        "Line": 35,
                         "Column": 5,
-                        "Index": 425
+                        "Index": 471
                     },
                     "End": {
-                        "Line": 34,
+                        "Line": 39,
                         "Column": 2,
-                        "Index": 485
+                        "Index": 550
                     }
                 }
             ],
             "IsConst": false,
             "Start": {
-                "Line": 31,
+                "Line": 35,
                 "Column": 1,
-                "Index": 421
+                "Index": 467
             },
             "End": {
-                "Line": 34,
+                "Line": 39,
                 "Column": 3,
-                "Index": 486
+                "Index": 551
             }
         }
     ],
