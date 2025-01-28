@@ -3,6 +3,7 @@ package parser
 import (
 	//Standard packages
 	"encoding/json"
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -24,6 +25,9 @@ type Parser struct {
 }
 
 func (p *Parser) currentToken() lexer.Token {
+	if p.index >= len(p.tokens) {
+		return lexer.Token{} // for safety
+	}
 	return p.tokens[p.index]
 }
 
@@ -35,10 +39,15 @@ func (p *Parser) hasToken() bool {
 	return p.index < len(p.tokens) && p.currentTokenKind() != lexer.EOF_TOKEN
 }
 
-func (p *Parser) advance() lexer.Token {
+func (p *Parser) eat() lexer.Token {
 	token := p.currentToken()
 	p.index++
 	return token
+}
+
+// rollback by N tokens
+func (p *Parser) rollback(n int) {
+	p.index -= n
 }
 
 func (p *Parser) expectError(expectedKind builtins.TOKEN_KIND, err error) lexer.Token {
@@ -61,7 +70,7 @@ func (p *Parser) expectError(expectedKind builtins.TOKEN_KIND, err error) lexer.
 			report.Add(p.FilePath, start.Line, end.Line, start.Column, end.Column, msg).Level(report.SYNTAX_ERROR)
 		}
 	}
-	return p.advance()
+	return p.eat()
 }
 
 func (p *Parser) expect(expectedKind builtins.TOKEN_KIND) lexer.Token {
@@ -73,6 +82,8 @@ type I interface {
 }
 
 func parseNode(p *Parser) ast.Node {
+
+	fmt.Printf("Parsing node %s\n", p.currentToken().Value)
 	// can be a statement or an expression
 	stmt_fn, exists := STMTLookup[p.currentTokenKind()]
 
@@ -83,7 +94,7 @@ func parseNode(p *Parser) ast.Node {
 	// if not a statement, then it must be an expression
 	expr := parseExpr(p, DEFAULT_BP)
 
-	p.expect(lexer.SEMI_COLON_TOKEN)
+	p.expectError(lexer.SEMI_COLON_TOKEN, errors.New("expected a semicolon at the end of statement"))
 
 	return expr
 }

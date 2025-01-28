@@ -24,7 +24,7 @@ import (
 // - An ast.Node representing the parsed 'for' statement.
 // - If the syntax is invalid, it generates an error and returns nil.
 func parseForStmt(p *Parser) ast.Node {
-	loopType := p.advance() // advance past the 'for|foreach' keyword
+	loopType := p.eat() // advance past the 'for|foreach' keyword
 
 	if loopType.Kind == lexer.FOR_TOKEN {
 		// empty loop is an infinite loop for {} | detection method: no expressions are present
@@ -83,7 +83,7 @@ func parseForStmt(p *Parser) ast.Node {
 		var first, second ast.Node
 		first = parseExpr(p, ASSIGNMENT_BP)
 		if p.currentTokenKind() == lexer.COMMA_TOKEN {
-			p.advance()
+			p.eat()
 			second = parseExpr(p, ASSIGNMENT_BP)
 		} else {
 			second = first

@@ -45,7 +45,6 @@ type TypeEnvironment struct {
 	variables  map[string]Tc
 	constants  map[string]bool
 	isOptional map[string]bool
-	interfaces map[string]Interface
 	filePath   string
 }
 
@@ -79,7 +78,6 @@ func NewTypeENV(parent *TypeEnvironment, scope SCOPE_TYPE, scopeName string, fil
 		variables:  make(map[string]Tc),
 		constants:  make(map[string]bool),
 		isOptional: make(map[string]bool),
-		interfaces: make(map[string]Interface),
 	}
 }
 

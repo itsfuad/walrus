@@ -66,7 +66,7 @@ func parsePrimaryExpr(p *Parser) ast.Node {
 
 	endpos := p.currentToken().End
 
-	primaryToken := p.advance()
+	primaryToken := p.eat()
 
 	rawValue := primaryToken.Value
 
@@ -74,6 +74,8 @@ func parsePrimaryExpr(p *Parser) ast.Node {
 		Start: startpos,
 		End:   endpos,
 	}
+
+	fmt.Printf("parsePrimaryExpr: %s\n", primaryToken.Value)
 
 	switch primaryToken.Kind {
 	case lexer.INT8_TOKEN, lexer.INT16_TOKEN, lexer.INT32_TOKEN, lexer.INT64_TOKEN, lexer.UINT8_TOKEN, lexer.UINT16_TOKEN, lexer.UINT32_TOKEN, lexer.UINT64_TOKEN:
@@ -97,6 +99,12 @@ func parsePrimaryExpr(p *Parser) ast.Node {
 			Location: loc,
 		}
 	case lexer.IDENTIFIER_TOKEN:
+
+		if p.currentToken().Kind == lexer.OPEN_CURLY { // might be map or struct in aliased form
+			p.rollback(1)
+			return parseCompositeLiteral(p)
+		}
+
 		return ast.IdentifierExpr{
 			Name:     rawValue,
 			Location: loc,
@@ -107,6 +115,37 @@ func parsePrimaryExpr(p *Parser) ast.Node {
 	}
 
 	return nil
+}
+
+func parseCompositeLiteral(p *Parser) ast.Node {
+
+	currentIndex := p.index
+
+	// name of the type
+	p.eat() // n = 1
+
+	//parse the opening curly brace
+	p.eat() // n = 2
+
+	//parse the first pair
+	parseExpr(p, DEFAULT_BP) // the expression consumes how many tokens, we don't know. So we have to get that
+
+	separator := p.eat()
+
+	rollbackPos := p.index - currentIndex
+
+	p.rollback(rollbackPos)
+
+	switch separator.Kind {
+	case lexer.FAT_ARROW_TOKEN:
+		return parseMapLiteral(p)
+	case lexer.COLON_TOKEN:
+		return parseStructLiteral(p)
+	default:
+		msg := fmt.Sprintf("unexpected token %s\n", separator.Value)
+		report.Add(p.FilePath, separator.Start.Line, separator.End.Line, separator.Start.Column, separator.End.Column, msg).Level(report.SYNTAX_ERROR)
+		return nil
+	}
 }
 
 // parseGroupingExpr parses a grouping expression enclosed in parentheses.
@@ -144,7 +183,7 @@ func parsePostfixExpr(p *Parser, left ast.Node, bp BINDING_POWER) ast.Node {
 	if _, ok := left.(ast.IdentifierExpr); !ok {
 		report.Add(p.FilePath, left.StartPos().Line, left.EndPos().Line, left.StartPos().Column, left.EndPos().Column, "only identifiers can be incremented or decremented").Level(report.SYNTAX_ERROR)
 	}
-	operator := p.advance()
+	operator := p.eat()
 	return ast.PostfixExpr{
 		Operator: operator,
 		Argument: left.(ast.IdentifierExpr),
@@ -169,7 +208,7 @@ func parsePostfixExpr(p *Parser, left ast.Node, bp BINDING_POWER) ast.Node {
 //     prefix expression.
 func parsePrefixExpr(p *Parser) ast.Node {
 	start := p.currentToken().Start
-	operator := p.advance()
+	operator := p.eat()
 	argument := p.expect(lexer.IDENTIFIER_TOKEN)
 	return ast.PrefixExpr{
 		OP: operator,
@@ -202,7 +241,7 @@ func parseUnaryExpr(p *Parser) ast.Node {
 
 	start := p.currentToken().Start
 
-	operator := p.advance()
+	operator := p.eat()
 
 	switch operator.Kind {
 	case lexer.MINUS_TOKEN, lexer.NOT_TOKEN:
@@ -236,7 +275,7 @@ func parseUnaryExpr(p *Parser) ast.Node {
 //   - An AST node representing the binary expression.
 func parseBinaryExpr(p *Parser, left ast.Node, bp BINDING_POWER) ast.Node {
 
-	op := p.advance()
+	op := p.eat()
 
 	right := parseExpr(p, bp)
 
@@ -252,13 +291,13 @@ func parseBinaryExpr(p *Parser, left ast.Node, bp BINDING_POWER) ast.Node {
 }
 
 func parseTypeofExpr(p *Parser) ast.Node {
-	start := p.advance().Start
+	start := p.eat().Start
 	expr := parseExpr(p, DEFAULT_BP)
 	return ast.TypeofExpr{
 		Expression: expr,
 		Location: ast.Location{
 			Start: start,
-			End: expr.EndPos(),
+			End:   expr.EndPos(),
 		},
 	}
 }

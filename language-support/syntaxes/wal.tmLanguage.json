@@ -539,7 +539,7 @@
                 {
                     "comment": "other keywords",
                     "name": "keyword.other.wal",
-                    "match": "\\b(async|in|priv|pub|readonly|typeof|union|import|package|export|from|interface|impl|method|with|this|extend|ret|mod|embed|override|returns)\\b"
+                    "match": "\\b(async|in|priv|pub|readonly|typeof|union|import|package|export|from|interface|impl|method|with|this|extend|ret|mod|embed|override|returns|alias)\\b"
                 },
                 {
                     "comment": "fn",

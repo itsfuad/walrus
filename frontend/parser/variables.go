@@ -36,7 +36,7 @@ func parseVarDeclStmt(p *Parser) ast.Node {
 	// 	const a: i32 = 10, b: f32 = 20, c : bool;
 
 	// advance the let/const keyword
-	declToken := p.advance()
+	declToken := p.eat()
 
 	// is it let or const?
 	isConst := declToken.Kind == lexer.CONST_TOKEN
@@ -52,7 +52,7 @@ func parseVarDeclStmt(p *Parser) ast.Node {
 
 		var value ast.Node
 
-		assignmentToken := p.advance()
+		assignmentToken := p.eat()
 
 		if assignmentToken.Kind == lexer.COLON_TOKEN {
 			explicitType = parseType(p, DEFAULT_BP)
@@ -128,7 +128,7 @@ func parseVarDeclStmt(p *Parser) ast.Node {
 //   - ast.Node - The parsed variable assignment expression node.
 func parseVarAssignmentExpr(p *Parser, left ast.Node, bp BINDING_POWER) ast.Node {
 
-	operator := p.advance()
+	operator := p.eat()
 
 	right := parseExpr(p, bp)
 

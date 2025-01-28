@@ -9,3 +9,32 @@ print(logger); //from logger.wal file
 print(utils::formatter); //from formatter.wal file
 
 print(utils::printer); //from printer.wal file
+
+struct Person {
+    name: str;
+    age: i32;
+}
+
+let person : Person = Person {
+    name: "John",
+    age: 25
+};
+
+alias PersonType Person;
+
+let person2 := PersonType {
+    name: "Doe",
+    age: 30
+};
+
+let userMap : map[str]i32 = map[str]i32 {
+    "John" => 25,
+    "Doe" => 30
+};
+
+alias UserMap map[str]i32;
+
+let userMap2 := UserMap {
+    "John" => 25 
+    "Doe" => 30
+};

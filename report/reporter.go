@@ -119,7 +119,7 @@ func makeParts(r *Report) (snippet, underline string, hLen int) {
 	}
 
 	lineNumber := fmt.Sprintf("%d | ", r.lineStart)
-	snippet = utils.GREY.Sprint(lineNumber) + fmt.Sprintln(line)
+	snippet = utils.GREY.Sprint(lineNumber) + line + "\n"
 	underline = fmt.Sprintf("%s^%s\n", strings.Repeat(" ", (r.colStart-1)+len(lineNumber)), strings.Repeat("~", hLen))
 
 	return snippet, underline, hLen

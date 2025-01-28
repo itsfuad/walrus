@@ -28,39 +28,14 @@ func bindTypeLookups() {
 	typeNUD(lexer.OPEN_BRACKET, parseArrayType)
 	typeNUD(lexer.FUNCTION_TOKEN, parseFunctionType)
 	typeNUD(lexer.MAP_TOKEN, parseMapType)
-	typeNUD(lexer.MAYBE_TOKEN, parseMaybeType)
-}
-
-func parseMaybeType(p *Parser) ast.DataType {
-	start := p.advance().Start
-
-	p.expect(lexer.OPEN_CURLY)
-
-	dataType := parseType(p, DEFAULT_BP)
-
-	end := p.expect(lexer.CLOSE_CURLY).End
-
-	return ast.MaybeType{
-		TypeName:  builtins.PARSER_TYPE(builtins.MAYBE),
-		MaybeType: dataType,
-		Location: ast.Location{
-			Start: start,
-			End:   end,
-		},
-	}
 }
 
 func parseMapType(p *Parser) ast.DataType {
 
-	// map[<keyType>]<valueType>
-	// or
-	// type UserDefinedType map[<keyType>]<valueType>
-	// UserDefinedType
-
 	var mapToken lexer.Token
 
 	if p.currentTokenKind() == lexer.MAP_TOKEN {
-		mapToken = p.advance()
+		mapToken = p.eat()
 	} else {
 		//we expect an identifier
 		mapToken = p.expectError(lexer.IDENTIFIER_TOKEN, errors.New("expected 'map' keyword or the map type"))
@@ -110,7 +85,7 @@ func parseMapType(p *Parser) ast.DataType {
 
 func parseFunctionType(p *Parser) ast.DataType {
 
-	start := p.advance().Start // eat function token
+	start := p.eat().Start // eat function token
 
 	typeName, params, returnType := getFunctionTypeSignature(p)
 
@@ -127,13 +102,6 @@ func parseFunctionType(p *Parser) ast.DataType {
 	}
 }
 
-//parseType is the entry point for parsing types
-/*
-Returns
- - ast.DataType : The parsed type
- - []ast.FunctionTypeParam : The parameters of the function type
- - ast.DataType : The return type of the function type
-*/
 func getFunctionTypeSignature(p *Parser) (builtins.PARSER_TYPE, []ast.FunctionTypeParam, ast.DataType) {
 	p.expect(lexer.OPEN_PAREN)
 	var params []ast.FunctionTypeParam
@@ -146,7 +114,7 @@ func getFunctionTypeSignature(p *Parser) (builtins.PARSER_TYPE, []ast.FunctionTy
 			report.Add(p.FilePath, curentToken.Start.Line, curentToken.End.Line, curentToken.Start.Column, curentToken.End.Column, "expected : or ?:").Level(report.SYNTAX_ERROR)
 		}
 
-		isOptional := p.advance().Kind == lexer.OPTIONAL_TOKEN
+		isOptional := p.eat().Kind == lexer.OPTIONAL_TOKEN
 
 		typeName := parseType(p, DEFAULT_BP)
 
@@ -176,7 +144,7 @@ func getFunctionTypeSignature(p *Parser) (builtins.PARSER_TYPE, []ast.FunctionTy
 	var returnType ast.DataType
 
 	if p.currentTokenKind() == lexer.ARROW_TOKEN {
-		p.advance()
+		p.eat()
 		returnType = parseType(p, DEFAULT_BP)
 	} else {
 		returnType = ast.VoidType{
@@ -196,7 +164,7 @@ func getFunctionTypeSignature(p *Parser) (builtins.PARSER_TYPE, []ast.FunctionTy
 // Type must be a single token identifier
 func parseDataType(p *Parser) ast.DataType {
 
-	identifier := p.advance()
+	identifier := p.eat()
 
 	switch identifier.Kind {
 	case lexer.IDENTIFIER_TOKEN:
@@ -206,6 +174,8 @@ func parseDataType(p *Parser) ast.DataType {
 	}
 
 	value := identifier.Value
+
+	fmt.Printf("Parsing data type %s\n", value)
 
 	loc := ast.Location{
 		Start: identifier.Start,
@@ -250,20 +220,9 @@ func parseDataType(p *Parser) ast.DataType {
 	}
 }
 
-// parseArrayType parses an array type from the input and returns an ast.DataType
-// representing the array type.
-//
-// The function expects the parser to be positioned at the opening bracket of the array type.
-// It advances the parser, expects a closing bracket, and then parses the element type of the array.
-//
-// Parameters:
-// - p: A pointer to the Parser instance.
-//
-// Returns:
-// - ast.DataType: An instance of ast.ArrayType representing the parsed array type.
 func parseArrayType(p *Parser) ast.DataType {
 
-	p.advance()
+	p.eat()
 	p.expect(lexer.CLOSE_BRACKET)
 
 	elemType := parseType(p, DEFAULT_BP)
@@ -278,18 +237,6 @@ func parseArrayType(p *Parser) ast.DataType {
 	}
 }
 
-// parseType parses a data type from the given parser instance, respecting the specified binding power.
-// It first attempts to parse a null denotation (NUD) based on the current token kind.
-// If no NUD handler is found for the token, it generates an error with hints and displays it.
-// If a NUD handler is found, it proceeds to parse left denotations (LED) while the binding power of the current token kind is greater than the specified binding power.
-// The function returns the parsed data type.
-//
-// Parameters:
-// - p: A pointer to the Parser instance from which to parse the data type.
-// - bp: The binding power to respect during parsing.
-//
-// Returns:
-// - An ast.DataType representing the parsed data type, or nil if an error occurs.
 func parseType(p *Parser, bp BINDING_POWER) ast.DataType {
 	// Fist parse the NUD
 	tokenKind := p.currentTokenKind()
@@ -303,7 +250,7 @@ func parseType(p *Parser, bp BINDING_POWER) ast.DataType {
 		} else {
 			tokStr = fmt.Sprintf("token '%s'", tokenKind)
 		}
-		report.Add(p.FilePath, p.currentToken().Start.Line, p.currentToken().End.Line, p.currentToken().Start.Column, p.currentToken().End.Column, fmt.Sprintf("unexpected %s\n", tokStr)).Level(report.SYNTAX_ERROR)
+		report.Add(p.FilePath, p.currentToken().Start.Line, p.currentToken().End.Line, p.currentToken().Start.Column, p.currentToken().End.Column, fmt.Sprintf("%s cannot be used as type\n", tokStr)).Level(report.SYNTAX_ERROR)
 		return nil
 	}
 
@@ -325,17 +272,7 @@ func parseType(p *Parser, bp BINDING_POWER) ast.DataType {
 	return left
 }
 
-/*
-Used to parse type for the type declaration with type keyword
-
-Example:
-
-	type MyType struct {
-		x: int,
-		y: float,
-	};
-*/
-func parseUDTType(p *Parser) ast.DataType {
+func parseTypeDefinition(p *Parser) ast.DataType {
 	switch v := p.currentToken().Value; builtins.TOKEN_KIND(v) {
 	case builtins.STRUCT:
 		return parseStructType(p)
@@ -366,7 +303,7 @@ func parseUDTType(p *Parser) ast.DataType {
 // - If the struct is empty, an error is generated and displayed.
 func parseStructType(p *Parser) ast.DataType {
 
-	identifier := p.advance() // eat struct token
+	identifier := p.eat() // eat struct token
 
 	props := make([]ast.StructPropType, 0)
 
@@ -378,7 +315,7 @@ func parseStructType(p *Parser) ast.DataType {
 
 		if p.currentTokenKind() == lexer.PRIVATE_TOKEN {
 			isPrivate = true
-			p.advance()
+			p.eat()
 		}
 
 		iden := p.expect(lexer.IDENTIFIER_TOKEN)
@@ -426,7 +363,7 @@ func parseStructType(p *Parser) ast.DataType {
 
 func parseInterfaceType(p *Parser) ast.DataType {
 
-	start := p.advance().Start
+	start := p.eat().Start
 
 	p.expect(lexer.OPEN_CURLY)
 
@@ -464,7 +401,7 @@ func parseInterfaceType(p *Parser) ast.DataType {
 		})
 
 		if p.currentTokenKind() != lexer.CLOSE_CURLY {
-			p.expect(lexer.SEMI_COLON_TOKEN)
+			p.expect(lexer.COMMA_TOKEN)
 		}
 	}
 

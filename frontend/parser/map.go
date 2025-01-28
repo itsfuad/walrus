@@ -7,7 +7,7 @@ import (
 
 func parseMapLiteral(p *Parser) ast.Node {
 
-	p.expect(lexer.DOLLAR_TOKEN)
+	//p.expect(lexer.DOLLAR_TOKEN)
 	mapType := parseMapType(p)
 	//parse the opening curly brace
 	p.expect(lexer.OPEN_CURLY)
@@ -30,7 +30,7 @@ func parseMapLiteral(p *Parser) ast.Node {
 
 		values = append(values, prop)
 
-		if p.currentTokenKind() == lexer.COMMA_TOKEN {
+		if p.currentTokenKind() != lexer.CLOSE_CURLY {
 			p.expect(lexer.COMMA_TOKEN)
 		}
 	}

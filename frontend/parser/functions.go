@@ -22,7 +22,7 @@ import (
 // - ast.Node: An AST node representing the parsed lambda function expression, including its parameters, return type, body, and location.
 func parseLambdaFunction(p *Parser) ast.Node {
 	//annonymous function
-	start := p.advance().Start // eat fn token
+	start := p.eat().Start // eat fn token
 
 	params, returnType := parseFunctionSignature(p)
 
@@ -55,7 +55,7 @@ func parseLambdaFunction(p *Parser) ast.Node {
 //     the function's identifier, parameters, return type, and body block.
 func parseFunctionDeclStmt(p *Parser) ast.Node {
 
-	start := p.advance().Start // eat fn token
+	start := p.eat().Start // eat fn token
 
 	nameToken := p.expect(lexer.IDENTIFIER_TOKEN)
 
@@ -117,7 +117,7 @@ func parseFunctionSignature(p *Parser) ([]ast.FunctionParam, ast.DataType) {
 			report.Add(p.FilePath, currentToken.Start.Line, currentToken.End.Line, currentToken.Start.Column, currentToken.End.Column, "expected : or ?:").Level(report.SYNTAX_ERROR)
 		}
 
-		p.advance()
+		p.eat()
 
 		isOptional := currentToken.Kind == lexer.OPTIONAL_TOKEN
 
@@ -173,7 +173,7 @@ func parseFunctionSignature(p *Parser) ([]ast.FunctionParam, ast.DataType) {
 //     caller, arguments, and their location in the source code.
 func parseCallExpr(p *Parser, left ast.Node, bp BINDING_POWER) ast.Node {
 
-	p.advance() //eat the open paren
+	p.eat() //eat the open paren
 	startPos := left.StartPos()
 	var args []ast.Node
 	// parse the arguments

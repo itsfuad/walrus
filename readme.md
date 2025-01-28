@@ -182,7 +182,7 @@ c[0][0] = 10; // c = [[10, 2], [3, 4], [5, 6]]
 
 ## Map
 ```rs
-let myMap : map[str]i32 = $map[str]i32 {
+let myMap : map[str]i32 = map[str]i32 {
     "a" => 10,
     "b" => 20,
     "c" => 30
@@ -220,13 +220,13 @@ type Person struct{
 }
 
 //Assign the type with @Name syntax. So we can distinguish between type and variable.
-let p := @Person {
+let p := Person {
     name: "John",
     age: 20
 };
 
 // We could also assign the type with type inference
-let p : Person = @Person { // Here 'Person' is the type, @Person is the type instance
+let p : Person = Person { // Here 'Person' is the type, @Person is the type instance
     name: "John",
     age: 20
 };
@@ -234,7 +234,7 @@ let p : Person = @Person { // Here 'Person' is the type, @Person is the type ins
 
 ## Struct property access
 ```rs
-let p := @Person {
+let p := Person {
     name: "John",
     priv age: 20 // Private property
 };
@@ -317,7 +317,7 @@ type FnType fn(a: i32, b: i32) -> i32;
 
 type WrapperInt i32;
 
-let c := @Circle {
+let c := Circle {
     radius: 10.0
 };
 
@@ -394,7 +394,7 @@ impl Person {
     }
 }
 
-let p := @Person {
+let p := Person {
     name: "John",
     age: 20
 };
