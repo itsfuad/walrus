@@ -15,7 +15,7 @@ import (
 
 func main() {
 
-	fileName := "better"
+	fileName := "userTypes"
 	folder := "code"
 	filePath := fmt.Sprintf("%s/%s.wal", folder, fileName)
 	tokens := lexer.Tokenize(filePath, true)
