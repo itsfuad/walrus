@@ -26,17 +26,14 @@ let userMap : map[str]i32 = map[str]i32 {
     "Doe" => 30
 };
 
-type UserMap map[str]i32;
+type UserSalary map[str]i32;
 
-let userMap2 := UserMap {
-    "John" => 25 
-    "Doe" => 30
-};
+fn getAdmin() -> str {
+    ret "Admin";
+}
 
-let iperson: struct {
-    name: str,
-    age: i32
-} = struct {
-    name: "John",
-    age: 25
+let userMap2 := UserSalary {
+    "John" => 25,
+    "Doe" => 30,
+    getAdmin() => 40,
 };

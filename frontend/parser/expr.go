@@ -119,20 +119,22 @@ func parsePrimaryExpr(p *Parser) ast.Node {
 
 func parseCompositeLiteral(p *Parser) ast.Node {
 
+	currentIndex := p.index
+
 	// name of the type
 	p.eat() // n = 1
 
 	//parse the opening curly brace
 	p.eat() // n = 2
 
-	//parse the values
-
 	//parse the first pair
-	parseExpr(p, DEFAULT_BP) // n = 3
+	parseExpr(p, DEFAULT_BP) // the expression consumes how many tokens, we don't know. So we have to get that
 
-	separator := p.eat() // n = 4
+	separator := p.eat()
 
-	p.rollback(4)
+	rollbackPos := p.index - currentIndex
+
+	p.rollback(rollbackPos)
 
 	switch separator.Kind {
 	case lexer.FAT_ARROW_TOKEN:

@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"fmt"
 	"walrus/frontend/ast"
 	"walrus/frontend/lexer"
 )
@@ -30,8 +31,8 @@ func parseMapLiteral(p *Parser) ast.Node {
 
 		values = append(values, prop)
 
-		if p.currentTokenKind() == lexer.COMMA_TOKEN {
-			p.expect(lexer.COMMA_TOKEN)
+		if p.currentTokenKind() != lexer.CLOSE_CURLY {
+			p.expectError(lexer.COMMA_TOKEN, fmt.Errorf("expected comma ',' or closing curly brace '}' before '%s'", p.currentToken().Value))
 		}
 	}
 
