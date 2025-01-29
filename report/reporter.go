@@ -11,16 +11,16 @@ import (
 type REPORT_TYPE string
 
 const (
-	NULL           	REPORT_TYPE = ""
-	CRITICAL_ERROR 	REPORT_TYPE = "critical error" // Stops compilation immediately
-	SYNTAX_ERROR   	REPORT_TYPE = "syntax error"   // Syntax error, also stops compilation
-	NORMAL_ERROR   	REPORT_TYPE = "error"          // Regular error that doesn't halt compilation
+	NULL           REPORT_TYPE = ""
+	CRITICAL_ERROR REPORT_TYPE = "critical error" // Stops compilation immediately
+	SYNTAX_ERROR   REPORT_TYPE = "syntax error"   // Syntax error, also stops compilation
+	NORMAL_ERROR   REPORT_TYPE = "error"          // Regular error that doesn't halt compilation
 
-	WARNING 		REPORT_TYPE = "warning" // Indicates potential issues
-	INFO   			REPORT_TYPE = "info"    // Informational message
+	WARNING REPORT_TYPE = "warning" // Indicates potential issues
+	INFO    REPORT_TYPE = "info"    // Informational message
 )
 
-//var colorMap = make(map[REPORT_TYPE]utils.COLOR)
+// var colorMap = make(map[REPORT_TYPE]utils.COLOR)
 var colorMap = map[REPORT_TYPE]utils.COLOR{
 	CRITICAL_ERROR: utils.BOLD_RED,
 	SYNTAX_ERROR:   utils.RED,
@@ -105,7 +105,7 @@ func makeParts(r *Report) (snippet, underline string, hLen int) {
 
 	lines := strings.Split(string(fileData), "\n")
 	line := lines[r.lineStart-1]
-	
+
 	hLen = 0
 
 	if r.lineStart == r.lineEnd {
@@ -135,7 +135,6 @@ func showHints(r *Report, padding int) {
 		fmt.Println()
 	}
 }
-
 
 // Hint appends a hint message to the error's hints slice.
 // If the provided message is empty, it returns the error without modification.

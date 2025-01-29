@@ -5,7 +5,6 @@ import (
 	"path/filepath"
 	"testing"
 
-
 	"walrus/frontend/ast"
 	"walrus/frontend/lexer"
 )

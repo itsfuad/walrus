@@ -6,7 +6,6 @@ import (
 
 const errMsg = "Has() = %v, want %v"
 
-
 type Test struct {
 	name     string
 	slice    interface{}
@@ -72,10 +71,10 @@ func TestHas(t *testing.T) {
 			expected: false,
 		},
 		{
-			name:    "empty slice",
-			slice:   []int{},
-			item:    1,
-			equalFn: equalInt,
+			name:     "empty slice",
+			slice:    []int{},
+			item:     1,
+			equalFn:  equalInt,
 			expected: false,
 		},
 	}
@@ -85,55 +84,55 @@ func TestHas(t *testing.T) {
 }
 
 type SomeTest struct {
-	name     string
-	slice    interface{}
+	name      string
+	slice     interface{}
 	predicate interface{}
-	expected bool
+	expected  bool
 }
 
 func TestSome(t *testing.T) {
 	tests := []SomeTest{
 		{
-			name:     "int slice contains item greater than 3",
-			slice:    []int{1, 2, 3, 4, 5},
+			name:      "int slice contains item greater than 3",
+			slice:     []int{1, 2, 3, 4, 5},
 			predicate: func(i int) bool { return i > 3 },
-			expected: true,
+			expected:  true,
 		},
 		{
-			name:     "int slice does not contain item greater than 5",
-			slice:    []int{1, 2, 3, 4, 5},
+			name:      "int slice does not contain item greater than 5",
+			slice:     []int{1, 2, 3, 4, 5},
 			predicate: func(i int) bool { return i > 5 },
-			expected: false,
+			expected:  false,
 		},
 		{
-			name:     "string slice contains item with length 1",
-			slice:    []string{"a", "bb", "ccc"},
+			name:      "string slice contains item with length 1",
+			slice:     []string{"a", "bb", "ccc"},
 			predicate: func(s string) bool { return len(s) == 1 },
-			expected: true,
+			expected:  true,
 		},
 		{
-			name:     "string slice does not contain item with length 4",
-			slice:    []string{"a", "bb", "ccc"},
+			name:      "string slice does not contain item with length 4",
+			slice:     []string{"a", "bb", "ccc"},
 			predicate: func(s string) bool { return len(s) == 4 },
-			expected: false,
+			expected:  false,
 		},
 		{
-			name:     "struct slice contains item with a > 2",
-			slice:    []struct{ a, b int }{{1, 2}, {3, 4}, {5, 6}},
+			name:      "struct slice contains item with a > 2",
+			slice:     []struct{ a, b int }{{1, 2}, {3, 4}, {5, 6}},
 			predicate: func(s struct{ a, b int }) bool { return s.a > 2 },
-			expected: true,
+			expected:  true,
 		},
 		{
-			name:     "struct slice does not contain item with a > 5",
-			slice:    []struct{ a, b int }{{1, 2}, {3, 4}, {5, 6}},
+			name:      "struct slice does not contain item with a > 5",
+			slice:     []struct{ a, b int }{{1, 2}, {3, 4}, {5, 6}},
 			predicate: func(s struct{ a, b int }) bool { return s.a > 5 },
-			expected: false,
+			expected:  false,
 		},
 		{
-			name:     "empty slice",
-			slice:    []int{},
+			name:      "empty slice",
+			slice:     []int{},
 			predicate: func(i int) bool { return i > 0 },
-			expected: false,
+			expected:  false,
 		},
 	}
 
@@ -176,7 +175,6 @@ func runSomeStructTest(t *testing.T, s []struct{ a, b int }, tt SomeTest) {
 		t.Errorf(errMsg, got, tt.expected)
 	}
 }
-
 
 func RunLoop(t *testing.T, tests []Test) {
 	for _, tt := range tests {

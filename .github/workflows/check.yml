@@ -37,8 +37,14 @@ jobs:
 
       - name: Format Check
         run: |
-          gofmt -l . | tee fmt.log
-          test -s fmt.log && { echo "Code is not formatted. Run gofmt."; exit 1; } || echo "Code is formatted."
+          unformatted=$(go fmt ./...)
+          if [ -n "$unformatted" ]; then
+            echo "The following files are not formatted:"
+            echo "$unformatted"
+            exit 1
+          else
+            echo "Code is formatted."
+          fi
 
       - name: Vet
         run: go vet ./...
