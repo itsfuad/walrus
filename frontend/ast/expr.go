@@ -18,7 +18,7 @@ func (a IdentifierExpr) EndPos() lexer.Position {
 	return a.Location.End
 }
 
-//Literals or Raw values like: 1,2,3,4.6, "hello world", 'a' ...etc
+// Literals or Raw values like: 1,2,3,4.6, "hello world", 'a' ...etc
 type IntegerLiteralExpr struct {
 	Value    string
 	BitSize  uint8

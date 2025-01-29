@@ -8,7 +8,6 @@ import (
 	"walrus/frontend/ast"
 )
 
-
 func Serialize(root *ast.Node, folder, filename string) error {
 
 	//create the folder if it does not exist

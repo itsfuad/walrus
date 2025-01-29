@@ -33,7 +33,6 @@ func TestIsKeyword(t *testing.T) {
 	}
 }
 
-
 func TestNewToken(t *testing.T) {
 	kind := LET_TOKEN
 	value := "let"
