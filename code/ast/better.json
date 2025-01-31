@@ -743,26 +743,26 @@
                     "Name": "map",
                     "Start": {
                         "Line": 29,
-                        "Column": 14,
-                        "Index": 405
+                        "Column": 17,
+                        "Index": 408
                     },
                     "End": {
                         "Line": 29,
-                        "Column": 17,
-                        "Index": 408
+                        "Column": 20,
+                        "Index": 411
                     }
                 },
                 "KeyType": {
                     "TypeName": "str",
                     "Start": {
                         "Line": 29,
-                        "Column": 18,
-                        "Index": 409
+                        "Column": 21,
+                        "Index": 412
                     },
                     "End": {
                         "Line": 29,
-                        "Column": 21,
-                        "Index": 412
+                        "Column": 24,
+                        "Index": 415
                     }
                 },
                 "ValueType": {
@@ -771,28 +771,28 @@
                     "IsSigned": true,
                     "Start": {
                         "Line": 29,
-                        "Column": 22,
-                        "Index": 413
+                        "Column": 25,
+                        "Index": 416
                     },
                     "End": {
                         "Line": 29,
-                        "Column": 25,
-                        "Index": 416
+                        "Column": 28,
+                        "Index": 419
                     }
                 },
                 "Start": {
                     "Line": 29,
-                    "Column": 14,
-                    "Index": 405
+                    "Column": 17,
+                    "Index": 408
                 },
                 "End": {
                     "Line": 29,
-                    "Column": 25,
-                    "Index": 416
+                    "Column": 28,
+                    "Index": 419
                 }
             },
             "UDTypeName": {
-                "Name": "UserMap",
+                "Name": "UserSalary",
                 "Start": {
                     "Line": 29,
                     "Column": 6,
@@ -800,8 +800,8 @@
                 },
                 "End": {
                     "Line": 29,
-                    "Column": 13,
-                    "Index": 404
+                    "Column": 16,
+                    "Index": 407
                 }
             },
             "Start": {
@@ -811,22 +811,22 @@
             },
             "End": {
                 "Line": 29,
-                "Column": 25,
-                "Index": 416
+                "Column": 28,
+                "Index": 419
             }
         },
         {
             "Identifier": {
-                "Name": "toStr",
+                "Name": "getAdmin",
                 "Start": {
                     "Line": 31,
                     "Column": 4,
-                    "Index": 424
+                    "Index": 427
                 },
                 "End": {
                     "Line": 31,
-                    "Column": 9,
-                    "Index": 429
+                    "Column": 12,
+                    "Index": 435
                 }
             },
             "Params": null,
@@ -834,63 +834,63 @@
                 "Contents": [
                     {
                         "Value": {
-                            "Value": "UserMap",
+                            "Value": "Admin",
                             "Start": {
                                 "Line": 32,
                                 "Column": 9,
-                                "Index": 450
+                                "Index": 456
                             },
                             "End": {
                                 "Line": 32,
-                                "Column": 18,
-                                "Index": 459
+                                "Column": 16,
+                                "Index": 463
                             }
                         },
                         "Start": {
                             "Line": 32,
                             "Column": 5,
-                            "Index": 446
+                            "Index": 452
                         },
                         "End": {
                             "Line": 32,
-                            "Column": 19,
-                            "Index": 460
+                            "Column": 17,
+                            "Index": 464
                         }
                     }
                 ],
                 "Start": {
                     "Line": 31,
-                    "Column": 19,
-                    "Index": 439
+                    "Column": 22,
+                    "Index": 445
                 },
                 "End": {
                     "Line": 33,
                     "Column": 2,
-                    "Index": 463
+                    "Index": 467
                 }
             },
             "ReturnType": {
                 "TypeName": "str",
                 "Start": {
                     "Line": 31,
-                    "Column": 15,
-                    "Index": 435
+                    "Column": 18,
+                    "Index": 441
                 },
                 "End": {
                     "Line": 31,
-                    "Column": 18,
-                    "Index": 438
+                    "Column": 21,
+                    "Index": 444
                 }
             },
             "Start": {
                 "Line": 31,
                 "Column": 1,
-                "Index": 421
+                "Index": 424
             },
             "End": {
                 "Line": 33,
                 "Column": 2,
-                "Index": 463
+                "Index": 467
             }
         },
         {
@@ -901,27 +901,27 @@
                         "Start": {
                             "Line": 35,
                             "Column": 5,
-                            "Index": 471
+                            "Index": 475
                         },
                         "End": {
                             "Line": 35,
                             "Column": 13,
-                            "Index": 479
+                            "Index": 483
                         }
                     },
                     "Value": {
                         "TypeName": "map",
                         "Map": {
-                            "Name": "UserMap",
+                            "Name": "UserSalary",
                             "Start": {
                                 "Line": 35,
                                 "Column": 17,
-                                "Index": 483
+                                "Index": 487
                             },
                             "End": {
                                 "Line": 35,
-                                "Column": 24,
-                                "Index": 490
+                                "Column": 27,
+                                "Index": 497
                             }
                         },
                         "KeyType": null,
@@ -933,12 +933,12 @@
                                     "Start": {
                                         "Line": 36,
                                         "Column": 5,
-                                        "Index": 498
+                                        "Index": 505
                                     },
                                     "End": {
                                         "Line": 36,
                                         "Column": 11,
-                                        "Index": 504
+                                        "Index": 511
                                     }
                                 },
                                 "Value": {
@@ -948,12 +948,12 @@
                                     "Start": {
                                         "Line": 36,
                                         "Column": 15,
-                                        "Index": 508
+                                        "Index": 515
                                     },
                                     "End": {
                                         "Line": 36,
                                         "Column": 17,
-                                        "Index": 510
+                                        "Index": 517
                                     }
                                 }
                             },
@@ -963,12 +963,12 @@
                                     "Start": {
                                         "Line": 37,
                                         "Column": 5,
-                                        "Index": 517
+                                        "Index": 524
                                     },
                                     "End": {
                                         "Line": 37,
                                         "Column": 10,
-                                        "Index": 522
+                                        "Index": 529
                                     }
                                 },
                                 "Value": {
@@ -978,55 +978,55 @@
                                     "Start": {
                                         "Line": 37,
                                         "Column": 14,
-                                        "Index": 526
+                                        "Index": 533
                                     },
                                     "End": {
                                         "Line": 37,
                                         "Column": 16,
-                                        "Index": 528
+                                        "Index": 535
                                     }
                                 }
                             },
                             {
                                 "Key": {
                                     "Caller": {
-                                        "Name": "toStr",
+                                        "Name": "getAdmin",
                                         "Start": {
                                             "Line": 38,
                                             "Column": 5,
-                                            "Index": 535
+                                            "Index": 542
                                         },
                                         "End": {
                                             "Line": 38,
-                                            "Column": 10,
-                                            "Index": 540
+                                            "Column": 13,
+                                            "Index": 550
                                         }
                                     },
                                     "Arguments": null,
                                     "Start": {
                                         "Line": 38,
                                         "Column": 5,
-                                        "Index": 535
+                                        "Index": 542
                                     },
                                     "End": {
                                         "Line": 38,
-                                        "Column": 12,
-                                        "Index": 542
+                                        "Column": 15,
+                                        "Index": 552
                                     }
                                 },
                                 "Value": {
-                                    "Value": "0",
+                                    "Value": "40",
                                     "BitSize": 32,
                                     "IsSigned": true,
                                     "Start": {
                                         "Line": 38,
-                                        "Column": 16,
-                                        "Index": 546
+                                        "Column": 19,
+                                        "Index": 556
                                     },
                                     "End": {
                                         "Line": 38,
-                                        "Column": 17,
-                                        "Index": 547
+                                        "Column": 21,
+                                        "Index": 558
                                     }
                                 }
                             }
@@ -1034,24 +1034,24 @@
                         "Start": {
                             "Line": 35,
                             "Column": 17,
-                            "Index": 483
+                            "Index": 487
                         },
                         "End": {
                             "Line": 39,
                             "Column": 2,
-                            "Index": 550
+                            "Index": 562
                         }
                     },
                     "ExplicitType": null,
                     "Start": {
                         "Line": 35,
                         "Column": 5,
-                        "Index": 471
+                        "Index": 475
                     },
                     "End": {
                         "Line": 39,
                         "Column": 2,
-                        "Index": 550
+                        "Index": 562
                     }
                 }
             ],
@@ -1059,12 +1059,1140 @@
             "Start": {
                 "Line": 35,
                 "Column": 1,
-                "Index": 467
+                "Index": 471
             },
             "End": {
                 "Line": 39,
                 "Column": 3,
-                "Index": 551
+                "Index": 563
+            }
+        },
+        {
+            "Variables": [
+                {
+                    "Identifier": {
+                        "Name": "name",
+                        "Start": {
+                            "Line": 42,
+                            "Column": 5,
+                            "Index": 592
+                        },
+                        "End": {
+                            "Line": 42,
+                            "Column": 9,
+                            "Index": 596
+                        }
+                    },
+                    "Value": {
+                        "Object": {
+                            "Name": "person",
+                            "Start": {
+                                "Line": 42,
+                                "Column": 13,
+                                "Index": 600
+                            },
+                            "End": {
+                                "Line": 42,
+                                "Column": 19,
+                                "Index": 606
+                            }
+                        },
+                        "Property": {
+                            "Name": "name",
+                            "Start": {
+                                "Line": 42,
+                                "Column": 20,
+                                "Index": 607
+                            },
+                            "End": {
+                                "Line": 42,
+                                "Column": 24,
+                                "Index": 611
+                            }
+                        },
+                        "Start": {
+                            "Line": 42,
+                            "Column": 13,
+                            "Index": 600
+                        },
+                        "End": {
+                            "Line": 42,
+                            "Column": 24,
+                            "Index": 611
+                        }
+                    },
+                    "ExplicitType": null,
+                    "Start": {
+                        "Line": 42,
+                        "Column": 5,
+                        "Index": 592
+                    },
+                    "End": {
+                        "Line": 42,
+                        "Column": 24,
+                        "Index": 611
+                    }
+                }
+            ],
+            "IsConst": false,
+            "Start": {
+                "Line": 42,
+                "Column": 1,
+                "Index": 588
+            },
+            "End": {
+                "Line": 42,
+                "Column": 25,
+                "Index": 612
+            }
+        },
+        {
+            "Variables": [
+                {
+                    "Identifier": {
+                        "Name": "age",
+                        "Start": {
+                            "Line": 43,
+                            "Column": 5,
+                            "Index": 618
+                        },
+                        "End": {
+                            "Line": 43,
+                            "Column": 8,
+                            "Index": 621
+                        }
+                    },
+                    "Value": {
+                        "Object": {
+                            "Name": "person",
+                            "Start": {
+                                "Line": 43,
+                                "Column": 12,
+                                "Index": 625
+                            },
+                            "End": {
+                                "Line": 43,
+                                "Column": 18,
+                                "Index": 631
+                            }
+                        },
+                        "Property": {
+                            "Name": "age",
+                            "Start": {
+                                "Line": 43,
+                                "Column": 19,
+                                "Index": 632
+                            },
+                            "End": {
+                                "Line": 43,
+                                "Column": 22,
+                                "Index": 635
+                            }
+                        },
+                        "Start": {
+                            "Line": 43,
+                            "Column": 12,
+                            "Index": 625
+                        },
+                        "End": {
+                            "Line": 43,
+                            "Column": 22,
+                            "Index": 635
+                        }
+                    },
+                    "ExplicitType": null,
+                    "Start": {
+                        "Line": 43,
+                        "Column": 5,
+                        "Index": 618
+                    },
+                    "End": {
+                        "Line": 43,
+                        "Column": 22,
+                        "Index": 635
+                    }
+                }
+            ],
+            "IsConst": false,
+            "Start": {
+                "Line": 43,
+                "Column": 1,
+                "Index": 614
+            },
+            "End": {
+                "Line": 43,
+                "Column": 23,
+                "Index": 636
+            }
+        },
+        {
+            "Variables": [
+                {
+                    "Identifier": {
+                        "Name": "name2",
+                        "Start": {
+                            "Line": 45,
+                            "Column": 5,
+                            "Index": 644
+                        },
+                        "End": {
+                            "Line": 45,
+                            "Column": 10,
+                            "Index": 649
+                        }
+                    },
+                    "Value": {
+                        "Object": {
+                            "Name": "person2",
+                            "Start": {
+                                "Line": 45,
+                                "Column": 14,
+                                "Index": 653
+                            },
+                            "End": {
+                                "Line": 45,
+                                "Column": 21,
+                                "Index": 660
+                            }
+                        },
+                        "Property": {
+                            "Name": "name",
+                            "Start": {
+                                "Line": 45,
+                                "Column": 22,
+                                "Index": 661
+                            },
+                            "End": {
+                                "Line": 45,
+                                "Column": 26,
+                                "Index": 665
+                            }
+                        },
+                        "Start": {
+                            "Line": 45,
+                            "Column": 14,
+                            "Index": 653
+                        },
+                        "End": {
+                            "Line": 45,
+                            "Column": 26,
+                            "Index": 665
+                        }
+                    },
+                    "ExplicitType": null,
+                    "Start": {
+                        "Line": 45,
+                        "Column": 5,
+                        "Index": 644
+                    },
+                    "End": {
+                        "Line": 45,
+                        "Column": 26,
+                        "Index": 665
+                    }
+                }
+            ],
+            "IsConst": false,
+            "Start": {
+                "Line": 45,
+                "Column": 1,
+                "Index": 640
+            },
+            "End": {
+                "Line": 45,
+                "Column": 27,
+                "Index": 666
+            }
+        },
+        {
+            "Variables": [
+                {
+                    "Identifier": {
+                        "Name": "age2",
+                        "Start": {
+                            "Line": 46,
+                            "Column": 5,
+                            "Index": 672
+                        },
+                        "End": {
+                            "Line": 46,
+                            "Column": 9,
+                            "Index": 676
+                        }
+                    },
+                    "Value": {
+                        "Object": {
+                            "Name": "person2",
+                            "Start": {
+                                "Line": 46,
+                                "Column": 13,
+                                "Index": 680
+                            },
+                            "End": {
+                                "Line": 46,
+                                "Column": 20,
+                                "Index": 687
+                            }
+                        },
+                        "Property": {
+                            "Name": "age",
+                            "Start": {
+                                "Line": 46,
+                                "Column": 21,
+                                "Index": 688
+                            },
+                            "End": {
+                                "Line": 46,
+                                "Column": 24,
+                                "Index": 691
+                            }
+                        },
+                        "Start": {
+                            "Line": 46,
+                            "Column": 13,
+                            "Index": 680
+                        },
+                        "End": {
+                            "Line": 46,
+                            "Column": 24,
+                            "Index": 691
+                        }
+                    },
+                    "ExplicitType": null,
+                    "Start": {
+                        "Line": 46,
+                        "Column": 5,
+                        "Index": 672
+                    },
+                    "End": {
+                        "Line": 46,
+                        "Column": 24,
+                        "Index": 691
+                    }
+                }
+            ],
+            "IsConst": false,
+            "Start": {
+                "Line": 46,
+                "Column": 1,
+                "Index": 668
+            },
+            "End": {
+                "Line": 46,
+                "Column": 25,
+                "Index": 692
+            }
+        },
+        {
+            "Variables": [
+                {
+                    "Identifier": {
+                        "Name": "age3",
+                        "Start": {
+                            "Line": 48,
+                            "Column": 5,
+                            "Index": 700
+                        },
+                        "End": {
+                            "Line": 48,
+                            "Column": 9,
+                            "Index": 704
+                        }
+                    },
+                    "Value": {
+                        "Index": {
+                            "Value": "John",
+                            "Start": {
+                                "Line": 48,
+                                "Column": 21,
+                                "Index": 716
+                            },
+                            "End": {
+                                "Line": 48,
+                                "Column": 27,
+                                "Index": 722
+                            }
+                        },
+                        "Container": {
+                            "Name": "userMap",
+                            "Start": {
+                                "Line": 48,
+                                "Column": 13,
+                                "Index": 708
+                            },
+                            "End": {
+                                "Line": 48,
+                                "Column": 20,
+                                "Index": 715
+                            }
+                        },
+                        "Start": {
+                            "Line": 48,
+                            "Column": 13,
+                            "Index": 708
+                        },
+                        "End": {
+                            "Line": 48,
+                            "Column": 28,
+                            "Index": 723
+                        }
+                    },
+                    "ExplicitType": null,
+                    "Start": {
+                        "Line": 48,
+                        "Column": 5,
+                        "Index": 700
+                    },
+                    "End": {
+                        "Line": 48,
+                        "Column": 28,
+                        "Index": 723
+                    }
+                }
+            ],
+            "IsConst": false,
+            "Start": {
+                "Line": 48,
+                "Column": 1,
+                "Index": 696
+            },
+            "End": {
+                "Line": 48,
+                "Column": 29,
+                "Index": 724
+            }
+        },
+        {
+            "Variables": [
+                {
+                    "Identifier": {
+                        "Name": "age4",
+                        "Start": {
+                            "Line": 49,
+                            "Column": 5,
+                            "Index": 730
+                        },
+                        "End": {
+                            "Line": 49,
+                            "Column": 9,
+                            "Index": 734
+                        }
+                    },
+                    "Value": {
+                        "Index": {
+                            "Value": "John",
+                            "Start": {
+                                "Line": 49,
+                                "Column": 22,
+                                "Index": 747
+                            },
+                            "End": {
+                                "Line": 49,
+                                "Column": 28,
+                                "Index": 753
+                            }
+                        },
+                        "Container": {
+                            "Name": "userMap2",
+                            "Start": {
+                                "Line": 49,
+                                "Column": 13,
+                                "Index": 738
+                            },
+                            "End": {
+                                "Line": 49,
+                                "Column": 21,
+                                "Index": 746
+                            }
+                        },
+                        "Start": {
+                            "Line": 49,
+                            "Column": 13,
+                            "Index": 738
+                        },
+                        "End": {
+                            "Line": 49,
+                            "Column": 29,
+                            "Index": 754
+                        }
+                    },
+                    "ExplicitType": null,
+                    "Start": {
+                        "Line": 49,
+                        "Column": 5,
+                        "Index": 730
+                    },
+                    "End": {
+                        "Line": 49,
+                        "Column": 29,
+                        "Index": 754
+                    }
+                }
+            ],
+            "IsConst": false,
+            "Start": {
+                "Line": 49,
+                "Column": 1,
+                "Index": 726
+            },
+            "End": {
+                "Line": 49,
+                "Column": 30,
+                "Index": 755
+            }
+        },
+        {
+            "Variables": [
+                {
+                    "Identifier": {
+                        "Name": "age5",
+                        "Start": {
+                            "Line": 50,
+                            "Column": 5,
+                            "Index": 761
+                        },
+                        "End": {
+                            "Line": 50,
+                            "Column": 9,
+                            "Index": 765
+                        }
+                    },
+                    "Value": {
+                        "Index": {
+                            "Caller": {
+                                "Name": "getAdmin",
+                                "Start": {
+                                    "Line": 50,
+                                    "Column": 22,
+                                    "Index": 778
+                                },
+                                "End": {
+                                    "Line": 50,
+                                    "Column": 30,
+                                    "Index": 786
+                                }
+                            },
+                            "Arguments": null,
+                            "Start": {
+                                "Line": 50,
+                                "Column": 22,
+                                "Index": 778
+                            },
+                            "End": {
+                                "Line": 50,
+                                "Column": 32,
+                                "Index": 788
+                            }
+                        },
+                        "Container": {
+                            "Name": "userMap2",
+                            "Start": {
+                                "Line": 50,
+                                "Column": 13,
+                                "Index": 769
+                            },
+                            "End": {
+                                "Line": 50,
+                                "Column": 21,
+                                "Index": 777
+                            }
+                        },
+                        "Start": {
+                            "Line": 50,
+                            "Column": 13,
+                            "Index": 769
+                        },
+                        "End": {
+                            "Line": 50,
+                            "Column": 33,
+                            "Index": 789
+                        }
+                    },
+                    "ExplicitType": null,
+                    "Start": {
+                        "Line": 50,
+                        "Column": 5,
+                        "Index": 761
+                    },
+                    "End": {
+                        "Line": 50,
+                        "Column": 33,
+                        "Index": 789
+                    }
+                }
+            ],
+            "IsConst": false,
+            "Start": {
+                "Line": 50,
+                "Column": 1,
+                "Index": 757
+            },
+            "End": {
+                "Line": 50,
+                "Column": 34,
+                "Index": 790
+            }
+        },
+        {
+            "Assignee": {
+                "Object": {
+                    "Name": "person",
+                    "Start": {
+                        "Line": 53,
+                        "Column": 1,
+                        "Index": 811
+                    },
+                    "End": {
+                        "Line": 53,
+                        "Column": 7,
+                        "Index": 817
+                    }
+                },
+                "Property": {
+                    "Name": "name",
+                    "Start": {
+                        "Line": 53,
+                        "Column": 8,
+                        "Index": 818
+                    },
+                    "End": {
+                        "Line": 53,
+                        "Column": 12,
+                        "Index": 822
+                    }
+                },
+                "Start": {
+                    "Line": 53,
+                    "Column": 1,
+                    "Index": 811
+                },
+                "End": {
+                    "Line": 53,
+                    "Column": 12,
+                    "Index": 822
+                }
+            },
+            "Value": {
+                "Value": "Doe",
+                "Start": {
+                    "Line": 53,
+                    "Column": 15,
+                    "Index": 825
+                },
+                "End": {
+                    "Line": 53,
+                    "Column": 20,
+                    "Index": 830
+                }
+            },
+            "Operator": {
+                "Kind": "=",
+                "Value": "=",
+                "Start": {
+                    "Line": 53,
+                    "Column": 13,
+                    "Index": 823
+                },
+                "End": {
+                    "Line": 53,
+                    "Column": 14,
+                    "Index": 824
+                }
+            },
+            "Start": {
+                "Line": 53,
+                "Column": 1,
+                "Index": 811
+            },
+            "End": {
+                "Line": 53,
+                "Column": 20,
+                "Index": 830
+            }
+        },
+        {
+            "Assignee": {
+                "Object": {
+                    "Name": "person",
+                    "Start": {
+                        "Line": 54,
+                        "Column": 1,
+                        "Index": 833
+                    },
+                    "End": {
+                        "Line": 54,
+                        "Column": 7,
+                        "Index": 839
+                    }
+                },
+                "Property": {
+                    "Name": "age",
+                    "Start": {
+                        "Line": 54,
+                        "Column": 8,
+                        "Index": 840
+                    },
+                    "End": {
+                        "Line": 54,
+                        "Column": 11,
+                        "Index": 843
+                    }
+                },
+                "Start": {
+                    "Line": 54,
+                    "Column": 1,
+                    "Index": 833
+                },
+                "End": {
+                    "Line": 54,
+                    "Column": 11,
+                    "Index": 843
+                }
+            },
+            "Value": {
+                "Value": "30",
+                "BitSize": 32,
+                "IsSigned": true,
+                "Start": {
+                    "Line": 54,
+                    "Column": 14,
+                    "Index": 846
+                },
+                "End": {
+                    "Line": 54,
+                    "Column": 16,
+                    "Index": 848
+                }
+            },
+            "Operator": {
+                "Kind": "=",
+                "Value": "=",
+                "Start": {
+                    "Line": 54,
+                    "Column": 12,
+                    "Index": 844
+                },
+                "End": {
+                    "Line": 54,
+                    "Column": 13,
+                    "Index": 845
+                }
+            },
+            "Start": {
+                "Line": 54,
+                "Column": 1,
+                "Index": 833
+            },
+            "End": {
+                "Line": 54,
+                "Column": 16,
+                "Index": 848
+            }
+        },
+        {
+            "Assignee": {
+                "Object": {
+                    "Name": "person2",
+                    "Start": {
+                        "Line": 56,
+                        "Column": 1,
+                        "Index": 853
+                    },
+                    "End": {
+                        "Line": 56,
+                        "Column": 8,
+                        "Index": 860
+                    }
+                },
+                "Property": {
+                    "Name": "name",
+                    "Start": {
+                        "Line": 56,
+                        "Column": 9,
+                        "Index": 861
+                    },
+                    "End": {
+                        "Line": 56,
+                        "Column": 13,
+                        "Index": 865
+                    }
+                },
+                "Start": {
+                    "Line": 56,
+                    "Column": 1,
+                    "Index": 853
+                },
+                "End": {
+                    "Line": 56,
+                    "Column": 13,
+                    "Index": 865
+                }
+            },
+            "Value": {
+                "Value": "John",
+                "Start": {
+                    "Line": 56,
+                    "Column": 16,
+                    "Index": 868
+                },
+                "End": {
+                    "Line": 56,
+                    "Column": 22,
+                    "Index": 874
+                }
+            },
+            "Operator": {
+                "Kind": "=",
+                "Value": "=",
+                "Start": {
+                    "Line": 56,
+                    "Column": 14,
+                    "Index": 866
+                },
+                "End": {
+                    "Line": 56,
+                    "Column": 15,
+                    "Index": 867
+                }
+            },
+            "Start": {
+                "Line": 56,
+                "Column": 1,
+                "Index": 853
+            },
+            "End": {
+                "Line": 56,
+                "Column": 22,
+                "Index": 874
+            }
+        },
+        {
+            "Assignee": {
+                "Object": {
+                    "Name": "person2",
+                    "Start": {
+                        "Line": 57,
+                        "Column": 1,
+                        "Index": 877
+                    },
+                    "End": {
+                        "Line": 57,
+                        "Column": 8,
+                        "Index": 884
+                    }
+                },
+                "Property": {
+                    "Name": "age",
+                    "Start": {
+                        "Line": 57,
+                        "Column": 9,
+                        "Index": 885
+                    },
+                    "End": {
+                        "Line": 57,
+                        "Column": 12,
+                        "Index": 888
+                    }
+                },
+                "Start": {
+                    "Line": 57,
+                    "Column": 1,
+                    "Index": 877
+                },
+                "End": {
+                    "Line": 57,
+                    "Column": 12,
+                    "Index": 888
+                }
+            },
+            "Value": {
+                "Value": "25",
+                "BitSize": 32,
+                "IsSigned": true,
+                "Start": {
+                    "Line": 57,
+                    "Column": 15,
+                    "Index": 891
+                },
+                "End": {
+                    "Line": 57,
+                    "Column": 17,
+                    "Index": 893
+                }
+            },
+            "Operator": {
+                "Kind": "=",
+                "Value": "=",
+                "Start": {
+                    "Line": 57,
+                    "Column": 13,
+                    "Index": 889
+                },
+                "End": {
+                    "Line": 57,
+                    "Column": 14,
+                    "Index": 890
+                }
+            },
+            "Start": {
+                "Line": 57,
+                "Column": 1,
+                "Index": 877
+            },
+            "End": {
+                "Line": 57,
+                "Column": 17,
+                "Index": 893
+            }
+        },
+        {
+            "Assignee": {
+                "Index": {
+                    "Value": "John",
+                    "Start": {
+                        "Line": 59,
+                        "Column": 9,
+                        "Index": 906
+                    },
+                    "End": {
+                        "Line": 59,
+                        "Column": 15,
+                        "Index": 912
+                    }
+                },
+                "Container": {
+                    "Name": "userMap",
+                    "Start": {
+                        "Line": 59,
+                        "Column": 1,
+                        "Index": 898
+                    },
+                    "End": {
+                        "Line": 59,
+                        "Column": 8,
+                        "Index": 905
+                    }
+                },
+                "Start": {
+                    "Line": 59,
+                    "Column": 1,
+                    "Index": 898
+                },
+                "End": {
+                    "Line": 59,
+                    "Column": 16,
+                    "Index": 913
+                }
+            },
+            "Value": {
+                "Value": "30",
+                "BitSize": 32,
+                "IsSigned": true,
+                "Start": {
+                    "Line": 59,
+                    "Column": 19,
+                    "Index": 916
+                },
+                "End": {
+                    "Line": 59,
+                    "Column": 21,
+                    "Index": 918
+                }
+            },
+            "Operator": {
+                "Kind": "=",
+                "Value": "=",
+                "Start": {
+                    "Line": 59,
+                    "Column": 17,
+                    "Index": 914
+                },
+                "End": {
+                    "Line": 59,
+                    "Column": 18,
+                    "Index": 915
+                }
+            },
+            "Start": {
+                "Line": 59,
+                "Column": 1,
+                "Index": 898
+            },
+            "End": {
+                "Line": 59,
+                "Column": 21,
+                "Index": 918
+            }
+        },
+        {
+            "Assignee": {
+                "Index": {
+                    "Value": "John",
+                    "Start": {
+                        "Line": 60,
+                        "Column": 10,
+                        "Index": 930
+                    },
+                    "End": {
+                        "Line": 60,
+                        "Column": 16,
+                        "Index": 936
+                    }
+                },
+                "Container": {
+                    "Name": "userMap2",
+                    "Start": {
+                        "Line": 60,
+                        "Column": 1,
+                        "Index": 921
+                    },
+                    "End": {
+                        "Line": 60,
+                        "Column": 9,
+                        "Index": 929
+                    }
+                },
+                "Start": {
+                    "Line": 60,
+                    "Column": 1,
+                    "Index": 921
+                },
+                "End": {
+                    "Line": 60,
+                    "Column": 17,
+                    "Index": 937
+                }
+            },
+            "Value": {
+                "Value": "30",
+                "BitSize": 32,
+                "IsSigned": true,
+                "Start": {
+                    "Line": 60,
+                    "Column": 20,
+                    "Index": 940
+                },
+                "End": {
+                    "Line": 60,
+                    "Column": 22,
+                    "Index": 942
+                }
+            },
+            "Operator": {
+                "Kind": "=",
+                "Value": "=",
+                "Start": {
+                    "Line": 60,
+                    "Column": 18,
+                    "Index": 938
+                },
+                "End": {
+                    "Line": 60,
+                    "Column": 19,
+                    "Index": 939
+                }
+            },
+            "Start": {
+                "Line": 60,
+                "Column": 1,
+                "Index": 921
+            },
+            "End": {
+                "Line": 60,
+                "Column": 22,
+                "Index": 942
+            }
+        },
+        {
+            "Assignee": {
+                "Index": {
+                    "Caller": {
+                        "Name": "getAdmin",
+                        "Start": {
+                            "Line": 61,
+                            "Column": 10,
+                            "Index": 954
+                        },
+                        "End": {
+                            "Line": 61,
+                            "Column": 18,
+                            "Index": 962
+                        }
+                    },
+                    "Arguments": null,
+                    "Start": {
+                        "Line": 61,
+                        "Column": 10,
+                        "Index": 954
+                    },
+                    "End": {
+                        "Line": 61,
+                        "Column": 20,
+                        "Index": 964
+                    }
+                },
+                "Container": {
+                    "Name": "userMap2",
+                    "Start": {
+                        "Line": 61,
+                        "Column": 1,
+                        "Index": 945
+                    },
+                    "End": {
+                        "Line": 61,
+                        "Column": 9,
+                        "Index": 953
+                    }
+                },
+                "Start": {
+                    "Line": 61,
+                    "Column": 1,
+                    "Index": 945
+                },
+                "End": {
+                    "Line": 61,
+                    "Column": 21,
+                    "Index": 965
+                }
+            },
+            "Value": {
+                "Value": "40",
+                "BitSize": 32,
+                "IsSigned": true,
+                "Start": {
+                    "Line": 61,
+                    "Column": 24,
+                    "Index": 968
+                },
+                "End": {
+                    "Line": 61,
+                    "Column": 26,
+                    "Index": 970
+                }
+            },
+            "Operator": {
+                "Kind": "=",
+                "Value": "=",
+                "Start": {
+                    "Line": 61,
+                    "Column": 22,
+                    "Index": 966
+                },
+                "End": {
+                    "Line": 61,
+                    "Column": 23,
+                    "Index": 967
+                }
+            },
+            "Start": {
+                "Line": 61,
+                "Column": 1,
+                "Index": 945
+            },
+            "End": {
+                "Line": 61,
+                "Column": 26,
+                "Index": 970
             }
         }
     ],
