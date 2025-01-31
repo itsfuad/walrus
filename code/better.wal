@@ -37,3 +37,25 @@ let userMap2 := UserSalary {
     "Doe" => 30,
     getAdmin() => 40,
 };
+
+//access properties
+let name := person.name;
+let age := person.age;
+
+let name2 := person2.name;
+let age2 := person2.age;
+
+let age3 := userMap["John"];
+let age4 := userMap2["John"];
+let age5 := userMap2[getAdmin()];
+
+//try to modify
+person.name = "Doe";
+person.age = 30;
+
+person2.name = "John";
+person2.age = 25;
+
+userMap["John"] = 30;
+userMap2["John"] = 30;
+userMap2[getAdmin()] = 40;
