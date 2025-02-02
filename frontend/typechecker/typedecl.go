@@ -1,10 +1,10 @@
 package typechecker
 
 import (
+	"walrus/colors"
 	"walrus/frontend/ast"
 	"walrus/report"
 	"walrus/utils"
-	"walrus/colors"
 )
 
 func checkTypeDeclaration(node ast.TypeDeclStmt, env *TypeEnvironment) Tc {

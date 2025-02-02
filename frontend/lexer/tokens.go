@@ -3,8 +3,8 @@ package lexer
 import (
 	"fmt"
 
-	"walrus/frontend/builtins"
 	"walrus/colors"
+	"walrus/frontend/builtins"
 )
 
 const (

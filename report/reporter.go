@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"os"
 	"strings"
-	"walrus/utils"
 	"walrus/colors"
+	"walrus/utils"
 )
 
 type REPORT_TYPE string

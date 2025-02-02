@@ -4,9 +4,9 @@ import (
 	//Standard packages
 	"fmt"
 	//Walrus packages
+	"walrus/colors"
 	"walrus/frontend/ast"
 	"walrus/report"
-	"walrus/colors"
 )
 
 func EvaluateProgram(program ast.ProgramStmt, env *TypeEnvironment) Tc {

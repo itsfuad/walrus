@@ -5,9 +5,9 @@ import (
 	"fmt"
 
 	//Walrus packages
+	"walrus/colors"
 	"walrus/frontend/ast"
 	"walrus/report"
-	"walrus/colors"
 )
 
 // checkVariableAssignment checks the assignment of a value to a variable in the given type environment.
