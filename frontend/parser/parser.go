@@ -10,11 +10,11 @@ import (
 	"strings"
 
 	//Walrus packages
+	"walrus/colors"
 	"walrus/frontend/ast"
 	"walrus/frontend/builtins"
 	"walrus/frontend/lexer"
 	"walrus/report"
-	"walrus/colors"
 )
 
 type Parser struct {

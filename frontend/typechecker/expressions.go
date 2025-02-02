@@ -4,11 +4,11 @@ import (
 	//Standard packages
 	"fmt"
 	//Walrus packages
+	"walrus/colors"
 	"walrus/frontend/ast"
 	"walrus/frontend/builtins"
 	"walrus/frontend/lexer"
 	"walrus/report"
-	"walrus/colors"
 )
 
 func checkIncrementalExpr(node ast.IncrementalInterface, env *TypeEnvironment) Tc {
