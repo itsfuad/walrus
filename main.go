@@ -17,7 +17,6 @@ import (
 
 func main() {
 
-
 	if len(os.Args) < 2 {
 		colors.GREEN.Println("Usage: walrus <file>")
 		os.Exit(-1)
