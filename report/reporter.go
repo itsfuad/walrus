@@ -6,6 +6,7 @@ import (
 	"os"
 	"strings"
 	"walrus/utils"
+	"walrus/colors"
 )
 
 type REPORT_TYPE string
@@ -21,12 +22,12 @@ const (
 )
 
 // var colorMap = make(map[REPORT_TYPE]utils.COLOR)
-var colorMap = map[REPORT_TYPE]utils.COLOR{
-	CRITICAL_ERROR: utils.BOLD_RED,
-	SYNTAX_ERROR:   utils.RED,
-	NORMAL_ERROR:   utils.RED,
-	WARNING:        utils.YELLOW,
-	INFO:           utils.BLUE,
+var colorMap = map[REPORT_TYPE]colors.COLOR{
+	CRITICAL_ERROR: colors.BOLD_RED,
+	SYNTAX_ERROR:   colors.RED,
+	NORMAL_ERROR:   colors.RED,
+	WARNING:        colors.YELLOW,
+	INFO:           colors.BLUE,
 }
 
 // global errors are arrays of error pointers
@@ -64,7 +65,7 @@ type Report struct {
 // If file reading fails, the function will panic.
 func printReport(r *Report) {
 
-	utils.GREY.Printf("%s:%d:%d: ", r.filePath, r.lineStart, r.colStart)
+	colors.GREY.Printf("%s:%d:%d: ", r.filePath, r.lineStart, r.colStart)
 
 	snippet, underline, hLen := makeParts(r)
 
@@ -119,7 +120,7 @@ func makeParts(r *Report) (snippet, underline string, hLen int) {
 	}
 
 	lineNumber := fmt.Sprintf("%d | ", r.lineStart)
-	snippet = utils.GREY.Sprint(lineNumber) + line + "\n"
+	snippet = colors.GREY.Sprint(lineNumber) + line + "\n"
 	underline = fmt.Sprintf("%s^%s\n", strings.Repeat(" ", (r.colStart-1)+len(lineNumber)), strings.Repeat("~", hLen))
 
 	return snippet, underline, hLen
@@ -127,9 +128,9 @@ func makeParts(r *Report) (snippet, underline string, hLen int) {
 
 func showHints(r *Report, padding int) {
 	if len(r.hints) > 0 {
-		utils.YELLOW.Printf("%sHint:\n", strings.Repeat(" ", padding))
+		colors.YELLOW.Printf("%sHint:\n", strings.Repeat(" ", padding))
 		for _, hint := range r.hints {
-			utils.YELLOW.Printf("%s- %s\n", strings.Repeat(" ", padding), hint)
+			colors.YELLOW.Printf("%s- %s\n", strings.Repeat(" ", padding), hint)
 		}
 	} else {
 		fmt.Println()
@@ -205,7 +206,7 @@ func DisplayAll() {
 		}
 
 		if r := recover(); r != nil {
-			utils.BOLD_RED.Println(r)
+			colors.BOLD_RED.Println(r)
 		}
 
 		showStatus(false, "Compilation failed with")
@@ -225,13 +226,13 @@ func showStatus(passed bool, msg string) {
 	warningCount := reports[WARNING]
 	probCount := reports[NORMAL_ERROR] + reports[CRITICAL_ERROR] + reports[SYNTAX_ERROR]
 
-	var messageColor utils.COLOR
+	var messageColor colors.COLOR
 
 	if passed {
-		messageColor = utils.GREEN
+		messageColor = colors.GREEN
 		messageColor.Printf("------------- %s ", msg)
 	} else {
-		messageColor = utils.RED
+		messageColor = colors.RED
 		messageColor.Printf("------------- %s ", msg)
 	}
 
@@ -240,7 +241,7 @@ func showStatus(passed bool, msg string) {
 	if warningCount > 0 {
 		totalProblemsString += colorMap[WARNING].Sprintf("%d %s", warningCount, utils.Plural("warning", "warnings ", warningCount))
 		if probCount > 0 {
-			totalProblemsString += utils.ORANGE.Sprintf(", ")
+			totalProblemsString += colors.ORANGE.Sprintf(", ")
 		}
 	}
 
@@ -258,9 +259,9 @@ func TreeFormatString(strings ...string) string {
 	str := ""
 	for i, prop := range strings {
 		if i == len(strings)-1 {
-			str += utils.GREY.Sprint("└── ") + utils.BROWN.Sprint(prop)
+			str += colors.GREY.Sprint("└── ") + colors.BROWN.Sprint(prop)
 		} else {
-			str += utils.GREY.Sprint("├── ") + utils.BROWN.Sprint(prop+"\n")
+			str += colors.GREY.Sprint("├── ") + colors.BROWN.Sprint(prop+"\n")
 		}
 	}
 	return str

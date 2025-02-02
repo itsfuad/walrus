@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"walrus/frontend/builtins"
-	"walrus/utils"
+	"walrus/colors"
 )
 
 const (
@@ -129,7 +129,7 @@ type Token struct {
 }
 
 func (t *Token) Debug(filename string) {
-	utils.GREY.Printf("%s:%d:%d ", filename, t.Start.Line, t.Start.Column)
+	colors.GREY.Printf("%s:%d:%d ", filename, t.Start.Line, t.Start.Column)
 	if t.Value == string(t.Kind) {
 		fmt.Printf("'%s'\n", t.Value)
 	} else {

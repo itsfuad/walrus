@@ -6,17 +6,17 @@ import (
 	//Walrus packages
 	"walrus/frontend/ast"
 	"walrus/report"
-	"walrus/utils"
+	"walrus/colors"
 )
 
 func EvaluateProgram(program ast.ProgramStmt, env *TypeEnvironment) Tc {
-	utils.PURPLE.Println("### Running type checker ###")
+	colors.PURPLE.Println("### Running type checker ###")
 	for _, item := range program.Contents {
 		CheckAST(item, env)
 	}
 
 	//print the file path
-	utils.BLUE.Printf("Evaluated File: %s\n", env.filePath)
+	colors.BLUE.Printf("Evaluated File: %s\n", env.filePath)
 
 	return NewVoid()
 }

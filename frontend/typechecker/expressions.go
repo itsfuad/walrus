@@ -8,7 +8,7 @@ import (
 	"walrus/frontend/builtins"
 	"walrus/frontend/lexer"
 	"walrus/report"
-	"walrus/utils"
+	"walrus/colors"
 )
 
 func checkIncrementalExpr(node ast.IncrementalInterface, env *TypeEnvironment) Tc {
@@ -28,10 +28,10 @@ func checkIncrementalExpr(node ast.IncrementalInterface, env *TypeEnvironment) T
 }
 
 func logCastSuccess(originalType Tc, toCast Tc) {
-	utils.ORANGE.Print("casted type ")
-	utils.PURPLE.Print(tcToString(originalType))
+	colors.ORANGE.Print("casted type ")
+	colors.PURPLE.Print(tcToString(originalType))
 	fmt.Print(" to ")
-	utils.PURPLE.Println(tcToString(toCast))
+	colors.PURPLE.Println(tcToString(toCast))
 }
 
 func checkTypeof(node ast.TypeofExpr, env *TypeEnvironment) Tc {
