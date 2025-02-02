@@ -4,7 +4,7 @@ import (
 	"errors"
 	"testing"
 
-	"walrus/utils"
+	"walrus/colors"
 )
 
 const error1 = "error message 1"
@@ -18,12 +18,12 @@ var tests = []struct {
 	{
 		name:     "Single string",
 		input:    []string{error1},
-		expected: utils.GREY.Sprint("└── ") + utils.BROWN.Sprint(error1),
+		expected: colors.GREY.Sprint("└── ") + colors.BROWN.Sprint(error1),
 	},
 	{
 		name:     "Multiple strings",
 		input:    []string{error1, error2},
-		expected: utils.GREY.Sprint("├── ") + utils.BROWN.Sprintln(error1) + utils.GREY.Sprint("└── ") + utils.BROWN.Sprint(error2),
+		expected: colors.GREY.Sprint("├── ") + colors.BROWN.Sprintln(error1) + colors.GREY.Sprint("└── ") + colors.BROWN.Sprint(error2),
 	},
 	{
 		name:     "No strings",

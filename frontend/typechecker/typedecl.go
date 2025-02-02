@@ -4,14 +4,15 @@ import (
 	"walrus/frontend/ast"
 	"walrus/report"
 	"walrus/utils"
+	"walrus/colors"
 )
 
 func checkTypeDeclaration(node ast.TypeDeclStmt, env *TypeEnvironment) Tc {
 
 	typeName := node.UDTypeValue
 
-	utils.BLUE.Print("declaring type ")
-	utils.PURPLE.Println(node.UDTypeName.Name)
+	colors.BLUE.Print("declaring type ")
+	colors.PURPLE.Println(node.UDTypeName.Name)
 
 	//if typename is small case
 	if !utils.IsCapitalized(node.UDTypeName.Name) {
@@ -40,8 +41,8 @@ func checkTypeDeclaration(node ast.TypeDeclStmt, env *TypeEnvironment) Tc {
 		report.Add(env.filePath, node.Start.Line, node.End.Line, node.Start.Column, node.End.Column, err.Error()).Level(report.NORMAL_ERROR)
 	}
 
-	utils.GREEN.Print("Declared Type ")
-	utils.PURPLE.Println(node.UDTypeName.Name)
+	colors.GREEN.Print("Declared Type ")
+	colors.PURPLE.Println(node.UDTypeName.Name)
 
 	return val
 }

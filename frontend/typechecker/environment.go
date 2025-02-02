@@ -3,7 +3,7 @@ package typechecker
 import (
 	"fmt"
 	"os"
-	"walrus/utils"
+	"walrus/colors"
 )
 
 type SCOPE_TYPE int
@@ -60,13 +60,13 @@ func ProgramEnv(filepath string) *TypeEnvironment {
 func initVar(env *TypeEnvironment, name string, typeVar Tc, isConst bool, isOptional bool) {
 	err := env.declareVar(name, typeVar, isConst, isOptional)
 	if err != nil {
-		utils.RED.Println(err)
+		colors.RED.Println(err)
 		os.Exit(-1)
 	}
 
 	builtinValues[name] = true
 
-	utils.BRIGHT_BROWN.Printf("Initialized builtin value '%s'\n", name)
+	colors.BRIGHT_BROWN.Printf("Initialized builtin value '%s'\n", name)
 }
 
 func NewTypeENV(parent *TypeEnvironment, scope SCOPE_TYPE, scopeName string, filePath string) *TypeEnvironment {

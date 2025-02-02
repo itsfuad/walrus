@@ -7,7 +7,7 @@ import (
 	//Walrus packages
 	"walrus/frontend/ast"
 	"walrus/report"
-	"walrus/utils"
+	"walrus/colors"
 )
 
 // checkVariableAssignment checks the assignment of a value to a variable in the given type environment.
@@ -66,8 +66,8 @@ func checkVariableDeclaration(node ast.VarDeclStmt, env *TypeEnvironment) Tc {
 
 	for _, varToDecl := range varsToDecl {
 
-		utils.BLUE.Print("Declaring variable ")
-		utils.RED.Println(varToDecl.Identifier.Name)
+		colors.BLUE.Print("Declaring variable ")
+		colors.RED.Println(varToDecl.Identifier.Name)
 
 		expectedTypeInterface := parseExpectedType(varToDecl.ExplicitType, varToDecl.Value, env)
 
@@ -90,15 +90,15 @@ func checkVariableDeclaration(node ast.VarDeclStmt, env *TypeEnvironment) Tc {
 		}
 
 		if node.IsConst {
-			utils.GREEN.Print("Declared constant variable ")
-			utils.RED.Print(varToDecl.Identifier.Name)
+			colors.GREEN.Print("Declared constant variable ")
+			colors.RED.Print(varToDecl.Identifier.Name)
 			fmt.Print(" of type ")
-			utils.PURPLE.Println(tcToString(expectedTypeInterface))
+			colors.PURPLE.Println(tcToString(expectedTypeInterface))
 		} else {
-			utils.GREEN.Print("Declared variable ")
-			utils.RED.Print(varToDecl.Identifier.Name)
+			colors.GREEN.Print("Declared variable ")
+			colors.RED.Print(varToDecl.Identifier.Name)
 			fmt.Print(" of type ")
-			utils.PURPLE.Println(tcToString(expectedTypeInterface))
+			colors.PURPLE.Println(tcToString(expectedTypeInterface))
 		}
 	}
 	return NewVoid()
@@ -110,11 +110,11 @@ func parseExpectedType(explicitType ast.DataType, value ast.Node, env *TypeEnvir
 	if explicitType != nil {
 		expectedTypeInterface = evaluateTypeName(explicitType, env)
 		fmt.Print("Explicit type: ")
-		utils.PURPLE.Println(tcToString(expectedTypeInterface))
+		colors.PURPLE.Println(tcToString(expectedTypeInterface))
 	} else {
 		expectedTypeInterface = parseNodeValue(value, env)
-		utils.ORANGE.Print("Auto detected type: ")
-		utils.PURPLE.Println(tcToString(expectedTypeInterface))
+		colors.ORANGE.Print("Auto detected type: ")
+		colors.PURPLE.Println(tcToString(expectedTypeInterface))
 	}
 
 	return expectedTypeInterface
