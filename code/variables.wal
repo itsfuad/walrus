@@ -20,3 +20,73 @@ let isFalse := a == 1.0; //this will not give an error
 //let isTrue2 := a == [1, 2, 3]; //this will give an error
 
 let p := y = 5; // Now it will work fine
+
+
+fn doSomething() bool {
+    ret true;
+}
+
+let var := 4;
+let p := &p; // similar to let p : *i32 = &var;
+
+//null is basically 0.
+match p {
+    some => {
+        //do something. p is not null
+        print(*p);
+    }
+    null => {
+        //do something. p is null
+    }
+}
+
+type Node struct {
+    value : i32;
+    next : *Node;
+}
+
+type LinkedList struct {
+    head : *Node;
+    tail : *Node;
+}
+
+impl LinkedList {
+    fn add(value: i32) {
+        let newNode := Node { value: value, next: null };
+        if this.head == null {
+            this.head = &newNode;
+            this.tail = &newNode;
+        } else {
+            this.tail.next = &newNode;
+            this.tail = &newNode;
+        }
+    }
+
+    fn print() {
+        let current := this.head; // current is a pointer to the head of the linked list
+        while current != null { // checking a pointer with null. which is a valid operation
+            //print(current.value); // current.value is not valid because current is a pointer. we need to dereference it
+            //print((*current).value); // dereferencing the pointer to get the value. still error. because a dereference must be inside a match
+            match current {
+                some => {
+                    print((*current).value); // dereferencing the pointer to get the value
+                    current = current.next; // moving the pointer to the next node
+                }
+                null => {
+                    //do something. current is null
+                    print("end of list");
+                }
+            }
+        }
+    }
+}
+
+fn MakeLinkedList() LinkedList {
+    ret LinkedList { head: null, tail: null };
+}
+
+let list := MakeLinkedList();
+list.add(1);
+list.add(2);
+list.add(3);
+list.print();
