@@ -90,7 +90,6 @@ func bindLookupHandlers() {
 	led(lexer.MINUS_MINUS_TOKEN, UNARY_BP, parsePostfixExpr) // a--
 
 	nud(lexer.IDENTIFIER_TOKEN, parsePrimaryExpr) // identifier
-	nud(lexer.TYPEOF_TOKEN, parseTypeofExpr)
 	nud(lexer.INT8_TOKEN, parsePrimaryExpr)        // int literal, 8 bit
 	nud(lexer.INT16_TOKEN, parsePrimaryExpr)       // int literal, 16 bit
 	nud(lexer.INT32_TOKEN, parsePrimaryExpr)       // int literal, 32 bit
@@ -102,7 +101,6 @@ func bindLookupHandlers() {
 	nud(lexer.UINT32_TOKEN, parsePrimaryExpr)      // uint literal, 32 bit
 	nud(lexer.UINT64_TOKEN, parsePrimaryExpr)      // uint literal, 64 bit
 	nud(lexer.STR_TOKEN, parsePrimaryExpr)         // string literal
-	nud(lexer.NULL_TOKEN, parsePrimaryExpr)        // null literal
 	nud(lexer.OPEN_BRACKET, parseArrayExpr)        // array literal [1,2,3]
 	nud(lexer.OPEN_PAREN, parseGroupingExpr)       // grouping expression a + (b+c)
 	nud(lexer.FUNCTION_TOKEN, parseLambdaFunction) // anonymous function
@@ -129,5 +127,4 @@ func bindLookupHandlers() {
 	stmt(lexer.FUNCTION_TOKEN, parseFunctionDeclStmt) // function declaration
 	stmt(lexer.RETURN_TOKEN, parseReturnStmt)         // return statement
 	stmt(lexer.IMPL_TOKEN, parseImplStmt)
-	stmt(lexer.SAFE_TOKEN, parseSafeStmt)
 }

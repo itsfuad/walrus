@@ -74,21 +74,6 @@ func (a BooleanType) EndPos() lexer.Position {
 	return a.Location.End
 }
 
-type NullType struct {
-	TypeName builtins.PARSER_TYPE
-	Location
-}
-
-func (a NullType) Type() builtins.PARSER_TYPE {
-	return a.TypeName
-}
-func (a NullType) StartPos() lexer.Position {
-	return a.Location.Start
-}
-func (a NullType) EndPos() lexer.Position {
-	return a.Location.End
-}
-
 type VoidType struct {
 	TypeName builtins.PARSER_TYPE
 	Location
@@ -168,7 +153,6 @@ func (a InterfaceType) EndPos() lexer.Position {
 type FunctionTypeParam struct {
 	Identifier IdentifierExpr
 	Type       DataType
-	IsOptional bool
 	Location
 }
 
@@ -186,24 +170,6 @@ func (a FunctionType) StartPos() lexer.Position {
 	return a.Location.Start
 }
 func (a FunctionType) EndPos() lexer.Position {
-	return a.Location.End
-}
-
-type MaybeType struct {
-	TypeName  builtins.PARSER_TYPE
-	MaybeType DataType
-	Location
-}
-
-func (a MaybeType) Type() builtins.PARSER_TYPE {
-	return a.TypeName
-}
-
-func (a MaybeType) StartPos() lexer.Position {
-	return a.Location.Start
-}
-
-func (a MaybeType) EndPos() lexer.Position {
 	return a.Location.End
 }
 

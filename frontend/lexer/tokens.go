@@ -22,9 +22,6 @@ const (
 	RETURN_TOKEN     builtins.TOKEN_KIND = "ret"
 	IN_TOKEN         builtins.TOKEN_KIND = "in"
 	AS_TOKEN         builtins.TOKEN_KIND = "as"
-	TYPEOF_TOKEN     builtins.TOKEN_KIND = "typeof"
-	SAFE_TOKEN       builtins.TOKEN_KIND = "safe"
-	OTHERWISE_TOKEN  builtins.TOKEN_KIND = "otherwise"
 	//data types
 	INT8_TOKEN      builtins.TOKEN_KIND = builtins.INT8
 	INT16_TOKEN     builtins.TOKEN_KIND = builtins.INT16
@@ -39,24 +36,31 @@ const (
 	STR_TOKEN       builtins.TOKEN_KIND = builtins.STRING
 	BYTE_TOKEN      builtins.TOKEN_KIND = builtins.BYTE
 	BOOL_TOKEN      builtins.TOKEN_KIND = builtins.BOOL
-	NULL_TOKEN      builtins.TOKEN_KIND = builtins.NULL
 	STRUCT_TOKEN    builtins.TOKEN_KIND = builtins.STRUCT
 	FUNCTION_TOKEN  builtins.TOKEN_KIND = builtins.FUNCTION
 	INTERFACE_TOKEN builtins.TOKEN_KIND = builtins.INTERFACE
-	MAYBE_TOKEN     builtins.TOKEN_KIND = builtins.MAYBE
 	MAP_TOKEN       builtins.TOKEN_KIND = builtins.MAP
 
 	//increment and decrement
 	PLUS_PLUS_TOKEN   builtins.TOKEN_KIND = "++"
 	MINUS_MINUS_TOKEN builtins.TOKEN_KIND = "--"
-	//logical operators
+	//Binary operators
+	AND_TOKEN builtins.TOKEN_KIND = "&&"
+	OR_TOKEN  builtins.TOKEN_KIND = "||"
+	//bitwise operators
+	BIT_AND_TOKEN builtins.TOKEN_KIND = "&"
+	BIT_OR_TOKEN  builtins.TOKEN_KIND = "|"
+	BIT_XOR_TOKEN builtins.TOKEN_KIND = "^"
+	//unary operators
 	NOT_TOKEN           builtins.TOKEN_KIND = "!"
+	//arithmetic operators
+	EXP_TOKEN           builtins.TOKEN_KIND = "**"
 	MINUS_TOKEN         builtins.TOKEN_KIND = "-"
 	PLUS_TOKEN          builtins.TOKEN_KIND = "+"
 	MUL_TOKEN           builtins.TOKEN_KIND = "*"
 	DIV_TOKEN           builtins.TOKEN_KIND = "/"
 	MOD_TOKEN           builtins.TOKEN_KIND = "%"
-	EXP_TOKEN           builtins.TOKEN_KIND = "^"
+	//logical operators
 	LESS_TOKEN          builtins.TOKEN_KIND = "<"
 	GREATER_TOKEN       builtins.TOKEN_KIND = ">"
 	LESS_EQUAL_TOKEN    builtins.TOKEN_KIND = "<="
@@ -85,9 +89,6 @@ const (
 	SEMI_COLON_TOKEN builtins.TOKEN_KIND = ";"
 	ARROW_TOKEN      builtins.TOKEN_KIND = "->"
 	FAT_ARROW_TOKEN  builtins.TOKEN_KIND = "=>"
-	OPTIONAL_TOKEN   builtins.TOKEN_KIND = "?:"
-	AT_TOKEN         builtins.TOKEN_KIND = "@"
-	DOLLAR_TOKEN     builtins.TOKEN_KIND = "$"
 	EOF_TOKEN        builtins.TOKEN_KIND = "eof"
 )
 
@@ -105,10 +106,6 @@ var keyWordsMap map[string]builtins.TOKEN_KIND = map[string]builtins.TOKEN_KIND{
 	"struct":    STRUCT_TOKEN,
 	"fn":        FUNCTION_TOKEN,
 	"map":       MAP_TOKEN,
-	"maybe":     MAYBE_TOKEN,
-	"typeof":    TYPEOF_TOKEN,
-	"safe":      SAFE_TOKEN,
-	"otherwise": OTHERWISE_TOKEN,
 	"ret":       RETURN_TOKEN,
 	"in":        IN_TOKEN,
 	"as":        AS_TOKEN,

@@ -1,9 +1,6 @@
 package parser
 
 import (
-	//Standard packages
-	"errors"
-
 	//Walrus packages
 	"walrus/frontend/ast"
 	"walrus/frontend/lexer"
@@ -113,27 +110,19 @@ func parseFunctionSignature(p *Parser) ([]ast.FunctionParam, ast.DataType) {
 		// if ?: then the param is optional
 		currentToken := p.currentToken()
 
-		if currentToken.Kind != lexer.COLON_TOKEN && currentToken.Kind != lexer.OPTIONAL_TOKEN {
-			report.Add(p.FilePath, currentToken.Start.Line, currentToken.End.Line, currentToken.Start.Column, currentToken.End.Column, "expected : or ?:").Level(report.SYNTAX_ERROR)
+		if currentToken.Kind != lexer.COLON_TOKEN {
+			report.Add(p.FilePath, currentToken.Start.Line, currentToken.End.Line, currentToken.Start.Column, currentToken.End.Column, "expected : ").Level(report.SYNTAX_ERROR)
 		}
 
 		p.eat()
-
-		isOptional := currentToken.Kind == lexer.OPTIONAL_TOKEN
 
 		paramType := parseType(p, DEFAULT_BP)
 
 		var defaultValue ast.Node
 
-		if isOptional {
-			p.expectError(lexer.EQUALS_TOKEN, errors.New("expected '=' followed by a default value for optional parameter. eg: param?: i32 = 10"))
-			defaultValue = parseExpr(p, ASSIGNMENT_BP)
-		}
-
 		params = append(params, ast.FunctionParam{
 			Identifier:   param,
 			Type:         paramType,
-			IsOptional:   isOptional,
 			DefaultValue: defaultValue,
 			Location: ast.Location{
 				Start: param.Start,

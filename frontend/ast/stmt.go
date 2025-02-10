@@ -131,7 +131,6 @@ func (a ForEachStmt) EndPos() lexer.Position {
 type FunctionParam struct {
 	Identifier   IdentifierExpr
 	Type         DataType
-	IsOptional   bool
 	DefaultValue Node
 	Location
 }

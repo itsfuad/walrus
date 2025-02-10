@@ -37,8 +37,6 @@ func CheckAST(node ast.Node, env *TypeEnvironment) Tc {
 		return checkIfStmt(t, env)
 	case ast.ForStmt:
 		return checkForStmt(t, env)
-	case ast.SafeStmt:
-		return checkSafeStmt(t, env)
 	default:
 		return parseNodeValue(node, env)
 	}
@@ -84,8 +82,6 @@ func parseNodeValue(node ast.Node, env *TypeEnvironment) Tc {
 		return checkFunctionCall(t, env) // value
 	case ast.ReturnStmt:
 		return checkReturnStmt(t, env) // value
-	case nil:
-		return NewNull() // value
 	default:
 		report.Add(env.filePath, node.StartPos().Line, node.EndPos().Line, node.StartPos().Column, node.EndPos().Column, fmt.Sprintf("<%T> node is not implemented yet to check", node)).Level(report.CRITICAL_ERROR)
 		return NewVoid()

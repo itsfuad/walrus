@@ -110,11 +110,9 @@ func getFunctionTypeSignature(p *Parser) (builtins.PARSER_TYPE, []ast.FunctionTy
 
 		curentToken := p.currentToken()
 
-		if curentToken.Kind != lexer.COLON_TOKEN && curentToken.Kind != lexer.OPTIONAL_TOKEN {
-			report.Add(p.FilePath, curentToken.Start.Line, curentToken.End.Line, curentToken.Start.Column, curentToken.End.Column, "expected : or ?:").Level(report.SYNTAX_ERROR)
+		if curentToken.Kind != lexer.COLON_TOKEN {
+			report.Add(p.FilePath, curentToken.Start.Line, curentToken.End.Line, curentToken.Start.Column, curentToken.End.Column, "expected : ").Level(report.SYNTAX_ERROR)
 		}
-
-		isOptional := p.eat().Kind == lexer.OPTIONAL_TOKEN
 
 		typeName := parseType(p, DEFAULT_BP)
 
@@ -126,8 +124,7 @@ func getFunctionTypeSignature(p *Parser) (builtins.PARSER_TYPE, []ast.FunctionTy
 					End:   iden.End,
 				},
 			},
-			Type:       typeName,
-			IsOptional: isOptional,
+			Type: typeName,
 			Location: ast.Location{
 				Start: iden.Start,
 				End:   typeName.EndPos(),
@@ -158,6 +155,7 @@ func getFunctionTypeSignature(p *Parser) (builtins.PARSER_TYPE, []ast.FunctionTy
 
 	return builtins.PARSER_TYPE(builtins.FUNCTION), params, returnType
 }
+
 
 // Parses the builtin types like int, float, bool, char, str, null.
 // If the type is not a builtin type, then it is a user defined type
@@ -203,11 +201,6 @@ func parseDataType(p *Parser) ast.DataType {
 		}
 	case lexer.BOOL_TOKEN:
 		return ast.BooleanType{
-			TypeName: builtins.PARSER_TYPE(v),
-			Location: loc,
-		}
-	case lexer.NULL_TOKEN:
-		return ast.NullType{
 			TypeName: builtins.PARSER_TYPE(v),
 			Location: loc,
 		}

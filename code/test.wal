@@ -3,3 +3,14 @@ let a : i32 = 23;
 let b := 2.4;
 
 let c := a + b;
+
+type Point struct {
+    x : i32,
+    y : i32
+};
+
+let p := Point { x: 1, y: 2 };
+p.x = 3;
+p.y = 4;
+
+//let pRef : &Point; // error: pRef is not initialized. Reference must be initialized.

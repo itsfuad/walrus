@@ -22,7 +22,6 @@ func checkInterfaceTypeDecl(interfaceName string, interfaceNode ast.InterfaceTyp
 		for _, param := range method.Parameters {
 			fnParam := FnParam{
 				Name:       param.Identifier.Name,
-				IsOptional: param.IsOptional,
 				Type:       evaluateTypeName(param.Type, fnEnv),
 			}
 

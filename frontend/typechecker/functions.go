@@ -44,48 +44,28 @@ func CheckAndDeclareFunction(funcNode ast.FunctionLiteral, name string, env *Typ
 func checkandDeclareParamaters(params []ast.FunctionParam, fnEnv *TypeEnvironment) []FnParam {
 	var parameters []FnParam
 
-	for i, param := range params {
-		checkAndDeclareSingleParameter(param, i, params, fnEnv, &parameters)
+	for _, param := range params {
+		checkAndDeclareSingleParameter(param, fnEnv, &parameters)
 	}
 	return parameters
 }
 
-func checkAndDeclareSingleParameter(param ast.FunctionParam, i int, params []ast.FunctionParam, fnEnv *TypeEnvironment, parameters *[]FnParam) {
+func checkAndDeclareSingleParameter(param ast.FunctionParam, fnEnv *TypeEnvironment, parameters *[]FnParam) {
 	if fnEnv.isDeclared(param.Identifier.Name) {
 		report.Add(fnEnv.filePath, param.Identifier.Start.Line, param.Identifier.End.Line, param.Identifier.Start.Column, param.Identifier.End.Column, fmt.Sprintf("parameter '%s' is already defined", param.Identifier.Name)).Level(report.NORMAL_ERROR)
 	}
 
 	paramType := evaluateTypeName(param.Type, fnEnv)
 
-	if param.IsOptional {
-		checkOptionalParameter(param, i, params, fnEnv, paramType)
-	}
-
-	err := fnEnv.declareVar(param.Identifier.Name, paramType, false, param.IsOptional)
+	err := fnEnv.declareVar(param.Identifier.Name, paramType, false, false)
 	if err != nil {
 		report.Add(fnEnv.filePath, param.Identifier.Start.Line, param.Identifier.End.Line, param.Identifier.Start.Column, param.Identifier.End.Column, fmt.Sprintf("error defining parameter. %s", err.Error())).Level(report.CRITICAL_ERROR)
 	}
 
 	*parameters = append(*parameters, FnParam{
 		Name:       param.Identifier.Name,
-		IsOptional: param.IsOptional,
 		Type:       paramType,
 	})
-}
-
-func checkOptionalParameter(param ast.FunctionParam, i int, params []ast.FunctionParam, fnEnv *TypeEnvironment, paramType Tc) {
-	for j := i + 1; j < len(params); j++ {
-		if !params[j].IsOptional {
-			report.Add(fnEnv.filePath, params[j].Identifier.Start.Line, params[j].Identifier.End.Line, params[j].Identifier.Start.Column, params[j].Identifier.End.Column, fmt.Sprintf("parameter '%s' cannot be non-optional after an optional parameter", params[j].Identifier.Name)).Level(report.CRITICAL_ERROR)
-		}
-	}
-
-	defaultValue := parseNodeValue(param.DefaultValue, fnEnv)
-
-	err := validateTypeCompatibility(paramType, defaultValue)
-	if err != nil {
-		report.Add(fnEnv.filePath, param.DefaultValue.StartPos().Line, param.DefaultValue.EndPos().Line, param.DefaultValue.StartPos().Column, param.DefaultValue.EndPos().Column, fmt.Sprintf("error defining parameter. %s", err.Error())).Level(report.CRITICAL_ERROR)
-	}
 }
 
 func checkFunctionCall(callNode ast.FunctionCallExpr, env *TypeEnvironment) Tc {
@@ -99,19 +79,7 @@ func checkFunctionCall(callNode ast.FunctionCallExpr, env *TypeEnvironment) Tc {
 
 	fnParams := fn.Params
 	if len(callNode.Arguments) != len(fnParams) {
-		// exclude the optional parameters from the count
-		optionalParams := 0
-		for _, param := range fnParams {
-			if param.IsOptional {
-				optionalParams++
-			}
-		}
-		if len(callNode.Arguments) < len(fnParams)-optionalParams {
-			report.Add(env.filePath, callNode.Start.Line, callNode.End.Line, callNode.Start.Column, callNode.End.Column, fmt.Sprintf("function expects at least %d arguments, got %d", len(fnParams)-optionalParams, len(callNode.Arguments))).Level(report.NORMAL_ERROR)
-		}
-		if len(callNode.Arguments) > len(fnParams) {
-			report.Add(env.filePath, callNode.Start.Line, callNode.End.Line, callNode.Start.Column, callNode.End.Column, fmt.Sprintf("function expects at most %d arguments, got %d", len(fnParams), len(callNode.Arguments))).Level(report.NORMAL_ERROR)
-		}
+		report.Add(env.filePath, callNode.Start.Line, callNode.End.Line, callNode.Start.Column, callNode.End.Column, fmt.Sprintf("function expects %d arguments, got %d", len(fnParams), len(callNode.Arguments))).Level(report.NORMAL_ERROR)
 	}
 
 	//check if the arguments match the parameters
