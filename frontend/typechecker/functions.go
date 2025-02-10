@@ -63,8 +63,8 @@ func checkAndDeclareSingleParameter(param ast.FunctionParam, fnEnv *TypeEnvironm
 	}
 
 	*parameters = append(*parameters, FnParam{
-		Name:       param.Identifier.Name,
-		Type:       paramType,
+		Name: param.Identifier.Name,
+		Type: paramType,
 	})
 }
 

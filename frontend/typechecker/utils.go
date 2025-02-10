@@ -143,8 +143,8 @@ func evalFn(analyzedFunctionType ast.FunctionType, env *TypeEnvironment) Tc {
 
 		paramType := evaluateTypeName(param.Type, env)
 		params = append(params, FnParam{
-			Name:       param.Identifier.Name,
-			Type:       paramType,
+			Name: param.Identifier.Name,
+			Type: paramType,
 		})
 	}
 
