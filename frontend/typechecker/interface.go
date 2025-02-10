@@ -21,8 +21,8 @@ func checkInterfaceTypeDecl(interfaceName string, interfaceNode ast.InterfaceTyp
 
 		for _, param := range method.Parameters {
 			fnParam := FnParam{
-				Name:       param.Identifier.Name,
-				Type:       evaluateTypeName(param.Type, fnEnv),
+				Name: param.Identifier.Name,
+				Type: evaluateTypeName(param.Type, fnEnv),
 			}
 
 			//check if the parameter is already declared

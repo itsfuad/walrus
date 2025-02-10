@@ -87,7 +87,7 @@ func (t Map) DType() builtins.TC_TYPE {
 }
 
 type FnParam struct {
-	Name       string
+	Name string
 	Type Tc
 }
 

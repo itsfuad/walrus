@@ -156,7 +156,6 @@ func getFunctionTypeSignature(p *Parser) (builtins.PARSER_TYPE, []ast.FunctionTy
 	return builtins.PARSER_TYPE(builtins.FUNCTION), params, returnType
 }
 
-
 // Parses the builtin types like int, float, bool, char, str, null.
 // If the type is not a builtin type, then it is a user defined type
 // Type must be a single token identifier

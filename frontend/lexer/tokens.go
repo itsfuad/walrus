@@ -52,14 +52,14 @@ const (
 	BIT_OR_TOKEN  builtins.TOKEN_KIND = "|"
 	BIT_XOR_TOKEN builtins.TOKEN_KIND = "^"
 	//unary operators
-	NOT_TOKEN           builtins.TOKEN_KIND = "!"
+	NOT_TOKEN builtins.TOKEN_KIND = "!"
 	//arithmetic operators
-	EXP_TOKEN           builtins.TOKEN_KIND = "**"
-	MINUS_TOKEN         builtins.TOKEN_KIND = "-"
-	PLUS_TOKEN          builtins.TOKEN_KIND = "+"
-	MUL_TOKEN           builtins.TOKEN_KIND = "*"
-	DIV_TOKEN           builtins.TOKEN_KIND = "/"
-	MOD_TOKEN           builtins.TOKEN_KIND = "%"
+	EXP_TOKEN   builtins.TOKEN_KIND = "**"
+	MINUS_TOKEN builtins.TOKEN_KIND = "-"
+	PLUS_TOKEN  builtins.TOKEN_KIND = "+"
+	MUL_TOKEN   builtins.TOKEN_KIND = "*"
+	DIV_TOKEN   builtins.TOKEN_KIND = "/"
+	MOD_TOKEN   builtins.TOKEN_KIND = "%"
 	//logical operators
 	LESS_TOKEN          builtins.TOKEN_KIND = "<"
 	GREATER_TOKEN       builtins.TOKEN_KIND = ">"
