@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"math/rand"
-	"reflect"
 	"time"
 
 	//Walrus packages
@@ -96,8 +95,6 @@ func evaluateTypeName(dtype ast.DataType, env *TypeEnvironment) Tc {
 		return evalFn(t, env)
 	case ast.MapType:
 		return evalMap(t, env)
-	case ast.MaybeType:
-		return NewMaybe(evaluateTypeName(t.MaybeType, env))
 	case ast.UserDefinedType:
 		return evalUD(t, env)
 	case nil:
@@ -147,7 +144,6 @@ func evalFn(analyzedFunctionType ast.FunctionType, env *TypeEnvironment) Tc {
 		paramType := evaluateTypeName(param.Type, env)
 		params = append(params, FnParam{
 			Name:       param.Identifier.Name,
-			IsOptional: param.IsOptional,
 			Type:       paramType,
 		})
 	}
@@ -191,7 +187,7 @@ func validateTypeCompatibility(expectedType, providedType Tc) error {
 	unwrappedExpected := unwrapType(expectedType)
 	unwrappedProvided := unwrapType(providedType)
 
-	switch t := unwrappedExpected.(type) {
+	switch unwrappedExpected.(type) {
 	case Interface:
 		errs := checkMethodsImplementations(unwrappedExpected, unwrappedProvided)
 		if len(errs) > 0 {
@@ -199,14 +195,6 @@ func validateTypeCompatibility(expectedType, providedType Tc) error {
 			return errors.New(msgs + report.TreeFormatError(errs...).Error())
 		}
 		return nil
-	case Maybe:
-		if _, ok := unwrappedProvided.(Null); ok {
-			return nil
-		}
-
-		if reflect.TypeOf(t.MaybeType) == reflect.TypeOf(unwrappedProvided) {
-			return nil
-		}
 	}
 
 	expectedStr := tcToString(unwrappedExpected)
@@ -247,11 +235,7 @@ func functionSignatureString(fn Fn) string {
 	ParamStrs := ""
 	for i, param := range fn.Params {
 		ParamStrs += param.Name
-		if param.IsOptional {
-			ParamStrs += "?: "
-		} else {
-			ParamStrs += ": "
-		}
+		ParamStrs += ": "
 		ParamStrs += string(tcToString(param.Type))
 		if i != len(fn.Params)-1 {
 			ParamStrs += ", "

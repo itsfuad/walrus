@@ -39,18 +39,10 @@ func NewBool() Bool {
 	return Bool{DataType: BOOLEAN_TYPE}
 }
 
-func NewNull() Null {
-	return Null{DataType: NULL_TYPE}
-}
-
 func NewVoid() Void {
 	return Void{DataType: VOID_TYPE}
 }
 
 func NewMap(keyType Tc, valueType Tc) Map {
 	return Map{DataType: MAP_TYPE, KeyType: keyType, ValueType: valueType}
-}
-
-func NewMaybe(valueType Tc) Maybe {
-	return Maybe{DataType: MAYBE_TYPE, MaybeType: valueType}
 }

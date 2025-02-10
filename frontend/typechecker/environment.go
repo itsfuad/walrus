@@ -32,7 +32,6 @@ var typeDefinitions = map[string]Tc{
 	string(FLOAT32_TYPE): NewFloat(32),
 	string(FLOAT64_TYPE): NewFloat(64),
 	string(BOOLEAN_TYPE): NewBool(),
-	string(NULL_TYPE):    NewNull(),
 	string(VOID_TYPE):    NewVoid(),
 }
 
@@ -52,7 +51,6 @@ func ProgramEnv(filepath string) *TypeEnvironment {
 	env := NewTypeENV(nil, GLOBAL_SCOPE, "global", filepath)
 	initVar(env, "true", NewBool(), true, false)
 	initVar(env, "false", NewBool(), true, false)
-	initVar(env, "null", NewNull(), true, false)
 	initVar(env, "PI", NewFloat(32), true, false)
 	return env
 }

@@ -18,14 +18,12 @@ const (
 	STRING_TYPE       builtins.TC_TYPE = builtins.STRING
 	BYTE_TYPE         builtins.TC_TYPE = builtins.BYTE
 	BOOLEAN_TYPE      builtins.TC_TYPE = builtins.BOOL
-	NULL_TYPE         builtins.TC_TYPE = builtins.NULL
 	VOID_TYPE         builtins.TC_TYPE = builtins.VOID
 	FUNCTION_TYPE     builtins.TC_TYPE = builtins.FUNCTION
 	STRUCT_TYPE       builtins.TC_TYPE = builtins.STRUCT
 	INTERFACE_TYPE    builtins.TC_TYPE = builtins.INTERFACE
 	ARRAY_TYPE        builtins.TC_TYPE = builtins.ARRAY
 	MAP_TYPE          builtins.TC_TYPE = builtins.MAP
-	MAYBE_TYPE        builtins.TC_TYPE = builtins.MAYBE
 	USER_DEFINED_TYPE builtins.TC_TYPE = builtins.USER_DEFINED
 	BLOCK_TYPE        builtins.TC_TYPE = "block"
 	RETURN_TYPE       builtins.TC_TYPE = "return"
@@ -70,14 +68,6 @@ func (t Bool) DType() builtins.TC_TYPE {
 	return t.DataType
 }
 
-type Null struct {
-	DataType builtins.TC_TYPE
-}
-
-func (t Null) DType() builtins.TC_TYPE {
-	return t.DataType
-}
-
 type Void struct {
 	DataType builtins.TC_TYPE
 }
@@ -98,8 +88,6 @@ func (t Map) DType() builtins.TC_TYPE {
 
 type FnParam struct {
 	Name       string
-	IsOptional bool
-	//DefaultValueType ValueTypeInterface
 	Type Tc
 }
 

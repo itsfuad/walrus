@@ -25,17 +25,6 @@ func TestFunctionSignatureString(t *testing.T) {
 			expected: "fn(a: i32, b: f64) -> i32",
 		},
 		{
-			name: "function with optional parameter",
-			fn: Fn{
-				Params: []FnParam{
-					{Name: "a", Type: Int{builtins.INT32, 32, true}},
-					{Name: "b", Type: Float{builtins.FLOAT32, 32}, IsOptional: true},
-				},
-				Returns: Int{builtins.INT32, 32, true},
-			},
-			expected: "fn(a: i32, b?: f32) -> i32",
-		},
-		{
 			name: "function with no return type",
 			fn: Fn{
 				Params: []FnParam{
@@ -171,7 +160,7 @@ func TestFunctionToString(t *testing.T) {
 	val := Fn{
 		Params: []FnParam{
 			{Name: "a", Type: Int{builtins.INT32, 32, true}},
-			{Name: "b", Type: Float{builtins.FLOAT64, 64}, IsOptional: true},
+			{Name: "b", Type: Float{builtins.FLOAT64, 64}},
 		},
 		Returns: Int{builtins.INT32, 32, true},
 	}
