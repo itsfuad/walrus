@@ -449,161 +449,1314 @@
             }
         },
         {
-            "Assignee": {
-                "Object": {
-                    "Name": "p",
+            "Variables": [
+                {
+                    "Identifier": {
+                        "Name": "p2",
+                        "Start": {
+                            "Line": 16,
+                            "Column": 5,
+                            "Index": 173
+                        },
+                        "End": {
+                            "Line": 16,
+                            "Column": 7,
+                            "Index": 175
+                        }
+                    },
+                    "Value": {
+                        "Identifier": {
+                            "Name": "",
+                            "Start": {
+                                "Line": 16,
+                                "Column": 11,
+                                "Index": 179
+                            },
+                            "End": {
+                                "Line": 16,
+                                "Column": 17,
+                                "Index": 185
+                            }
+                        },
+                        "Properties": [
+                            {
+                                "Prop": {
+                                    "Name": "x",
+                                    "Start": {
+                                        "Line": 16,
+                                        "Column": 20,
+                                        "Index": 188
+                                    },
+                                    "End": {
+                                        "Line": 16,
+                                        "Column": 21,
+                                        "Index": 189
+                                    }
+                                },
+                                "Value": {
+                                    "Value": "1",
+                                    "BitSize": 32,
+                                    "IsSigned": true,
+                                    "Start": {
+                                        "Line": 16,
+                                        "Column": 23,
+                                        "Index": 191
+                                    },
+                                    "End": {
+                                        "Line": 16,
+                                        "Column": 24,
+                                        "Index": 192
+                                    }
+                                }
+                            },
+                            {
+                                "Prop": {
+                                    "Name": "y",
+                                    "Start": {
+                                        "Line": 16,
+                                        "Column": 26,
+                                        "Index": 194
+                                    },
+                                    "End": {
+                                        "Line": 16,
+                                        "Column": 27,
+                                        "Index": 195
+                                    }
+                                },
+                                "Value": {
+                                    "Value": "2",
+                                    "BitSize": 32,
+                                    "IsSigned": true,
+                                    "Start": {
+                                        "Line": 16,
+                                        "Column": 29,
+                                        "Index": 197
+                                    },
+                                    "End": {
+                                        "Line": 16,
+                                        "Column": 30,
+                                        "Index": 198
+                                    }
+                                }
+                            }
+                        ],
+                        "Start": {
+                            "Line": 16,
+                            "Column": 11,
+                            "Index": 179
+                        },
+                        "End": {
+                            "Line": 16,
+                            "Column": 32,
+                            "Index": 200
+                        }
+                    },
+                    "ExplicitType": null,
                     "Start": {
-                        "Line": 13,
-                        "Column": 1,
-                        "Index": 143
+                        "Line": 16,
+                        "Column": 5,
+                        "Index": 173
                     },
                     "End": {
-                        "Line": 13,
-                        "Column": 2,
-                        "Index": 144
+                        "Line": 16,
+                        "Column": 32,
+                        "Index": 200
                     }
-                },
-                "Property": {
-                    "Name": "x",
-                    "Start": {
-                        "Line": 13,
-                        "Column": 3,
-                        "Index": 145
-                    },
-                    "End": {
-                        "Line": 13,
-                        "Column": 4,
-                        "Index": 146
-                    }
-                },
-                "Start": {
-                    "Line": 13,
-                    "Column": 1,
-                    "Index": 143
-                },
-                "End": {
-                    "Line": 13,
-                    "Column": 4,
-                    "Index": 146
                 }
-            },
-            "Value": {
-                "Value": "3",
-                "BitSize": 32,
-                "IsSigned": true,
-                "Start": {
-                    "Line": 13,
-                    "Column": 7,
-                    "Index": 149
-                },
-                "End": {
-                    "Line": 13,
-                    "Column": 8,
-                    "Index": 150
-                }
-            },
-            "Operator": {
-                "Kind": "=",
-                "Value": "=",
-                "Start": {
-                    "Line": 13,
-                    "Column": 5,
-                    "Index": 147
-                },
-                "End": {
-                    "Line": 13,
-                    "Column": 6,
-                    "Index": 148
-                }
-            },
+            ],
+            "IsConst": false,
             "Start": {
-                "Line": 13,
+                "Line": 16,
                 "Column": 1,
-                "Index": 143
+                "Index": 169
             },
             "End": {
-                "Line": 13,
-                "Column": 8,
-                "Index": 150
+                "Line": 16,
+                "Column": 33,
+                "Index": 201
             }
         },
         {
-            "Assignee": {
-                "Object": {
-                    "Name": "p",
+            "Variables": [
+                {
+                    "Identifier": {
+                        "Name": "p3",
+                        "Start": {
+                            "Line": 20,
+                            "Column": 5,
+                            "Index": 233
+                        },
+                        "End": {
+                            "Line": 20,
+                            "Column": 7,
+                            "Index": 235
+                        }
+                    },
+                    "Value": {
+                        "Name": "p2",
+                        "Start": {
+                            "Line": 20,
+                            "Column": 38,
+                            "Index": 266
+                        },
+                        "End": {
+                            "Line": 20,
+                            "Column": 40,
+                            "Index": 268
+                        }
+                    },
+                    "ExplicitType": {
+                        "TypeName": "struct",
+                        "Properties": [
+                            {
+                                "Prop": {
+                                    "Name": "x",
+                                    "Start": {
+                                        "Line": 20,
+                                        "Column": 19,
+                                        "Index": 247
+                                    },
+                                    "End": {
+                                        "Line": 20,
+                                        "Column": 20,
+                                        "Index": 248
+                                    }
+                                },
+                                "PropType": {
+                                    "TypeName": "i32",
+                                    "BitSize": 32,
+                                    "IsSigned": true,
+                                    "Start": {
+                                        "Line": 20,
+                                        "Column": 22,
+                                        "Index": 250
+                                    },
+                                    "End": {
+                                        "Line": 20,
+                                        "Column": 25,
+                                        "Index": 253
+                                    }
+                                },
+                                "IsPrivate": false
+                            },
+                            {
+                                "Prop": {
+                                    "Name": "y",
+                                    "Start": {
+                                        "Line": 20,
+                                        "Column": 27,
+                                        "Index": 255
+                                    },
+                                    "End": {
+                                        "Line": 20,
+                                        "Column": 28,
+                                        "Index": 256
+                                    }
+                                },
+                                "PropType": {
+                                    "TypeName": "i32",
+                                    "BitSize": 32,
+                                    "IsSigned": true,
+                                    "Start": {
+                                        "Line": 20,
+                                        "Column": 30,
+                                        "Index": 258
+                                    },
+                                    "End": {
+                                        "Line": 20,
+                                        "Column": 33,
+                                        "Index": 261
+                                    }
+                                },
+                                "IsPrivate": false
+                            }
+                        ],
+                        "Start": {
+                            "Line": 20,
+                            "Column": 17,
+                            "Index": 245
+                        },
+                        "End": {
+                            "Line": 20,
+                            "Column": 35,
+                            "Index": 263
+                        }
+                    },
                     "Start": {
-                        "Line": 14,
-                        "Column": 1,
-                        "Index": 153
+                        "Line": 20,
+                        "Column": 5,
+                        "Index": 233
                     },
                     "End": {
-                        "Line": 14,
-                        "Column": 2,
-                        "Index": 154
+                        "Line": 20,
+                        "Column": 40,
+                        "Index": 268
                     }
-                },
-                "Property": {
-                    "Name": "y",
-                    "Start": {
-                        "Line": 14,
-                        "Column": 3,
-                        "Index": 155
-                    },
-                    "End": {
-                        "Line": 14,
-                        "Column": 4,
-                        "Index": 156
-                    }
-                },
-                "Start": {
-                    "Line": 14,
-                    "Column": 1,
-                    "Index": 153
-                },
-                "End": {
-                    "Line": 14,
-                    "Column": 4,
-                    "Index": 156
                 }
+            ],
+            "IsConst": false,
+            "Start": {
+                "Line": 20,
+                "Column": 1,
+                "Index": 229
             },
-            "Value": {
-                "Value": "4",
+            "End": {
+                "Line": 20,
+                "Column": 41,
+                "Index": 269
+            }
+        },
+        {
+            "Variables": [
+                {
+                    "Identifier": {
+                        "Name": "p4",
+                        "Start": {
+                            "Line": 22,
+                            "Column": 5,
+                            "Index": 286
+                        },
+                        "End": {
+                            "Line": 22,
+                            "Column": 7,
+                            "Index": 288
+                        }
+                    },
+                    "Value": {
+                        "Name": "p3",
+                        "Start": {
+                            "Line": 22,
+                            "Column": 38,
+                            "Index": 319
+                        },
+                        "End": {
+                            "Line": 22,
+                            "Column": 40,
+                            "Index": 321
+                        }
+                    },
+                    "ExplicitType": {
+                        "TypeName": "struct",
+                        "Properties": [
+                            {
+                                "Prop": {
+                                    "Name": "x",
+                                    "Start": {
+                                        "Line": 22,
+                                        "Column": 19,
+                                        "Index": 300
+                                    },
+                                    "End": {
+                                        "Line": 22,
+                                        "Column": 20,
+                                        "Index": 301
+                                    }
+                                },
+                                "PropType": {
+                                    "TypeName": "i32",
+                                    "BitSize": 32,
+                                    "IsSigned": true,
+                                    "Start": {
+                                        "Line": 22,
+                                        "Column": 22,
+                                        "Index": 303
+                                    },
+                                    "End": {
+                                        "Line": 22,
+                                        "Column": 25,
+                                        "Index": 306
+                                    }
+                                },
+                                "IsPrivate": false
+                            },
+                            {
+                                "Prop": {
+                                    "Name": "y",
+                                    "Start": {
+                                        "Line": 22,
+                                        "Column": 27,
+                                        "Index": 308
+                                    },
+                                    "End": {
+                                        "Line": 22,
+                                        "Column": 28,
+                                        "Index": 309
+                                    }
+                                },
+                                "PropType": {
+                                    "TypeName": "i32",
+                                    "BitSize": 32,
+                                    "IsSigned": true,
+                                    "Start": {
+                                        "Line": 22,
+                                        "Column": 30,
+                                        "Index": 311
+                                    },
+                                    "End": {
+                                        "Line": 22,
+                                        "Column": 33,
+                                        "Index": 314
+                                    }
+                                },
+                                "IsPrivate": false
+                            }
+                        ],
+                        "Start": {
+                            "Line": 22,
+                            "Column": 17,
+                            "Index": 298
+                        },
+                        "End": {
+                            "Line": 22,
+                            "Column": 35,
+                            "Index": 316
+                        }
+                    },
+                    "Start": {
+                        "Line": 22,
+                        "Column": 5,
+                        "Index": 286
+                    },
+                    "End": {
+                        "Line": 22,
+                        "Column": 40,
+                        "Index": 321
+                    }
+                }
+            ],
+            "IsConst": false,
+            "Start": {
+                "Line": 22,
+                "Column": 1,
+                "Index": 282
+            },
+            "End": {
+                "Line": 22,
+                "Column": 41,
+                "Index": 322
+            }
+        },
+        {
+            "Variables": [
+                {
+                    "Identifier": {
+                        "Name": "p5",
+                        "Start": {
+                            "Line": 24,
+                            "Column": 5,
+                            "Index": 355
+                        },
+                        "End": {
+                            "Line": 24,
+                            "Column": 7,
+                            "Index": 357
+                        }
+                    },
+                    "Value": {
+                        "Identifier": {
+                            "Name": "",
+                            "Start": {
+                                "Line": 24,
+                                "Column": 11,
+                                "Index": 361
+                            },
+                            "End": {
+                                "Line": 24,
+                                "Column": 17,
+                                "Index": 367
+                            }
+                        },
+                        "Properties": [
+                            {
+                                "Prop": {
+                                    "Name": "x",
+                                    "Start": {
+                                        "Line": 24,
+                                        "Column": 20,
+                                        "Index": 370
+                                    },
+                                    "End": {
+                                        "Line": 24,
+                                        "Column": 21,
+                                        "Index": 371
+                                    }
+                                },
+                                "Value": {
+                                    "Value": "46",
+                                    "BitSize": 32,
+                                    "IsSigned": true,
+                                    "Start": {
+                                        "Line": 24,
+                                        "Column": 23,
+                                        "Index": 373
+                                    },
+                                    "End": {
+                                        "Line": 24,
+                                        "Column": 25,
+                                        "Index": 375
+                                    }
+                                }
+                            },
+                            {
+                                "Prop": {
+                                    "Name": "y",
+                                    "Start": {
+                                        "Line": 24,
+                                        "Column": 27,
+                                        "Index": 377
+                                    },
+                                    "End": {
+                                        "Line": 24,
+                                        "Column": 28,
+                                        "Index": 378
+                                    }
+                                },
+                                "Value": {
+                                    "Value": "2",
+                                    "BitSize": 32,
+                                    "IsSigned": true,
+                                    "Start": {
+                                        "Line": 24,
+                                        "Column": 30,
+                                        "Index": 380
+                                    },
+                                    "End": {
+                                        "Line": 24,
+                                        "Column": 31,
+                                        "Index": 381
+                                    }
+                                }
+                            }
+                        ],
+                        "Start": {
+                            "Line": 24,
+                            "Column": 11,
+                            "Index": 361
+                        },
+                        "End": {
+                            "Line": 24,
+                            "Column": 33,
+                            "Index": 383
+                        }
+                    },
+                    "ExplicitType": null,
+                    "Start": {
+                        "Line": 24,
+                        "Column": 5,
+                        "Index": 355
+                    },
+                    "End": {
+                        "Line": 24,
+                        "Column": 33,
+                        "Index": 383
+                    }
+                }
+            ],
+            "IsConst": false,
+            "Start": {
+                "Line": 24,
+                "Column": 1,
+                "Index": 351
+            },
+            "End": {
+                "Line": 24,
+                "Column": 34,
+                "Index": 384
+            }
+        },
+        {
+            "UDTypeValue": {
+                "TypeName": "i32",
                 "BitSize": 32,
                 "IsSigned": true,
                 "Start": {
-                    "Line": 14,
-                    "Column": 7,
-                    "Index": 159
+                    "Line": 26,
+                    "Column": 10,
+                    "Index": 406
                 },
                 "End": {
-                    "Line": 14,
-                    "Column": 8,
-                    "Index": 160
+                    "Line": 26,
+                    "Column": 13,
+                    "Index": 409
                 }
             },
-            "Operator": {
-                "Kind": "=",
-                "Value": "=",
+            "UDTypeName": {
+                "Name": "Int",
                 "Start": {
-                    "Line": 14,
-                    "Column": 5,
-                    "Index": 157
+                    "Line": 26,
+                    "Column": 6,
+                    "Index": 402
                 },
                 "End": {
-                    "Line": 14,
-                    "Column": 6,
-                    "Index": 158
+                    "Line": 26,
+                    "Column": 9,
+                    "Index": 405
                 }
             },
             "Start": {
-                "Line": 14,
+                "Line": 26,
                 "Column": 1,
-                "Index": 153
+                "Index": 397
             },
             "End": {
-                "Line": 14,
-                "Column": 8,
-                "Index": 160
+                "Line": 26,
+                "Column": 13,
+                "Index": 409
+            }
+        },
+        {
+            "Variables": [
+                {
+                    "Identifier": {
+                        "Name": "i1",
+                        "Start": {
+                            "Line": 28,
+                            "Column": 5,
+                            "Index": 418
+                        },
+                        "End": {
+                            "Line": 28,
+                            "Column": 7,
+                            "Index": 420
+                        }
+                    },
+                    "Value": {
+                        "Value": "23",
+                        "BitSize": 32,
+                        "IsSigned": true,
+                        "Start": {
+                            "Line": 28,
+                            "Column": 16,
+                            "Index": 429
+                        },
+                        "End": {
+                            "Line": 28,
+                            "Column": 18,
+                            "Index": 431
+                        }
+                    },
+                    "ExplicitType": {
+                        "TypeName": "user_defined",
+                        "AliasName": "Int",
+                        "Start": {
+                            "Line": 28,
+                            "Column": 10,
+                            "Index": 423
+                        },
+                        "End": {
+                            "Line": 28,
+                            "Column": 13,
+                            "Index": 426
+                        }
+                    },
+                    "Start": {
+                        "Line": 28,
+                        "Column": 5,
+                        "Index": 418
+                    },
+                    "End": {
+                        "Line": 28,
+                        "Column": 18,
+                        "Index": 431
+                    }
+                }
+            ],
+            "IsConst": false,
+            "Start": {
+                "Line": 28,
+                "Column": 1,
+                "Index": 414
+            },
+            "End": {
+                "Line": 28,
+                "Column": 19,
+                "Index": 432
+            }
+        },
+        {
+            "Variables": [
+                {
+                    "Identifier": {
+                        "Name": "i2",
+                        "Start": {
+                            "Line": 29,
+                            "Column": 5,
+                            "Index": 438
+                        },
+                        "End": {
+                            "Line": 29,
+                            "Column": 7,
+                            "Index": 440
+                        }
+                    },
+                    "Value": {
+                        "Name": "i1",
+                        "Start": {
+                            "Line": 29,
+                            "Column": 16,
+                            "Index": 449
+                        },
+                        "End": {
+                            "Line": 29,
+                            "Column": 18,
+                            "Index": 451
+                        }
+                    },
+                    "ExplicitType": {
+                        "TypeName": "i32",
+                        "BitSize": 32,
+                        "IsSigned": true,
+                        "Start": {
+                            "Line": 29,
+                            "Column": 10,
+                            "Index": 443
+                        },
+                        "End": {
+                            "Line": 29,
+                            "Column": 13,
+                            "Index": 446
+                        }
+                    },
+                    "Start": {
+                        "Line": 29,
+                        "Column": 5,
+                        "Index": 438
+                    },
+                    "End": {
+                        "Line": 29,
+                        "Column": 18,
+                        "Index": 451
+                    }
+                }
+            ],
+            "IsConst": false,
+            "Start": {
+                "Line": 29,
+                "Column": 1,
+                "Index": 434
+            },
+            "End": {
+                "Line": 29,
+                "Column": 19,
+                "Index": 452
+            }
+        },
+        {
+            "Variables": [
+                {
+                    "Identifier": {
+                        "Name": "p6",
+                        "Start": {
+                            "Line": 31,
+                            "Column": 5,
+                            "Index": 460
+                        },
+                        "End": {
+                            "Line": 31,
+                            "Column": 7,
+                            "Index": 462
+                        }
+                    },
+                    "Value": {
+                        "Expression": {
+                            "Name": "p5",
+                            "Start": {
+                                "Line": 31,
+                                "Column": 18,
+                                "Index": 473
+                            },
+                            "End": {
+                                "Line": 31,
+                                "Column": 20,
+                                "Index": 475
+                            }
+                        },
+                        "ToCast": {
+                            "TypeName": "user_defined",
+                            "AliasName": "Point",
+                            "Start": {
+                                "Line": 31,
+                                "Column": 24,
+                                "Index": 479
+                            },
+                            "End": {
+                                "Line": 31,
+                                "Column": 29,
+                                "Index": 484
+                            }
+                        },
+                        "Start": {
+                            "Line": 31,
+                            "Column": 18,
+                            "Index": 473
+                        },
+                        "End": {
+                            "Line": 31,
+                            "Column": 29,
+                            "Index": 484
+                        }
+                    },
+                    "ExplicitType": {
+                        "TypeName": "user_defined",
+                        "AliasName": "Point",
+                        "Start": {
+                            "Line": 31,
+                            "Column": 10,
+                            "Index": 465
+                        },
+                        "End": {
+                            "Line": 31,
+                            "Column": 15,
+                            "Index": 470
+                        }
+                    },
+                    "Start": {
+                        "Line": 31,
+                        "Column": 5,
+                        "Index": 460
+                    },
+                    "End": {
+                        "Line": 31,
+                        "Column": 29,
+                        "Index": 484
+                    }
+                }
+            ],
+            "IsConst": false,
+            "Start": {
+                "Line": 31,
+                "Column": 1,
+                "Index": 456
+            },
+            "End": {
+                "Line": 31,
+                "Column": 30,
+                "Index": 485
+            }
+        },
+        {
+            "UDTypeValue": {
+                "TypeName": "struct",
+                "Properties": [
+                    {
+                        "Prop": {
+                            "Name": "x",
+                            "Start": {
+                                "Line": 34,
+                                "Column": 5,
+                                "Index": 568
+                            },
+                            "End": {
+                                "Line": 34,
+                                "Column": 6,
+                                "Index": 569
+                            }
+                        },
+                        "PropType": {
+                            "TypeName": "i32",
+                            "BitSize": 32,
+                            "IsSigned": true,
+                            "Start": {
+                                "Line": 34,
+                                "Column": 9,
+                                "Index": 572
+                            },
+                            "End": {
+                                "Line": 34,
+                                "Column": 12,
+                                "Index": 575
+                            }
+                        },
+                        "IsPrivate": false
+                    },
+                    {
+                        "Prop": {
+                            "Name": "y",
+                            "Start": {
+                                "Line": 35,
+                                "Column": 5,
+                                "Index": 582
+                            },
+                            "End": {
+                                "Line": 35,
+                                "Column": 6,
+                                "Index": 583
+                            }
+                        },
+                        "PropType": {
+                            "TypeName": "i32",
+                            "BitSize": 32,
+                            "IsSigned": true,
+                            "Start": {
+                                "Line": 35,
+                                "Column": 9,
+                                "Index": 586
+                            },
+                            "End": {
+                                "Line": 35,
+                                "Column": 12,
+                                "Index": 589
+                            }
+                        },
+                        "IsPrivate": false
+                    },
+                    {
+                        "Prop": {
+                            "Name": "z",
+                            "Start": {
+                                "Line": 36,
+                                "Column": 5,
+                                "Index": 596
+                            },
+                            "End": {
+                                "Line": 36,
+                                "Column": 6,
+                                "Index": 597
+                            }
+                        },
+                        "PropType": {
+                            "TypeName": "i32",
+                            "BitSize": 32,
+                            "IsSigned": true,
+                            "Start": {
+                                "Line": 36,
+                                "Column": 9,
+                                "Index": 600
+                            },
+                            "End": {
+                                "Line": 36,
+                                "Column": 12,
+                                "Index": 603
+                            }
+                        },
+                        "IsPrivate": false
+                    }
+                ],
+                "Start": {
+                    "Line": 33,
+                    "Column": 20,
+                    "Index": 561
+                },
+                "End": {
+                    "Line": 37,
+                    "Column": 2,
+                    "Index": 606
+                }
+            },
+            "UDTypeName": {
+                "Name": "Point3",
+                "Start": {
+                    "Line": 33,
+                    "Column": 6,
+                    "Index": 547
+                },
+                "End": {
+                    "Line": 33,
+                    "Column": 12,
+                    "Index": 553
+                }
+            },
+            "Start": {
+                "Line": 33,
+                "Column": 1,
+                "Index": 542
+            },
+            "End": {
+                "Line": 37,
+                "Column": 2,
+                "Index": 606
+            }
+        },
+        {
+            "UDTypeValue": {
+                "TypeName": "struct",
+                "Properties": [
+                    {
+                        "Prop": {
+                            "Name": "x",
+                            "Start": {
+                                "Line": 40,
+                                "Column": 5,
+                                "Index": 637
+                            },
+                            "End": {
+                                "Line": 40,
+                                "Column": 6,
+                                "Index": 638
+                            }
+                        },
+                        "PropType": {
+                            "TypeName": "i32",
+                            "BitSize": 32,
+                            "IsSigned": true,
+                            "Start": {
+                                "Line": 40,
+                                "Column": 9,
+                                "Index": 641
+                            },
+                            "End": {
+                                "Line": 40,
+                                "Column": 12,
+                                "Index": 644
+                            }
+                        },
+                        "IsPrivate": false
+                    },
+                    {
+                        "Prop": {
+                            "Name": "y",
+                            "Start": {
+                                "Line": 41,
+                                "Column": 5,
+                                "Index": 651
+                            },
+                            "End": {
+                                "Line": 41,
+                                "Column": 6,
+                                "Index": 652
+                            }
+                        },
+                        "PropType": {
+                            "TypeName": "i32",
+                            "BitSize": 32,
+                            "IsSigned": true,
+                            "Start": {
+                                "Line": 41,
+                                "Column": 9,
+                                "Index": 655
+                            },
+                            "End": {
+                                "Line": 41,
+                                "Column": 12,
+                                "Index": 658
+                            }
+                        },
+                        "IsPrivate": false
+                    }
+                ],
+                "Start": {
+                    "Line": 39,
+                    "Column": 20,
+                    "Index": 630
+                },
+                "End": {
+                    "Line": 42,
+                    "Column": 2,
+                    "Index": 661
+                }
+            },
+            "UDTypeName": {
+                "Name": "Point2",
+                "Start": {
+                    "Line": 39,
+                    "Column": 6,
+                    "Index": 616
+                },
+                "End": {
+                    "Line": 39,
+                    "Column": 12,
+                    "Index": 622
+                }
+            },
+            "Start": {
+                "Line": 39,
+                "Column": 1,
+                "Index": 611
+            },
+            "End": {
+                "Line": 42,
+                "Column": 2,
+                "Index": 661
+            }
+        },
+        {
+            "Variables": [
+                {
+                    "Identifier": {
+                        "Name": "p8",
+                        "Start": {
+                            "Line": 46,
+                            "Column": 5,
+                            "Index": 766
+                        },
+                        "End": {
+                            "Line": 46,
+                            "Column": 7,
+                            "Index": 768
+                        }
+                    },
+                    "Value": {
+                        "Expression": {
+                            "Name": "p6",
+                            "Start": {
+                                "Line": 46,
+                                "Column": 19,
+                                "Index": 780
+                            },
+                            "End": {
+                                "Line": 46,
+                                "Column": 21,
+                                "Index": 782
+                            }
+                        },
+                        "ToCast": {
+                            "TypeName": "user_defined",
+                            "AliasName": "Point2",
+                            "Start": {
+                                "Line": 46,
+                                "Column": 25,
+                                "Index": 786
+                            },
+                            "End": {
+                                "Line": 46,
+                                "Column": 31,
+                                "Index": 792
+                            }
+                        },
+                        "Start": {
+                            "Line": 46,
+                            "Column": 19,
+                            "Index": 780
+                        },
+                        "End": {
+                            "Line": 46,
+                            "Column": 31,
+                            "Index": 792
+                        }
+                    },
+                    "ExplicitType": {
+                        "TypeName": "user_defined",
+                        "AliasName": "Point2",
+                        "Start": {
+                            "Line": 46,
+                            "Column": 10,
+                            "Index": 771
+                        },
+                        "End": {
+                            "Line": 46,
+                            "Column": 16,
+                            "Index": 777
+                        }
+                    },
+                    "Start": {
+                        "Line": 46,
+                        "Column": 5,
+                        "Index": 766
+                    },
+                    "End": {
+                        "Line": 46,
+                        "Column": 31,
+                        "Index": 792
+                    }
+                }
+            ],
+            "IsConst": false,
+            "Start": {
+                "Line": 46,
+                "Column": 1,
+                "Index": 762
+            },
+            "End": {
+                "Line": 46,
+                "Column": 32,
+                "Index": 793
+            }
+        },
+        {
+            "ImplFor": {
+                "Name": "Point2",
+                "Start": {
+                    "Line": 48,
+                    "Column": 6,
+                    "Index": 811
+                },
+                "End": {
+                    "Line": 48,
+                    "Column": 12,
+                    "Index": 817
+                }
+            },
+            "Methods": [
+                {
+                    "IsPrivate": false,
+                    "Identifier": {
+                        "Name": "getSum",
+                        "Start": {
+                            "Line": 49,
+                            "Column": 8,
+                            "Index": 828
+                        },
+                        "End": {
+                            "Line": 49,
+                            "Column": 14,
+                            "Index": 834
+                        }
+                    },
+                    "Params": null,
+                    "Body": {
+                        "Contents": [
+                            {
+                                "Value": {
+                                    "Binop": {
+                                        "Kind": "+",
+                                        "Value": "+",
+                                        "Start": {
+                                            "Line": 50,
+                                            "Column": 20,
+                                            "Index": 866
+                                        },
+                                        "End": {
+                                            "Line": 50,
+                                            "Column": 21,
+                                            "Index": 867
+                                        }
+                                    },
+                                    "Left": {
+                                        "Object": {
+                                            "Name": "this",
+                                            "Start": {
+                                                "Line": 50,
+                                                "Column": 13,
+                                                "Index": 859
+                                            },
+                                            "End": {
+                                                "Line": 50,
+                                                "Column": 17,
+                                                "Index": 863
+                                            }
+                                        },
+                                        "Property": {
+                                            "Name": "x",
+                                            "Start": {
+                                                "Line": 50,
+                                                "Column": 18,
+                                                "Index": 864
+                                            },
+                                            "End": {
+                                                "Line": 50,
+                                                "Column": 19,
+                                                "Index": 865
+                                            }
+                                        },
+                                        "Start": {
+                                            "Line": 50,
+                                            "Column": 13,
+                                            "Index": 859
+                                        },
+                                        "End": {
+                                            "Line": 50,
+                                            "Column": 19,
+                                            "Index": 865
+                                        }
+                                    },
+                                    "Right": {
+                                        "Object": {
+                                            "Name": "this",
+                                            "Start": {
+                                                "Line": 50,
+                                                "Column": 22,
+                                                "Index": 868
+                                            },
+                                            "End": {
+                                                "Line": 50,
+                                                "Column": 26,
+                                                "Index": 872
+                                            }
+                                        },
+                                        "Property": {
+                                            "Name": "y",
+                                            "Start": {
+                                                "Line": 50,
+                                                "Column": 27,
+                                                "Index": 873
+                                            },
+                                            "End": {
+                                                "Line": 50,
+                                                "Column": 28,
+                                                "Index": 874
+                                            }
+                                        },
+                                        "Start": {
+                                            "Line": 50,
+                                            "Column": 22,
+                                            "Index": 868
+                                        },
+                                        "End": {
+                                            "Line": 50,
+                                            "Column": 28,
+                                            "Index": 874
+                                        }
+                                    },
+                                    "Start": {
+                                        "Line": 50,
+                                        "Column": 13,
+                                        "Index": 859
+                                    },
+                                    "End": {
+                                        "Line": 50,
+                                        "Column": 28,
+                                        "Index": 874
+                                    }
+                                },
+                                "Start": {
+                                    "Line": 50,
+                                    "Column": 9,
+                                    "Index": 855
+                                },
+                                "End": {
+                                    "Line": 50,
+                                    "Column": 29,
+                                    "Index": 875
+                                }
+                            }
+                        ],
+                        "Start": {
+                            "Line": 49,
+                            "Column": 24,
+                            "Index": 844
+                        },
+                        "End": {
+                            "Line": 51,
+                            "Column": 6,
+                            "Index": 882
+                        }
+                    },
+                    "ReturnType": {
+                        "TypeName": "i32",
+                        "BitSize": 32,
+                        "IsSigned": true,
+                        "Start": {
+                            "Line": 49,
+                            "Column": 20,
+                            "Index": 840
+                        },
+                        "End": {
+                            "Line": 49,
+                            "Column": 23,
+                            "Index": 843
+                        }
+                    },
+                    "Start": {
+                        "Line": 49,
+                        "Column": 8,
+                        "Index": 828
+                    },
+                    "End": {
+                        "Line": 51,
+                        "Column": 6,
+                        "Index": 882
+                    }
+                }
+            ],
+            "Start": {
+                "Line": 48,
+                "Column": 1,
+                "Index": 806
+            },
+            "End": {
+                "Line": 52,
+                "Column": 2,
+                "Index": 885
             }
         }
     ],

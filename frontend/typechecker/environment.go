@@ -154,6 +154,20 @@ func declareType(name string, typeType Tc) error {
 	return nil
 }
 
+func (t *TypeEnvironment) getStructType() (Struct, error) {
+	if t.scopeType == STRUCT_SCOPE {
+		return Struct{
+			DataType:    STRUCT_TYPE,
+			StructName:  t.scopeName,
+			StructScope: *t,
+		}, nil
+	}
+	if t.parent == nil {
+		return Struct{}, fmt.Errorf("not in struct scope")
+	}
+	return t.parent.getStructType()
+}
+
 func (t *TypeEnvironment) isDeclared(name string) bool {
 	if _, ok := t.variables[name]; ok {
 		return true

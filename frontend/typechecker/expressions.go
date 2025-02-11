@@ -44,7 +44,7 @@ func checkTypeCast(node ast.TypeCastExpr, env *TypeEnvironment) Tc {
 	originalType := parseNodeValue(node.Expression, env)
 	toCast := evaluateTypeName(node.ToCast, env)
 
-	if err := isCompatibleType(originalType, toCast); err == nil {
+	if err := isCastable(originalType, toCast); err == nil {
 		logCastSuccess(originalType, toCast)
 		return toCast
 	} else {
@@ -54,20 +54,60 @@ func checkTypeCast(node ast.TypeCastExpr, env *TypeEnvironment) Tc {
 	return originalType
 }
 
-func isCompatibleType(src, dest Tc) error {
+func isCastable(src, dest Tc) error {
 	srcStr := tcToString(src)
 	destStr := tcToString(dest)
-	switch src.(type) {
+	switch t := src.(type) {
 	case Int, Float:
 		if isNumberType(dest) {
 			return nil
 		}
+	case Struct:
+		err := isCastableStructs(t, dest)
+		if err != nil {
+			return err
+		}
+		return nil
 	default:
 		if srcStr == destStr {
 			return nil
 		}
 	}
 	return fmt.Errorf("cannot cast '%s' to '%s'", srcStr, destStr)
+}
+
+func isCastableStructs(src Struct, dest Tc) error {
+
+	errMsg := fmt.Sprintf("cannot cast struct '%s' to '%s'", src.StructName, tcToString(dest))
+
+	format := "%s\n%s"
+
+	if dS, ok := dest.(Struct); ok {
+		err := checkMissingFields(src, dS)
+		if err != nil {
+			return fmt.Errorf(format, errMsg, report.TreeFormatError(err).Error())
+		}
+		err = checkMissingFields(dS, src)
+		if err != nil {
+			return fmt.Errorf(format, errMsg, report.TreeFormatError(err).Error())
+		}
+		return nil
+	} else {
+		return fmt.Errorf(format, errMsg, report.TreeFormatString("destination is not a struct"))
+	}
+}
+
+func checkMissingFields(src Struct, dest Struct) error {
+	//fmt.Printf("checking missing fields in %s\n", targetType)
+
+	for key, val := range src.StructScope.variables {
+		if dVal, ok := dest.StructScope.variables[key]; !ok {
+			return fmt.Errorf("field '%s' is missing in struct '%s'", key, dest.StructName)
+		} else if err := validateTypeCompatibility(val, dVal); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 func checkUnaryExpr(node ast.UnaryExpr, env *TypeEnvironment) Tc {

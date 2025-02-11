@@ -28,6 +28,7 @@ func bindTypeLookups() {
 	typeNUD(lexer.OPEN_BRACKET, parseArrayType)
 	typeNUD(lexer.FUNCTION_TOKEN, parseFunctionType)
 	typeNUD(lexer.MAP_TOKEN, parseMapType)
+	typeNUD(lexer.STRUCT_TOKEN, parseStructType)
 }
 
 func parseMapType(p *Parser) ast.DataType {
