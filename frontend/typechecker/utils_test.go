@@ -164,7 +164,7 @@ func TestFunctionToString(t *testing.T) {
 		},
 		Returns: Int{builtins.INT32, 32, true},
 	}
-	expected := "fn(a: i32, b?: f64) -> i32"
+	expected := "fn(a: i32, b: f64) -> i32"
 	result := tcToString(val)
 	if result != expected {
 		t.Errorf(exp, expected, result)
