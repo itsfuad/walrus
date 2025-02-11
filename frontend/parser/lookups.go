@@ -104,6 +104,7 @@ func bindLookupHandlers() {
 	nud(lexer.OPEN_BRACKET, parseArrayExpr)        // array literal [1,2,3]
 	nud(lexer.OPEN_PAREN, parseGroupingExpr)       // grouping expression a + (b+c)
 	nud(lexer.FUNCTION_TOKEN, parseLambdaFunction) // anonymous function
+	nud(lexer.STRUCT_TOKEN, parseStructLiteral)    // anonymous struct
 
 	//nud(lexer.AT_TOKEN, parseStructLiteral)
 	nud(lexer.MAP_TOKEN, parseMapLiteral)

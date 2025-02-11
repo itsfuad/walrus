@@ -4,14 +4,60 @@ import (
 	//Standard packages
 	"fmt"
 	//Walrus packages
+	"walrus/colors"
 	"walrus/frontend/ast"
 	"walrus/report"
 	"walrus/utils"
 )
 
+func checkAnnonymousStructLiteral(structLit ast.StructLiteral, env *TypeEnvironment) Tc {
+
+	var structType Struct
+
+	structEnv := NewTypeENV(env, STRUCT_SCOPE, "", env.filePath)
+
+	//make the struct name "struct { prop1: type1, prop2: type2, ... }"
+	sname := "struct { "
+
+	for i, propval := range structLit.Properties {
+		propType := parseNodeValue(propval.Value, env)
+		property := StructProperty{
+			IsPrivate: false,
+			Type:      propType,
+		}
+		//declare the property on the struct environment
+		err := structEnv.declareVar(propval.Prop.Name, property, false, false)
+		if err != nil {
+			report.Add(env.filePath, propval.Prop.StartPos().Line, propval.Prop.EndPos().Line, propval.Prop.StartPos().Column, propval.Prop.EndPos().Column, fmt.Sprintf("error declaring property '%s': %s", propval.Prop.Name, err.Error())).Level(report.CRITICAL_ERROR)
+		}
+
+		sname += fmt.Sprintf("%s: %s", propval.Prop.Name, tcToString(propType))
+		if i < len(structLit.Properties)-1 {
+			sname += ", "
+		}
+	}
+
+	sname += " }"
+
+	structType = Struct{
+		DataType:    STRUCT_TYPE,
+		StructName:  sname,
+		StructScope: *structEnv,
+	}
+
+	return structType
+}
+
 func checkStructLiteral(structLit ast.StructLiteral, env *TypeEnvironment) Tc {
 
 	sName := structLit.Identifier
+
+	colors.BLUE.Printf("Struct Literal: '%s'\n", sName.Name)
+
+	if sName.Name == "" {
+		//annonymous struct
+		return checkAnnonymousStructLiteral(structLit, env)
+	}
 
 	Type, err := getTypeDefinition(sName.Name) // need to get the most deep type
 	if err != nil {
@@ -97,11 +143,22 @@ func checkPropsType(structType Struct, structLit ast.StructLiteral, env *TypeEnv
 	}
 }
 
+func getObject(expr ast.StructPropertyAccessExpr, env *TypeEnvironment) Tc {
+	// if obj is 'this' then we return the struct type
+	if ok := expr.Object.(ast.IdentifierExpr); ok.Name == "this" {
+		obj, err := env.getStructType()
+		if err != nil {
+			report.Add(env.filePath, expr.Object.StartPos().Line, expr.Object.EndPos().Line, expr.Object.StartPos().Column, expr.Object.EndPos().Column, err.Error()).Level(report.CRITICAL_ERROR)
+		}
+		return obj
+	} else {
+		return parseNodeValue(expr.Object, env)
+	}
+}
+
 func checkPropertyAccess(expr ast.StructPropertyAccessExpr, env *TypeEnvironment) Tc {
 
-	fmt.Printf("Property Access: %s\n", expr.Property.Name)
-
-	object := parseNodeValue(expr.Object, env)
+	object := getObject(expr, env)
 
 	prop := expr.Property
 
@@ -176,11 +233,11 @@ func checkStructTypeDecl(name string, structType ast.StructType, env *TypeEnviro
 		StructScope: *structEnv,
 	}
 
-	//declare 'this' variable to be used in the struct's methods
-	err := structEnv.declareVar("this", structTypeValue, true, false)
-	if err != nil {
-		report.Add(env.filePath, structType.StartPos().Line, structType.EndPos().Line, structType.StartPos().Column, structType.EndPos().Column, err.Error()).Level(report.CRITICAL_ERROR)
-	}
+	// //declare 'this' variable to be used in the struct's methods
+	// err := structEnv.declareVar("this", structTypeValue, true, false)
+	// if err != nil {
+	// 	report.Add(env.filePath, structType.StartPos().Line, structType.EndPos().Line, structType.StartPos().Column, structType.EndPos().Column, err.Error()).Level(report.CRITICAL_ERROR)
+	// }
 
 	return structTypeValue
 }

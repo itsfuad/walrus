@@ -97,11 +97,36 @@ func evaluateTypeName(dtype ast.DataType, env *TypeEnvironment) Tc {
 		return evalMap(t, env)
 	case ast.UserDefinedType:
 		return evalUD(t, env)
+	case ast.StructType:
+		return evalStruct(t, env)
 	case nil:
 		return NewVoid()
 	default:
 		return evalDefaultType(dtype, env)
 	}
+}
+
+func evalStruct(s ast.StructType, env *TypeEnvironment) Struct {
+
+	name := "struct { "
+	for i, prop := range s.Properties {
+
+		propType := evaluateTypeName(prop.PropType, env)
+
+		name += prop.Prop.Name + ": " + tcToString(propType)
+		if i != len(s.Properties)-1 {
+			name += ", "
+		}
+	}
+
+	name += " }"
+
+	typ := checkStructTypeDecl(name, s, env)
+
+	// declare the struct type
+	declareType(name, typ) // if the struct is already declared, it will be skipped
+
+	return typ
 }
 
 func evalDefaultType(defaultType ast.DataType, env *TypeEnvironment) Tc {
@@ -131,26 +156,27 @@ func evalArray(analyzedArray ast.ArrayType, env *TypeEnvironment) Tc {
 }
 
 func evalFn(analyzedFunctionType ast.FunctionType, env *TypeEnvironment) Tc {
+
+	scope := NewTypeENV(env, FUNCTION_SCOPE, fmt.Sprintf("_FN_%s", RandStringRunes(10)), env.filePath)
+
 	var params []FnParam
 	for _, param := range analyzedFunctionType.Parameters {
 		//check if the parameter is already declared
 		if utils.Some(params, func(p FnParam) bool {
 			return p.Name == param.Identifier.Name
 		}) {
-			report.Add(env.filePath, param.Identifier.Start.Line, param.Identifier.End.Line, param.Identifier.Start.Column, param.Identifier.End.Column,
+			report.Add(scope.filePath, param.Identifier.Start.Line, param.Identifier.End.Line, param.Identifier.Start.Column, param.Identifier.End.Column,
 				fmt.Sprintf("parameter '%s' is already defined", param.Identifier.Name)).Level(report.CRITICAL_ERROR)
 		}
 
-		paramType := evaluateTypeName(param.Type, env)
+		paramType := evaluateTypeName(param.Type, scope)
 		params = append(params, FnParam{
 			Name: param.Identifier.Name,
 			Type: paramType,
 		})
 	}
 
-	returns := evaluateTypeName(analyzedFunctionType.ReturnType, env)
-
-	scope := NewTypeENV(env, FUNCTION_SCOPE, fmt.Sprintf("_FN_%s", RandStringRunes(10)), env.filePath)
+	returns := evaluateTypeName(analyzedFunctionType.ReturnType, scope)
 
 	return Fn{
 		DataType:      builtins.FUNCTION,

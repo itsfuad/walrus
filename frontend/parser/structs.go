@@ -30,13 +30,30 @@ func parseStructLiteral(p *Parser) ast.Node {
 
 	//start := p.expect(lexer.AT_TOKEN).Start
 
-	idetifierToken := p.expectError(lexer.IDENTIFIER_TOKEN, fmt.Errorf("expected a struct name"))
+	//struct will have a name (MyStruct{...}) or it will be annonymous (only struct{...})
+
+	//idetifierToken := p.expectError(lexer.IDENTIFIER_TOKEN, fmt.Errorf("expected a struct name"))
+
+	structName := ""
+
+	var idenStart, idenEnd lexer.Position
+
+	if p.currentTokenKind() == lexer.STRUCT_TOKEN {
+		token := p.eat()
+		idenStart = token.Start
+		idenEnd = token.End
+	} else {
+		idetifierToken := p.expectError(lexer.IDENTIFIER_TOKEN, fmt.Errorf("expected a struct name"))
+		structName = idetifierToken.Value
+		idenStart = idetifierToken.Start
+		idenEnd = idetifierToken.End
+	}
 
 	identidier := ast.IdentifierExpr{
-		Name: idetifierToken.Value,
+		Name: structName,
 		Location: ast.Location{
-			Start: idetifierToken.Start,
-			End:   idetifierToken.End,
+			Start: idenStart,
+			End:   idenEnd,
 		},
 	}
 
