@@ -23,7 +23,7 @@ func Some[T any](slice []T, predicate func(T) bool) (T, bool) {
 
 // None checks if a slice does not contain an item using the default equality function.
 func None[T any](slice []T, predicate func(T) bool) bool {
-	if _, found := Some(slice, predicate); !found{
+	if _, found := Some(slice, predicate); !found {
 		return true
 	} else {
 		return false

@@ -229,6 +229,6 @@ func checkStructTypeDecl(name string, structType ast.StructType, env *TypeEnviro
 		StructName:  name,
 		StructScope: *structEnv,
 	}
-	
+
 	return structTypeValue
 }
