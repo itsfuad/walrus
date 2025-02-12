@@ -285,67 +285,9 @@ func checkMethodsImplementations(src, dest Tc) error {
 	//check if the provided type is a struct or interface
 	switch t := src.(type) {
 	case Struct:
-		// check if all methods are present
-		for _, interfaceMethod := range interfaceType.Methods {
-			// check if method is present in the struct's variables
-			methodVal, ok := t.StructScope.variables[interfaceMethod.Name]
-			if !ok {
-				errs = append(errs, fmt.Errorf("missing method '%s' on '%s'", interfaceMethod.Name, t.StructName))
-				continue
-			}
-
-			// check if the method is a function
-			methodFn, ok := methodVal.(StructMethod)
-			if !ok {
-				//return fmt.Errorf("'%s' on struct '%s' is not a valid method for interface '%s'",
-				//	methodName, structType.StructName, interfaceType.InterfaceName)
-				errs = append(errs, fmt.Errorf("'%s' is expected to be a method", interfaceMethod.Name))
-				continue
-			}
-
-			// check the return type and parameters
-			for i, param := range interfaceMethod.Method.Params {
-				expectedParam := tcToString(param.Type)
-				providedParam := tcToString(methodFn.Fn.Params[i].Type)
-				if expectedParam != providedParam {
-					//return fmt.Errorf("method '%s' found for interface '%s' but parameter missmatch", methodName, interfaceType.InterfaceName)
-					errs = append(errs, fmt.Errorf("method '%s', but parameter missmatch", interfaceMethod.Name))
-				}
-			}
-
-			//check the return type
-			expectedReturn := tcToString(interfaceMethod.Method.Returns)
-			providedReturn := tcToString(methodFn.Fn.Returns)
-			if expectedReturn != providedReturn {
-				//return fmt.Errorf("method '%s' found for interface '%s' but return type mismatched", methodName, interfaceType.InterfaceName)
-				errs = append(errs, fmt.Errorf("method '%s' found, but return type mismatched", interfaceMethod.Name))
-			}
-		}
+		handleStructDest(t, interfaceType, errs)
 	case Interface:
-		// both are interfaces, check if all methods are present and compatible
-		fmt.Printf("checking interface %s\n", t.InterfaceName)
-		for _, interfaceMethod := range interfaceType.Methods {
-			// check if method is present in the struct's variables
-			if method, found := utils.Some(t.Methods, func(m InterfaceMethodType) bool {
-				return m.Name == interfaceMethod.Name
-			}); found {
-				fmt.Printf("checking method %s\n", method.Name)
-				//check parameters
-				for i, param := range interfaceMethod.Method.Params {
-					if err := validateTypeCompatibility(param.Type, method.Method.Params[i].Type); err != nil {
-						errs = append(errs, fmt.Errorf("method '%s' found, but parameter missmatch", interfaceMethod.Name))
-					}
-				}
-
-				//check return type
-				if err := validateTypeCompatibility(interfaceMethod.Method.Returns, method.Method.Returns); err != nil {
-					errs = append(errs, fmt.Errorf("method '%s' found, but return type mismatched", interfaceMethod.Name))
-				}
-
-			} else {
-				errs = append(errs, fmt.Errorf("missing method '%s' on '%s'", interfaceMethod.Name, t.InterfaceName))
-			}
-		}
+		handleInterfaceDest(t, interfaceType, errs)
 	default:
 		return errors.New(errMsg + report.TreeFormatString("type must be a struct or interface"))
 	}
@@ -355,4 +297,68 @@ func checkMethodsImplementations(src, dest Tc) error {
 	}
 
 	return nil
+}
+
+func handleStructDest(src Struct, destInterface Interface, errs []error) {
+
+	// check if all methods are present
+	for _, interfaceMethod := range destInterface.Methods {
+		// check if method is present in the struct's variables
+		methodVal, ok := src.StructScope.variables[interfaceMethod.Name]
+		if !ok {
+			errs = append(errs, fmt.Errorf("missing method '%s' on '%s'", interfaceMethod.Name, src.StructName))
+			continue
+		}
+
+		// check if the method is a function
+		methodFn, ok := methodVal.(StructMethod)
+		if !ok {
+			errs = append(errs, fmt.Errorf("'%s' is expected to be a method", interfaceMethod.Name))
+			continue
+		}
+
+		// check the return type and parameters
+		for i, param := range interfaceMethod.Method.Params {
+			expectedParam := tcToString(param.Type)
+			providedParam := tcToString(methodFn.Fn.Params[i].Type)
+			if expectedParam != providedParam {
+				//return fmt.Errorf("method '%s' found for interface '%s' but parameter missmatch", methodName, interfaceType.InterfaceName)
+				errs = append(errs, fmt.Errorf("method '%s', but parameter missmatch", interfaceMethod.Name))
+			}
+		}
+
+		//check the return type
+		expectedReturn := tcToString(interfaceMethod.Method.Returns)
+		providedReturn := tcToString(methodFn.Fn.Returns)
+		if expectedReturn != providedReturn {
+			//return fmt.Errorf("method '%s' found for interface '%s' but return type mismatched", methodName, interfaceType.InterfaceName)
+			errs = append(errs, fmt.Errorf("method '%s' found, but return type mismatched", interfaceMethod.Name))
+		}
+	}
+}
+
+func handleInterfaceDest(src Interface, destInterface Interface, errs []error) {
+	// both are interfaces, check if all methods are present and compatible
+	for _, interfaceMethod := range destInterface.Methods {
+		// check if method is present in the struct's variables
+		if method, found := utils.Some(src.Methods, func(m InterfaceMethodType) bool {
+			return m.Name == interfaceMethod.Name
+		}); found {
+			fmt.Printf("checking method %s\n", method.Name)
+			//check parameters
+			for i, param := range interfaceMethod.Method.Params {
+				if err := validateTypeCompatibility(param.Type, method.Method.Params[i].Type); err != nil {
+					errs = append(errs, fmt.Errorf("method '%s' found, but parameter missmatch", interfaceMethod.Name))
+				}
+			}
+
+			//check return type
+			if err := validateTypeCompatibility(interfaceMethod.Method.Returns, method.Method.Returns); err != nil {
+				errs = append(errs, fmt.Errorf("method '%s' found, but return type mismatched", interfaceMethod.Name))
+			}
+
+		} else {
+			errs = append(errs, fmt.Errorf("missing method '%s' on '%s'", interfaceMethod.Name, src.InterfaceName))
+		}
+	}
 }
