@@ -2,6 +2,7 @@ package typechecker
 
 import (
 	//Standard packages
+	"errors"
 	"fmt"
 	//Walrus packages
 	"walrus/colors"
@@ -57,56 +58,76 @@ func checkTypeCast(node ast.TypeCastExpr, env *TypeEnvironment) Tc {
 func isCastable(src, dest Tc) error {
 	srcStr := tcToString(src)
 	destStr := tcToString(dest)
+
+	var err error
+
 	switch t := src.(type) {
 	case Int, Float:
 		if isNumberType(dest) {
 			return nil
 		}
 	case Struct:
-		err := isCastableStructs(t, dest)
-		if err != nil {
-			return err
+		err = isCastableStruct(t, dest)
+		if err == nil {
+			return nil
 		}
-		return nil
+	case Interface:
+		err = checkMethodsImplementations(t, dest)
+		if err == nil {
+			return nil
+		}
 	default:
 		if srcStr == destStr {
 			return nil
 		}
 	}
-	return fmt.Errorf("cannot cast '%s' to '%s'", srcStr, destStr)
+
+	return fmt.Errorf("cannot cast '%s' to '%s'\n%s", srcStr, destStr, err.Error())
 }
 
-func isCastableStructs(src Struct, dest Tc) error {
+func isCastableStruct(src Struct, dest Tc) error {
 
-	errMsg := fmt.Sprintf("cannot cast struct '%s' to '%s'", src.StructName, tcToString(dest))
+	tName := tcToString(src)
+	dName := tcToString(dest)
+
+	fmt.Printf("checking cast from %s to %s\n", tName, dName)
+
+	errMsg := fmt.Sprintf("cannot cast struct '%s' to '%s'", tName, dName)
 
 	format := "%s\n%s"
 
-	if dS, ok := dest.(Struct); ok {
-		err := checkMissingFields(src, dS)
-		if err != nil {
-			return fmt.Errorf(format, errMsg, report.TreeFormatError(err).Error())
-		}
-		err = checkMissingFields(dS, src)
-		if err != nil {
-			return fmt.Errorf(format, errMsg, report.TreeFormatError(err).Error())
+	//dest must be a struct and have the same fields as src
+	if destStruct, ok := dest.(Struct); ok {
+		if err := checkMissingFields(src, destStruct); err != nil {
+			return fmt.Errorf(format, errMsg, err.Error())
 		}
 		return nil
+	} else if destInterface, ok := dest.(Interface); ok {
+		//check if the struct implements the interface
+		return checkMethodsImplementations(src, destInterface)
 	} else {
-		return fmt.Errorf(format, errMsg, report.TreeFormatString("destination is not a struct"))
+		fmt.Printf("dest type: %T\n", dest)
+		return errors.New(errMsg)
 	}
 }
 
 func checkMissingFields(src Struct, dest Struct) error {
 	//fmt.Printf("checking missing fields in %s\n", targetType)
-
-	for key, val := range src.StructScope.variables {
-		if dVal, ok := dest.StructScope.variables[key]; !ok {
-			return fmt.Errorf("field '%s' is missing in struct '%s'", key, dest.StructName)
+	errs := make([]error, 0)
+	for key, val := range dest.StructScope.variables {
+		fmt.Printf("checking field %s\n", key)
+		if dVal, ok := src.StructScope.variables[key]; !ok {
+			errs = append(errs, fmt.Errorf("field '%s' is missing in struct '%s'", key, src.StructName))
 		} else if err := validateTypeCompatibility(val, dVal); err != nil {
-			return err
+			fmt.Printf("uncompatible: %s\n", err.Error())
+			errs = append(errs, err) 
 		}
 	}
+	
+	if len(errs) > 0 {
+		return errors.New(report.TreeFormatError(errs...).Error())
+	}
+
 	return nil
 }
 

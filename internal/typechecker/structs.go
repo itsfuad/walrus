@@ -104,10 +104,7 @@ func checkMissingProps(structType Struct, structLit ast.StructLiteral) []string 
 	missingProps := []string{}
 
 	for propname := range structType.StructScope.variables {
-		// skip methods and 'this' variable
-		if propname == "this" {
-			continue
-		}
+		//skip methods
 		if _, ok := structType.StructScope.variables[propname].(StructMethod); ok {
 			continue
 		}
@@ -232,12 +229,6 @@ func checkStructTypeDecl(name string, structType ast.StructType, env *TypeEnviro
 		StructName:  name,
 		StructScope: *structEnv,
 	}
-
-	// //declare 'this' variable to be used in the struct's methods
-	// err := structEnv.declareVar("this", structTypeValue, true, false)
-	// if err != nil {
-	// 	report.Add(env.filePath, structType.StartPos().Line, structType.EndPos().Line, structType.StartPos().Column, structType.EndPos().Column, err.Error()).SetLevel(report.CRITICAL_ERROR)
-	// }
-
+	
 	return structTypeValue
 }
