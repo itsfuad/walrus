@@ -91,9 +91,7 @@ impl Point {
 }
 
 //let ipoint : IPoint = p6; // error: p8 does not implement IPoint
-let ipoint2 : IPoint = (p6 as IPoint); // works, add type casting
-
-let ipoint3 := ipoint2 as IPoint3; // works
+let ipoint2 : IPoint3 = (p6 as IPoint) as IPoint3; // works, add type casting
 
 //let pRef : &Point; // error: pRef is not initialized. Reference must be initialized.
 
