@@ -120,10 +120,10 @@ func checkMissingFields(src Struct, dest Struct) error {
 			errs = append(errs, fmt.Errorf("field '%s' is missing in struct '%s'", key, src.StructName))
 		} else if err := validateTypeCompatibility(val, dVal); err != nil {
 			fmt.Printf("uncompatible: %s\n", err.Error())
-			errs = append(errs, err) 
+			errs = append(errs, err)
 		}
 	}
-	
+
 	if len(errs) > 0 {
 		return errors.New(report.TreeFormatError(errs...).Error())
 	}

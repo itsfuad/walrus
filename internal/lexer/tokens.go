@@ -22,7 +22,7 @@ const (
 	RETURN_TOKEN     builtins.TOKEN_KIND = "ret"
 	IN_TOKEN         builtins.TOKEN_KIND = "in"
 	AS_TOKEN         builtins.TOKEN_KIND = "as"
-	TYPEOF_TOKEN	 builtins.TOKEN_KIND = "typeof"
+	TYPEOF_TOKEN     builtins.TOKEN_KIND = "typeof"
 	//data types
 	INT8_TOKEN      builtins.TOKEN_KIND = builtins.INT8
 	INT16_TOKEN     builtins.TOKEN_KIND = builtins.INT16

@@ -10,7 +10,6 @@ func parseImplStmt(p *Parser) ast.Node {
 
 	start := p.eat().Start
 
-	
 	var errMsg error
 	if p.currentToken().Kind == lexer.STRUCT_TOKEN {
 		errMsg = errors.New("unnamed structs cannot be used with 'impl', use a named struct instead")
