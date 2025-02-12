@@ -3138,46 +3138,72 @@
                     },
                     "Value": {
                         "Expression": {
-                            "Name": "p6",
+                            "Expression": {
+                                "Name": "p6",
+                                "Start": {
+                                    "Line": 94,
+                                    "Column": 26,
+                                    "Index": 1670
+                                },
+                                "End": {
+                                    "Line": 94,
+                                    "Column": 28,
+                                    "Index": 1672
+                                }
+                            },
+                            "ToCast": {
+                                "TypeName": "user_defined",
+                                "AliasName": "IPoint",
+                                "Start": {
+                                    "Line": 94,
+                                    "Column": 32,
+                                    "Index": 1676
+                                },
+                                "End": {
+                                    "Line": 94,
+                                    "Column": 38,
+                                    "Index": 1682
+                                }
+                            },
                             "Start": {
                                 "Line": 94,
-                                "Column": 25,
-                                "Index": 1669
+                                "Column": 26,
+                                "Index": 1670
                             },
                             "End": {
                                 "Line": 94,
-                                "Column": 27,
-                                "Index": 1671
+                                "Column": 38,
+                                "Index": 1682
                             }
                         },
                         "ToCast": {
                             "TypeName": "user_defined",
-                            "AliasName": "IPoint",
+                            "AliasName": "IPoint3",
                             "Start": {
                                 "Line": 94,
-                                "Column": 31,
-                                "Index": 1675
+                                "Column": 43,
+                                "Index": 1687
                             },
                             "End": {
                                 "Line": 94,
-                                "Column": 37,
-                                "Index": 1681
+                                "Column": 50,
+                                "Index": 1694
                             }
                         },
                         "Start": {
                             "Line": 94,
-                            "Column": 25,
-                            "Index": 1669
+                            "Column": 26,
+                            "Index": 1670
                         },
                         "End": {
                             "Line": 94,
-                            "Column": 37,
-                            "Index": 1681
+                            "Column": 50,
+                            "Index": 1694
                         }
                     },
                     "ExplicitType": {
                         "TypeName": "user_defined",
-                        "AliasName": "IPoint",
+                        "AliasName": "IPoint3",
                         "Start": {
                             "Line": 94,
                             "Column": 15,
@@ -3185,8 +3211,8 @@
                         },
                         "End": {
                             "Line": 94,
-                            "Column": 21,
-                            "Index": 1665
+                            "Column": 22,
+                            "Index": 1666
                         }
                     },
                     "Start": {
@@ -3196,8 +3222,8 @@
                     },
                     "End": {
                         "Line": 94,
-                        "Column": 38,
-                        "Index": 1682
+                        "Column": 50,
+                        "Index": 1694
                     }
                 }
             ],
@@ -3209,88 +3235,8 @@
             },
             "End": {
                 "Line": 94,
-                "Column": 39,
-                "Index": 1683
-            }
-        },
-        {
-            "Variables": [
-                {
-                    "Identifier": {
-                        "Name": "ipoint3",
-                        "Start": {
-                            "Line": 96,
-                            "Column": 5,
-                            "Index": 1718
-                        },
-                        "End": {
-                            "Line": 96,
-                            "Column": 12,
-                            "Index": 1725
-                        }
-                    },
-                    "Value": {
-                        "Expression": {
-                            "Name": "ipoint2",
-                            "Start": {
-                                "Line": 96,
-                                "Column": 16,
-                                "Index": 1729
-                            },
-                            "End": {
-                                "Line": 96,
-                                "Column": 23,
-                                "Index": 1736
-                            }
-                        },
-                        "ToCast": {
-                            "TypeName": "user_defined",
-                            "AliasName": "IPoint3",
-                            "Start": {
-                                "Line": 96,
-                                "Column": 27,
-                                "Index": 1740
-                            },
-                            "End": {
-                                "Line": 96,
-                                "Column": 34,
-                                "Index": 1747
-                            }
-                        },
-                        "Start": {
-                            "Line": 96,
-                            "Column": 16,
-                            "Index": 1729
-                        },
-                        "End": {
-                            "Line": 96,
-                            "Column": 34,
-                            "Index": 1747
-                        }
-                    },
-                    "ExplicitType": null,
-                    "Start": {
-                        "Line": 96,
-                        "Column": 5,
-                        "Index": 1718
-                    },
-                    "End": {
-                        "Line": 96,
-                        "Column": 34,
-                        "Index": 1747
-                    }
-                }
-            ],
-            "IsConst": false,
-            "Start": {
-                "Line": 96,
-                "Column": 1,
-                "Index": 1714
-            },
-            "End": {
-                "Line": 96,
-                "Column": 35,
-                "Index": 1748
+                "Column": 51,
+                "Index": 1695
             }
         },
         {
@@ -3299,64 +3245,64 @@
                     "Identifier": {
                         "Name": "typeofP",
                         "Start": {
-                            "Line": 100,
+                            "Line": 98,
                             "Column": 5,
-                            "Index": 1855
+                            "Index": 1820
                         },
                         "End": {
-                            "Line": 100,
+                            "Line": 98,
                             "Column": 12,
-                            "Index": 1862
+                            "Index": 1827
                         }
                     },
                     "Value": {
                         "Expression": {
                             "Name": "p",
                             "Start": {
-                                "Line": 100,
+                                "Line": 98,
                                 "Column": 23,
-                                "Index": 1873
+                                "Index": 1838
                             },
                             "End": {
-                                "Line": 100,
+                                "Line": 98,
                                 "Column": 24,
-                                "Index": 1874
+                                "Index": 1839
                             }
                         },
                         "Start": {
-                            "Line": 100,
+                            "Line": 98,
                             "Column": 16,
-                            "Index": 1866
+                            "Index": 1831
                         },
                         "End": {
-                            "Line": 100,
+                            "Line": 98,
                             "Column": 24,
-                            "Index": 1874
+                            "Index": 1839
                         }
                     },
                     "ExplicitType": null,
                     "Start": {
-                        "Line": 100,
+                        "Line": 98,
                         "Column": 5,
-                        "Index": 1855
+                        "Index": 1820
                     },
                     "End": {
-                        "Line": 100,
+                        "Line": 98,
                         "Column": 24,
-                        "Index": 1874
+                        "Index": 1839
                     }
                 }
             ],
             "IsConst": false,
             "Start": {
-                "Line": 100,
+                "Line": 98,
                 "Column": 1,
-                "Index": 1851
+                "Index": 1816
             },
             "End": {
-                "Line": 100,
+                "Line": 98,
                 "Column": 25,
-                "Index": 1875
+                "Index": 1840
             }
         }
     ],
