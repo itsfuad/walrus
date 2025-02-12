@@ -112,7 +112,7 @@ func getFunctionTypeSignature(p *Parser) (builtins.PARSER_TYPE, []ast.FunctionTy
 		curentToken := p.currentToken()
 
 		if curentToken.Kind != lexer.COLON_TOKEN {
-			report.Add(p.FilePath, curentToken.Start.Line, curentToken.End.Line, curentToken.Start.Column, curentToken.End.Column, "expected : ").Level(report.SYNTAX_ERROR)
+			report.Add(p.FilePath, curentToken.Start.Line, curentToken.End.Line, curentToken.Start.Column, curentToken.End.Column, "expected : ").SetLevel(report.SYNTAX_ERROR)
 		}
 
 		typeName := parseType(p, DEFAULT_BP)
@@ -168,7 +168,7 @@ func parseDataType(p *Parser) ast.DataType {
 	case lexer.IDENTIFIER_TOKEN:
 		break
 	default:
-		report.Add(p.FilePath, identifier.Start.Line, identifier.End.Line, identifier.Start.Column, identifier.End.Column, "invalid data type").Level(report.SYNTAX_ERROR)
+		report.Add(p.FilePath, identifier.Start.Line, identifier.End.Line, identifier.Start.Column, identifier.End.Column, "invalid data type").SetLevel(report.SYNTAX_ERROR)
 	}
 
 	value := identifier.Value
@@ -243,7 +243,7 @@ func parseType(p *Parser, bp BINDING_POWER) ast.DataType {
 		} else {
 			tokStr = fmt.Sprintf("token '%s'", tokenKind)
 		}
-		report.Add(p.FilePath, p.currentToken().Start.Line, p.currentToken().End.Line, p.currentToken().Start.Column, p.currentToken().End.Column, fmt.Sprintf("%s cannot be used as type\n", tokStr)).Level(report.SYNTAX_ERROR)
+		report.Add(p.FilePath, p.currentToken().Start.Line, p.currentToken().End.Line, p.currentToken().Start.Column, p.currentToken().End.Column, fmt.Sprintf("%s cannot be used as type\n", tokStr)).SetLevel(report.SYNTAX_ERROR)
 		return nil
 	}
 
@@ -344,7 +344,7 @@ func parseStructType(p *Parser) ast.DataType {
 	}
 
 	if len(props) == 0 {
-		report.Add(p.FilePath, identifier.Start.Line, identifier.End.Line, identifier.Start.Column, identifier.End.Column, "struct is empty").Level(report.SYNTAX_ERROR)
+		report.Add(p.FilePath, identifier.Start.Line, identifier.End.Line, identifier.Start.Column, identifier.End.Column, "struct is empty").SetLevel(report.SYNTAX_ERROR)
 	}
 
 	return ast.StructType{
@@ -367,7 +367,7 @@ func parseInterfaceType(p *Parser) ast.DataType {
 		start := p.expect(lexer.FUNCTION_TOKEN).Start
 
 		if p.currentTokenKind() != lexer.IDENTIFIER_TOKEN {
-			report.Add(p.FilePath, p.currentToken().Start.Line, p.currentToken().End.Line, p.currentToken().Start.Column, p.currentToken().End.Column, "expected method name").Level(report.SYNTAX_ERROR)
+			report.Add(p.FilePath, p.currentToken().Start.Line, p.currentToken().End.Line, p.currentToken().Start.Column, p.currentToken().End.Column, "expected method name").SetLevel(report.SYNTAX_ERROR)
 		}
 
 		name := p.expect(lexer.IDENTIFIER_TOKEN)

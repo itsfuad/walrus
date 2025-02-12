@@ -31,7 +31,7 @@ func CheckAndDeclareFunction(funcNode ast.FunctionLiteral, name string, env *Typ
 	//declare the function
 	err := env.declareVar(name, fn, true, false)
 	if err != nil {
-		report.Add(env.filePath, funcNode.Start.Line, funcNode.End.Line, funcNode.Start.Column, funcNode.End.Column, "error declaring function. "+err.Error()).Level(report.CRITICAL_ERROR)
+		report.Add(env.filePath, funcNode.Start.Line, funcNode.End.Line, funcNode.Start.Column, funcNode.End.Column, "error declaring function. "+err.Error()).SetLevel(report.CRITICAL_ERROR)
 	}
 	//check the function body
 	for _, stmt := range funcNode.Body.Contents {
@@ -52,14 +52,14 @@ func checkandDeclareParamaters(params []ast.FunctionParam, fnEnv *TypeEnvironmen
 
 func checkAndDeclareSingleParameter(param ast.FunctionParam, fnEnv *TypeEnvironment, parameters *[]FnParam) {
 	if fnEnv.isDeclared(param.Identifier.Name) {
-		report.Add(fnEnv.filePath, param.Identifier.Start.Line, param.Identifier.End.Line, param.Identifier.Start.Column, param.Identifier.End.Column, fmt.Sprintf("parameter '%s' is already defined", param.Identifier.Name)).Level(report.NORMAL_ERROR)
+		report.Add(fnEnv.filePath, param.Identifier.Start.Line, param.Identifier.End.Line, param.Identifier.Start.Column, param.Identifier.End.Column, fmt.Sprintf("parameter '%s' is already defined", param.Identifier.Name)).SetLevel(report.NORMAL_ERROR)
 	}
 
 	paramType := evaluateTypeName(param.Type, fnEnv)
 
 	err := fnEnv.declareVar(param.Identifier.Name, paramType, false, false)
 	if err != nil {
-		report.Add(fnEnv.filePath, param.Identifier.Start.Line, param.Identifier.End.Line, param.Identifier.Start.Column, param.Identifier.End.Column, fmt.Sprintf("error defining parameter. %s", err.Error())).Level(report.CRITICAL_ERROR)
+		report.Add(fnEnv.filePath, param.Identifier.Start.Line, param.Identifier.End.Line, param.Identifier.Start.Column, param.Identifier.End.Column, fmt.Sprintf("error defining parameter. %s", err.Error())).SetLevel(report.CRITICAL_ERROR)
 	}
 
 	*parameters = append(*parameters, FnParam{
@@ -74,12 +74,12 @@ func checkFunctionCall(callNode ast.FunctionCallExpr, env *TypeEnvironment) Tc {
 	fn, err := userDefinedToFn(caller)
 
 	if err != nil {
-		report.Add(env.filePath, callNode.Caller.StartPos().Line, callNode.Caller.EndPos().Line, callNode.Caller.StartPos().Column, callNode.Caller.EndPos().Column, err.Error()).Level(report.CRITICAL_ERROR)
+		report.Add(env.filePath, callNode.Caller.StartPos().Line, callNode.Caller.EndPos().Line, callNode.Caller.StartPos().Column, callNode.Caller.EndPos().Column, err.Error()).SetLevel(report.CRITICAL_ERROR)
 	}
 
 	fnParams := fn.Params
 	if len(callNode.Arguments) != len(fnParams) {
-		report.Add(env.filePath, callNode.Start.Line, callNode.End.Line, callNode.Start.Column, callNode.End.Column, fmt.Sprintf("function expects %d arguments, got %d", len(fnParams), len(callNode.Arguments))).Level(report.NORMAL_ERROR)
+		report.Add(env.filePath, callNode.Start.Line, callNode.End.Line, callNode.Start.Column, callNode.End.Column, fmt.Sprintf("function expects %d arguments, got %d", len(fnParams), len(callNode.Arguments))).SetLevel(report.NORMAL_ERROR)
 	}
 
 	//check if the arguments match the parameters
@@ -87,7 +87,7 @@ func checkFunctionCall(callNode ast.FunctionCallExpr, env *TypeEnvironment) Tc {
 		arg := parseNodeValue(callNode.Arguments[i], env)
 		err := validateTypeCompatibility(fnParams[i].Type, arg)
 		if err != nil {
-			report.Add(env.filePath, callNode.Arguments[i].StartPos().Line, callNode.Arguments[i].EndPos().Line, callNode.Arguments[i].StartPos().Column, callNode.Arguments[i].EndPos().Column, err.Error()).Level(report.NORMAL_ERROR)
+			report.Add(env.filePath, callNode.Arguments[i].StartPos().Line, callNode.Arguments[i].EndPos().Line, callNode.Arguments[i].StartPos().Column, callNode.Arguments[i].EndPos().Column, err.Error()).SetLevel(report.NORMAL_ERROR)
 		}
 	}
 
@@ -114,7 +114,7 @@ func checkFunctionDeclStmt(funcNode ast.FunctionDeclStmt, env *TypeEnvironment) 
 	funcName := funcNode.Identifier.Name
 
 	if env.isDeclared(funcName) {
-		report.Add(env.filePath, funcNode.Identifier.Start.Line, funcNode.Identifier.End.Line, funcNode.Identifier.Start.Column, funcNode.Identifier.End.Column, fmt.Sprintf("function '%s' is already defined in this scope", funcName)).Level(report.NORMAL_ERROR)
+		report.Add(env.filePath, funcNode.Identifier.Start.Line, funcNode.Identifier.End.Line, funcNode.Identifier.Start.Column, funcNode.Identifier.End.Column, fmt.Sprintf("function '%s' is already defined in this scope", funcName)).SetLevel(report.NORMAL_ERROR)
 	}
 
 	return CheckAndDeclareFunction(funcNode.FunctionLiteral, funcName, env)
@@ -124,7 +124,7 @@ func getFunctionReturnValue(env *TypeEnvironment, returnNode ast.Node) Tc {
 	funcParent, err := env.resolveFunctionEnv()
 
 	if err != nil {
-		report.Add(env.filePath, returnNode.StartPos().Line, returnNode.EndPos().Line, returnNode.StartPos().Column, returnNode.EndPos().Column, err.Error()).Level(report.CRITICAL_ERROR)
+		report.Add(env.filePath, returnNode.StartPos().Line, returnNode.EndPos().Line, returnNode.StartPos().Column, returnNode.EndPos().Column, err.Error()).SetLevel(report.CRITICAL_ERROR)
 	}
 
 	fnName := funcParent.scopeName
@@ -135,7 +135,7 @@ func getFunctionReturnValue(env *TypeEnvironment, returnNode ast.Node) Tc {
 	case StructMethod:
 		return fn.Fn.Returns
 	default:
-		report.Add(env.filePath, returnNode.StartPos().Line, returnNode.EndPos().Line, returnNode.StartPos().Column, returnNode.EndPos().Column, fmt.Sprintf("'%s' is not a function", fnName)).Level(report.NORMAL_ERROR)
+		report.Add(env.filePath, returnNode.StartPos().Line, returnNode.EndPos().Line, returnNode.StartPos().Column, returnNode.EndPos().Column, fmt.Sprintf("'%s' is not a function", fnName)).SetLevel(report.NORMAL_ERROR)
 		return NewVoid()
 	}
 }

@@ -31,19 +31,8 @@ var colorMap = map[REPORT_TYPE]colors.COLOR{
 }
 
 // global errors are arrays of error pointers
-var globalReports []*Report
+var globalReports []*Diagnostic
 var reports = make(map[REPORT_TYPE]int)
-
-type Report struct {
-	filePath  string
-	lineStart int
-	lineEnd   int
-	colStart  int
-	colEnd    int
-	msg       string
-	hints     []string
-	level     REPORT_TYPE
-}
 
 // Add exported Diagnostic type to be used by the LSP server.
 type Diagnostic struct {
@@ -53,6 +42,7 @@ type Diagnostic struct {
 	ColStart  int         `json:"colStart"`
 	ColEnd    int         `json:"colEnd"`
 	Message   string      `json:"message"`
+	Hints     []string    `json:"hints"`
 	Level     REPORT_TYPE `json:"level"`
 }
 
@@ -60,19 +50,11 @@ type Diagnostic struct {
 func GetDiagnostics() []Diagnostic {
 	var diags []Diagnostic
 	for _, r := range globalReports {
-		if r.level == NULL {
+		if r.Level == NULL {
 			// Skip reports without valid level.
 			continue
 		}
-		diags = append(diags, Diagnostic{
-			FilePath:  r.filePath,
-			LineStart: r.lineStart,
-			LineEnd:   r.lineEnd,
-			ColStart:  r.colStart,
-			ColEnd:    r.colEnd,
-			Message:   r.msg,
-			Level:     r.level,
-		})
+		diags = append(diags, *r)
 	}
 	return diags
 }
@@ -95,15 +77,15 @@ func GetDiagnostics() []Diagnostic {
 //   - Exits program if error is critical
 //
 // If file reading fails, the function will panic.
-func printReport(r *Report) {
+func printReport(r *Diagnostic) {
 
-	colors.GREY.Printf("%s:%d:%d: ", r.filePath, r.lineStart, r.colStart)
+	colors.GREY.Printf("%s:%d:%d: ", r.FilePath, r.LineStart, r.ColStart)
 
 	snippet, underline, hLen := makeParts(r)
 
 	var reportMsg string
 
-	switch r.level {
+	switch r.Level {
 	case WARNING:
 		reportMsg = "Warning: "
 	case INFO:
@@ -116,33 +98,33 @@ func printReport(r *Report) {
 		reportMsg = "Error: "
 	}
 
-	reportColor := colorMap[r.level]
+	reportColor := colorMap[r.Level]
 	reportColor.Print(reportMsg)
-	reportColor.Print(r.msg + "\n")
+	reportColor.Print(r.Message + "\n")
 
 	fmt.Print(snippet)
 	reportColor.Print(underline)
 
 	showHints(r, hLen)
 
-	if r.level == CRITICAL_ERROR || r.level == SYNTAX_ERROR {
-		panic(fmt.Sprintf("Compilation halted due to %s\n", r.level))
+	if r.Level == CRITICAL_ERROR || r.Level == SYNTAX_ERROR {
+		panic(fmt.Sprintf("Compilation halted due to %s\n", r.Level))
 	}
 }
 
-func makeParts(r *Report) (snippet, underline string, hLen int) {
-	fileData, err := os.ReadFile(r.filePath)
+func makeParts(r *Diagnostic) (snippet, underline string, hLen int) {
+	fileData, err := os.ReadFile(r.FilePath)
 	if err != nil {
 		panic(err)
 	}
 
 	lines := strings.Split(string(fileData), "\n")
-	line := lines[r.lineStart-1]
+	line := lines[r.LineStart-1]
 
 	hLen = 0
 
-	if r.lineStart == r.lineEnd {
-		hLen = (r.colEnd - r.colStart) - 1
+	if r.LineStart == r.LineEnd {
+		hLen = (r.ColEnd - r.ColStart) - 1
 	} else {
 		//full line
 		hLen = len(line) - 2
@@ -151,17 +133,17 @@ func makeParts(r *Report) (snippet, underline string, hLen int) {
 		hLen = 0
 	}
 
-	lineNumber := fmt.Sprintf("%d | ", r.lineStart)
+	lineNumber := fmt.Sprintf("%d | ", r.LineStart)
 	snippet = colors.GREY.Sprint(lineNumber) + line + "\n"
-	underline = fmt.Sprintf("%s^%s\n", strings.Repeat(" ", (r.colStart-1)+len(lineNumber)), strings.Repeat("~", hLen))
+	underline = fmt.Sprintf("%s^%s\n", strings.Repeat(" ", (r.ColStart-1)+len(lineNumber)), strings.Repeat("~", hLen))
 
 	return snippet, underline, hLen
 }
 
-func showHints(r *Report, padding int) {
-	if len(r.hints) > 0 {
+func showHints(r *Diagnostic, padding int) {
+	if len(r.Hints) > 0 {
 		colors.YELLOW.Printf("%sHint:\n", strings.Repeat(" ", padding))
-		for _, hint := range r.hints {
+		for _, hint := range r.Hints {
 			colors.YELLOW.Printf("%s- %s\n", strings.Repeat(" ", padding), hint)
 		}
 	} else {
@@ -178,17 +160,17 @@ func showHints(r *Report, padding int) {
 //
 // Returns:
 //   - *WalrusError: Returns the error instance to allow for method chaining
-func (r *Report) Hint(msg string) *Report {
+func (r *Diagnostic) Hint(msg string) *Diagnostic {
 
 	if msg == "" {
 		return r
 	}
 
-	r.hints = append(r.hints, msg)
+	r.Hints = append(r.Hints, msg)
 	return r
 }
 
-func Add(filePath string, lineStart, lineEnd int, colStart, colEnd int, msg string) *Report {
+func Add(filePath string, lineStart, lineEnd int, colStart, colEnd int, msg string) *Diagnostic {
 	if lineStart < 1 {
 		lineStart = 1
 	}
@@ -202,14 +184,14 @@ func Add(filePath string, lineStart, lineEnd int, colStart, colEnd int, msg stri
 		colEnd = 1
 	}
 
-	report := &Report{
-		filePath:  filePath,
-		lineStart: lineStart,
-		lineEnd:   lineEnd,
-		colStart:  colStart,
-		colEnd:    colEnd,
-		msg:       msg,
-		level:     NULL,
+	report := &Diagnostic{
+		FilePath:  filePath,
+		LineStart: lineStart,
+		LineEnd:   lineEnd,
+		ColStart:  colStart,
+		ColEnd:    colEnd,
+		Message:   msg,
+		Level:     NULL,
 	}
 
 	globalReports = append(globalReports, report)
@@ -217,11 +199,11 @@ func Add(filePath string, lineStart, lineEnd int, colStart, colEnd int, msg stri
 	return report
 }
 
-func (e *Report) Level(level REPORT_TYPE) {
+func (e *Diagnostic) SetLevel(level REPORT_TYPE) {
 	if level == NULL {
-		panic("call ErrorLevel() method with valid Error level")
+		panic("call SetLevel() method with valid Error level")
 	}
-	e.level = level
+	e.Level = level
 	reports[level]++
 	if level == CRITICAL_ERROR || level == SYNTAX_ERROR {
 		DisplayAll()
@@ -245,8 +227,8 @@ func DisplayAll() {
 		os.Exit(-1)
 	}()
 	for _, err := range globalReports {
-		if err.level == NULL {
-			panic("call Level() method with valid Error level")
+		if err.Level == NULL {
+			panic("call SetLevel() method with valid Error level")
 		}
 		printReport(err)
 	}
