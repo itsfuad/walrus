@@ -394,7 +394,7 @@ func parseInterfaceType(p *Parser) ast.DataType {
 		})
 
 		if p.currentTokenKind() != lexer.CLOSE_CURLY {
-			p.expect(lexer.COMMA_TOKEN)
+			p.expect(lexer.SEMI_COLON_TOKEN)
 		}
 	}
 

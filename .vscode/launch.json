@@ -9,16 +9,8 @@
             "type": "go",
             "request": "launch",
             "mode": "auto",
-            "program": "${workspaceFolder}",
-            "args": ["code/test.wal"]
+            "program": "${workspaceFolder}/cmd/walrus",
+            "args": ["${workspaceFolder}/code/test.wal"]
         },
-        {
-            "name": "Launch Walrus Language Server",
-            "type": "go",
-            "request": "launch",
-            "mode": "auto",
-            "program": "${workspaceFolder}/cmd/walrus/lsp_server.go",
-            "args": []
-        }
     ]
 }

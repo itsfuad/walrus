@@ -159,19 +159,19 @@ func runSomeTest(t *testing.T, tt SomeTest) {
 }
 
 func runSomeIntTest(t *testing.T, s []int, tt SomeTest) {
-	if got := Some(s, tt.predicate.(func(int) bool)); got != tt.expected {
+	if _, got := Some(s, tt.predicate.(func(int) bool)); got != tt.expected {
 		t.Errorf(errMsg, got, tt.expected)
 	}
 }
 
 func runSomeStringTest(t *testing.T, s []string, tt SomeTest) {
-	if got := Some(s, tt.predicate.(func(string) bool)); got != tt.expected {
+	if _, got := Some(s, tt.predicate.(func(string) bool)); got != tt.expected {
 		t.Errorf(errMsg, got, tt.expected)
 	}
 }
 
 func runSomeStructTest(t *testing.T, s []struct{ a, b int }, tt SomeTest) {
-	if got := Some(s, tt.predicate.(func(struct{ a, b int }) bool)); got != tt.expected {
+	if _, got := Some(s, tt.predicate.(func(struct{ a, b int }) bool)); got != tt.expected {
 		t.Errorf(errMsg, got, tt.expected)
 	}
 }

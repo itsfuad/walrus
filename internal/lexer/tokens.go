@@ -22,6 +22,7 @@ const (
 	RETURN_TOKEN     builtins.TOKEN_KIND = "ret"
 	IN_TOKEN         builtins.TOKEN_KIND = "in"
 	AS_TOKEN         builtins.TOKEN_KIND = "as"
+	TYPEOF_TOKEN	 builtins.TOKEN_KIND = "typeof"
 	//data types
 	INT8_TOKEN      builtins.TOKEN_KIND = builtins.INT8
 	INT16_TOKEN     builtins.TOKEN_KIND = builtins.INT16
@@ -100,6 +101,7 @@ var keyWordsMap map[string]builtins.TOKEN_KIND = map[string]builtins.TOKEN_KIND{
 	"for":       FOR_TOKEN,
 	"foreach":   FOREACH_TOKEN,
 	"type":      TYPE_TOKEN,
+	"typeof":    TYPEOF_TOKEN,
 	"priv":      PRIVATE_TOKEN,
 	"interface": INTERFACE_TOKEN,
 	"impl":      IMPL_TOKEN,

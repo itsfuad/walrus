@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"errors"
 	"walrus/internal/ast"
 	"walrus/internal/lexer"
 )
@@ -9,7 +10,15 @@ func parseImplStmt(p *Parser) ast.Node {
 
 	start := p.eat().Start
 
-	typeName := p.expect(lexer.IDENTIFIER_TOKEN)
+	
+	var errMsg error
+	if p.currentToken().Kind == lexer.STRUCT_TOKEN {
+		errMsg = errors.New("unnamed structs cannot be used with 'impl', use a named struct instead")
+	} else {
+		errMsg = errors.New("expected a struct name after 'impl'")
+	}
+
+	typeName := p.expectError(lexer.IDENTIFIER_TOKEN, errMsg)
 
 	p.expect(lexer.OPEN_CURLY)
 

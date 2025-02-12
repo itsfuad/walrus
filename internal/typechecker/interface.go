@@ -26,9 +26,9 @@ func checkInterfaceTypeDecl(interfaceName string, interfaceNode ast.InterfaceTyp
 			}
 
 			//check if the parameter is already declared
-			if utils.Some(params, func(p FnParam) bool {
+			if _, found := utils.Some(params, func(p FnParam) bool {
 				return p.Name == fnParam.Name
-			}) {
+			}); found {
 				report.Add(env.filePath, param.Identifier.Start.Line, param.Identifier.End.Line, param.Identifier.Start.Column, param.Identifier.End.Column,
 					fmt.Sprintf("parameter '%s' is already defined for method '%s'", fnParam.Name, method.Identifier.Name)).SetLevel(report.CRITICAL_ERROR)
 			}
@@ -39,9 +39,9 @@ func checkInterfaceTypeDecl(interfaceName string, interfaceNode ast.InterfaceTyp
 		returns := evaluateTypeName(method.ReturnType, fnEnv)
 
 		//check if the method already exists
-		if utils.Some(methods, func(m InterfaceMethodType) bool {
+		if _, found := utils.Some(methods, func(m InterfaceMethodType) bool {
 			return m.Name == method.Identifier.Name
-		}) {
+		}); found {
 			report.Add(env.filePath, method.Identifier.Start.Line, method.Identifier.End.Line, method.Identifier.Start.Column, method.Identifier.End.Column,
 				fmt.Sprintf("method '%s' already exists in interface '%s'", method.Identifier.Name, interfaceName)).SetLevel(report.CRITICAL_ERROR)
 		}
