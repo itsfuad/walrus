@@ -47,11 +47,26 @@
         "language": "walrus",
         "path": "./snippets/walrus.json"
       }
-    ]
+    ],
+    "configuration": {
+      "type": "object",
+      "title": "Walrus Language Server",
+      "properties": {
+        "walrusLanguageServer.trace.server": {
+          "type": "string",
+          "enum": ["off", "messages", "verbose"],
+          "default": "off",
+          "description": "Traces the communication between VS Code and the Walrus Language Server."
+        }
+      }
+    }
   },
-  "main": "index.js",
+  "main": "./client.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "vscode-languageclient": "^7.0.0"
   },
   "keywords": [
     "Walrus",

@@ -1,1 +1,6 @@
-console.log('Hello, X!');
+const { activate, deactivate } = require('./client');
+
+module.exports = {
+    activate,
+    deactivate
+};
