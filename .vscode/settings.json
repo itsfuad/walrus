@@ -1,3 +1,5 @@
 {
-    "deepscan.enable": true
+    "deepscan.enable": true,
+    "walrusLanguageServer.trace.server": "off",
+    "walrusLanguageServer.path": "path/to/walrus/language/server"
 }
