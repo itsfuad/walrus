@@ -361,8 +361,8 @@ func functionSignatureString(fn Fn) string {
 // - dest: The interface type that `src` should implement.
 //
 // Returns:
-// - error: An error if `src` does not implement `dest` or if `dest` is not an interface.
-//          The error message includes details about the mismatch or invalid type.
+//   - error: An error if `src` does not implement `dest` or if `dest` is not an interface.
+//     The error message includes details about the mismatch or invalid type.
 func checkMethodsImplementations(src, dest Tc) error {
 
 	//check if the provided type implements the interface
