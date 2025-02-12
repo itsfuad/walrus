@@ -45,6 +45,38 @@ type Report struct {
 	level     REPORT_TYPE
 }
 
+// Add exported Diagnostic type to be used by the LSP server.
+type Diagnostic struct {
+	FilePath  string      `json:"filePath"`
+	LineStart int         `json:"lineStart"`
+	LineEnd   int         `json:"lineEnd"`
+	ColStart  int         `json:"colStart"`
+	ColEnd    int         `json:"colEnd"`
+	Message   string      `json:"message"`
+	Level     REPORT_TYPE `json:"level"`
+}
+
+// GetDiagnostics converts internal reports to LSP diagnostics.
+func GetDiagnostics() []Diagnostic {
+	var diags []Diagnostic
+	for _, r := range globalReports {
+		if r.level == NULL {
+			// Skip reports without valid level.
+			continue
+		}
+		diags = append(diags, Diagnostic{
+			FilePath:  r.filePath,
+			LineStart: r.lineStart,
+			LineEnd:   r.lineEnd,
+			ColStart:  r.colStart,
+			ColEnd:    r.colEnd,
+			Message:   r.msg,
+			Level:     r.level,
+		})
+	}
+	return diags
+}
+
 // It prints the error location, the relevant code line, and visual indicators
 // showing where the error occurred. For critical errors, it will terminate
 // program execution.

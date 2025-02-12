@@ -7,12 +7,12 @@ import (
 	"path/filepath"
 
 	//Walrus packages
+	"walrus/cmd/io"
 	"walrus/colors"
 	"walrus/internal/lexer"
 	"walrus/internal/parser"
 	"walrus/internal/report"
 	"walrus/internal/typechecker"
-	"walrus/cmd/io"
 )
 
 func main() {
