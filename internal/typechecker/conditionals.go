@@ -17,7 +17,7 @@ func checkIfStmt(ifNode ast.IfStmt, env *TypeEnvironment) Tc {
 	//condition
 	cond := parseNodeValue(ifNode.Condition, env)
 	if _, ok := cond.(Bool); !ok {
-		report.Add(env.filePath, ifNode.Condition.StartPos().Line, ifNode.Condition.EndPos().Line, ifNode.Condition.StartPos().Column, ifNode.Condition.EndPos().Column, "Condition must be a boolean expression").Level(report.NORMAL_ERROR)
+		report.Add(env.filePath, ifNode.Condition.StartPos().Line, ifNode.Condition.EndPos().Line, ifNode.Condition.StartPos().Column, ifNode.Condition.EndPos().Column, "Condition must be a boolean expression").SetLevel(report.NORMAL_ERROR)
 	}
 
 	//then block

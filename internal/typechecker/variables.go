@@ -26,7 +26,7 @@ func checkVariableAssignment(node ast.VarAssignmentExpr, env *TypeEnvironment) T
 	valueToAssign := node.Value
 
 	if err := checkLValue(Assignee, env); err != nil {
-		report.Add(env.filePath, Assignee.StartPos().Line, Assignee.EndPos().Line, Assignee.StartPos().Column, Assignee.EndPos().Column, fmt.Sprintf("cannot assign to %s", err.Error())).Level(report.CRITICAL_ERROR)
+		report.Add(env.filePath, Assignee.StartPos().Line, Assignee.EndPos().Line, Assignee.StartPos().Column, Assignee.EndPos().Column, fmt.Sprintf("cannot assign to %s", err.Error())).SetLevel(report.CRITICAL_ERROR)
 	}
 
 	expectedType := parseNodeValue(Assignee, env)
@@ -34,7 +34,7 @@ func checkVariableAssignment(node ast.VarAssignmentExpr, env *TypeEnvironment) T
 
 	err := validateTypeCompatibility(expectedType, providedType)
 	if err != nil {
-		report.Add(env.filePath, valueToAssign.StartPos().Line, valueToAssign.EndPos().Line, valueToAssign.StartPos().Column, valueToAssign.EndPos().Column, err.Error()).Level(report.NORMAL_ERROR)
+		report.Add(env.filePath, valueToAssign.StartPos().Line, valueToAssign.EndPos().Line, valueToAssign.StartPos().Column, valueToAssign.EndPos().Column, err.Error()).SetLevel(report.NORMAL_ERROR)
 	}
 
 	return providedType
@@ -73,20 +73,20 @@ func checkVariableDeclaration(node ast.VarDeclStmt, env *TypeEnvironment) Tc {
 
 		// do not allow void type
 		if _, ok := expectedTypeInterface.(Void); ok {
-			report.Add(env.filePath, varToDecl.Identifier.StartPos().Line, varToDecl.Identifier.EndPos().Line, varToDecl.Identifier.StartPos().Column, varToDecl.Identifier.EndPos().Column, "cannot declare variable of type void\n"+report.TreeFormatString("a variable must have a non void type")).Level(report.CRITICAL_ERROR)
+			report.Add(env.filePath, varToDecl.Identifier.StartPos().Line, varToDecl.Identifier.EndPos().Line, varToDecl.Identifier.StartPos().Column, varToDecl.Identifier.EndPos().Column, "cannot declare variable of type void\n"+report.TreeFormatString("a variable must have a non void type")).SetLevel(report.CRITICAL_ERROR)
 		}
 
 		if varToDecl.Value != nil && varToDecl.ExplicitType != nil {
 			providedValue := parseNodeValue(varToDecl.Value, env)
 			err := validateTypeCompatibility(expectedTypeInterface, providedValue)
 			if err != nil {
-				report.Add(env.filePath, varToDecl.Value.StartPos().Line, varToDecl.Value.EndPos().Line, varToDecl.Value.StartPos().Column, varToDecl.Value.EndPos().Column, fmt.Sprintf("error declaring variable '%s'. %s", varToDecl.Identifier.Name, err.Error())).Level(report.NORMAL_ERROR)
+				report.Add(env.filePath, varToDecl.Value.StartPos().Line, varToDecl.Value.EndPos().Line, varToDecl.Value.StartPos().Column, varToDecl.Value.EndPos().Column, fmt.Sprintf("error declaring variable '%s'. %s", varToDecl.Identifier.Name, err.Error())).SetLevel(report.NORMAL_ERROR)
 			}
 		}
 
 		err := env.declareVar(varToDecl.Identifier.Name, expectedTypeInterface, node.IsConst, false)
 		if err != nil {
-			report.Add(env.filePath, varToDecl.Identifier.StartPos().Line, varToDecl.Identifier.EndPos().Line, varToDecl.Identifier.StartPos().Column, varToDecl.Identifier.EndPos().Column, err.Error()).Level(report.CRITICAL_ERROR)
+			report.Add(env.filePath, varToDecl.Identifier.StartPos().Line, varToDecl.Identifier.EndPos().Line, varToDecl.Identifier.StartPos().Column, varToDecl.Identifier.EndPos().Column, err.Error()).SetLevel(report.CRITICAL_ERROR)
 		}
 
 		if node.IsConst {

@@ -21,21 +21,21 @@ func checkForStmt(forStmt ast.ForStmt, env *TypeEnvironment) Tc {
 		case ast.VarAssignmentExpr:
 			checkVariableAssignment(t, forLoopEnv)
 		default:
-			report.Add(env.filePath, forStmt.StartPos().Line, forStmt.EndPos().Line, forStmt.StartPos().Column, forStmt.EndPos().Column, "for loop initialization must be a variable declaration or assignment").Level(report.CRITICAL_ERROR)
+			report.Add(env.filePath, forStmt.StartPos().Line, forStmt.EndPos().Line, forStmt.StartPos().Column, forStmt.EndPos().Column, "for loop initialization must be a variable declaration or assignment").SetLevel(report.CRITICAL_ERROR)
 		}
 
 		cond := parseNodeValue(forStmt.Condition, forLoopEnv)
 
 		//must be a boolean if !cond -> error, if !cond.Type == bool -> error
 		if _, ok := cond.(Bool); !ok {
-			report.Add(env.filePath, forStmt.StartPos().Line, forStmt.EndPos().Line, forStmt.StartPos().Column, forStmt.EndPos().Column, "for loop condition must be a boolean expression").Level(report.CRITICAL_ERROR)
+			report.Add(env.filePath, forStmt.StartPos().Line, forStmt.EndPos().Line, forStmt.StartPos().Column, forStmt.EndPos().Column, "for loop condition must be a boolean expression").SetLevel(report.CRITICAL_ERROR)
 		}
 
 		incr := parseNodeValue(forStmt.Increment, forLoopEnv)
 
 		//must be assignment
 		if _, ok := incr.(ast.IncrementalInterface); !ok {
-			report.Add(env.filePath, forStmt.StartPos().Line, forStmt.EndPos().Line, forStmt.StartPos().Column, forStmt.EndPos().Column, "for loop increment must be incremental assignment").Level(report.CRITICAL_ERROR)
+			report.Add(env.filePath, forStmt.StartPos().Line, forStmt.EndPos().Line, forStmt.StartPos().Column, forStmt.EndPos().Column, "for loop increment must be incremental assignment").SetLevel(report.CRITICAL_ERROR)
 		}
 	}
 

@@ -28,7 +28,7 @@ func checkAnnonymousStructLiteral(structLit ast.StructLiteral, env *TypeEnvironm
 		//declare the property on the struct environment
 		err := structEnv.declareVar(propval.Prop.Name, property, false, false)
 		if err != nil {
-			report.Add(env.filePath, propval.Prop.StartPos().Line, propval.Prop.EndPos().Line, propval.Prop.StartPos().Column, propval.Prop.EndPos().Column, fmt.Sprintf("error declaring property '%s': %s", propval.Prop.Name, err.Error())).Level(report.CRITICAL_ERROR)
+			report.Add(env.filePath, propval.Prop.StartPos().Line, propval.Prop.EndPos().Line, propval.Prop.StartPos().Column, propval.Prop.EndPos().Column, fmt.Sprintf("error declaring property '%s': %s", propval.Prop.Name, err.Error())).SetLevel(report.CRITICAL_ERROR)
 		}
 
 		sname += fmt.Sprintf("%s: %s", propval.Prop.Name, tcToString(propType))
@@ -61,13 +61,13 @@ func checkStructLiteral(structLit ast.StructLiteral, env *TypeEnvironment) Tc {
 
 	Type, err := getTypeDefinition(sName.Name) // need to get the most deep type
 	if err != nil {
-		report.Add(env.filePath, sName.StartPos().Line, sName.EndPos().Line, sName.StartPos().Column, sName.EndPos().Column, err.Error()).Level(report.NORMAL_ERROR)
+		report.Add(env.filePath, sName.StartPos().Line, sName.EndPos().Line, sName.StartPos().Column, sName.EndPos().Column, err.Error()).SetLevel(report.NORMAL_ERROR)
 	}
 
 	structType, ok := Type.(Struct)
 
 	if !ok {
-		report.Add(env.filePath, sName.StartPos().Line, sName.EndPos().Line, sName.StartPos().Column, sName.EndPos().Column, fmt.Sprintf("'%s' is not a struct", sName.Name)).Level(report.CRITICAL_ERROR)
+		report.Add(env.filePath, sName.StartPos().Line, sName.EndPos().Line, sName.StartPos().Column, sName.EndPos().Column, fmt.Sprintf("'%s' is not a struct", sName.Name)).SetLevel(report.CRITICAL_ERROR)
 	}
 
 	// now we match the defined props with the provided props
@@ -96,7 +96,7 @@ func composeErrors(structLit ast.StructLiteral, missingProps []string, env *Type
 	}
 	errMsg := fmt.Sprintf("incomplete struct literal for struct '%s'\n", structLit.Identifier.Name)
 	errMsg += report.TreeFormatString(missingProps...)
-	report.Add(env.filePath, structLit.StartPos().Line, structLit.EndPos().Line, structLit.StartPos().Column, structLit.EndPos().Column, errMsg).Level(report.NORMAL_ERROR)
+	report.Add(env.filePath, structLit.StartPos().Line, structLit.EndPos().Line, structLit.StartPos().Column, structLit.EndPos().Column, errMsg).SetLevel(report.NORMAL_ERROR)
 }
 
 func checkMissingProps(structType Struct, structLit ast.StructLiteral) []string {
@@ -128,7 +128,7 @@ func checkPropsType(structType Struct, structLit ast.StructLiteral, env *TypeEnv
 	for _, structProp := range structLit.Properties {
 		//check if the property is defined
 		if _, ok := structType.StructScope.variables[structProp.Prop.Name]; !ok {
-			report.Add(env.filePath, structProp.Prop.Start.Line, structProp.Prop.End.Line, structProp.Prop.Start.Column, structProp.Prop.End.Column, fmt.Sprintf("property '%s' is not defined on struct '%s'", structProp.Prop.Name, structLit.Identifier.Name)).Level(report.CRITICAL_ERROR)
+			report.Add(env.filePath, structProp.Prop.Start.Line, structProp.Prop.End.Line, structProp.Prop.Start.Column, structProp.Prop.End.Column, fmt.Sprintf("property '%s' is not defined on struct '%s'", structProp.Prop.Name, structLit.Identifier.Name)).SetLevel(report.CRITICAL_ERROR)
 		}
 
 		//check if the property type matches the defined type
@@ -138,7 +138,7 @@ func checkPropsType(structType Struct, structLit ast.StructLiteral, env *TypeEnv
 
 		err := validateTypeCompatibility(expectedType, providedType)
 		if err != nil {
-			report.Add(env.filePath, structProp.Prop.StartPos().Column, structProp.Value.EndPos().Line, structProp.Prop.StartPos().Column, structProp.Value.EndPos().Column, err.Error()).Level(report.NORMAL_ERROR)
+			report.Add(env.filePath, structProp.Prop.StartPos().Column, structProp.Value.EndPos().Line, structProp.Prop.StartPos().Column, structProp.Value.EndPos().Column, err.Error()).SetLevel(report.NORMAL_ERROR)
 		}
 	}
 }
@@ -148,7 +148,7 @@ func getObject(expr ast.StructPropertyAccessExpr, env *TypeEnvironment) Tc {
 	if ok := expr.Object.(ast.IdentifierExpr); ok.Name == "this" {
 		obj, err := env.getStructType()
 		if err != nil {
-			report.Add(env.filePath, expr.Object.StartPos().Line, expr.Object.EndPos().Line, expr.Object.StartPos().Column, expr.Object.EndPos().Column, err.Error()).Level(report.CRITICAL_ERROR)
+			report.Add(env.filePath, expr.Object.StartPos().Line, expr.Object.EndPos().Line, expr.Object.StartPos().Column, expr.Object.EndPos().Column, err.Error()).SetLevel(report.CRITICAL_ERROR)
 		}
 		return obj
 	} else {
@@ -177,7 +177,7 @@ func checkPropertyAccess(expr ast.StructPropertyAccessExpr, env *TypeEnvironment
 				return method.Method
 			}
 		}
-		report.Add(env.filePath, prop.Start.Line, prop.End.Line, prop.Start.Column, prop.End.Column, fmt.Sprintf("interface '%s' does not have a method '%s'", t.InterfaceName, prop.Name)).Level(report.CRITICAL_ERROR)
+		report.Add(env.filePath, prop.Start.Line, prop.End.Line, prop.Start.Column, prop.End.Column, fmt.Sprintf("interface '%s' does not have a method '%s'", t.InterfaceName, prop.Name)).SetLevel(report.CRITICAL_ERROR)
 	}
 
 	propType := ""
@@ -193,19 +193,19 @@ func checkPropertyAccess(expr ast.StructPropertyAccessExpr, env *TypeEnvironment
 			propType = "property"
 			isPrivate = t.IsPrivate
 		default:
-			report.Add(env.filePath, prop.Start.Line, prop.End.Line, prop.Start.Column, prop.End.Column, fmt.Sprintf("'%s' is not a %s", prop.Name, propType)).Level(report.CRITICAL_ERROR)
+			report.Add(env.filePath, prop.Start.Line, prop.End.Line, prop.Start.Column, prop.End.Column, fmt.Sprintf("'%s' is not a %s", prop.Name, propType)).SetLevel(report.CRITICAL_ERROR)
 		}
 
 		if isPrivate {
 			//check the scope we are in
 			if !env.isInStructScope() {
-				report.Add(env.filePath, prop.Start.Line, prop.End.Line, prop.Start.Column, prop.End.Column, fmt.Sprintf("cannot access private property '%s' from outside of the struct's scope", prop.Name)).Level(report.NORMAL_ERROR)
+				report.Add(env.filePath, prop.Start.Line, prop.End.Line, prop.Start.Column, prop.End.Column, fmt.Sprintf("cannot access private property '%s' from outside of the struct's scope", prop.Name)).SetLevel(report.NORMAL_ERROR)
 			}
 		}
 		return property
 	}
 
-	report.Add(env.filePath, prop.Start.Line, prop.End.Line, prop.Start.Column, prop.End.Column, fmt.Sprintf("'%s' does not exist on type '%s'", prop.Name, objName)).Level(report.CRITICAL_ERROR)
+	report.Add(env.filePath, prop.Start.Line, prop.End.Line, prop.Start.Column, prop.End.Column, fmt.Sprintf("'%s' does not exist on type '%s'", prop.Name, objName)).SetLevel(report.CRITICAL_ERROR)
 
 	return NewVoid()
 }
@@ -223,7 +223,7 @@ func checkStructTypeDecl(name string, structType ast.StructType, env *TypeEnviro
 		//declare the property on the struct environment
 		err := structEnv.declareVar(propval.Prop.Name, property, false, false)
 		if err != nil {
-			report.Add(env.filePath, propval.PropType.StartPos().Line, propval.PropType.EndPos().Line, propval.PropType.StartPos().Column, propval.PropType.EndPos().Column, fmt.Sprintf("error declaring property '%s': %s", propval.Prop.Name, err.Error())).Level(report.CRITICAL_ERROR)
+			report.Add(env.filePath, propval.PropType.StartPos().Line, propval.PropType.EndPos().Line, propval.PropType.StartPos().Column, propval.PropType.EndPos().Column, fmt.Sprintf("error declaring property '%s': %s", propval.Prop.Name, err.Error())).SetLevel(report.CRITICAL_ERROR)
 		}
 	}
 
@@ -236,7 +236,7 @@ func checkStructTypeDecl(name string, structType ast.StructType, env *TypeEnviro
 	// //declare 'this' variable to be used in the struct's methods
 	// err := structEnv.declareVar("this", structTypeValue, true, false)
 	// if err != nil {
-	// 	report.Add(env.filePath, structType.StartPos().Line, structType.EndPos().Line, structType.StartPos().Column, structType.EndPos().Column, err.Error()).Level(report.CRITICAL_ERROR)
+	// 	report.Add(env.filePath, structType.StartPos().Line, structType.EndPos().Line, structType.StartPos().Column, structType.EndPos().Column, err.Error()).SetLevel(report.CRITICAL_ERROR)
 	// }
 
 	return structTypeValue
