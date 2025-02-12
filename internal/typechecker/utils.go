@@ -129,7 +129,6 @@ func evalStruct(s ast.StructType, env *TypeEnvironment) Struct {
 	return typ
 }
 
-
 func evalDefaultType(defaultType ast.DataType, env *TypeEnvironment) Tc {
 	val, err := getTypeDefinition(string(defaultType.Type())) // need to get the most deep type
 	if err != nil || val == nil {
@@ -362,7 +361,7 @@ func functionSignatureString(fn Fn) string {
 // - dest: The interface type that `src` should implement.
 //
 // Returns:
-// - error: An error if `src` does not implement `dest` or if `dest` is not an interface. 
+// - error: An error if `src` does not implement `dest` or if `dest` is not an interface.
 //          The error message includes details about the mismatch or invalid type.
 func checkMethodsImplementations(src, dest Tc) error {
 

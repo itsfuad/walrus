@@ -34,7 +34,7 @@ var colorMap = map[REPORT_TYPE]colors.COLOR{
 var globalReports []*Diagnostic
 var reports = make(map[REPORT_TYPE]int)
 
-// Add exported Diagnostic type to be used by the LSP server.
+// Diagnostic represents a diagnostic report used both internally and by LSP.
 type Diagnostic struct {
 	FilePath  string      `json:"filePath"`
 	LineStart int         `json:"lineStart"`
@@ -46,7 +46,8 @@ type Diagnostic struct {
 	Level     REPORT_TYPE `json:"level"`
 }
 
-// GetDiagnostics converts internal reports to LSP diagnostics.
+// GetDiagnostics returns a slice of diagnostics converted from internal reports.
+// It skips any reports that do not have a valid level.
 func GetDiagnostics() []Diagnostic {
 	var diags []Diagnostic
 	for _, r := range globalReports {
@@ -59,24 +60,9 @@ func GetDiagnostics() []Diagnostic {
 	return diags
 }
 
-// It prints the error location, the relevant code line, and visual indicators
-// showing where the error occurred. For critical errors, it will terminate
-// program execution.
-//
-// Parameters:
-//   - e: Pointer to a WalrusError containing error details
-//   - showFileName: Boolean flag to control whether the file name is displayed
-//
-// The function:
-//   - Reads the source file
-//   - Displays file location (if showFileName is true)
-//   - Shows the problematic line of code
-//   - Highlights the error position with ^ and ~ characters
-//   - Prints the error message
-//   - Shows hints if available
-//   - Exits program if error is critical
-//
-// If file reading fails, the function will panic.
+// printReport prints a formatted diagnostic report to stdout.
+// It shows file location, a code snippet, underline highlighting, any hints,
+// and panics if the diagnostic level is critical or indicates a syntax error.
 func printReport(r *Diagnostic) {
 
 	colors.GREY.Printf("%s:%d:%d: ", r.FilePath, r.LineStart, r.ColStart)
@@ -112,6 +98,9 @@ func printReport(r *Diagnostic) {
 	}
 }
 
+// makeParts reads the source file and generates a code snippet and underline
+// indicating the location of the diagnostic. It returns the snippet, underline,
+// and a hint padding value.
 func makeParts(r *Diagnostic) (snippet, underline string, hLen int) {
 	fileData, err := os.ReadFile(r.FilePath)
 	if err != nil {
@@ -140,6 +129,8 @@ func makeParts(r *Diagnostic) (snippet, underline string, hLen int) {
 	return snippet, underline, hLen
 }
 
+// showHints outputs any associated hint messages for the diagnostic,
+// using the provided padding for proper alignment.
 func showHints(r *Diagnostic, padding int) {
 	if len(r.Hints) > 0 {
 		colors.YELLOW.Printf("%sHint:\n", strings.Repeat(" ", padding))
@@ -151,15 +142,8 @@ func showHints(r *Diagnostic, padding int) {
 	}
 }
 
-// Hint appends a hint message to the error's hints slice.
-// If the provided message is empty, it returns the error without modification.
-// Each hint provides additional context or suggestions about the error.
-//
-// Parameters:
-//   - msg: The hint message to add
-//
-// Returns:
-//   - *WalrusError: Returns the error instance to allow for method chaining
+// Hint appends a new hint message to the diagnostic and returns the updated diagnostic.
+// It ignores empty hint messages.
 func (r *Diagnostic) Hint(msg string) *Diagnostic {
 
 	if msg == "" {
@@ -170,6 +154,8 @@ func (r *Diagnostic) Hint(msg string) *Diagnostic {
 	return r
 }
 
+// Add creates and registers a new diagnostic report with basic position validation.
+// It returns a pointer to the newly created Diagnostic.
 func Add(filePath string, lineStart, lineEnd int, colStart, colEnd int, msg string) *Diagnostic {
 	if lineStart < 1 {
 		lineStart = 1
@@ -199,6 +185,8 @@ func Add(filePath string, lineStart, lineEnd int, colStart, colEnd int, msg stri
 	return report
 }
 
+// SetLevel assigns a diagnostic level to the report, increments its count,
+// and triggers DisplayAll if the level is critical or denotes a syntax error.
 func (e *Diagnostic) SetLevel(level REPORT_TYPE) {
 	if level == NULL {
 		panic("call SetLevel() method with valid Error level")
@@ -210,6 +198,8 @@ func (e *Diagnostic) SetLevel(level REPORT_TYPE) {
 	}
 }
 
+// DisplayAll outputs all the diagnostic reports. It recovers from panics,
+// prints a summary status, and exits the process if errors are present.
 func DisplayAll() {
 	//recover if panics
 	defer func() {
@@ -234,6 +224,7 @@ func DisplayAll() {
 	}
 }
 
+// showStatus displays a summary of compilation status along with counts of warnings and errors.
 func showStatus(passed bool, msg string) {
 
 	//show errors and warnings separately
@@ -267,7 +258,7 @@ func showStatus(passed bool, msg string) {
 	messageColor.Println(" -------------")
 }
 
-// func Tree print with one or more strings
+// TreeFormatString formats one or more strings into a tree-like structure using specific tree characters.
 func TreeFormatString(strings ...string) string {
 	// use └, ├ as tree characters
 	str := ""
@@ -281,6 +272,7 @@ func TreeFormatString(strings ...string) string {
 	return str
 }
 
+// TreeFormatError creates an error by formatting multiple error messages into a tree-like structure.
 func TreeFormatError(errs ...error) error {
 	strs := []string{}
 	for _, err := range errs {
