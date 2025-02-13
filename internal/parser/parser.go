@@ -82,8 +82,6 @@ type I interface {
 }
 
 func parseNode(p *Parser) ast.Node {
-
-	fmt.Printf("Parsing node %s\n", p.currentToken().Value)
 	// can be a statement or an expression
 	stmt_fn, exists := STMTLookup[p.currentTokenKind()]
 
@@ -100,8 +98,6 @@ func parseNode(p *Parser) ast.Node {
 }
 
 func (p *Parser) Parse(saveJson bool) ast.Node {
-
-	colors.GREEN.Printf("Parsing %s\n", p.FilePath)
 
 	var contents []ast.Node
 
