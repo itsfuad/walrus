@@ -6,7 +6,7 @@ import (
 	//Walrus packages
 	"walrus/compiler/colors"
 	"walrus/compiler/internal/ast"
-	"walrus/compiler/internal/report"
+	"walrus/compiler/report"
 )
 
 func EvaluateProgram(program ast.ProgramStmt, env *TypeEnvironment) Tc {

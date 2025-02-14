@@ -10,8 +10,8 @@ import (
 	//Walrus packages
 	"walrus/compiler/internal/ast"
 	"walrus/compiler/internal/builtins"
-	"walrus/compiler/internal/report"
 	"walrus/compiler/internal/utils"
+	"walrus/compiler/report"
 )
 
 func init() {

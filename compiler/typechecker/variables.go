@@ -7,7 +7,7 @@ import (
 	//Walrus packages
 	"walrus/compiler/colors"
 	"walrus/compiler/internal/ast"
-	"walrus/compiler/internal/report"
+	"walrus/compiler/report"
 )
 
 // checkVariableAssignment checks the assignment of a value to a variable in the given type environment.

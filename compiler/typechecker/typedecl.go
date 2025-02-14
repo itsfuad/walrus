@@ -3,8 +3,8 @@ package typechecker
 import (
 	"walrus/compiler/colors"
 	"walrus/compiler/internal/ast"
-	"walrus/compiler/internal/report"
 	"walrus/compiler/internal/utils"
+	"walrus/compiler/report"
 )
 
 func checkTypeDeclaration(node ast.TypeDeclStmt, env *TypeEnvironment) Tc {

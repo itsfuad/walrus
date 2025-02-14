@@ -5,7 +5,7 @@ import (
 	"fmt"
 	//Walrus packages
 	"walrus/compiler/internal/ast"
-	"walrus/compiler/internal/report"
+	"walrus/compiler/report"
 )
 
 func checkImplStmt(implStmt ast.ImplStmt, env *TypeEnvironment) Tc {

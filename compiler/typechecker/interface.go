@@ -5,8 +5,8 @@ import (
 	"fmt"
 	//Walrus packages
 	"walrus/compiler/internal/ast"
-	"walrus/compiler/internal/report"
 	"walrus/compiler/internal/utils"
+	"walrus/compiler/report"
 )
 
 func checkInterfaceTypeDecl(interfaceName string, interfaceNode ast.InterfaceType, env *TypeEnvironment) Interface {

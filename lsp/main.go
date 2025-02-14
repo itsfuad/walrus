@@ -7,6 +7,11 @@ import (
 	"io"
 	"log"
 	"os"
+
+	"walrus/compiler/colors"
+	"walrus/compiler/parser"
+	"walrus/compiler/report"
+	"walrus/compiler/typechecker"
 )
 
 type Message struct {
@@ -31,8 +36,22 @@ type TextDocumentSyncOptions struct {
 	Change    int  `json:"change"` // 1 = full
 }
 
+type Range struct {
+	Start Position `json:"start"`
+	End   Position `json:"end"`
+}
+
+type Position struct {
+	Line      int `json:"line"`
+	Character int `json:"character"`
+}
+
+// handleMessage processes requests and notifications.
 func handleMessage(msg *Message) *Message {
-	if msg.Method == "initialize" {
+
+	colors.BLUE.Println("Received message: ", msg.Method)
+	switch msg.Method {
+	case "initialize":
 		return &Message{
 			JsonRPC: "2.0",
 			ID:      msg.ID,
@@ -40,10 +59,39 @@ func handleMessage(msg *Message) *Message {
 				Capabilities: ServerCapabilities{
 					TextDocumentSync: TextDocumentSyncOptions{
 						OpenClose: true,
-						Change:    1,
+						Change:    1, // using full text on change
 					},
 				},
 			},
+		}
+	case "textDocument/didOpen":
+		var params struct {
+			TextDocument struct {
+				URI  string `json:"uri"`
+				Text string `json:"text"`
+			} `json:"textDocument"`
+		}
+		if err := json.Unmarshal(msg.Params, &params); err != nil {
+			log.Printf("Error parsing didOpen params: %v", err)
+			return nil
+		}
+		processDiagnostics(params.TextDocument.URI, params.TextDocument.Text)
+	case "textDocument/didChange":
+		var params struct {
+			TextDocument struct {
+				URI string `json:"uri"`
+			} `json:"textDocument"`
+			ContentChanges []struct {
+				Text string `json:"text"`
+			} `json:"contentChanges"`
+		}
+		if err := json.Unmarshal(msg.Params, &params); err != nil {
+			log.Printf("Error parsing didChange params: %v", err)
+			return nil
+		}
+		if len(params.ContentChanges) > 0 {
+			// Use full text update from the latest change.
+			processDiagnostics(params.TextDocument.URI, params.ContentChanges[len(params.ContentChanges)-1].Text)
 		}
 	}
 	return nil
@@ -107,4 +155,39 @@ func writeMessage(w io.Writer, msg *Message) error {
 
 	_, err = w.Write(content)
 	return err
+}
+
+// processDiagnostics now uses the compiler's lexer, parser, and typechecker.
+func processDiagnostics(uri string, source string) {
+	tokens := lexer.Tokenize(source, true)
+	tree := parser.NewParser("lsp", tokens).Parse(false)
+	env := typechecker.ProgramEnv("lsp")
+	typechecker.CheckAST(tree, env)
+
+	// Fetch diagnostics produced during typechecking.
+	diagnostics := report.GetDiagnostics()
+	publishDiagnostics(uri, diagnostics)
+}
+
+func publishDiagnostics(uri string, diagnostics []report.Diagnostic) {
+	params := struct {
+		URI         string              `json:"uri"`
+		Diagnostics []report.Diagnostic `json:"diagnostics"`
+	}{
+		URI:         uri,
+		Diagnostics: diagnostics,
+	}
+	data, err := json.Marshal(params)
+	if err != nil {
+		log.Printf("Error marshalling diagnostics: %v", err)
+		return
+	}
+	notification := Message{
+		JsonRPC: "2.0",
+		Method:  "textDocument/publishDiagnostics",
+		Params:  data,
+	}
+	if err := writeMessage(os.Stdout, &notification); err != nil {
+		log.Printf("Error writing diagnostics: %v", err)
+	}
 }

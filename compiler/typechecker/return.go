@@ -5,7 +5,7 @@ import (
 	"fmt"
 	//Walrus packages
 	"walrus/compiler/internal/ast"
-	"walrus/compiler/internal/report"
+	"walrus/compiler/report"
 )
 
 func checkReturnStmt(returnNode ast.ReturnStmt, env *TypeEnvironment) Tc {

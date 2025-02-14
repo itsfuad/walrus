@@ -1,8 +1,6 @@
 package ast
 
-import (
-	"walrus/compiler/internal/lexer"
-)
+import "walrus/compiler/internal/lexer"
 
 type ProgramStmt struct {
 	Contents []Node

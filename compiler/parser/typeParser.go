@@ -9,7 +9,7 @@ import (
 	"walrus/compiler/internal/ast"
 	"walrus/compiler/internal/builtins"
 	"walrus/compiler/internal/lexer"
-	"walrus/compiler/internal/report"
+	"walrus/compiler/report"
 )
 
 type typeNUDHandler func(p *Parser) ast.DataType

@@ -7,7 +7,7 @@ import (
 	"walrus/compiler/internal/ast"
 	"walrus/compiler/internal/builtins"
 	"walrus/compiler/internal/lexer"
-	"walrus/compiler/internal/report"
+	"walrus/compiler/report"
 )
 
 // parseExpr parses an expression with the given binding power.

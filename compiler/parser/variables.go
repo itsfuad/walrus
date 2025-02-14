@@ -5,8 +5,8 @@ import (
 	"fmt"
 	//Walrus packages
 	"walrus/compiler/internal/ast"
+	"walrus/compiler/report"
 	"walrus/compiler/internal/lexer"
-	"walrus/compiler/internal/report"
 )
 
 // parseVarDeclStmt parses a variable declaration statement in the source code.

@@ -4,8 +4,8 @@ import (
 	//Standard packages
 	"fmt"
 	//Walrus packages
+	"walrus/compiler/report"
 	"walrus/compiler/internal/ast"
-	"walrus/compiler/internal/report"
 )
 
 // evaluateIndexableAccess evaluates the access of an array element by its index.

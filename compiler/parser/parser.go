@@ -13,8 +13,8 @@ import (
 	"walrus/compiler/colors"
 	"walrus/compiler/internal/ast"
 	"walrus/compiler/internal/builtins"
+	"walrus/compiler/report"
 	"walrus/compiler/internal/lexer"
-	"walrus/compiler/internal/report"
 )
 
 type Parser struct {
@@ -137,7 +137,9 @@ func (p *Parser) Parse(saveJson bool) ast.Node {
 	return program
 }
 
-func NewParser(filePath string, tokens []lexer.Token) *Parser {
+func NewParser(filePath string, debug bool) *Parser {
+
+	tokens := lexer.Tokenize(filePath, debug)
 
 	bindLookupHandlers()
 	bindTypeLookups()

@@ -10,7 +10,7 @@ import (
 	"walrus/compiler/internal/ast"
 	"walrus/compiler/internal/builtins"
 	"walrus/compiler/internal/lexer"
-	"walrus/compiler/internal/report"
+	"walrus/compiler/report"
 )
 
 func checkIncrementalExpr(node ast.IncrementalInterface, env *TypeEnvironment) Tc {

@@ -6,8 +6,8 @@ import (
 	//Walrus packages
 	"walrus/compiler/colors"
 	"walrus/compiler/internal/ast"
-	"walrus/compiler/internal/report"
 	"walrus/compiler/internal/utils"
+	"walrus/compiler/report"
 )
 
 func checkAnnonymousStructLiteral(structLit ast.StructLiteral, env *TypeEnvironment) Tc {

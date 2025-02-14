@@ -4,7 +4,7 @@ import (
 	//Walrus packages
 	"walrus/compiler/internal/ast"
 	"walrus/compiler/internal/lexer"
-	"walrus/compiler/internal/report"
+	"walrus/compiler/report"
 )
 
 // parseLambdaFunction parses a lambda function expression from the input and returns an AST node representing the function.

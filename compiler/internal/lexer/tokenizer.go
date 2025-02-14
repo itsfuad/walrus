@@ -10,7 +10,7 @@ import (
 	//Walrus packages
 	"walrus/compiler/colors"
 	"walrus/compiler/internal/builtins"
-	"walrus/compiler/internal/report"
+	"walrus/compiler/report"
 )
 
 type regexHandler func(lex *Lexer, regex *regexp.Regexp)

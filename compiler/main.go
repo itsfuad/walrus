@@ -8,11 +8,10 @@ import (
 
 	//Walrus packages
 	"walrus/compiler/colors"
-	"walrus/compiler/internal/lexer"
-	"walrus/compiler/internal/parser"
-	"walrus/compiler/internal/report"
-	"walrus/compiler/internal/typechecker"
 	"walrus/compiler/io"
+	"walrus/compiler/parser"
+	"walrus/compiler/report"
+	"walrus/compiler/typechecker"
 )
 
 func main() {
@@ -33,8 +32,7 @@ func main() {
 	//get the folder and file name
 	folder, fileName := filepath.Split(filePath)
 
-	tokens := lexer.Tokenize(filePath, true)
-	tree := parser.NewParser(filePath, tokens).Parse(false)
+	tree := parser.NewParser(filePath, false).Parse(false)
 
 	//write the tree to a file named 'expressions.json' in 'code/ast' folder
 	err := io.Serialize(&tree, folder, fileName)

@@ -3,7 +3,7 @@ package typechecker
 import (
 	//Walrus packages
 	"walrus/compiler/internal/ast"
-	"walrus/compiler/internal/report"
+	"walrus/compiler/report"
 )
 
 func checkMapLiteral(node ast.MapLiteral, env *TypeEnvironment) Tc {
