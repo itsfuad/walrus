@@ -24,37 +24,28 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deactivate = exports.activate = void 0;
-const path = __importStar(require("path"));
-const vscode_1 = require("vscode");
+const vscode = __importStar(require("vscode"));
 const node_1 = require("vscode-languageclient/node");
 let client;
 function activate(context) {
-    const serverPath = context.asAbsolutePath(path.join('bin', 'walrus-lsp'));
+    console.log("Activating Walrus Language Extension...");
+    const serverExe = context.asAbsolutePath('../lsp/walrus-lsp.exe');
     const serverOptions = {
-        run: {
-            command: serverPath,
-            transport: node_1.TransportKind.stdio,
-        },
-        debug: {
-            command: serverPath,
-            transport: node_1.TransportKind.stdio,
-        }
+        run: { command: serverExe, args: [] },
+        debug: { command: serverExe, args: [] }
     };
     const clientOptions = {
         documentSelector: [{ scheme: 'file', language: 'walrus' }],
         synchronize: {
-            fileEvents: vscode_1.workspace.createFileSystemWatcher('**/*.{wal,walrus}')
+            fileEvents: vscode.workspace.createFileSystemWatcher('**/*.{wal,walrus}')
         }
     };
     client = new node_1.LanguageClient('walrusLanguageServer', 'Walrus Language Server', serverOptions, clientOptions);
-    client.start();
+    context.subscriptions.push(client.start());
 }
 exports.activate = activate;
 function deactivate() {
-    if (!client) {
-        return undefined;
-    }
-    return client.stop();
+    return client ? client.stop() : undefined;
 }
 exports.deactivate = deactivate;
 //# sourceMappingURL=client.js.map
