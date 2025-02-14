@@ -33,7 +33,6 @@ func main() {
 	folder, fileName := filepath.Split(filePath)
 
 	tree := parser.NewParser(filePath, false).Parse(false)
-
 	//write the tree to a file named 'expressions.json' in 'code/ast' folder
 	err := io.Serialize(&tree, folder, fileName)
 	if err != nil {

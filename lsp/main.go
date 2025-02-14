@@ -8,7 +8,6 @@ import (
 	"log"
 	"os"
 
-	"walrus/compiler/colors"
 	"walrus/compiler/parser"
 	"walrus/compiler/report"
 	"walrus/compiler/typechecker"
@@ -48,8 +47,10 @@ type Position struct {
 
 // handleMessage processes requests and notifications.
 func handleMessage(msg *Message) *Message {
+	// Removed output to stdout to avoid protocol corruption.
+	// log to stderr if needed:
+	log.Printf("Received message: %s", msg.Method)
 
-	colors.BLUE.Println("Received message: ", msg.Method)
 	switch msg.Method {
 	case "initialize":
 		return &Message{
@@ -75,7 +76,7 @@ func handleMessage(msg *Message) *Message {
 			log.Printf("Error parsing didOpen params: %v", err)
 			return nil
 		}
-		processDiagnostics(params.TextDocument.URI, params.TextDocument.Text)
+		processDiagnostics(params.TextDocument.URI)
 	case "textDocument/didChange":
 		var params struct {
 			TextDocument struct {
@@ -90,8 +91,8 @@ func handleMessage(msg *Message) *Message {
 			return nil
 		}
 		if len(params.ContentChanges) > 0 {
-			// Use full text update from the latest change.
-			processDiagnostics(params.TextDocument.URI, params.ContentChanges[len(params.ContentChanges)-1].Text)
+			// Use full text update.
+			processDiagnostics(params.TextDocument.URI)
 		}
 	}
 	return nil
@@ -158,15 +159,15 @@ func writeMessage(w io.Writer, msg *Message) error {
 }
 
 // processDiagnostics now uses the compiler's lexer, parser, and typechecker.
-func processDiagnostics(uri string, source string) {
-	tokens := lexer.Tokenize(source, true)
-	tree := parser.NewParser("lsp", tokens).Parse(false)
-	env := typechecker.ProgramEnv("lsp")
+func processDiagnostics(filePath string) {
+
+	tree := parser.NewParser(filePath, false).Parse(false)
+	env := typechecker.ProgramEnv(filePath)
 	typechecker.CheckAST(tree, env)
 
 	// Fetch diagnostics produced during typechecking.
 	diagnostics := report.GetDiagnostics()
-	publishDiagnostics(uri, diagnostics)
+	publishDiagnostics(filePath, diagnostics)
 }
 
 func publishDiagnostics(uri string, diagnostics []report.Diagnostic) {

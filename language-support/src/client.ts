@@ -1,3 +1,4 @@
+import path from 'path';
 import * as vscode from 'vscode';
 import { LanguageClient, LanguageClientOptions, ServerOptions } from 'vscode-languageclient/node';
 
@@ -6,7 +7,7 @@ let client: LanguageClient;
 export function activate(context: vscode.ExtensionContext) {
 	console.log("Activating Walrus Language Extension...");
   
-  const serverExe = context.asAbsolutePath('../lsp/walrus-lsp.exe');
+  const serverExe = context.asAbsolutePath(path.join('bin', 'walrus-lsp.exe'));
 	const serverOptions: ServerOptions = {
 		run: { command: serverExe, args: [] },
 		debug: { command: serverExe, args: [] }
@@ -21,12 +22,16 @@ export function activate(context: vscode.ExtensionContext) {
 
 	client = new LanguageClient(
 		'walrusLanguageServer',
-		'Walrus Language Server',
+		'Walrus LSP', // changed from "Walrus Language Server"
 		serverOptions,
 		clientOptions
 	);
-
-	context.subscriptions.push(client.start());
+	
+	context.subscriptions.push({
+		dispose: () => client.stop()
+	});
+	  
+	client.start();
 }
 
 export function deactivate(): Thenable<void> | undefined {

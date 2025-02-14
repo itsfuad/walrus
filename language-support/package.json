@@ -49,7 +49,7 @@
     ],
     "configuration": {
       "type": "object",
-      "title": "Walrus Language Server",
+      "title": "Walrus LSP",
       "properties": {
         "walrusLanguageServer.trace.server": {
           "type": "string",
@@ -66,15 +66,16 @@
   },
   "main": "./out/client.js",
   "scripts": {
-    "vscode:prepublish": "npm run compile",
+    "bundle": "esbuild src/client.ts --bundle --platform=node --outfile=out/client.js --external:vscode",
+    "vscode:prepublish": "go build -C ./../lsp -o ./../language-support/bin/walrus-lsp.exe && npm run bundle",
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
     "lint": "eslint src --ext ts"
   },
   "devDependencies": {
-    "vscode-languageclient": "^7.0.0",
     "@types/node": "^16.11.7",
     "@types/vscode": "^1.85.0",
+    "esbuild": "^0.25.0",
     "typescript": "^4.9.5"
   },
   "keywords": [
@@ -83,5 +84,8 @@
     "Language"
   ],
   "author": "Fuad Hasan",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "vscode-languageclient": "^9.0.1"
+  }
 }
