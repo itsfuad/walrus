@@ -160,10 +160,23 @@ func writeMessage(w io.Writer, msg *Message) error {
 
 // processDiagnostics now uses the compiler's lexer, parser, and typechecker.
 func processDiagnostics(filePath string) {
+	defer func() {
+		if r := recover(); r != nil {
+			log.Printf("Recovered from panic in processDiagnostics: %v", r)
+		}
+	}()
 
-	tree := parser.NewParser(filePath, false).Parse(false)
+	tree, err := parser.NewParser(filePath, false).Parse(false)
+	if err != nil {
+		log.Printf("Error parsing file: %v", err)
+		return
+	}
+
 	env := typechecker.ProgramEnv(filePath)
-	typechecker.CheckAST(tree, env)
+	if err := typechecker.CheckAST(tree, env); err != nil {
+		log.Printf("Error during type checking: %v", err)
+		return
+	}
 
 	// Fetch diagnostics produced during typechecking.
 	diagnostics := report.GetDiagnostics()
