@@ -1,9 +1,8 @@
-package ast_test
+package ast
 
 import (
 	"testing"
-	"walrus/internal/ast"
-	"walrus/internal/lexer"
+	"walrus/compiler/internal/lexer"
 )
 
 type TestNode struct {
@@ -40,7 +39,7 @@ func TestNodeInterface(t *testing.T) {
 func TestLocation(t *testing.T) {
 	startPos := lexer.Position{Line: 1, Column: 1}
 	endPos := lexer.Position{Line: 1, Column: 10}
-	location := ast.Location{Start: startPos, End: endPos}
+	location := Location{Start: startPos, End: endPos}
 
 	if location.Start != startPos {
 		t.Errorf("expected start position %v, got %v", startPos, location.Start)
