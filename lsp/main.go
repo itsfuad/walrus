@@ -160,7 +160,7 @@ func writeMessage(w io.Writer, msg *Message) error {
 // processDiagnostics now uses the compiler's lexer, parser, and typechecker.
 func processDiagnostics(filePath string) {
 
-	analyzer.Analyze(filePath, false, false)
+	analyzer.Analyze(filePath, false, false, false)
 
 	publishDiagnostics(filePath, report.GetDiagnostics())
 }

@@ -24,5 +24,5 @@ func main() {
 		os.Exit(-1)
 	}
 
-	analyzer.Analyze(filePath, false, false)
+	analyzer.Analyze(filePath, true, false, false)
 }

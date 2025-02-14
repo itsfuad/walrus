@@ -11,12 +11,14 @@ import (
 	"walrus/compiler/report"
 )
 
-func Analyze(filePath string, debug, save2Json bool) {
+func Analyze(filePath string, displayErrors, debug, save2Json bool) {
 
 	defer func() {
 		if r := recover(); r != nil {
-			report.DisplayAll()
-			colors.BOLD_RED.Println(r)
+			if displayErrors {
+				report.DisplayAll()
+				colors.BOLD_RED.Println(r)
+			}
 		}
 	}()
 
