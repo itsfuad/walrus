@@ -97,4 +97,4 @@ let ipoint2 : IPoint3 = (p6 as IPoint) as IPoint3; // works, add type casting
 
 let typeofP := typeof p; // typeofP is Point
 
-let incompleteObj := Point{}; // error: incomplete object
+let incompleteObj := 3; // error: incomplete object

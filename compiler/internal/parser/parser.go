@@ -97,7 +97,7 @@ func parseNode(p *Parser) ast.Node {
 	return expr
 }
 
-func (p *Parser) Parse(saveJson bool) ast.Node {
+func (p *Parser) Parse(saveJson bool) (ast.Node, error) {
 
 	var contents []ast.Node
 
@@ -113,20 +113,20 @@ func (p *Parser) Parse(saveJson bool) ast.Node {
 	if saveJson {
 		file, err := os.Create(strings.TrimSuffix(p.FilePath, filepath.Ext(p.FilePath)) + ".json")
 		if err != nil {
-			panic(err)
+			return nil, err
 		}
 
 		//parse as string
 		astString, err := json.MarshalIndent(program, "", "  ")
 
 		if err != nil {
-			panic(err)
+			return nil, err
 		}
 
 		_, err = file.Write(astString)
 
 		if err != nil {
-			panic(err)
+			return nil, err
 		}
 
 		file.Close()
@@ -134,7 +134,7 @@ func (p *Parser) Parse(saveJson bool) ast.Node {
 
 	colors.GREEN.Println("Parsing complete")
 
-	return program
+	return program, nil
 }
 
 func NewParser(filePath string, debug bool) *Parser {

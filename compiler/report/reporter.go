@@ -94,7 +94,7 @@ func printReport(r *Diagnostic) {
 	showHints(r, hLen)
 
 	if r.Level == CRITICAL_ERROR || r.Level == SYNTAX_ERROR {
-		panic(fmt.Sprintf("Compilation halted due to %s\n", r.Level))
+		//panic(fmt.Sprintf("Compilation halted due to %s\n", r.Level))
 	}
 }
 
@@ -194,7 +194,7 @@ func (e *Diagnostic) SetLevel(level REPORT_TYPE) {
 	e.Level = level
 	reports[level]++
 	if level == CRITICAL_ERROR || level == SYNTAX_ERROR {
-		DisplayAll()
+		panic(fmt.Sprintf("Compilation halted due to %s\n", level))
 	}
 }
 
@@ -202,20 +202,22 @@ func (e *Diagnostic) SetLevel(level REPORT_TYPE) {
 // prints a summary status, and exits the process if errors are present.
 func DisplayAll() {
 	//recover if panics
-	defer func() {
+	// defer func() {
 
-		if reports[CRITICAL_ERROR] == 0 && reports[NORMAL_ERROR] == 0 && reports[SYNTAX_ERROR] == 0 {
-			showStatus(true, "Compilation successful with")
-			return
-		}
+	// 	if reports[CRITICAL_ERROR] == 0 && reports[NORMAL_ERROR] == 0 && reports[SYNTAX_ERROR] == 0 {
+	// 		showStatus(true, "Compilation successful with")
+	// 		return
+	// 	}
 
-		if r := recover(); r != nil {
-			colors.BOLD_RED.Println(r)
-		}
+	// 	if r := recover(); r != nil {
+	// 		colors.BOLD_RED.Println(r)
+	// 	}
 
-		showStatus(false, "Compilation failed with")
-		os.Exit(-1)
-	}()
+	// 	showStatus(false, "Compilation failed with")
+
+	// 	//panic("Compilation failed")
+	// 	//os.Exit(-1)
+	// }()
 	for _, err := range globalReports {
 		if err.Level == NULL {
 			panic("call SetLevel() method with valid Error level")

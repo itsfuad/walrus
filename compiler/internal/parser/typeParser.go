@@ -173,8 +173,6 @@ func parseDataType(p *Parser) ast.DataType {
 
 	value := identifier.Value
 
-	fmt.Printf("Parsing data type %s\n", value)
-
 	loc := ast.Location{
 		Start: identifier.Start,
 		End:   identifier.End,

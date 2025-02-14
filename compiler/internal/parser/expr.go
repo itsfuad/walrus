@@ -75,8 +75,6 @@ func parsePrimaryExpr(p *Parser) ast.Node {
 		End:   endpos,
 	}
 
-	fmt.Printf("parsePrimaryExpr: %s\n", primaryToken.Value)
-
 	switch primaryToken.Kind {
 	case lexer.INT8_TOKEN, lexer.INT16_TOKEN, lexer.INT32_TOKEN, lexer.INT64_TOKEN, lexer.UINT8_TOKEN, lexer.UINT16_TOKEN, lexer.UINT32_TOKEN, lexer.UINT64_TOKEN:
 		return ast.IntegerLiteralExpr{

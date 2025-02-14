@@ -2,16 +2,11 @@ package main
 
 import (
 	//Standard packages
-	"fmt"
 	"os"
-	"path/filepath"
 
 	//Walrus packages
+	"walrus/compiler/analyzer"
 	"walrus/compiler/colors"
-	"walrus/compiler/io"
-	"walrus/compiler/parser"
-	"walrus/compiler/report"
-	"walrus/compiler/typechecker"
 )
 
 func main() {
@@ -29,20 +24,5 @@ func main() {
 		os.Exit(-1)
 	}
 
-	//get the folder and file name
-	folder, fileName := filepath.Split(filePath)
-
-	tree := parser.NewParser(filePath, false).Parse(false)
-	//write the tree to a file named 'expressions.json' in 'code/ast' folder
-	err := io.Serialize(&tree, folder, fileName)
-	if err != nil {
-		fmt.Println(report.TreeFormatString("compilation halted", "Error serializing AST", err.Error()))
-		os.Exit(-1)
-	}
-
-	typeCheckerEnv := typechecker.ProgramEnv(filePath)
-
-	typechecker.CheckAST(tree, typeCheckerEnv)
-
-	report.DisplayAll()
+	analyzer.Analyze(filePath, false, false)
 }

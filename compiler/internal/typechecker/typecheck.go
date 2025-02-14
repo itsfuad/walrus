@@ -9,10 +9,10 @@ import (
 	"walrus/compiler/report"
 )
 
-func EvaluateProgram(program ast.ProgramStmt, env *TypeEnvironment) Tc {
+func evaluateProgram(program ast.ProgramStmt, env *TypeEnvironment) Tc {
 	colors.PURPLE.Println("### Running type checker ###")
 	for _, item := range program.Contents {
-		CheckAST(item, env)
+		checkAST(item, env)
 	}
 
 	//print the file path
@@ -21,10 +21,19 @@ func EvaluateProgram(program ast.ProgramStmt, env *TypeEnvironment) Tc {
 	return NewVoid()
 }
 
-func CheckAST(node ast.Node, env *TypeEnvironment) Tc {
+func Analyze(tree ast.Node, filePath string) {
+
+	colors.PURPLE.Println("### Running type checker ###")
+
+	env := ProgramEnv(filePath)
+
+	checkAST(tree, env)
+}
+
+func checkAST(node ast.Node, env *TypeEnvironment) Tc {
 	switch t := node.(type) {
 	case ast.ProgramStmt:
-		return EvaluateProgram(t, env)
+		return evaluateProgram(t, env)
 	case ast.VarDeclStmt:
 		return checkVariableDeclaration(t, env)
 	case ast.TypeDeclStmt:

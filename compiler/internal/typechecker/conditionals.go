@@ -8,7 +8,7 @@ import (
 
 func checkConditionBlock(block ast.BlockStmt, env *TypeEnvironment) Tc {
 	for _, stmt := range block.Contents {
-		CheckAST(stmt, env)
+		checkAST(stmt, env)
 	}
 	return NewVoid()
 }

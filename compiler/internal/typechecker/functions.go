@@ -35,7 +35,7 @@ func CheckAndDeclareFunction(funcNode ast.FunctionLiteral, name string, env *Typ
 	}
 	//check the function body
 	for _, stmt := range funcNode.Body.Contents {
-		CheckAST(stmt, fnEnv)
+		checkAST(stmt, fnEnv)
 	}
 
 	return fn
