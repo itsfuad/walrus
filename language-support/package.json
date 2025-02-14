@@ -61,12 +61,25 @@
       }
     }
   },
-  "main": "./client.ts",
+  "main": "./out/client.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "lint": "eslint src --ext ts"
   },
   "dependencies": {
-    "vscode-languageclient": "^7.0.0"
+    "vscode-languageclient": "^7.0.0",
+    "@types/minimatch": "^3.0.3",
+    "@types/semver": "^7.3.4",
+    "shx": "^0.3.2"
+  },
+  "devDependencies": {
+    "@types/node": "^16.11.7",
+    "@types/vscode": "^1.85.0",
+    "typescript": "^4.9.4",
+    "@types/msgpack-lite": "^0.1.7",
+    "msgpack-lite": "^0.1.26"
   },
   "keywords": [
     "Walrus",

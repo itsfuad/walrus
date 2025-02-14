@@ -1,5 +1,5 @@
 {
-    "name": "Rex language",
+    "name": "Walrus Language Support",
     "scopeName": "source.wal",
     "patterns": [
         {

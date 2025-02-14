@@ -1,24 +1,35 @@
+import * as path from 'path';
 import { workspace, ExtensionContext } from 'vscode';
-import { LanguageClient, LanguageClientOptions, ServerOptions } from 'vscode-languageclient/node';
+import {
+    LanguageClient,
+    LanguageClientOptions,
+    ServerOptions,
+    TransportKind
+} from 'vscode-languageclient/node';
 
 let client: LanguageClient;
 
 export function activate(context: ExtensionContext) {
-    // Server options - configure to run Go executable
-    const serverOptions: ServerOptions = {
-        command: 'lsp_server',
-        args: []
-    };
+    const serverPath = context.asAbsolutePath(path.join('bin', 'walrus-lsp'));
 
-    // Client options
-    const clientOptions: LanguageClientOptions = {
-        documentSelector: [{ scheme: 'file', language: 'walrus' }],
-        synchronize: {
-            fileEvents: workspace.createFileSystemWatcher('**/*.wal')
+    const serverOptions: ServerOptions = {
+        run: {
+            command: serverPath,
+            transport: TransportKind.stdio,
+        },
+        debug: {
+            command: serverPath,
+            transport: TransportKind.stdio,
         }
     };
 
-    // Create the language client
+    const clientOptions: LanguageClientOptions = {
+        documentSelector: [{ scheme: 'file', language: 'walrus' }],
+        synchronize: {
+            fileEvents: workspace.createFileSystemWatcher('**/*.{wal,walrus}')
+        }
+    };
+
     client = new LanguageClient(
         'walrusLanguageServer',
         'Walrus Language Server',
