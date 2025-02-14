@@ -82,12 +82,12 @@ func TestHandleMessageDidOpen(t *testing.T) {
 		t.Fatalf("Failed to create dummy file: %v", err)
 	}
 
-	defer func () {
+	defer func() {
 		f.Close()
 		os.Remove(filename)
 	}()
 
-	content := "let a := 3;\n";
+	content := "let a := 3;\n"
 
 	//write some content to the file
 	_, err = f.WriteString(content)
@@ -137,12 +137,12 @@ func TestHandleMessageDidChange(t *testing.T) {
 		t.Fatalf("Failed to create dummy file: %v", err)
 	}
 
-	defer func () {
+	defer func() {
 		f.Close()
 		os.Remove(filename)
 	}()
 
-	content := "let a := 3;\n";
+	content := "let a := 3;\n"
 
 	//write some content to the file
 	_, err = f.WriteString(content)
