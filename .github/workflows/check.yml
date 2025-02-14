@@ -23,34 +23,48 @@ jobs:
         id: gomod-cache
         with:
           path: ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ hashFiles('go.mod') }}
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.mod') }}
           restore-keys: |
             ${{ runner.os }}-go-
 
       - name: Install Dependencies
-        run: go mod tidy
+        run: |
+          cd compiler && go mod tidy
+          cd ../lsp && go mod tidy
 
       - name: Lint
         run: |
           go install golang.org/x/lint/golint@latest
-          golint ./...
+          cd compiler && golint ./...
+          cd ../lsp && golint ./...
 
       - name: Format Check
         run: |
-          unformatted=$(go fmt ./...)
-          if [ -n "$unformatted" ]; then
-            echo "The following files are not formatted:"
-            echo "$unformatted"
-            exit 1
-          else
-            echo "Code is formatted."
-          fi
+          check_format() {
+            unformatted=$(go fmt ./...)
+            if [ -n "$unformatted" ]; then
+              echo "The following files are not formatted in $1:"
+              echo "$unformatted"
+              return 1
+            fi
+            echo "Code is formatted in $1."
+            return 0
+          }
+          
+          cd compiler && check_format "compiler"
+          cd ../lsp && check_format "lsp"
 
       - name: Vet
-        run: go vet ./...
+        run: |
+          cd compiler && go vet ./...
+          cd ../lsp && go vet ./...
 
       - name: Build
-        run: go build -v ./...
+        run: |
+          cd compiler && go build -v ./...
+          cd ../lsp && go build -v ./...
 
       - name: Test
-        run: go test -v ./...
+        run: |
+          cd compiler && go test -v ./...
+          cd ../lsp && go test -v ./...

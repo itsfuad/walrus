@@ -1,0 +1,100 @@
+let a : i32 = 23;
+
+let b := 2.4;
+
+let c := a + b;
+
+type Point struct {
+    x : i32,
+    y : i32
+};
+
+let p := Point { x: 1, y: 2 };
+//p.x = 3;
+//p.y = 4;
+
+let p2 := struct { x: 1, y: 2 }; // works
+
+//p2.x = 3;
+
+let p3 : struct { x: i32, y: i32 } = p2; // works
+
+let p4 : struct { x: i32, y: i32 } = p3; // duplicate, also works
+
+let p5 := struct { x: 46, y: 2 }; // works
+
+type Int i32;
+
+let i1 : Int = 23;
+let i2 : i32 = i1;
+
+let p6 : Point = p5 as Point; // error: p5 is not of type Point. lets make it work
+
+type Point3 struct {
+    x : i32,
+    y : i32,
+    z : i32,
+    c : i32
+};
+
+type Point2 struct {
+    x : i32,
+    y : i32
+};
+
+//let p7 : Point3 = p6 as Point3; // wont work as Point2 has 4 fields and Point has 2 fields
+
+//let p8 : Point3 = p6 as Point3; // works
+
+impl Point2 {
+    fn getSum() -> i32 {
+        ret this.x + this.y;
+    }
+}
+
+fn getSum(p: struct { x: i32, y: i32 }) -> i32 {
+    ret p.x + p.y;
+}
+
+type IPoint interface {
+    fn getSum() -> i32;
+    fn getThird() -> i32;
+    fn getX() -> i32;
+    fn getY() -> i32;
+    fn getC() -> i32;
+};
+
+type IPoint3 interface {
+    fn getSum() -> i32;
+    fn getThird() -> i32;
+    //fn getMax() -> i32;
+};
+
+let ppp : Point3 = Point3{x:1, y:2, z:3, c:4};
+
+impl Point {
+    fn getSum() -> i32 {
+        ret this.x + this.y;
+    }
+    fn getThird() -> i32 {
+        ret 0;
+    }
+    fn getX() -> i32 {
+        ret this.x;
+    }
+    fn getY() -> i32 {
+        ret this.y;
+    }
+    fn getC() -> i32 {
+        ret 0;
+    }
+}
+
+//let ipoint : IPoint = p6; // error: p8 does not implement IPoint
+let ipoint2 : IPoint3 = (p6 as IPoint) as IPoint3; // works, add type casting
+
+//let pRef : &Point; // error: pRef is not initialized. Reference must be initialized.
+
+let typeofP := typeof p; // typeofP is Point
+
+let incompleteObj := Point{}; // error: incomplete object
