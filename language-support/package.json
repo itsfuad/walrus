@@ -54,7 +54,11 @@
       "properties": {
         "walrusLanguageServer.trace.server": {
           "type": "string",
-          "enum": ["off", "messages", "verbose"],
+          "enum": [
+            "off",
+            "messages",
+            "verbose"
+          ],
           "default": "off",
           "description": "Traces the communication between VS Code and the Walrus Language Server."
         }
@@ -69,17 +73,12 @@
     "lint": "eslint src --ext ts"
   },
   "dependencies": {
-    "vscode-languageclient": "^7.0.0",
-    "@types/minimatch": "^3.0.3",
-    "@types/semver": "^7.3.4",
-    "shx": "^0.3.2"
+    "vscode-languageclient": "^7.0.0"
   },
   "devDependencies": {
     "@types/node": "^16.11.7",
     "@types/vscode": "^1.85.0",
-    "typescript": "^4.9.4",
-    "@types/msgpack-lite": "^0.1.7",
-    "msgpack-lite": "^0.1.26"
+    "typescript": "^4.9.5"
   },
   "keywords": [
     "Walrus",
