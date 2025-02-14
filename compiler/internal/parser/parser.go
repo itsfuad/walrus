@@ -13,8 +13,8 @@ import (
 	"walrus/compiler/colors"
 	"walrus/compiler/internal/ast"
 	"walrus/compiler/internal/builtins"
-	"walrus/compiler/report"
 	"walrus/compiler/internal/lexer"
+	"walrus/compiler/report"
 )
 
 type Parser struct {

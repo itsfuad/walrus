@@ -13,7 +13,7 @@ import (
 
 func Analyze(filePath string, debug, save2Json bool) {
 
-	defer func(){
+	defer func() {
 		if r := recover(); r != nil {
 			report.DisplayAll()
 			colors.BOLD_RED.Println(r)

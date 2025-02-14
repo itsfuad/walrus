@@ -8,8 +8,8 @@ import (
 	"log"
 	"os"
 
-	"walrus/compiler/report"
 	"walrus/compiler/analyzer"
+	"walrus/compiler/report"
 )
 
 type Message struct {
