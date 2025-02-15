@@ -5,7 +5,7 @@ import (
 )
 
 func TestAnalyze(t *testing.T) {
-	filePath := "./../compiler/code/test.wal"
+	filePath := "./../code/test.wal"
 	reports, err := Analyze(filePath, false, false, false)
 	if err != nil {
 		t.Error(err)
