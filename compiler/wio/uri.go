@@ -13,17 +13,20 @@ func UriToFilePath(uri string) (string, error) {
 		return "", err
 	}
 
-	// Handle Windows paths (e.g., file:///C:/path/to/file)
-	if parsed.Path[0] == '/' && len(parsed.Path) > 3 && parsed.Path[2] == ':' {
-		parsed.Path = parsed.Path[1:]
+	// Handle Windows paths (e.g., file:///d%3A/dev/Golang/walrus/compiler/code/start.wal)
+	if parsed.Scheme == "file" && len(parsed.Path) > 2 && parsed.Path[0] == '/' && parsed.Path[2] == ':' {
+		return parsed.Path[1:], nil
 	}
 
-	// Decode URL-encoded characters (e.g., %3A -> :)
-	filePath, err := url.PathUnescape(parsed.Path)
-	if err != nil {
-		return "", err
+	// Handle Unix paths (e.g., file:///dev/Golang/walrus/compiler/code/start.wal)
+	if parsed.Scheme == "file" && len(parsed.Path) > 1 && parsed.Path[0] == '/' {
+		return parsed.Path, nil
 	}
 
-	// Convert to platform-specific file path
-	return filepath.FromSlash(filePath), nil
+	// Handle relative paths (e.g., file://start.wal)
+	if parsed.Scheme == "file" {
+		return filepath.FromSlash(parsed.Path), nil
+	}
+
+	return "", nil
 }

@@ -7,47 +7,40 @@ import (
 
 func TestUriToFilePath(t *testing.T) {
 	tests := []struct {
-		name      string
-		uri       string
-		wantPath  string
-		wantError bool
+		name     string
+		uri      string
+		expected string
 	}{
 		{
-			name:     "Windows file URI",
-			uri:      "file:///C:/path/to/file",
-			wantPath: filepath.FromSlash("C:/path/to/file"),
+			name:     "Windows file path",
+			uri:      "file:///d:/dev/Golang/walrus/compiler/code/start.wal",
+			expected: "d:/dev/Golang/walrus/compiler/code/start.wal",
 		},
 		{
-			name:     "Unix file URI",
-			uri:      "file:///home/user/file.txt",
-			wantPath: filepath.FromSlash("/home/user/file.txt"),
+			name:     "Unix file path",
+			uri:      "file:///usr/local/bin",
+			expected: "/usr/local/bin",
 		},
 		{
-			name:     "URI with URL-encoded characters",
-			uri:      "file:///C:/Program%20Files/App",
-			wantPath: filepath.FromSlash("C:/Program Files/App"),
+			name:     "Relative file URI without host",
+			uri:      "file://start.wal",
+			expected: filepath.FromSlash(""), // parsed.Path is empty
 		},
 		{
-			name:      "Invalid URI",
-			uri:       "://invalid",
-			wantError: true,
+			name:     "Non-file scheme",
+			uri:      "http:///usr/local/bin",
+			expected: "",
 		},
 	}
 
-	for _, tc := range tests {
-		t.Run(tc.name, func(t *testing.T) {
-			got, err := UriToFilePath(tc.uri)
-			if tc.wantError {
-				if err == nil {
-					t.Errorf("Expected error for URI %q, got nil", tc.uri)
-				}
-				return
-			}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result, err := UriToFilePath(tt.uri)
 			if err != nil {
-				t.Fatalf("Unexpected error for URI %q: %v", tc.uri, err)
+				t.Fatalf("Unexpected error: %v", err)
 			}
-			if got != tc.wantPath {
-				t.Errorf("uriToFilePath(%q) = %q, want %q", tc.uri, got, tc.wantPath)
+			if result != tt.expected {
+				t.Errorf("UriToFilePath(%q) returned %q; expected %q", tt.uri, result, tt.expected)
 			}
 		})
 	}

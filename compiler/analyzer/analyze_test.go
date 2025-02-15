@@ -5,7 +5,7 @@ import (
 )
 
 func TestAnalyze(t *testing.T) {
-	filePath := "./../code/test.wal"
+	filePath := `d:\dev\Golang\walrus\compiler\code\start.wal`
 	reports, err := Analyze(filePath, false, false, false)
 	if err != nil {
 		t.Error(err)
