@@ -129,8 +129,8 @@ func processDiagnostics(uri string) {
 // publishDiagnostics sends diagnostics to the client.
 func publishDiagnostics(uri string, diagnostics report.IReport) {
 	params := struct {
-		URI         string              `json:"uri"`
-		Diagnostics report.IReport 		`json:"diagnostics"`
+		URI         string         `json:"uri"`
+		Diagnostics report.IReport `json:"diagnostics"`
 	}{
 		URI:         uri,
 		Diagnostics: diagnostics,
@@ -149,7 +149,6 @@ func publishDiagnostics(uri string, diagnostics report.IReport) {
 		log.Printf("Error writing diagnostics: %v", err)
 	}
 }
-
 
 func readMessage(r *bufio.Reader, msg *Message) error {
 	// Read headers
