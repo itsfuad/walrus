@@ -30,8 +30,15 @@ var colorMap = map[REPORT_TYPE]colors.COLOR{
 	INFO:           colors.BLUE,
 }
 
+type IReport interface {
+	DisplayAll()
+	HasErrors() bool
+}
+
+type Reports []*Diagnostic
+
 // global errors are arrays of error pointers
-var globalReports []*Diagnostic
+var globalReports Reports
 var reports = make(map[REPORT_TYPE]int)
 
 // Diagnostic represents a diagnostic report used both internally and by LSP.
@@ -48,14 +55,14 @@ type Diagnostic struct {
 
 // GetDiagnostics returns a slice of diagnostics converted from internal reports.
 // It skips any reports that do not have a valid level.
-func GetDiagnostics() []Diagnostic {
-	var diags []Diagnostic
+func GetDiagnostics() IReport {
+	var diags Reports
 	for _, r := range globalReports {
 		if r.Level == NULL {
 			// Skip reports without valid level.
 			continue
 		}
-		diags = append(diags, *r)
+		diags = append(diags, r)
 	}
 	return diags
 }
@@ -200,34 +207,23 @@ func (e *Diagnostic) SetLevel(level REPORT_TYPE) {
 
 // DisplayAll outputs all the diagnostic reports. It recovers from panics,
 // prints a summary status, and exits the process if errors are present.
-func DisplayAll() {
-	//recover if panics
-	// defer func() {
-
-	// 	if reports[CRITICAL_ERROR] == 0 && reports[NORMAL_ERROR] == 0 && reports[SYNTAX_ERROR] == 0 {
-	// 		showStatus(true, "Compilation successful with")
-	// 		return
-	// 	}
-
-	// 	if r := recover(); r != nil {
-	// 		colors.BOLD_RED.Println(r)
-	// 	}
-
-	// 	showStatus(false, "Compilation failed with")
-
-	// 	//panic("Compilation failed")
-	// 	//os.Exit(-1)
-	// }()
-	for _, err := range globalReports {
+func (r Reports) DisplayAll() {
+	for _, err := range r {
 		if err.Level == NULL {
 			panic("call SetLevel() method with valid Error level")
 		}
 		printReport(err)
 	}
+	r.ShowStatus()
 }
 
-// showStatus displays a summary of compilation status along with counts of warnings and errors.
-func showStatus(passed bool, msg string) {
+// HasErrors returns true if there are any critical or syntax errors in the reports.
+func (r Reports) HasErrors() bool {
+	return reports[CRITICAL_ERROR] > 0 || reports[SYNTAX_ERROR] > 0
+}
+
+// ShowStatus displays a summary of compilation status along with counts of warnings and errors.
+func (r Reports) ShowStatus() {
 
 	//show errors and warnings separately
 	warningCount := reports[WARNING]
@@ -235,12 +231,12 @@ func showStatus(passed bool, msg string) {
 
 	var messageColor colors.COLOR
 
-	if passed {
+	if !r.HasErrors() {
 		messageColor = colors.GREEN
-		messageColor.Printf("------------- %s ", msg)
+		messageColor.Print("------------- Passed")
 	} else {
 		messageColor = colors.RED
-		messageColor.Printf("------------- %s ", msg)
+		messageColor.Print("------------- failed with")
 	}
 
 	totalProblemsString := ""

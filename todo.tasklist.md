@@ -1,10 +1,7 @@
 # Todo
 
-## Function
- - Remove optional params.
-
 ## Variables
- - Remove `maybe{}` and use ? instead. Like let X ?: i32 = 2; // x can be null.
+ - Nullable | Pointer | Reference ???
 
 ## Switch-case
  - Add

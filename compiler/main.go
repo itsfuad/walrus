@@ -13,16 +13,17 @@ func main() {
 
 	if len(os.Args) < 2 {
 		colors.GREEN.Println("Usage: walrus <file>")
-		os.Exit(-1)
+		return
 	}
 
 	filePath := os.Args[1]
 
-	//must have .wal file
-	if len(filePath) < 5 || filePath[len(filePath)-4:] != ".wal" {
-		colors.RED.Println("Error: file must have .wal extension")
-		os.Exit(-1)
+	r, err := analyzer.Analyze(filePath, true, false, false)
+	if err != nil {
+		colors.RED.Println(err)
 	}
 
-	analyzer.Analyze(filePath, true, false, false)
+	if r != nil {
+		r.DisplayAll()
+	}
 }

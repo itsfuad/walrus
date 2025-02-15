@@ -1,42 +1,52 @@
 package analyzer
 
 import (
+	"errors"
 	"fmt"
-	"os"
 	"path/filepath"
-	"walrus/compiler/colors"
 	"walrus/compiler/internal/parser"
 	"walrus/compiler/internal/typechecker"
-	"walrus/compiler/io"
 	"walrus/compiler/report"
+	"walrus/compiler/wio"
 )
 
-func Analyze(filePath string, displayErrors, debug, save2Json bool) {
+const HALTED = "compilation halted"
+
+func Analyze(filePath string, displayErrors, debug, save2Json bool) (reports report.IReport, e error) {
 
 	defer func() {
 		if r := recover(); r != nil {
-			if displayErrors {
-				report.DisplayAll()
-				colors.BOLD_RED.Println(r)
-			}
+			e = fmt.Errorf("%v", r)
+			reports = report.GetDiagnostics()
 		}
 	}()
+
+	//must have .wal file
+	if len(filePath) < 5 || filePath[len(filePath)-4:] != ".wal" {
+		e = errors.New("error: file must have .wal extension")
+		return nil, e
+	}
 
 	//get the folder and file name
 	folder, fileName := filepath.Split(filePath)
 
-	tree, err := parser.NewParser(filePath, debug).Parse(save2Json)
-	if err != nil {
-		fmt.Println(report.TreeFormatString("compilation halted", "Error parsing file", err.Error()))
-		os.Exit(-1)
+	tree, e := parser.NewParser(filePath, debug).Parse()
+	if e != nil {
+		return report.GetDiagnostics(), e
 	}
-	//write the tree to a file named 'expressions.json' in 'code/ast' folder
-	err = io.Serialize(&tree, folder, fileName)
 
-	if err != nil {
-		fmt.Println(report.TreeFormatString("compilation halted", "Error serializing AST", err.Error()))
-		os.Exit(-1)
+	if save2Json {
+		//write the tree to a file named 'expressions.json' in 'code/ast' folder
+		e = wio.Serialize(&tree, folder, fileName)
+		if reports != nil {
+			err := errors.New(report.TreeFormatString(HALTED, "Error serializing AST", e.Error()))
+			return report.GetDiagnostics(), err
+		}
 	}
 
 	typechecker.Analyze(tree, filePath)
+
+	reports = report.GetDiagnostics()
+
+	return reports, nil
 }

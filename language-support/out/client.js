@@ -6682,8 +6682,8 @@ var require_protocolCodeAction = __commonJS({
   "node_modules/vscode-languageclient/lib/common/protocolCodeAction.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
-    var vscode2 = require("vscode");
-    var ProtocolCodeAction = class extends vscode2.CodeAction {
+    var vscode = require("vscode");
+    var ProtocolCodeAction = class extends vscode.CodeAction {
       constructor(title, data) {
         super(title);
         this.data = data;
@@ -6699,7 +6699,7 @@ var require_protocolDiagnostic = __commonJS({
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.ProtocolDiagnostic = exports2.DiagnosticCode = void 0;
-    var vscode2 = require("vscode");
+    var vscode = require("vscode");
     var Is = require_is();
     var DiagnosticCode;
     (function(DiagnosticCode2) {
@@ -6709,7 +6709,7 @@ var require_protocolDiagnostic = __commonJS({
       }
       DiagnosticCode2.is = is;
     })(DiagnosticCode || (exports2.DiagnosticCode = DiagnosticCode = {}));
-    var ProtocolDiagnostic = class extends vscode2.Diagnostic {
+    var ProtocolDiagnostic = class extends vscode.Diagnostic {
       constructor(range, message, severity, data) {
         super(range, message, severity);
         this.data = data;
@@ -10713,7 +10713,7 @@ var require_notebook = __commonJS({
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.NotebookDocumentSyncFeature = void 0;
-    var vscode2 = require("vscode");
+    var vscode = require("vscode");
     var minimatch = require_minimatch();
     var proto = require_main3();
     var UUID = require_uuid();
@@ -10768,9 +10768,9 @@ var require_notebook = __commonJS({
         c2p2.asNotebookCell = asNotebookCell;
         function asNotebookCellKind(kind) {
           switch (kind) {
-            case vscode2.NotebookCellKind.Markup:
+            case vscode.NotebookCellKind.Markup:
               return proto.NotebookCellKind.Markup;
-            case vscode2.NotebookCellKind.Code:
+            case vscode.NotebookCellKind.Code:
               return proto.NotebookCellKind.Code;
           }
         }
@@ -11021,25 +11021,25 @@ var require_notebook = __commonJS({
         this.notebookDidOpen = /* @__PURE__ */ new Set();
         this.disposables = [];
         this.selector = client2.protocol2CodeConverter.asDocumentSelector($NotebookDocumentSyncOptions.asDocumentSelector(options));
-        vscode2.workspace.onDidOpenNotebookDocument((notebookDocument) => {
+        vscode.workspace.onDidOpenNotebookDocument((notebookDocument) => {
           this.notebookDidOpen.add(notebookDocument.uri.toString());
           this.didOpen(notebookDocument);
         }, void 0, this.disposables);
-        for (const notebookDocument of vscode2.workspace.notebookDocuments) {
+        for (const notebookDocument of vscode.workspace.notebookDocuments) {
           this.notebookDidOpen.add(notebookDocument.uri.toString());
           this.didOpen(notebookDocument);
         }
-        vscode2.workspace.onDidChangeNotebookDocument((event) => this.didChangeNotebookDocument(event), void 0, this.disposables);
+        vscode.workspace.onDidChangeNotebookDocument((event) => this.didChangeNotebookDocument(event), void 0, this.disposables);
         if (this.options.save === true) {
-          vscode2.workspace.onDidSaveNotebookDocument((notebookDocument) => this.didSave(notebookDocument), void 0, this.disposables);
+          vscode.workspace.onDidSaveNotebookDocument((notebookDocument) => this.didSave(notebookDocument), void 0, this.disposables);
         }
-        vscode2.workspace.onDidCloseNotebookDocument((notebookDocument) => {
+        vscode.workspace.onDidCloseNotebookDocument((notebookDocument) => {
           this.didClose(notebookDocument);
           this.notebookDidOpen.delete(notebookDocument.uri.toString());
         }, void 0, this.disposables);
       }
       getState() {
-        for (const notebook of vscode2.workspace.notebookDocuments) {
+        for (const notebook of vscode.workspace.notebookDocuments) {
           const matchingCells = this.getMatchingCells(notebook);
           if (matchingCells !== void 0) {
             return { kind: "document", id: "$internal", registrations: true, matches: true };
@@ -11051,10 +11051,10 @@ var require_notebook = __commonJS({
         return "notebook";
       }
       handles(textDocument) {
-        return vscode2.languages.match(this.selector, textDocument) > 0;
+        return vscode.languages.match(this.selector, textDocument) > 0;
       }
       didOpenNotebookCellTextDocument(notebookDocument, cell) {
-        if (vscode2.languages.match(this.selector, cell.document) === 0) {
+        if (vscode.languages.match(this.selector, cell.document) === 0) {
           return;
         }
         if (!this.notebookDidOpen.has(notebookDocument.uri.toString())) {
@@ -11085,7 +11085,7 @@ var require_notebook = __commonJS({
         }
       }
       didChangeNotebookCellTextDocument(notebookDocument, event) {
-        if (vscode2.languages.match(this.selector, event.document) === 0) {
+        if (vscode.languages.match(this.selector, event.document) === 0) {
           return;
         }
         this.doSendChange({
@@ -11358,7 +11358,7 @@ var require_notebook = __commonJS({
         this.client = client2;
         this.registrations = /* @__PURE__ */ new Map();
         this.registrationType = proto.NotebookDocumentSyncRegistrationType.type;
-        vscode2.workspace.onDidOpenTextDocument((textDocument) => {
+        vscode.workspace.onDidOpenTextDocument((textDocument) => {
           if (textDocument.uri.scheme !== _NotebookDocumentSyncFeature.CellScheme) {
             return;
           }
@@ -11372,7 +11372,7 @@ var require_notebook = __commonJS({
             }
           }
         });
-        vscode2.workspace.onDidChangeTextDocument((event) => {
+        vscode.workspace.onDidChangeTextDocument((event) => {
           if (event.contentChanges.length === 0) {
             return;
           }
@@ -11390,7 +11390,7 @@ var require_notebook = __commonJS({
             }
           }
         });
-        vscode2.workspace.onDidCloseTextDocument((textDocument) => {
+        vscode.workspace.onDidCloseTextDocument((textDocument) => {
           if (textDocument.uri.scheme !== _NotebookDocumentSyncFeature.CellScheme) {
             return;
           }
@@ -11455,7 +11455,7 @@ var require_notebook = __commonJS({
         if (textDocument.uri.scheme !== _NotebookDocumentSyncFeature.CellScheme) {
           return false;
         }
-        if (this.dedicatedChannel !== void 0 && vscode2.languages.match(this.dedicatedChannel, textDocument) > 0) {
+        if (this.dedicatedChannel !== void 0 && vscode.languages.match(this.dedicatedChannel, textDocument) > 0) {
           return true;
         }
         for (const provider of this.registrations.values()) {
@@ -11475,7 +11475,7 @@ var require_notebook = __commonJS({
       }
       findNotebookDocumentAndCell(textDocument) {
         const uri = textDocument.uri.toString();
-        for (const notebookDocument of vscode2.workspace.notebookDocuments) {
+        for (const notebookDocument of vscode.workspace.notebookDocuments) {
           for (const cell of notebookDocument.getCells()) {
             if (cell.document.uri.toString() === uri) {
               return [notebookDocument, cell];
@@ -13991,7 +13991,7 @@ var require_semanticTokens = __commonJS({
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.SemanticTokensFeature = void 0;
-    var vscode2 = require("vscode");
+    var vscode = require("vscode");
     var vscode_languageserver_protocol_1 = require_main3();
     var features_1 = require_features();
     var Is = require_is();
@@ -14069,7 +14069,7 @@ var require_semanticTokens = __commonJS({
         const selector = options.documentSelector;
         const fullProvider = Is.boolean(options.full) ? options.full : options.full !== void 0;
         const hasEditProvider = options.full !== void 0 && typeof options.full !== "boolean" && options.full.delta === true;
-        const eventEmitter = new vscode2.EventEmitter();
+        const eventEmitter = new vscode.EventEmitter();
         const documentProvider = fullProvider ? {
           onDidChangeSemanticTokens: eventEmitter.event,
           provideDocumentSemanticTokens: (document, token) => {
@@ -14141,12 +14141,12 @@ var require_semanticTokens = __commonJS({
         const legend = client2.protocol2CodeConverter.asSemanticTokensLegend(options.legend);
         const documentSelector = client2.protocol2CodeConverter.asDocumentSelector(selector);
         if (documentProvider !== void 0) {
-          disposables.push(vscode2.languages.registerDocumentSemanticTokensProvider(documentSelector, documentProvider, legend));
+          disposables.push(vscode.languages.registerDocumentSemanticTokensProvider(documentSelector, documentProvider, legend));
         }
         if (rangeProvider !== void 0) {
-          disposables.push(vscode2.languages.registerDocumentRangeSemanticTokensProvider(documentSelector, rangeProvider, legend));
+          disposables.push(vscode.languages.registerDocumentRangeSemanticTokensProvider(documentSelector, rangeProvider, legend));
         }
-        return [new vscode2.Disposable(() => disposables.forEach((item) => item.dispose())), { range: rangeProvider, full: documentProvider, onDidChangeSemanticTokensEmitter: eventEmitter }];
+        return [new vscode.Disposable(() => disposables.forEach((item) => item.dispose())), { range: rangeProvider, full: documentProvider, onDidChangeSemanticTokensEmitter: eventEmitter }];
       }
     };
     exports2.SemanticTokensFeature = SemanticTokensFeature;
@@ -17463,18 +17463,18 @@ var require_main4 = __commonJS({
     __exportStar(require_node2(), exports2);
     __exportStar(require_api3(), exports2);
     var REQUIRED_VSCODE_VERSION = "^1.82.0";
-    var TransportKind;
-    (function(TransportKind2) {
-      TransportKind2[TransportKind2["stdio"] = 0] = "stdio";
-      TransportKind2[TransportKind2["ipc"] = 1] = "ipc";
-      TransportKind2[TransportKind2["pipe"] = 2] = "pipe";
-      TransportKind2[TransportKind2["socket"] = 3] = "socket";
-    })(TransportKind || (exports2.TransportKind = TransportKind = {}));
+    var TransportKind2;
+    (function(TransportKind3) {
+      TransportKind3[TransportKind3["stdio"] = 0] = "stdio";
+      TransportKind3[TransportKind3["ipc"] = 1] = "ipc";
+      TransportKind3[TransportKind3["pipe"] = 2] = "pipe";
+      TransportKind3[TransportKind3["socket"] = 3] = "socket";
+    })(TransportKind2 || (exports2.TransportKind = TransportKind2 = {}));
     var Transport;
     (function(Transport2) {
       function isSocket(value) {
         const candidate = value;
-        return candidate && candidate.kind === TransportKind.socket && Is.number(candidate.port);
+        return candidate && candidate.kind === TransportKind2.socket && Is.number(candidate.port);
       }
       Transport2.isSocket = isSocket;
     })(Transport || (Transport = {}));
@@ -17675,7 +17675,7 @@ var require_main4 = __commonJS({
         return this._getServerWorkingDir(json.options).then((serverWorkingDir) => {
           if (NodeModule.is(json) && json.module) {
             let node = json;
-            let transport = node.transport || TransportKind.stdio;
+            let transport = node.transport || TransportKind2.stdio;
             if (node.runtime) {
               const args = [];
               const options = node.options ?? /* @__PURE__ */ Object.create(null);
@@ -17691,32 +17691,32 @@ var require_main4 = __commonJS({
               execOptions.env = getEnvironment(options.env, false);
               const runtime = this._getRuntimePath(node.runtime, serverWorkingDir);
               let pipeName = void 0;
-              if (transport === TransportKind.ipc) {
+              if (transport === TransportKind2.ipc) {
                 execOptions.stdio = [null, null, null, "ipc"];
                 args.push("--node-ipc");
-              } else if (transport === TransportKind.stdio) {
+              } else if (transport === TransportKind2.stdio) {
                 args.push("--stdio");
-              } else if (transport === TransportKind.pipe) {
+              } else if (transport === TransportKind2.pipe) {
                 pipeName = (0, node_1.generateRandomPipeName)();
                 args.push(`--pipe=${pipeName}`);
               } else if (Transport.isSocket(transport)) {
                 args.push(`--socket=${transport.port}`);
               }
               args.push(`--clientProcessId=${process.pid.toString()}`);
-              if (transport === TransportKind.ipc || transport === TransportKind.stdio) {
+              if (transport === TransportKind2.ipc || transport === TransportKind2.stdio) {
                 const serverProcess = cp.spawn(runtime, args, execOptions);
                 if (!serverProcess || !serverProcess.pid) {
                   return handleChildProcessStartError(serverProcess, `Launching server using runtime ${runtime} failed.`);
                 }
                 this._serverProcess = serverProcess;
                 serverProcess.stderr.on("data", (data) => this.outputChannel.append(Is.string(data) ? data : data.toString(encoding)));
-                if (transport === TransportKind.ipc) {
+                if (transport === TransportKind2.ipc) {
                   serverProcess.stdout.on("data", (data) => this.outputChannel.append(Is.string(data) ? data : data.toString(encoding)));
                   return Promise.resolve({ reader: new node_1.IPCMessageReader(serverProcess), writer: new node_1.IPCMessageWriter(serverProcess) });
                 } else {
                   return Promise.resolve({ reader: new node_1.StreamMessageReader(serverProcess.stdout), writer: new node_1.StreamMessageWriter(serverProcess.stdin) });
                 }
-              } else if (transport === TransportKind.pipe) {
+              } else if (transport === TransportKind2.pipe) {
                 return (0, node_1.createClientPipeTransport)(pipeName).then((transport2) => {
                   const process2 = cp.spawn(runtime, args, execOptions);
                   if (!process2 || !process2.pid) {
@@ -17747,11 +17747,11 @@ var require_main4 = __commonJS({
               let pipeName = void 0;
               return new Promise((resolve, reject) => {
                 const args = (node.args && node.args.slice()) ?? [];
-                if (transport === TransportKind.ipc) {
+                if (transport === TransportKind2.ipc) {
                   args.push("--node-ipc");
-                } else if (transport === TransportKind.stdio) {
+                } else if (transport === TransportKind2.stdio) {
                   args.push("--stdio");
-                } else if (transport === TransportKind.pipe) {
+                } else if (transport === TransportKind2.pipe) {
                   pipeName = (0, node_1.generateRandomPipeName)();
                   args.push(`--pipe=${pipeName}`);
                 } else if (Transport.isSocket(transport)) {
@@ -17763,18 +17763,18 @@ var require_main4 = __commonJS({
                 options.execArgv = options.execArgv || [];
                 options.cwd = serverWorkingDir;
                 options.silent = true;
-                if (transport === TransportKind.ipc || transport === TransportKind.stdio) {
+                if (transport === TransportKind2.ipc || transport === TransportKind2.stdio) {
                   const sp = cp.fork(node.module, args || [], options);
                   assertStdio(sp);
                   this._serverProcess = sp;
                   sp.stderr.on("data", (data) => this.outputChannel.append(Is.string(data) ? data : data.toString(encoding)));
-                  if (transport === TransportKind.ipc) {
+                  if (transport === TransportKind2.ipc) {
                     sp.stdout.on("data", (data) => this.outputChannel.append(Is.string(data) ? data : data.toString(encoding)));
                     resolve({ reader: new node_1.IPCMessageReader(this._serverProcess), writer: new node_1.IPCMessageWriter(this._serverProcess) });
                   } else {
                     resolve({ reader: new node_1.StreamMessageReader(sp.stdout), writer: new node_1.StreamMessageWriter(sp.stdin) });
                   }
-                } else if (transport === TransportKind.pipe) {
+                } else if (transport === TransportKind2.pipe) {
                   (0, node_1.createClientPipeTransport)(pipeName).then((transport2) => {
                     const sp = cp.fork(node.module, args || [], options);
                     assertStdio(sp);
@@ -17804,19 +17804,19 @@ var require_main4 = __commonJS({
             const args = json.args !== void 0 ? json.args.slice(0) : [];
             let pipeName = void 0;
             const transport = json.transport;
-            if (transport === TransportKind.stdio) {
+            if (transport === TransportKind2.stdio) {
               args.push("--stdio");
-            } else if (transport === TransportKind.pipe) {
+            } else if (transport === TransportKind2.pipe) {
               pipeName = (0, node_1.generateRandomPipeName)();
               args.push(`--pipe=${pipeName}`);
             } else if (Transport.isSocket(transport)) {
               args.push(`--socket=${transport.port}`);
-            } else if (transport === TransportKind.ipc) {
+            } else if (transport === TransportKind2.ipc) {
               throw new Error(`Transport kind ipc is not support for command executable`);
             }
             const options = Object.assign({}, command.options);
             options.cwd = options.cwd || serverWorkingDir;
-            if (transport === void 0 || transport === TransportKind.stdio) {
+            if (transport === void 0 || transport === TransportKind2.stdio) {
               const serverProcess = cp.spawn(command.command, args, options);
               if (!serverProcess || !serverProcess.pid) {
                 return handleChildProcessStartError(serverProcess, `Launching server using command ${command.command} failed.`);
@@ -17825,7 +17825,7 @@ var require_main4 = __commonJS({
               this._serverProcess = serverProcess;
               this._isDetached = !!options.detached;
               return Promise.resolve({ reader: new node_1.StreamMessageReader(serverProcess.stdout), writer: new node_1.StreamMessageWriter(serverProcess.stdin) });
-            } else if (transport === TransportKind.pipe) {
+            } else if (transport === TransportKind2.pipe) {
               return (0, node_1.createClientPipeTransport)(pipeName).then((transport2) => {
                 const serverProcess = cp.spawn(command.command, args, options);
                 if (!serverProcess || !serverProcess.pid) {
@@ -17972,37 +17972,41 @@ __export(client_exports, {
   deactivate: () => deactivate
 });
 module.exports = __toCommonJS(client_exports);
-var import_path = __toESM(require("path"));
-var vscode = __toESM(require("vscode"));
+var path = __toESM(require("path"));
+var import_vscode = require("vscode");
 var import_node = __toESM(require_node3());
 var client;
 function activate(context) {
-  console.log("Activating Walrus Language Extension...");
-  const serverExe = context.asAbsolutePath(import_path.default.join("bin", "walrus-lsp.exe"));
+  const serverExec = context.asAbsolutePath(
+    path.join("bin", "walrus-lsp.exe")
+  );
   const serverOptions = {
-    run: { command: serverExe, args: [] },
-    debug: { command: serverExe, args: [] }
+    run: { command: serverExec, transport: import_node.TransportKind.stdio },
+    debug: {
+      command: serverExec,
+      transport: import_node.TransportKind.stdio
+    }
   };
   const clientOptions = {
     documentSelector: [{ scheme: "file", language: "walrus" }],
     synchronize: {
-      fileEvents: vscode.workspace.createFileSystemWatcher("**/*.{wal,walrus}")
+      // Notify the server about file changes to .wal files contained in the workspace
+      fileEvents: import_vscode.workspace.createFileSystemWatcher("**/*.{wal,walrus}")
     }
   };
   client = new import_node.LanguageClient(
     "walrusLanguageServer",
-    "Walrus LSP",
-    // changed from "Walrus Language Server"
+    "Walrus Language Server",
     serverOptions,
     clientOptions
   );
-  context.subscriptions.push({
-    dispose: () => client.stop()
-  });
   client.start();
 }
 function deactivate() {
-  return client ? client.stop() : void 0;
+  if (!client) {
+    return void 0;
+  }
+  return client.stop();
 }
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {

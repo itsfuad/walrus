@@ -2,7 +2,6 @@ package typechecker
 
 import (
 	"fmt"
-	"os"
 	"walrus/compiler/colors"
 )
 
@@ -59,7 +58,7 @@ func initVar(env *TypeEnvironment, name string, typeVar Tc, isConst bool, isOpti
 	err := env.declareVar(name, typeVar, isConst, isOptional)
 	if err != nil {
 		colors.RED.Println(err)
-		os.Exit(-1)
+		return
 	}
 
 	builtinValues[name] = true

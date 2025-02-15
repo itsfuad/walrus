@@ -1,39 +1,53 @@
-import path from 'path';
-import * as vscode from 'vscode';
-import { LanguageClient, LanguageClientOptions, ServerOptions } from 'vscode-languageclient/node';
+import * as path from "path";
+import { workspace, ExtensionContext } from "vscode";
+
+import {
+  LanguageClient,
+  LanguageClientOptions,
+  ServerOptions,
+  TransportKind,
+} from "vscode-languageclient/node";
 
 let client: LanguageClient;
 
-export function activate(context: vscode.ExtensionContext) {
-	console.log("Activating Walrus Language Extension...");
-  
-  const serverExe = context.asAbsolutePath(path.join('bin', 'walrus-lsp.exe'));
-	const serverOptions: ServerOptions = {
-		run: { command: serverExe, args: [] },
-		debug: { command: serverExe, args: [] }
-	};
+export function activate(context: ExtensionContext) {
+  const serverExec = context.asAbsolutePath(
+    path.join("bin", "walrus-lsp.exe")
+  );
+  // If the extension is launched in debug mode then the debug server options are used
+  // Otherwise the run options are used
+  const serverOptions: ServerOptions = {
+    run: { command: serverExec, transport: TransportKind.stdio },
+    debug: {
+      command: serverExec,
+      transport: TransportKind.stdio,
+    },
+  };
 
-	const clientOptions: LanguageClientOptions = {
-		documentSelector: [{ scheme: 'file', language: 'walrus' }],
-		synchronize: {
-			fileEvents: vscode.workspace.createFileSystemWatcher('**/*.{wal,walrus}')
-		}
-	};
+  // Options to control the language client
+  const clientOptions: LanguageClientOptions = {
+    documentSelector: [{ scheme: "file", language: 'walrus' }],
+    synchronize: {
+      // Notify the server about file changes to .wal files contained in the workspace
+      fileEvents: workspace.createFileSystemWatcher('**/*.{wal,walrus}'),
+    },
+  };
 
-	client = new LanguageClient(
-		'walrusLanguageServer',
-		'Walrus LSP', // changed from "Walrus Language Server"
-		serverOptions,
-		clientOptions
-	);
-	
-	context.subscriptions.push({
-		dispose: () => client.stop()
-	});
-	  
-	client.start();
+  // Create the language client and start the client.
+  client = new LanguageClient(
+    "walrusLanguageServer",
+    "Walrus Language Server",
+    serverOptions,
+    clientOptions
+  );
+
+  // Start the client. This will also launch the server
+  client.start();
 }
 
 export function deactivate(): Thenable<void> | undefined {
-	return client ? client.stop() : undefined;
+  if (!client) {
+    return undefined;
+  }
+  return client.stop();
 }

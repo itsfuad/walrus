@@ -2,13 +2,8 @@ package parser
 
 import (
 	//Standard packages
-	"encoding/json"
 	"errors"
 	"fmt"
-	"os"
-	"path/filepath"
-	"strings"
-
 	//Walrus packages
 	"walrus/compiler/colors"
 	"walrus/compiler/internal/ast"
@@ -97,7 +92,7 @@ func parseNode(p *Parser) ast.Node {
 	return expr
 }
 
-func (p *Parser) Parse(saveJson bool) (ast.Node, error) {
+func (p *Parser) Parse() (ast.Node, error) {
 
 	var contents []ast.Node
 
@@ -108,28 +103,6 @@ func (p *Parser) Parse(saveJson bool) (ast.Node, error) {
 
 	program := ast.ProgramStmt{
 		Contents: contents,
-	}
-
-	if saveJson {
-		file, err := os.Create(strings.TrimSuffix(p.FilePath, filepath.Ext(p.FilePath)) + ".json")
-		if err != nil {
-			return nil, err
-		}
-
-		//parse as string
-		astString, err := json.MarshalIndent(program, "", "  ")
-
-		if err != nil {
-			return nil, err
-		}
-
-		_, err = file.Write(astString)
-
-		if err != nil {
-			return nil, err
-		}
-
-		file.Close()
 	}
 
 	colors.GREEN.Println("Parsing complete")
