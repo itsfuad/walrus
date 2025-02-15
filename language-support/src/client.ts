@@ -1,6 +1,5 @@
 import * as path from "path";
 import { workspace, ExtensionContext } from "vscode";
-
 import {
   LanguageClient,
   LanguageClientOptions,
@@ -12,28 +11,27 @@ let client: LanguageClient;
 
 export function activate(context: ExtensionContext) {
   const serverExec = context.asAbsolutePath(
-    path.join("bin", "walrus-lsp.exe")
+    path.join("bin", "walrus-lsp.exe") // Ensure the server binary is here
   );
-  // If the extension is launched in debug mode then the debug server options are used
-  // Otherwise the run options are used
+
   const serverOptions: ServerOptions = {
     run: { command: serverExec, transport: TransportKind.stdio },
-    debug: {
-      command: serverExec,
-      transport: TransportKind.stdio,
-    },
+    debug: { command: serverExec, transport: TransportKind.stdio },
   };
 
-  // Options to control the language client
   const clientOptions: LanguageClientOptions = {
-    documentSelector: [{ scheme: "file", language: 'walrus' }],
+    documentSelector: [{ scheme: "file", language: "walrus" }],
     synchronize: {
-      // Notify the server about file changes to .wal files contained in the workspace
-      fileEvents: workspace.createFileSystemWatcher('**/*.{wal,walrus}'),
+      fileEvents: workspace.createFileSystemWatcher("**/*.{wal,walrus}"),
+    },
+    middleware: {
+      handleDiagnostics: (uri, diagnostics, next) => {
+        console.log("Received diagnostics:", uri.toString(), diagnostics);
+        next(uri, diagnostics); // Pass diagnostics to VSCode
+      },
     },
   };
 
-  // Create the language client and start the client.
   client = new LanguageClient(
     "walrusLanguageServer",
     "Walrus Language Server",
@@ -41,7 +39,6 @@ export function activate(context: ExtensionContext) {
     clientOptions
   );
 
-  // Start the client. This will also launch the server
   client.start();
 }
 

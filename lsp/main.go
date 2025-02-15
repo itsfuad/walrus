@@ -6,222 +6,281 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"net/url"
 	"os"
+	"path/filepath"
+	"strings"
 
 	"walrus/compiler/analyzer"
 	"walrus/compiler/report"
-	"walrus/compiler/wio"
 )
 
-// Message represents a JSON-RPC message.
-type Message struct {
-	JsonRPC string           `json:"jsonrpc"`
-	ID      *json.RawMessage `json:"id,omitempty"`
-	Method  string           `json:"method,omitempty"`
-	Params  json.RawMessage  `json:"params,omitempty"`
-	Result  interface{}      `json:"result,omitempty"`
-	Error   interface{}      `json:"error,omitempty"`
-}
-
-// InitializeResult is the response to the initialize request.
-type InitializeResult struct {
-	Capabilities ServerCapabilities `json:"capabilities"`
-}
-
-// ServerCapabilities defines the server's capabilities.
-type ServerCapabilities struct {
-	TextDocumentSync TextDocumentSyncOptions `json:"textDocumentSync"`
-}
-
-// TextDocumentSyncOptions defines how text document changes are handled.
-type TextDocumentSyncOptions struct {
-	OpenClose bool `json:"openClose"`
-	Change    int  `json:"change"` // 1 = full
-}
-
-// Position represents a position in a text document.
-type Position struct {
-	Line      int `json:"line"`
-	Character int `json:"character"`
-}
-
-// Range represents a range in a text document.
-type Range struct {
-	Start Position `json:"start"`
-	End   Position `json:"end"`
-}
-
-func handleMessage(msg *Message) *Message {
-	log.Printf("Received message: %s", msg.Method)
-
-	switch msg.Method {
-	case "initialize":
-		log.Println("Handling initialize request")
-		// Respond to the initialize request with server capabilities.
-		response := &Message{
-			JsonRPC: "2.0",
-			ID:      msg.ID,
-			Result: InitializeResult{
-				Capabilities: ServerCapabilities{
-					TextDocumentSync: TextDocumentSyncOptions{
-						OpenClose: true,
-						Change:    1, // Full text synchronization
-					},
-				},
-			},
-		}
-		log.Printf("Sending initialize response: %+v", response)
-		return response
-
-	case "textDocument/didOpen":
-		log.Println("Handling textDocument/didOpen notification")
-		var params struct {
-			TextDocument struct {
-				URI  string `json:"uri"`
-				Text string `json:"text"`
-			} `json:"textDocument"`
-		}
-		if err := json.Unmarshal(msg.Params, &params); err != nil {
-			log.Printf("Error parsing didOpen params: %v", err)
-			return nil
-		}
-		processDiagnostics(params.TextDocument.URI)
-
-	case "textDocument/didChange":
-		log.Println("Handling textDocument/didChange notification")
-		var params struct {
-			TextDocument struct {
-				URI string `json:"uri"`
-			} `json:"textDocument"`
-			ContentChanges []struct {
-				Text string `json:"text"`
-			} `json:"contentChanges"`
-		}
-		if err := json.Unmarshal(msg.Params, &params); err != nil {
-			log.Printf("Error parsing didChange params: %v", err)
-			return nil
-		}
-		if len(params.ContentChanges) > 0 {
-			// Process diagnostics for the full text update.
-			processDiagnostics(params.TextDocument.URI)
-		}
-	}
-
-	return nil
-}
-
-// processDiagnostics analyzes the file and publishes diagnostics.
-func processDiagnostics(uri string) {
-	filePath, err := wio.UriToFilePath(uri)
+// UriToFilePath converts a file:// URI to a platform-specific file path.
+func UriToFilePath(uri string) (string, error) {
+	// Parse the URI
+	parsed, err := url.Parse(uri)
 	if err != nil {
-		log.Printf("Error converting URI to file path: %v", err)
-		return
+		return "", err
 	}
-	log.Printf("Processing diagnostics for: %s", filePath)
-	reports, err := analyzer.Analyze(filePath, false, false, false)
+
+	// Handle Windows paths (e.g., file:///C:/path/to/file)
+	if parsed.Path[0] == '/' && len(parsed.Path) > 3 && parsed.Path[2] == ':' {
+		parsed.Path = parsed.Path[1:]
+	}
+
+	// Decode URL-encoded characters (e.g., %3A -> :)
+	filePath, err := url.PathUnescape(parsed.Path)
 	if err != nil {
-		log.Printf("Error analyzing file: %v", err)
-		return
+		return "", err
 	}
-	publishDiagnostics(filePath, reports)
+
+	// Convert to platform-specific file path
+	return filepath.FromSlash(filePath), nil
 }
 
-// publishDiagnostics sends diagnostics to the client.
-func publishDiagnostics(uri string, diagnostics report.IReport) {
-	params := struct {
-		URI         string         `json:"uri"`
-		Diagnostics report.IReport `json:"diagnostics"`
-	}{
-		URI:         uri,
-		Diagnostics: diagnostics,
-	}
-	data, err := json.Marshal(params)
+//log to file
+func init() {
+	f, err := os.OpenFile("lsp.log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 	if err != nil {
-		log.Printf("Error marshalling diagnostics: %v", err)
-		return
+		log.Fatalf("error opening file: %v", err)
 	}
-	notification := Message{
-		JsonRPC: "2.0",
-		Method:  "textDocument/publishDiagnostics",
-		Params:  data,
-	}
-	if err := writeMessage(os.Stdout, &notification); err != nil {
-		log.Printf("Error writing diagnostics: %v", err)
-	}
+	log.SetOutput(f)
 }
 
-func readMessage(r *bufio.Reader, msg *Message) error {
-	// Read headers
-	contentLength := 0
-	for {
-		line, err := r.ReadString('\n')
-		if err != nil {
-			return err
-		}
-		if line == "\r\n" {
-			break
-		}
-		if _, err := fmt.Sscanf(line, "Content-Length: %d\r\n", &contentLength); err != nil {
-			log.Printf("Ignoring header: %s", line)
-			continue
-		}
-	}
-
-	log.Printf("Content-Length: %d", contentLength)
-
-	// Read content
-	content := make([]byte, contentLength)
-	if _, err := io.ReadFull(r, content); err != nil {
-		log.Printf("Error reading content: %v", err)
-		return err
-	}
-
-	log.Printf("Received content: %s", content)
-
-	return json.Unmarshal(content, msg)
+// LSP Request and Response structures
+type Request struct {
+	Jsonrpc string          `json:"jsonrpc"`
+	Id      int             `json:"id"`
+	Method  string          `json:"method"`
+	Params  json.RawMessage `json:"params,omitempty"`
 }
 
-// writeMessage writes a JSON-RPC message to the output stream.
-func writeMessage(w io.Writer, msg *Message) error {
-	content, err := json.Marshal(msg)
-	if err != nil {
-		return err
-	}
-
-	header := fmt.Sprintf("Content-Length: %d\r\n\r\n", len(content))
-	if _, err := w.Write([]byte(header)); err != nil {
-		return err
-	}
-
-	_, err = w.Write(content)
-	return err
+type Response struct {
+	Jsonrpc string      `json:"jsonrpc"`
+	Id      int         `json:"id"`
+	Result  interface{} `json:"result,omitempty"`
+	Error   *LspError   `json:"error,omitempty"`
 }
+
+type LspError struct {
+	Code    int    `json:"code"`
+	Message string `json:"message"`
+}
+
+var stdout = bufio.NewWriter(os.Stdout)
 
 func main() {
-	defer func() {
-		if r := recover(); r != nil {
-			log.Printf("Panic: %v", r)
-		}
-	}()
+	log.Println("Starting Walrus LSP...")
 
-	reader := bufio.NewReader(os.Stdin)
 	for {
-		var msg Message
-		if err := readMessage(reader, &msg); err != nil {
-			if err == io.EOF {
-				log.Println("EOF received, exiting")
-				return
-			}
+		msg, err := readMessage()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
 			log.Printf("Error reading message: %v", err)
 			continue
 		}
 
-		if response := handleMessage(&msg); response != nil {
-			if err := writeMessage(os.Stdout, response); err != nil {
-				log.Printf("Error writing response: %v", err)
+		var req Request
+		if err := json.Unmarshal([]byte(msg), &req); err != nil {
+			log.Printf("Invalid JSON message: %v", err)
+			continue
+		}
+
+		log.Printf("Received request: %+v", req)
+
+		switch req.Method {
+		case "initialize":
+			response := Response{
+				Jsonrpc: "2.0",
+				Id:      req.Id,
+				Result: map[string]interface{}{
+					"capabilities": map[string]interface{}{
+						"textDocumentSync": 1, // Full text sync
+					},
+				},
 			}
-		} else {
-			log.Printf("No response for message: %+v", msg)
+			writeMessage(response)
+		
+			// Send initialized notification
+			notification := map[string]interface{}{
+				"jsonrpc": "2.0",
+				"method":  "initialized",
+				"params":  map[string]interface{}{},
+			}
+
+			writeRawMessage(notification)
+
+		case "textDocument/didOpen", "textDocument/didChange":
+			var params struct {
+				TextDocument struct {
+					URI string `json:"uri"`
+				} `json:"textDocument"`
+			}
+			if err := json.Unmarshal(req.Params, &params); err != nil {
+				log.Println("Error parsing textDocument params:", err)
+				continue
+			}
+			processDiagnostics(params.TextDocument.URI)
+
+		case "shutdown":
+			writeMessage(Response{Jsonrpc: "2.0", Id: req.Id, Result: nil})
+
+		case "exit":
+			os.Exit(0)
 		}
 	}
+}
+
+
+func readMessage() (string, error) {
+
+    reader := bufio.NewReader(os.Stdin)
+    
+    // Read headers
+    contentLength := 0
+    for {
+        line, err := reader.ReadString('\n')
+        if err != nil {
+            return "", err
+        }
+        line = strings.TrimSpace(line)
+        
+        if line == "" { // End of headers
+            break
+        }
+
+        if strings.HasPrefix(line, "Content-Length: ") {
+            fmt.Sscanf(line, "Content-Length: %d", &contentLength)
+        }
+    }
+
+    // Read body
+    body := make([]byte, contentLength)
+    _, err := io.ReadFull(reader, body)
+    if err != nil {
+        return "", fmt.Errorf("failed to read message body: %v", err)
+    }
+
+    return string(body), nil
+}
+
+
+// Write an LSP message
+func writeMessage(resp Response) {
+	data, err := json.Marshal(resp)
+	if err != nil {
+		log.Printf("Failed to marshal response: %v", err)
+		return
+	}
+
+	msg := fmt.Sprintf("Content-Length: %d\r\n\r\n%s", len(data), data)
+	if _, err := stdout.WriteString(msg); err != nil {
+		log.Printf("Failed to write response: %v", err)
+	}
+	stdout.Flush()
+}
+
+func processDiagnostics(uri string) {
+	log.Println("Processing diagnostics for:", uri)
+
+	// Convert URI to file path
+	filePath, err := UriToFilePath(uri)
+	if err != nil {
+		log.Println("Error converting URI to file path:", err)
+		// Handle URI to file path conversion error
+		writeMessage(Response{
+			Jsonrpc: "2.0",
+			Id:      0,
+			Error: &LspError{
+				Code:    -32603, // Internal error code
+				Message: fmt.Sprintf("Error converting URI to file path: %v", err),
+			},
+		})
+		return
+	}
+
+	// Analyze the file for diagnostics
+	reports, err := analyzer.Analyze(filePath, false, false, false)
+	if err != nil {
+		log.Println("Error analyzing file:", err)
+		// Handle analysis error
+		writeMessage(Response{
+			Jsonrpc: "2.0",
+			Id:      0,
+			Error: &LspError{
+				Code:    -32603, // Internal error code
+				Message: fmt.Sprintf("Error analyzing file: %v", err),
+			},
+		})
+		return
+	}
+
+	// Convert the report to diagnostics
+	diagnostics := []map[string]interface{}{}
+	for _, report := range reports {
+		diagnostic := map[string]interface{}{
+			"range": map[string]interface{}{
+				"start": map[string]interface{}{
+					"line": report.LineStart - 1, // LSP uses 0-based indices
+					"character": report.ColStart - 1,
+				},
+				"end": map[string]interface{}{
+					"line": report.LineEnd - 1,
+					"character": report.ColEnd - 1,
+				},
+			},
+			"message": report.Message,
+			"severity": mapSeverityToLsp(report.Level),
+		}
+		diagnostics = append(diagnostics, diagnostic)
+	}
+
+	// Send diagnostics to LSP client
+	response := Response{
+		Jsonrpc: "2.0",
+		Id:      0,
+		Result: map[string]interface{}{
+			"uri":        uri,
+			"diagnostics": diagnostics,
+		},
+	}
+	
+	writeMessage(response)
+}
+
+// Convert report severity to LSP severity
+func mapSeverityToLsp(level report.REPORT_TYPE) int {
+	switch level {
+	case report.CRITICAL_ERROR, report.SYNTAX_ERROR:
+		return 1 // Error
+	case report.NORMAL_ERROR:
+		return 1 // Error
+	case report.WARNING:
+		return 2 // Warning
+	case report.INFO:
+		return 3 // Information
+	default:
+		return 3 // Information
+	}
+}
+
+func publishDiagnostics(uri string, diagnostics []map[string]interface{}) {
+    notification := map[string]interface{}{
+        "jsonrpc": "2.0",
+        "method":  "textDocument/publishDiagnostics",
+        "params": map[string]interface{}{
+            "uri":         uri,
+            "diagnostics": diagnostics,
+        },
+    }
+    writeRawMessage(notification)
+}
+
+func writeRawMessage(msg interface{}) {
+    data, _ := json.Marshal(msg)
+    fullMsg := fmt.Sprintf("Content-Length: %d\r\n\r\n%s", len(data), data)
+    stdout.WriteString(fullMsg)
+    stdout.Flush()
 }

@@ -12,7 +12,7 @@ import (
 
 const HALTED = "compilation halted"
 
-func Analyze(filePath string, displayErrors, debug, save2Json bool) (reports report.IReport, e error) {
+func Analyze(filePath string, displayErrors, debug, save2Json bool) (reports report.Reports, e error) {
 
 	defer func() {
 		if r := recover(); r != nil {
