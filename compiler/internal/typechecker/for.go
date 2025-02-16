@@ -41,7 +41,7 @@ func checkForStmt(forStmt ast.ForStmt, env *TypeEnvironment) Tc {
 
 	//infinte loop
 	for _, stmt := range forStmt.Block.Contents {
-		CheckAST(stmt, forLoopEnv)
+		checkAST(stmt, forLoopEnv)
 	}
 
 	return NewVoid()

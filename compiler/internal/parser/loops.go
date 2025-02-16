@@ -6,8 +6,8 @@ import (
 
 	//Walrus packages
 	"walrus/compiler/internal/ast"
-	"walrus/compiler/report"
 	"walrus/compiler/internal/lexer"
+	"walrus/compiler/report"
 )
 
 // parseForStmt parses a 'for' statement in the source code.

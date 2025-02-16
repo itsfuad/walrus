@@ -1,0 +1,36 @@
+// Welcome
+
+let a : i32 = 89;
+
+let b : i32 = 45.2 as i32;
+
+let c : i32 = 45.4 as i32;
+
+let sum := a + b + c;
+
+type Point struct {
+    x : i32,
+    y : i32,
+};
+
+type Point2 Point;
+
+let p : Point = @Point{ x: 10, y: 20 };
+
+let p2 := @Point2{ x: 10, y: 20 };
+
+fn add(a : i32, b : i32) -> i32 {
+    ret a + b;
+}
+
+let result := add(10, 20);
+
+fn largest(a : i32, b : i32) -> i32 {
+    if a > b {
+        ret a;
+    } else {
+        //ret b;
+    }
+
+    ret 0;
+}

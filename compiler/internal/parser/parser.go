@@ -2,19 +2,14 @@ package parser
 
 import (
 	//Standard packages
-	"encoding/json"
 	"errors"
 	"fmt"
-	"os"
-	"path/filepath"
-	"strings"
-
 	//Walrus packages
 	"walrus/compiler/colors"
 	"walrus/compiler/internal/ast"
 	"walrus/compiler/internal/builtins"
-	"walrus/compiler/report"
 	"walrus/compiler/internal/lexer"
+	"walrus/compiler/report"
 )
 
 type Parser struct {
@@ -43,11 +38,6 @@ func (p *Parser) eat() lexer.Token {
 	token := p.currentToken()
 	p.index++
 	return token
-}
-
-// rollback by N tokens
-func (p *Parser) rollback(n int) {
-	p.index -= n
 }
 
 func (p *Parser) expectError(expectedKind builtins.TOKEN_KIND, err error) lexer.Token {
@@ -97,7 +87,7 @@ func parseNode(p *Parser) ast.Node {
 	return expr
 }
 
-func (p *Parser) Parse(saveJson bool) ast.Node {
+func (p *Parser) Parse() (ast.Node, error) {
 
 	var contents []ast.Node
 
@@ -110,31 +100,9 @@ func (p *Parser) Parse(saveJson bool) ast.Node {
 		Contents: contents,
 	}
 
-	if saveJson {
-		file, err := os.Create(strings.TrimSuffix(p.FilePath, filepath.Ext(p.FilePath)) + ".json")
-		if err != nil {
-			panic(err)
-		}
-
-		//parse as string
-		astString, err := json.MarshalIndent(program, "", "  ")
-
-		if err != nil {
-			panic(err)
-		}
-
-		_, err = file.Write(astString)
-
-		if err != nil {
-			panic(err)
-		}
-
-		file.Close()
-	}
-
 	colors.GREEN.Println("Parsing complete")
 
-	return program
+	return program, nil
 }
 
 func NewParser(filePath string, debug bool) *Parser {

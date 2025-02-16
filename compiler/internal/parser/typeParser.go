@@ -173,8 +173,6 @@ func parseDataType(p *Parser) ast.DataType {
 
 	value := identifier.Value
 
-	fmt.Printf("Parsing data type %s\n", value)
-
 	loc := ast.Location{
 		Start: identifier.Start,
 		End:   identifier.End,
@@ -236,7 +234,6 @@ func parseType(p *Parser, bp BINDING_POWER) ast.DataType {
 	nudFunction, exists := typeNUDLookup[tokenKind]
 
 	if !exists {
-		//panic(fmt.Sprintf("TYPE NUD handler expected for token %s\n", tokenKind))
 		var tokStr string
 		if lexer.IsKeyword(string(tokenKind)) {
 			tokStr = fmt.Sprintf("keyword '%s'", tokenKind)

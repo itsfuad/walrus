@@ -75,8 +75,6 @@ func parsePrimaryExpr(p *Parser) ast.Node {
 		End:   endpos,
 	}
 
-	fmt.Printf("parsePrimaryExpr: %s\n", primaryToken.Value)
-
 	switch primaryToken.Kind {
 	case lexer.INT8_TOKEN, lexer.INT16_TOKEN, lexer.INT32_TOKEN, lexer.INT64_TOKEN, lexer.UINT8_TOKEN, lexer.UINT16_TOKEN, lexer.UINT32_TOKEN, lexer.UINT64_TOKEN:
 		return ast.IntegerLiteralExpr{
@@ -99,12 +97,6 @@ func parsePrimaryExpr(p *Parser) ast.Node {
 			Location: loc,
 		}
 	case lexer.IDENTIFIER_TOKEN:
-
-		if p.currentToken().Kind == lexer.OPEN_CURLY { // might be map or struct in aliased form
-			p.rollback(1)
-			return parseCompositeLiteral(p)
-		}
-
 		return ast.IdentifierExpr{
 			Name:     rawValue,
 			Location: loc,
@@ -115,37 +107,6 @@ func parsePrimaryExpr(p *Parser) ast.Node {
 	}
 
 	return nil
-}
-
-func parseCompositeLiteral(p *Parser) ast.Node {
-
-	currentIndex := p.index
-
-	// name of the type
-	p.eat() // n = 1
-
-	//parse the opening curly brace
-	p.eat() // n = 2
-
-	//parse the first pair
-	parseExpr(p, DEFAULT_BP) // the expression consumes how many tokens, we don't know. So we have to get that
-
-	separator := p.eat()
-
-	rollbackPos := p.index - currentIndex
-
-	p.rollback(rollbackPos)
-
-	switch separator.Kind {
-	case lexer.FAT_ARROW_TOKEN:
-		return parseMapLiteral(p)
-	case lexer.COLON_TOKEN:
-		return parseStructLiteral(p)
-	default:
-		msg := fmt.Sprintf("unexpected token %s\n", separator.Value)
-		report.Add(p.FilePath, separator.Start.Line, separator.End.Line, separator.Start.Column, separator.End.Column, msg).SetLevel(report.SYNTAX_ERROR)
-		return nil
-	}
 }
 
 // parseGroupingExpr parses a grouping expression enclosed in parentheses.

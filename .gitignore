@@ -2,3 +2,4 @@ node_modules
 language/*.json
 *.exe
 *.log
+*.js

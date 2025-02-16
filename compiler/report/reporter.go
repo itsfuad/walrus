@@ -30,40 +30,47 @@ var colorMap = map[REPORT_TYPE]colors.COLOR{
 	INFO:           colors.BLUE,
 }
 
-// global errors are arrays of error pointers
-var globalReports []*Diagnostic
-var reports = make(map[REPORT_TYPE]int)
+type Reports []*Report
 
-// Diagnostic represents a diagnostic report used both internally and by LSP.
-type Diagnostic struct {
-	FilePath  string      `json:"filePath"`
-	LineStart int         `json:"lineStart"`
-	LineEnd   int         `json:"lineEnd"`
-	ColStart  int         `json:"colStart"`
-	ColEnd    int         `json:"colEnd"`
-	Message   string      `json:"message"`
-	Hints     []string    `json:"hints"`
-	Level     REPORT_TYPE `json:"level"`
+// global errors are arrays of error pointers
+var globalReports Reports
+
+// Report represents a diagnostic report used both internally and by LSP.
+type Report struct {
+	FilePath  string
+	LineStart int
+	LineEnd   int
+	ColStart  int
+	ColEnd    int
+	Message   string
+	Hints     []string
+	Level     REPORT_TYPE
 }
 
-// GetDiagnostics returns a slice of diagnostics converted from internal reports.
+// GetReports returns a slice of diagnostics converted from internal reports.
 // It skips any reports that do not have a valid level.
-func GetDiagnostics() []Diagnostic {
-	var diags []Diagnostic
+func GetReports() Reports {
+	var diags Reports
 	for _, r := range globalReports {
 		if r.Level == NULL {
 			// Skip reports without valid level.
 			continue
 		}
-		diags = append(diags, *r)
+		diags = append(diags, r)
 	}
+
 	return diags
+}
+
+func ClearReports() {
+	globalReports = Reports{}
+	colors.CYAN.Println("Reports cleared")
 }
 
 // printReport prints a formatted diagnostic report to stdout.
 // It shows file location, a code snippet, underline highlighting, any hints,
 // and panics if the diagnostic level is critical or indicates a syntax error.
-func printReport(r *Diagnostic) {
+func printReport(r *Report) {
 
 	colors.GREY.Printf("%s:%d:%d: ", r.FilePath, r.LineStart, r.ColStart)
 
@@ -92,16 +99,12 @@ func printReport(r *Diagnostic) {
 	reportColor.Print(underline)
 
 	showHints(r, hLen)
-
-	if r.Level == CRITICAL_ERROR || r.Level == SYNTAX_ERROR {
-		panic(fmt.Sprintf("Compilation halted due to %s\n", r.Level))
-	}
 }
 
 // makeParts reads the source file and generates a code snippet and underline
 // indicating the location of the diagnostic. It returns the snippet, underline,
 // and a hint padding value.
-func makeParts(r *Diagnostic) (snippet, underline string, hLen int) {
+func makeParts(r *Report) (snippet, underline string, hLen int) {
 	fileData, err := os.ReadFile(r.FilePath)
 	if err != nil {
 		panic(err)
@@ -131,7 +134,7 @@ func makeParts(r *Diagnostic) (snippet, underline string, hLen int) {
 
 // showHints outputs any associated hint messages for the diagnostic,
 // using the provided padding for proper alignment.
-func showHints(r *Diagnostic, padding int) {
+func showHints(r *Report, padding int) {
 	if len(r.Hints) > 0 {
 		colors.YELLOW.Printf("%sHint:\n", strings.Repeat(" ", padding))
 		for _, hint := range r.Hints {
@@ -144,7 +147,7 @@ func showHints(r *Diagnostic, padding int) {
 
 // Hint appends a new hint message to the diagnostic and returns the updated diagnostic.
 // It ignores empty hint messages.
-func (r *Diagnostic) Hint(msg string) *Diagnostic {
+func (r *Report) Hint(msg string) *Report {
 
 	if msg == "" {
 		return r
@@ -156,7 +159,7 @@ func (r *Diagnostic) Hint(msg string) *Diagnostic {
 
 // Add creates and registers a new diagnostic report with basic position validation.
 // It returns a pointer to the newly created Diagnostic.
-func Add(filePath string, lineStart, lineEnd int, colStart, colEnd int, msg string) *Diagnostic {
+func Add(filePath string, lineStart, lineEnd int, colStart, colEnd int, msg string) *Report {
 	if lineStart < 1 {
 		lineStart = 1
 	}
@@ -170,7 +173,7 @@ func Add(filePath string, lineStart, lineEnd int, colStart, colEnd int, msg stri
 		colEnd = 1
 	}
 
-	report := &Diagnostic{
+	report := &Report{
 		FilePath:  filePath,
 		LineStart: lineStart,
 		LineEnd:   lineEnd,
@@ -187,58 +190,49 @@ func Add(filePath string, lineStart, lineEnd int, colStart, colEnd int, msg stri
 
 // SetLevel assigns a diagnostic level to the report, increments its count,
 // and triggers DisplayAll if the level is critical or denotes a syntax error.
-func (e *Diagnostic) SetLevel(level REPORT_TYPE) {
+func (e *Report) SetLevel(level REPORT_TYPE) {
 	if level == NULL {
 		panic("call SetLevel() method with valid Error level")
 	}
 	e.Level = level
-	reports[level]++
 	if level == CRITICAL_ERROR || level == SYNTAX_ERROR {
-		DisplayAll()
+		panic("Critical error or syntax error detected")
 	}
 }
 
 // DisplayAll outputs all the diagnostic reports. It recovers from panics,
 // prints a summary status, and exits the process if errors are present.
-func DisplayAll() {
-	//recover if panics
-	defer func() {
-
-		if reports[CRITICAL_ERROR] == 0 && reports[NORMAL_ERROR] == 0 && reports[SYNTAX_ERROR] == 0 {
-			showStatus(true, "Compilation successful with")
-			return
-		}
-
-		if r := recover(); r != nil {
-			colors.BOLD_RED.Println(r)
-		}
-
-		showStatus(false, "Compilation failed with")
-		os.Exit(-1)
-	}()
-	for _, err := range globalReports {
+func (r Reports) DisplayAll() {
+	for _, err := range r {
 		if err.Level == NULL {
 			panic("call SetLevel() method with valid Error level")
 		}
 		printReport(err)
 	}
+	r.ShowStatus()
 }
 
-// showStatus displays a summary of compilation status along with counts of warnings and errors.
-func showStatus(passed bool, msg string) {
+// ShowStatus displays a summary of compilation status along with counts of warnings and errors.
+func (r Reports) ShowStatus() {
+	warningCount := 0
+	probCount := 0
 
-	//show errors and warnings separately
-	warningCount := reports[WARNING]
-	probCount := reports[NORMAL_ERROR] + reports[CRITICAL_ERROR] + reports[SYNTAX_ERROR]
+	for _, report := range r {
+		if report.Level == WARNING {
+			warningCount++
+		} else if report.Level == NORMAL_ERROR || report.Level == CRITICAL_ERROR || report.Level == SYNTAX_ERROR {
+			probCount++
+		}
+	}
 
 	var messageColor colors.COLOR
 
-	if passed {
-		messageColor = colors.GREEN
-		messageColor.Printf("------------- %s ", msg)
-	} else {
+	if probCount > 0 {
 		messageColor = colors.RED
-		messageColor.Printf("------------- %s ", msg)
+		messageColor.Print("------------- failed with ")
+	} else {
+		messageColor = colors.GREEN
+		messageColor.Print("------------- Passed")
 	}
 
 	totalProblemsString := ""

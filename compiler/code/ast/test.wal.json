@@ -3304,6 +3304,62 @@
                 "Column": 25,
                 "Index": 1840
             }
+        },
+        {
+            "Variables": [
+                {
+                    "Identifier": {
+                        "Name": "incompleteObj",
+                        "Start": {
+                            "Line": 100,
+                            "Column": 5,
+                            "Index": 1868
+                        },
+                        "End": {
+                            "Line": 100,
+                            "Column": 18,
+                            "Index": 1881
+                        }
+                    },
+                    "Value": {
+                        "Value": "3",
+                        "BitSize": 32,
+                        "IsSigned": true,
+                        "Start": {
+                            "Line": 100,
+                            "Column": 22,
+                            "Index": 1885
+                        },
+                        "End": {
+                            "Line": 100,
+                            "Column": 23,
+                            "Index": 1886
+                        }
+                    },
+                    "ExplicitType": null,
+                    "Start": {
+                        "Line": 100,
+                        "Column": 5,
+                        "Index": 1868
+                    },
+                    "End": {
+                        "Line": 100,
+                        "Column": 23,
+                        "Index": 1886
+                    }
+                }
+            ],
+            "IsConst": false,
+            "Start": {
+                "Line": 100,
+                "Column": 1,
+                "Index": 1864
+            },
+            "End": {
+                "Line": 100,
+                "Column": 24,
+                "Index": 1887
+            }
         }
     ],
     "Start": {

@@ -1,4 +1,4 @@
-package io
+package wio
 
 import (
 	"os"
@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"walrus/compiler/internal/ast"
+	"walrus/compiler/internal/lexer"
 )
 
 func TestSerialize(t *testing.T) {
