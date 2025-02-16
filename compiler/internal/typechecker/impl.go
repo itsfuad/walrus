@@ -60,10 +60,7 @@ func checkImplStmt(implStmt ast.ImplStmt, env *TypeEnvironment) Tc {
 			report.Add(env.filePath, method.Start.Line, method.End.Line, method.Start.Column, method.End.Column, fmt.Sprintf("cannot declare method '%s'\n└── %s", method.Identifier.Name, err.Error())).SetLevel(report.CRITICAL_ERROR)
 		}
 
-		//check the function body
-		for _, stmt := range method.Body.Contents {
-			checkAST(stmt, fnEnv)
-		}
+		checkSatisfaction(method.FunctionLiteral, returnType, fnEnv)
 
 	}
 

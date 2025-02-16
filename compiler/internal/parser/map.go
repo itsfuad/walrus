@@ -7,7 +7,7 @@ import (
 
 func parseMapLiteral(p *Parser) ast.Node {
 
-	//p.expect(lexer.DOLLAR_TOKEN)
+	start := p.expect(lexer.DOLLAR_TOKEN).Start
 	mapType := parseMapType(p)
 	//parse the opening curly brace
 	p.expect(lexer.OPEN_CURLY)
@@ -41,7 +41,7 @@ func parseMapLiteral(p *Parser) ast.Node {
 		MapType: mapType.(ast.MapType),
 		Values:  values,
 		Location: ast.Location{
-			Start: mapType.StartPos(),
+			Start: start,
 			End:   end,
 		},
 	}

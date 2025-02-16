@@ -64,6 +64,7 @@ func isCastable(src, dest Tc) error {
 
 	switch t := src.(type) {
 	case Int, Float:
+		colors.BLUE.Printf("checking cast from %s to %s\n", srcStr, destStr)
 		if isNumberType(dest) {
 			return nil
 		}
@@ -83,7 +84,11 @@ func isCastable(src, dest Tc) error {
 		}
 	}
 
-	return fmt.Errorf("cannot cast '%s' to '%s'\n%s", srcStr, destStr, err.Error())
+	if err != nil {
+		return fmt.Errorf("cannot cast '%s' to '%s'\n%s", srcStr, destStr, report.TreeFormatError(err))
+	}
+
+	return fmt.Errorf("cannot cast '%s' to '%s'", srcStr, destStr)
 }
 
 func isCastableStruct(src Struct, dest Tc) error {

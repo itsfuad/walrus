@@ -48,13 +48,21 @@ type IShape interface {
     fn area() -> f32
 };
 
+let castedType := c as f32;
+
+fn area() -> f32 {
+    let thisX := c as f32;
+    ret c as f32;
+}
+
 impl Point {
     fn area() -> f32 {
-        ret (this.x + this.y) as f32;
+        let thisX := this.x as f32;
+        ret this.x as f32;
     }
 }
 
 //implementing interface
 let iShape : IShape = @Point{x: 3, y: 4}; // Point must have area function to implement IShape
 
-//Thanks for reading! :)
+let float : f32 = 3 as f32;

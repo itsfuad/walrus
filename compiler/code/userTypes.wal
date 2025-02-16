@@ -9,24 +9,24 @@ const add : Func = fn(a: i32, b: i32) -> i32 {
     ret a + b;
 };
 
-let myMap : map[str]i32 = map[str]i32 {
+let myMap : map[str]i32 = $map[str]i32 {
     "John" => 10,
     "Doe" => 20,
 };
 
-let myMap2 : map[str]i32 = map[str]i32 {
+let myMap2 : map[str]i32 = $map[str]i32 {
     "John" => 10,
     "Doe" => 20,
 };
 
 type Users map[str]i32;
 
-let users : Users = Users{
+let users : Users = $Users{
     "John" => 10,
     "Doe" => 20,
 };
 
-let users2 := Users{
+let users2 := $Users{
     "John" => 10,
     "Doe" => 20,
 };
@@ -45,23 +45,23 @@ type User struct {
 
 type User2 User;
 
-let user := User{
+let user := @User{
     name: "John",
     age: 10,
 };
 
-let user2 := User2{
+let user2 := @User2{
     name: "John",
     age: 10,
 };
 
-let user3 : User2 = User2{
+let user3 : User2 = @User2{
     name: "John",
     age: 10,
 };
 
 
-let user4 : User = User2{
+let user4 : User = @User2{
     name: "John",
     age: 10,
 };
@@ -76,8 +76,8 @@ type Banana struct {
 };
 
 type IPerson interface {
-    fn getName() -> str,
-    fn someMethod(a: i32)
+    fn getName() -> str;
+    fn someMethod(a: i32);
 };
 
 fn ShowInfo(p: IPerson) {
@@ -113,7 +113,7 @@ let arr := [1, 2, 3, 4, 5];
 arr[1];
 
 ShowInfo(user);
-ShowInfo(Banana{name: "Cavendish", price: 10});
+ShowInfo(@Banana{name: "Cavendish", price: 10});
 
 fn voidFn() {
     // do something

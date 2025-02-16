@@ -109,11 +109,8 @@ func getFunctionTypeSignature(p *Parser) (builtins.PARSER_TYPE, []ast.FunctionTy
 	for p.hasToken() && p.currentTokenKind() != lexer.CLOSE_PAREN {
 		iden := p.expect(lexer.IDENTIFIER_TOKEN)
 
-		curentToken := p.currentToken()
-
-		if curentToken.Kind != lexer.COLON_TOKEN {
-			report.Add(p.FilePath, curentToken.Start.Line, curentToken.End.Line, curentToken.Start.Column, curentToken.End.Column, "expected : ").SetLevel(report.SYNTAX_ERROR)
-		}
+		// now we expect a colon
+		p.expect(lexer.COLON_TOKEN)		
 
 		typeName := parseType(p, DEFAULT_BP)
 

@@ -5,23 +5,23 @@ type Person struct {
 };
 
 type IPerson interface {
-    fn get_name() -> str,
+    fn get_name() -> str;
     fn get_age() -> i32
 };
 
-let person : Person = Person {
+let person : Person = @Person {
     name: "John",
     age: 25
 };
 
 type PersonType Person;
 
-let person2 := PersonType {
+let person2 := @PersonType {
     name: "Doe",
     age: 30
 };
 
-let userMap : map[str]i32 = map[str]i32 {
+let userMap : map[str]i32 = $map[str]i32 {
     "John" => 25,
     "Doe" => 30
 };
@@ -32,7 +32,7 @@ fn getAdmin() -> str {
     ret "Admin";
 }
 
-let userMap2 := UserSalary {
+let userMap2 := $UserSalary {
     "John" => 25,
     "Doe" => 30,
     getAdmin() => 40,

@@ -14,17 +14,8 @@ fn add(a: i32, b: i32) -> i32 {
     ret a + b;
 }
 
-//Functions parameters can have optional parameters. Optional parameters are defined by adding a ? after the parameter name. Optional parameters must have a default value.
-fn addOptional(a: i32, b: i32, c?: i32 = 0, d?: bool = false) -> i32 {
-    ret a + b + c;
-}
-
 //calling functions
-let a := doSomething();
-let b := print("Hello, World!");
 let c := add(1, 2);
-let d := addOptional(1, 2, 3);
-let e := addOptional(1, 2);
 
 //Closure
 fn parent() -> fn() -> i32 {

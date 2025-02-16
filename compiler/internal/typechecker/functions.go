@@ -34,6 +34,12 @@ func CheckAndDeclareFunction(funcNode ast.FunctionLiteral, name string, env *Typ
 		report.Add(env.filePath, funcNode.Start.Line, funcNode.End.Line, funcNode.Start.Column, funcNode.End.Column, "error declaring function. "+err.Error()).SetLevel(report.CRITICAL_ERROR)
 	}
 
+	checkSatisfaction(funcNode, returnType, fnEnv)
+
+	return fn
+}
+
+func checkSatisfaction(funcNode ast.FunctionLiteral, returnType Tc, fnEnv *TypeEnvironment) {
 	//check the function body
 
 	var fnSatisfied bool
@@ -60,9 +66,8 @@ func CheckAndDeclareFunction(funcNode ast.FunctionLiteral, name string, env *Typ
 	}
 
 	checkSafeReturns(funcNode, unsatisfiedBlocks, fnSatisfied, totalBlocks, fnEnv)
-
-	return fn
 }
+
 
 func checkSafeReturns(funcNode ast.FunctionLiteral, unsatisfiedBlocks []Block, fnSatisfied bool, totalBlocks int, env *TypeEnvironment) {
 

@@ -1,15 +1,15 @@
 //Maps are builtin types in Walrus. They are used to store key-value pairs. Maps are created using map[KeyType]ValueType.
-let myMap : map[str]i32 = map[str]i32{
-    "one": 1,
-    "two": 2,
-    "three": 3
+let myMap : map[str]i32 = $map[str]i32{
+    "one" => 1,
+    "two" => 2,
+    "three" => 3
 };
 
 //you can skip the type of the map if you are initializing it with values
-let myMap2 := map[str]i32{
-    "one": 1,
-    "two": 2,
-    "three": 3
+let myMap2 := $map[str]i32{
+    "one" => 1,
+    "two" => 2,
+    "three" => 3
 };
 
 //Indexing a map
