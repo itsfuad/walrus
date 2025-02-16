@@ -6,23 +6,14 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"net"
 	"os"
+	"strconv"
 	"strings"
-
-	//"walrus/compiler/analyzer"
 	"walrus/compiler/wio"
 )
 
-//log to file
-func init() {
-	f, err := os.OpenFile("lsp.log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
-	if err != nil {
-		log.Fatalf("error opening file: %v", err)
-	}
-	log.SetOutput(f)
-}
-
-// LSP Request and Response structures
+// LSP structures remain the same
 type Request struct {
 	Jsonrpc string          `json:"jsonrpc"`
 	Id      int             `json:"id"`
@@ -42,14 +33,40 @@ type LspError struct {
 	Message string `json:"message"`
 }
 
-var stdout = bufio.NewWriter(os.Stdout)
-
 func main() {
-	log.Println("Starting Walrus LSP...")
+	log.SetOutput(os.Stderr)
+	log.SetFlags(log.Ldate | log.Ltime | log.Lmicroseconds) // Add microseconds to log timestamps
+
+	listener, err := net.Listen("tcp", "127.0.0.1:0")
+	if err != nil {
+		log.Fatalf("Failed to start server: %v", err)
+	}
+	defer listener.Close()
+
+	port := listener.Addr().(*net.TCPAddr).Port
+	fmt.Printf("PORT:%d\n", port)
+	os.Stdout.Sync() // Force flush the port number
+
+	log.Printf("LSP Server listening on port %d", port)
+
+	conn, err := listener.Accept()
+	if err != nil {
+		log.Fatalf("Failed to accept connection: %v", err)
+	}
+	defer conn.Close()
+
+	log.Printf("Client connected from: %s", conn.RemoteAddr())
+	handleConnection(conn)
+}
+
+func handleConnection(conn net.Conn) {
+	reader := bufio.NewReader(conn)
+	writer := bufio.NewWriter(conn)
 
 	for {
-		msg, err := readMessage()
+		msg, err := readMessage(reader)
 		if err == io.EOF {
+			log.Printf("Client disconnected")
 			break
 		}
 		if err != nil {
@@ -57,93 +74,117 @@ func main() {
 			continue
 		}
 
-		var req Request
-		if err := json.Unmarshal([]byte(msg), &req); err != nil {
-			log.Printf("Invalid JSON message: %v", err)
+		log.Printf("Raw message received: %q", msg)
+
+		if msg == "" {
+			log.Printf("Empty message received, skipping")
 			continue
 		}
 
-		log.Printf("Received request: %+v", req)
+		var req Request
+		if err := json.Unmarshal([]byte(msg), &req); err != nil {
+			log.Printf("Invalid JSON message %q: %v", msg, err)
+			continue
+		}
+
+		log.Printf("Parsed request: %+v", req)
 
 		switch req.Method {
 		case "initialize":
+			log.Printf("Handling initialize request")
 			response := Response{
 				Jsonrpc: "2.0",
 				Id:      req.Id,
 				Result: map[string]interface{}{
 					"capabilities": map[string]interface{}{
-						"textDocumentSync": 1, // Full text sync
+						"textDocumentSync": 1,
 					},
 				},
 			}
-			writeMessage(response)
-		
-			// Send initialized notification
+			writeMessage(writer, response)
+
 			notification := map[string]interface{}{
 				"jsonrpc": "2.0",
 				"method":  "initialized",
 				"params":  map[string]interface{}{},
 			}
-
-			writeRawMessage(notification)
+			writeRawMessage(writer, notification)
 
 		case "textDocument/didOpen", "textDocument/didChange":
+			log.Printf("Handling document change")
 			var params struct {
 				TextDocument struct {
 					URI string `json:"uri"`
 				} `json:"textDocument"`
 			}
 			if err := json.Unmarshal(req.Params, &params); err != nil {
-				log.Println("Error parsing textDocument params:", err)
+				log.Printf("Error parsing textDocument params: %v", err)
 				continue
 			}
-			processDiagnostics(params.TextDocument.URI)
+			processDiagnostics(writer, params.TextDocument.URI)
 
 		case "shutdown":
-			writeMessage(Response{Jsonrpc: "2.0", Id: req.Id, Result: nil})
+			log.Printf("Handling shutdown request")
+			writeMessage(writer, Response{Jsonrpc: "2.0", Id: req.Id, Result: nil})
 
 		case "exit":
+			log.Printf("Handling exit request")
+			conn.Close()
 			os.Exit(0)
+
+		default:
+			log.Printf("Unknown method: %s", req.Method)
 		}
 	}
 }
 
+func readMessage(reader *bufio.Reader) (string, error) {
+	contentLength := 0
+	
+	// Read headers
+	for {
+		line, err := reader.ReadString('\n')
+		if err != nil {
+			return "", err
+		}
+		
+		// Trim both \r and \n
+		line = strings.TrimRight(line, "\r\n")
+		
+		log.Printf("Header line: %q", line)
+		
+		if line == "" { // End of headers
+			break
+		}
 
-func readMessage() (string, error) {
+		if strings.HasPrefix(line, "Content-Length: ") {
+			lengthStr := strings.TrimPrefix(line, "Content-Length: ")
+			contentLength, err = strconv.Atoi(lengthStr)
+			if err != nil {
+				return "", fmt.Errorf("invalid Content-Length: %v", err)
+			}
+			log.Printf("Content length: %d", contentLength)
+		}
+	}
 
-    reader := bufio.NewReader(os.Stdin)
-    
-    // Read headers
-    contentLength := 0
-    for {
-        line, err := reader.ReadString('\n')
-        if err != nil {
-            return "", err
-        }
-        line = strings.TrimSpace(line)
-        
-        if line == "" { // End of headers
-            break
-        }
+	if contentLength == 0 {
+		return "", fmt.Errorf("no content length header found")
+	}
 
-        if strings.HasPrefix(line, "Content-Length: ") {
-            fmt.Sscanf(line, "Content-Length: %d", &contentLength)
-        }
-    }
+	// Read body
+	body := make([]byte, contentLength)
+	n, err := io.ReadFull(reader, body)
+	if err != nil {
+		return "", fmt.Errorf("failed to read message body (read %d of %d bytes): %v", n, contentLength, err)
+	}
 
-    // Read body
-    body := make([]byte, contentLength)
-    _, err := io.ReadFull(reader, body)
-    if err != nil {
-        return "", fmt.Errorf("failed to read message body: %v", err)
-    }
-
-    return string(body), nil
+	bodyStr := string(body)
+	log.Printf("Received message body: %q", bodyStr)
+	return bodyStr, nil
 }
 
 
-// Write an LSP message
-func writeMessage(resp Response) {
+func writeMessage(writer *bufio.Writer, resp Response) {
 	data, err := json.Marshal(resp)
 	if err != nil {
 		log.Printf("Failed to marshal response: %v", err)
@@ -151,14 +192,27 @@ func writeMessage(resp Response) {
 	}
 
 	msg := fmt.Sprintf("Content-Length: %d\r\n\r\n%s", len(data), data)
-	if _, err := stdout.WriteString(msg); err != nil {
+	if _, err := writer.WriteString(msg); err != nil {
 		log.Printf("Failed to write response: %v", err)
 	}
-	stdout.Flush()
+	writer.Flush()
 }
 
-// Process and send diagnostics (error underlines)
-func processDiagnostics(uri string) {
+func writeRawMessage(writer *bufio.Writer, msg interface{}) {
+	data, err := json.Marshal(msg)
+	if err != nil {
+		log.Printf("Failed to marshal message: %v", err)
+		return
+	}
+	
+	fullMsg := fmt.Sprintf("Content-Length: %d\r\n\r\n%s", len(data), data)
+	if _, err := writer.WriteString(fullMsg); err != nil {
+		log.Printf("Failed to write message: %v", err)
+	}
+	writer.Flush()
+}
+
+func processDiagnostics(writer *bufio.Writer, uri string) {
 	log.Println("Processing diagnostics for:", uri)
 
 	_, err := wio.UriToFilePath(uri)
@@ -167,9 +221,6 @@ func processDiagnostics(uri string) {
 		return
 	}
 
-	//analyzer.Analyze(filePath, false, false, false)
-
-	//todo: remove this dummy diagnostics
 	diagnostics := []map[string]interface{}{
 		{
 			"range": map[string]interface{}{
@@ -177,28 +228,21 @@ func processDiagnostics(uri string) {
 				"end":   map[string]int{"line": 0, "character": 17},
 			},
 			"message":  "Syntax error detected",
-			"severity": 1, // 1 = Error, 2 = Warning, 3 = Info
+			"severity": 1,
 		},
 	}
 
-	publishDiagnostics(uri, diagnostics)
+	publishDiagnostics(writer, uri, diagnostics)
 }
 
-func publishDiagnostics(uri string, diagnostics []map[string]interface{}) {
-    notification := map[string]interface{}{
-        "jsonrpc": "2.0",
-        "method":  "textDocument/publishDiagnostics",
-        "params": map[string]interface{}{
-            "uri":         uri,
-            "diagnostics": diagnostics,
-        },
-    }
-    writeRawMessage(notification)
-}
-
-func writeRawMessage(msg interface{}) {
-    data, _ := json.Marshal(msg)
-    fullMsg := fmt.Sprintf("Content-Length: %d\r\n\r\n%s", len(data), data)
-    stdout.WriteString(fullMsg)
-    stdout.Flush()
+func publishDiagnostics(writer *bufio.Writer, uri string, diagnostics []map[string]interface{}) {
+	notification := map[string]interface{}{
+		"jsonrpc": "2.0",
+		"method":  "textDocument/publishDiagnostics",
+		"params": map[string]interface{}{
+			"uri":         uri,
+			"diagnostics": diagnostics,
+		},
+	}
+	writeRawMessage(writer, notification)
 }

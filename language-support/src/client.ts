@@ -1,39 +1,67 @@
 import * as path from "path";
 import { workspace, ExtensionContext } from "vscode";
+import * as net from "net";
+import * as cp from "child_process";
 
 import {
   LanguageClient,
   LanguageClientOptions,
   ServerOptions,
-  TransportKind,
+  StreamInfo,
 } from "vscode-languageclient/node";
 
 let client: LanguageClient;
 
 export function activate(context: ExtensionContext) {
-  const serverExec = context.asAbsolutePath(
+  const serverModule = context.asAbsolutePath(
     path.join("bin", "walrus-lsp.exe")
   );
-  // If the extension is launched in debug mode then the debug server options are used
-  // Otherwise the run options are used
-  const serverOptions: ServerOptions = {
-    run: { command: serverExec, transport: TransportKind.stdio },
-    debug: {
-      command: serverExec,
-      transport: TransportKind.stdio,
-    },
+
+  const serverOptions: ServerOptions = async () => {
+    const childProcess = cp.spawn(serverModule);
+    
+    return new Promise<StreamInfo>((resolve, reject) => {
+      let portData: string = '';
+      
+      // Read the port number from stdout
+      childProcess.stdout.on('data', (data: Buffer) => {
+        portData += data.toString();
+        const match = portData.match(/PORT:(\d+)/);
+        if (match) {
+          const portNumber = parseInt(match[1]);
+          
+          // Create TCP connection
+          const socket = new net.Socket();
+          socket.connect(portNumber, "127.0.0.1", () => {
+            resolve({
+              reader: socket,
+              writer: socket
+            });
+          });
+          
+          socket.on('error', (err) => {
+            reject(err);
+          });
+        }
+      });
+      
+      childProcess.stderr.on('data', (data: Buffer) => {
+        console.error(`LSP Server Error: ${data.toString()}`);
+      });
+      
+      childProcess.on('error', (err) => {
+        reject(err);
+      });
+    });
   };
 
-  // Options to control the language client
   const clientOptions: LanguageClientOptions = {
     documentSelector: [{ scheme: "file", language: 'walrus' }],
     synchronize: {
-      // Notify the server about file changes to .wal files contained in the workspace
       fileEvents: workspace.createFileSystemWatcher('**/*.{wal,walrus}'),
     },
   };
 
-  // Create the language client and start the client.
   client = new LanguageClient(
     "walrusLanguageServer",
     "Walrus Language Server",
@@ -41,7 +69,6 @@ export function activate(context: ExtensionContext) {
     clientOptions
   );
 
-  // Start the client. This will also launch the server
   client.start();
 }
 
