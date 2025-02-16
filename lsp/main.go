@@ -114,7 +114,7 @@ func handleInitialize(writer *bufio.Writer, req Request) {
 		},
 	}
 	writeMessage(writer, resp)
-	
+
 	notification := map[string]interface{}{
 		"jsonrpc": "2.0",
 		"method":  "initialized",
@@ -159,17 +159,17 @@ func handleUnknownMethod(req Request) {
 
 func readMessage(reader *bufio.Reader) (string, error) {
 	contentLength := 0
-	
+
 	// Read headers
 	for {
 		line, err := reader.ReadString('\n')
 		if err != nil {
 			return "", err
 		}
-		
+
 		// Trim both \r and \n
 		line = strings.TrimRight(line, "\r\n")
-		
+
 		if line == "" { // End of headers
 			break
 		}
@@ -200,7 +200,6 @@ func readMessage(reader *bufio.Reader) (string, error) {
 	return bodyStr, nil
 }
 
-
 func writeMessage(writer *bufio.Writer, resp Response) {
 	data, err := json.Marshal(resp)
 	if err != nil {
@@ -221,7 +220,7 @@ func writeRawMessage(writer *bufio.Writer, msg interface{}) {
 		log.Printf("Failed to marshal message: %v", err)
 		return
 	}
-	
+
 	fullMsg := fmt.Sprintf("Content-Length: %d\r\n\r\n%s", len(data), data)
 	if _, err := writer.WriteString(fullMsg); err != nil {
 		log.Printf("Failed to write message: %v", err)
@@ -248,7 +247,7 @@ func processDiagnostics(writer *bufio.Writer, uri string) {
 	diagnostics := make([]map[string]interface{}, 0)
 
 	log.Printf("Found %d problems\n", len(report))
-	
+
 	for _, r := range report {
 		diagnostics = append(diagnostics, map[string]interface{}{
 			"range": map[string]interface{}{

@@ -64,7 +64,7 @@ func CheckAndDeclareFunction(funcNode ast.FunctionLiteral, name string, env *Typ
 	return fn
 }
 
-func checkSafeReturns(funcNode ast.FunctionLiteral, unsatisfiedBlocks []Block, fnSatisfied bool, totalBlocks int, env *TypeEnvironment){
+func checkSafeReturns(funcNode ast.FunctionLiteral, unsatisfiedBlocks []Block, fnSatisfied bool, totalBlocks int, env *TypeEnvironment) {
 
 	if len(unsatisfiedBlocks) > 0 {
 		for _, block := range unsatisfiedBlocks {

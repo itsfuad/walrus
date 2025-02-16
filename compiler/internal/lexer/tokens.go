@@ -21,8 +21,8 @@ const (
 	IMPL_TOKEN       builtins.TOKEN_KIND = "impl"
 	RETURN_TOKEN     builtins.TOKEN_KIND = "ret"
 	IN_TOKEN         builtins.TOKEN_KIND = "in"
-	AT_TOKEN		 builtins.TOKEN_KIND = "@"
-	DOLLAR_TOKEN	 builtins.TOKEN_KIND = "$"
+	AT_TOKEN         builtins.TOKEN_KIND = "@"
+	DOLLAR_TOKEN     builtins.TOKEN_KIND = "$"
 	AS_TOKEN         builtins.TOKEN_KIND = "as"
 	TYPEOF_TOKEN     builtins.TOKEN_KIND = "typeof"
 	//data types
