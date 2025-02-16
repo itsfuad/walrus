@@ -1,36 +1,60 @@
 // Welcome
 
-let a : i32 = 89;
+//Variable declarations
 
-let b : i32 = 45.2 as i32;
+let a := 89;
 
-let c : i32 = 45.4 as i32;
+//we can also provide the type of the variable
+let b : f32 = 3.5; //if i provide integer value here, it will give error
 
-let sum := a + b + c;
+//Variable assignment
+a = 90; //works
+
+//structs
 
 type Point struct {
     x : i32,
-    y : i32,
+    y : i32
 };
 
-type Point2 Point;
+let p := @Point{x: 3, y: 4}; // Here @ symbol is used to create an instance of struct Point
 
-let p : Point = @Point{ x: 10, y: 20 };
+//we can also provide the type
 
-let p2 := @Point2{ x: 10, y: 20 };
+let p2 : Point = @Point{x: 3, y: 4};
 
-fn add(a : i32, b : i32) -> i32 {
+//function declarations
+fn add(a: i32, b: i32) -> i32 {
     ret a + b;
 }
 
-let result := add(10, 20);
 
-fn largest(a : i32, b : i32) -> i32 {
+fn largest(a: i32, b: i32) -> i32 {
     if a > b {
-        ret a;
+        ret a; // satisfies
     } else {
-        //ret b;
+        //ret b; // satisfies
     }
 
-    ret 0;
+    ret b; //now we must have a fallback return statement :)
 }
+
+//function calls
+let c := add(3, 7.7 as i32); //let's type cast :D
+
+//interface
+
+type IShape interface {
+    fn area() -> f32
+};
+
+impl Point {
+    fn area() -> f32 {
+        ret (this.x + this.y) as f32;
+    }
+}
+
+//implementing interface
+let iShape : IShape = @Point{x: 3, y: 4}; // Point must have area function to implement IShape
+
+//Thanks for reading! :)
