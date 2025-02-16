@@ -110,7 +110,7 @@ func getFunctionTypeSignature(p *Parser) (builtins.PARSER_TYPE, []ast.FunctionTy
 		iden := p.expect(lexer.IDENTIFIER_TOKEN)
 
 		// now we expect a colon
-		p.expect(lexer.COLON_TOKEN)		
+		p.expect(lexer.COLON_TOKEN)
 
 		typeName := parseType(p, DEFAULT_BP)
 

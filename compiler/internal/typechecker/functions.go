@@ -68,7 +68,6 @@ func checkSatisfaction(funcNode ast.FunctionLiteral, returnType Tc, fnEnv *TypeE
 	checkSafeReturns(funcNode, unsatisfiedBlocks, fnSatisfied, totalBlocks, fnEnv)
 }
 
-
 func checkSafeReturns(funcNode ast.FunctionLiteral, unsatisfiedBlocks []Block, fnSatisfied bool, totalBlocks int, env *TypeEnvironment) {
 
 	if len(unsatisfiedBlocks) > 0 {
