@@ -46,6 +46,33 @@ type TypeEnvironment struct {
 	filePath   string
 }
 
+func ClearTypes() {
+	typeDefinitions = map[string]Tc{
+		string(INT8_TYPE):    NewInt(8, true),
+		string(INT16_TYPE):   NewInt(16, true),
+		string(INT32_TYPE):   NewInt(32, true),
+		string(INT64_TYPE):   NewInt(64, true),
+		string(UINT8_TYPE):   NewInt(8, false),
+		string(UINT16_TYPE):  NewInt(16, false),
+		string(UINT32_TYPE):  NewInt(32, false),
+		string(UINT64_TYPE):  NewInt(64, false),
+		string(BYTE_TYPE):    NewInt(8, false),
+		string(STRING_TYPE):  NewStr(),
+		string(FLOAT32_TYPE): NewFloat(32),
+		string(FLOAT64_TYPE): NewFloat(64),
+		string(BOOLEAN_TYPE): NewBool(),
+		string(VOID_TYPE):    NewVoid(),
+	}
+
+	builtinValues = make(map[string]bool)
+}
+
+func (t *TypeEnvironment) ClearEnv() {
+	t.variables = make(map[string]Tc)
+	t.constants = make(map[string]bool)
+	t.isOptional = make(map[string]bool)
+}
+
 func ProgramEnv(filepath string) *TypeEnvironment {
 	env := NewTypeENV(nil, GLOBAL_SCOPE, "global", filepath)
 	initVar(env, "true", NewBool(), true, false)

@@ -74,6 +74,8 @@ func createLexer(filePath *string) *Lexer {
 			{regexp.MustCompile(`'[^']'`), byteHandler},                       // byte literals
 			{regexp.MustCompile(`[0-9]+(?:\.[0-9]+)?`), numberHandler},        // decimal numbers
 			{regexp.MustCompile(`[a-zA-Z_][a-zA-Z0-9_]*`), identifierHandler}, // identifiers
+			{regexp.MustCompile(`@`), defaultHandler(AT_TOKEN, "@")},
+			{regexp.MustCompile(`\$`), defaultHandler(DOLLAR_TOKEN, "$")},
 			{regexp.MustCompile(`\+\+`), defaultHandler(PLUS_PLUS_TOKEN, "++")},
 			{regexp.MustCompile(`\-\-`), defaultHandler(MINUS_MINUS_TOKEN, "--")},
 			{regexp.MustCompile(`\->`), defaultHandler(ARROW_TOKEN, "->")},

@@ -40,11 +40,6 @@ func (p *Parser) eat() lexer.Token {
 	return token
 }
 
-// rollback by N tokens
-func (p *Parser) rollback(n int) {
-	p.index -= n
-}
-
 func (p *Parser) expectError(expectedKind builtins.TOKEN_KIND, err error) lexer.Token {
 	token := p.currentToken()
 	kind := token.Kind

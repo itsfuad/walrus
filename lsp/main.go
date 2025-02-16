@@ -10,7 +10,10 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"walrus/compiler/report"
 	"walrus/compiler/wio"
+
+	"walrus/compiler/analyzer"
 )
 
 // LSP structures remain the same
@@ -74,8 +77,6 @@ func handleConnection(conn net.Conn) {
 			continue
 		}
 
-		log.Printf("Raw message received: %q", msg)
-
 		if msg == "" {
 			log.Printf("Empty message received, skipping")
 			continue
@@ -87,55 +88,73 @@ func handleConnection(conn net.Conn) {
 			continue
 		}
 
-		log.Printf("Parsed request: %+v", req)
-
 		switch req.Method {
 		case "initialize":
-			log.Printf("Handling initialize request")
-			response := Response{
-				Jsonrpc: "2.0",
-				Id:      req.Id,
-				Result: map[string]interface{}{
-					"capabilities": map[string]interface{}{
-						"textDocumentSync": 1,
-					},
-				},
-			}
-			writeMessage(writer, response)
-
-			notification := map[string]interface{}{
-				"jsonrpc": "2.0",
-				"method":  "initialized",
-				"params":  map[string]interface{}{},
-			}
-			writeRawMessage(writer, notification)
-
-		case "textDocument/didOpen", "textDocument/didChange":
-			log.Printf("Handling document change")
-			var params struct {
-				TextDocument struct {
-					URI string `json:"uri"`
-				} `json:"textDocument"`
-			}
-			if err := json.Unmarshal(req.Params, &params); err != nil {
-				log.Printf("Error parsing textDocument params: %v", err)
-				continue
-			}
-			processDiagnostics(writer, params.TextDocument.URI)
-
+			handleInitialize(writer, req)
+		case "textDocument/didOpen", "textDocument/didChange", "textDocument/didSave":
+			handleTextDocumentChange(writer, req)
 		case "shutdown":
-			log.Printf("Handling shutdown request")
-			writeMessage(writer, Response{Jsonrpc: "2.0", Id: req.Id, Result: nil})
-
+			handleShutdown(writer, req)
 		case "exit":
-			log.Printf("Handling exit request")
-			conn.Close()
-			os.Exit(0)
-
+			handleExit(conn)
 		default:
-			log.Printf("Unknown method: %s", req.Method)
+			handleUnknownMethod(req)
 		}
 	}
+}
+
+func handleInitialize(writer *bufio.Writer, req Request) {
+	resp := Response{
+		Jsonrpc: "2.0",
+		Id:      req.Id,
+		Result: map[string]interface{}{
+			"capabilities": map[string]interface{}{
+				"textDocumentSync": 1,
+			},
+		},
+	}
+	writeMessage(writer, resp)
+	
+	notification := map[string]interface{}{
+		"jsonrpc": "2.0",
+		"method":  "initialized",
+		"params":  map[string]interface{}{},
+	}
+	writeRawMessage(writer, notification)
+}
+
+func handleTextDocumentChange(writer *bufio.Writer, req Request) {
+	var params map[string]interface{}
+	if err := json.Unmarshal(req.Params, &params); err != nil {
+		log.Printf("Invalid params: %v", err)
+		return
+	}
+
+	uri, ok := params["textDocument"].(map[string]interface{})["uri"].(string)
+	if !ok {
+		log.Printf("Invalid uri: %v", params)
+		return
+	}
+
+	processDiagnostics(writer, uri)
+}
+
+func handleShutdown(writer *bufio.Writer, req Request) {
+	resp := Response{
+		Jsonrpc: "2.0",
+		Id:      req.Id,
+		Result:  nil,
+	}
+	writeMessage(writer, resp)
+}
+
+func handleExit(conn net.Conn) {
+	log.Printf("Client requested exit")
+	conn.Close()
+}
+
+func handleUnknownMethod(req Request) {
+	log.Printf("Unknown method: %v", req.Method)
 }
 
 func readMessage(reader *bufio.Reader) (string, error) {
@@ -150,8 +169,6 @@ func readMessage(reader *bufio.Reader) (string, error) {
 		
 		// Trim both \r and \n
 		line = strings.TrimRight(line, "\r\n")
-		
-		log.Printf("Header line: %q", line)
 		
 		if line == "" { // End of headers
 			break
@@ -215,24 +232,48 @@ func writeRawMessage(writer *bufio.Writer, msg interface{}) {
 func processDiagnostics(writer *bufio.Writer, uri string) {
 	log.Println("Processing diagnostics for:", uri)
 
-	_, err := wio.UriToFilePath(uri)
+	filePath, err := wio.UriToFilePath(uri)
 	if err != nil {
 		log.Println("Error converting URI to file path:", err)
 		return
 	}
 
-	diagnostics := []map[string]interface{}{
-		{
+	log.Println("File path:", filePath)
+
+	report, err := analyzer.Analyze(filePath, false, false, false)
+	if err != nil {
+		log.Println("Error analyzing file:", err)
+	}
+
+	diagnostics := make([]map[string]interface{}, 0)
+
+	log.Printf("Found %d problems\n", len(report))
+	
+	for _, r := range report {
+		diagnostics = append(diagnostics, map[string]interface{}{
 			"range": map[string]interface{}{
-				"start": map[string]int{"line": 0, "character": 14},
-				"end":   map[string]int{"line": 0, "character": 17},
+				"start": map[string]int{"line": r.LineStart - 1, "character": r.ColStart - 1},
+				"end":   map[string]int{"line": r.LineEnd - 1, "character": r.ColEnd - 1},
 			},
-			"message":  "Syntax error detected",
-			"severity": 1,
-		},
+			"message":  r.Message,
+			"severity": getSeverity(r.Level),
+		})
 	}
 
 	publishDiagnostics(writer, uri, diagnostics)
+}
+
+func getSeverity(level report.REPORT_TYPE) int {
+	switch level {
+	case report.CRITICAL_ERROR, report.SYNTAX_ERROR, report.NORMAL_ERROR:
+		return 1
+	case report.WARNING:
+		return 2
+	case report.INFO:
+		return 3
+	default:
+		return 4
+	}
 }
 
 func publishDiagnostics(writer *bufio.Writer, uri string, diagnostics []map[string]interface{}) {

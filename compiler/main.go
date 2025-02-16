@@ -19,11 +19,11 @@ func main() {
 	filePath := os.Args[1]
 
 	r, err := analyzer.Analyze(filePath, true, false, false)
-	if err != nil {
-		colors.RED.Println(err)
-	}
-
 	if r != nil {
 		r.DisplayAll()
+	}
+
+	if err != nil {
+		colors.RED.Println(err)
 	}
 }

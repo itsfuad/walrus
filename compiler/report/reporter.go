@@ -34,7 +34,6 @@ type Reports []*Report
 
 // global errors are arrays of error pointers
 var globalReports Reports
-var reports = make(map[REPORT_TYPE]int)
 
 // Report represents a diagnostic report used both internally and by LSP.
 type Report struct {
@@ -48,9 +47,9 @@ type Report struct {
 	Level     REPORT_TYPE
 }
 
-// GetDiagnostics returns a slice of diagnostics converted from internal reports.
+// GetReports returns a slice of diagnostics converted from internal reports.
 // It skips any reports that do not have a valid level.
-func GetDiagnostics() Reports {
+func GetReports() Reports {
 	var diags Reports
 	for _, r := range globalReports {
 		if r.Level == NULL {
@@ -59,7 +58,13 @@ func GetDiagnostics() Reports {
 		}
 		diags = append(diags, r)
 	}
+
 	return diags
+}
+
+func ClearReports() {
+	globalReports = Reports{}
+	colors.CYAN.Println("Reports cleared")
 }
 
 // printReport prints a formatted diagnostic report to stdout.
@@ -94,10 +99,6 @@ func printReport(r *Report) {
 	reportColor.Print(underline)
 
 	showHints(r, hLen)
-
-	if r.Level == CRITICAL_ERROR || r.Level == SYNTAX_ERROR {
-		//panic(fmt.Sprintf("Compilation halted due to %s\n", r.Level))
-	}
 }
 
 // makeParts reads the source file and generates a code snippet and underline
@@ -194,9 +195,8 @@ func (e *Report) SetLevel(level REPORT_TYPE) {
 		panic("call SetLevel() method with valid Error level")
 	}
 	e.Level = level
-	reports[level]++
 	if level == CRITICAL_ERROR || level == SYNTAX_ERROR {
-		panic(fmt.Sprintf("Compilation halted due to %s\n", level))
+		panic("Critical error or syntax error detected")
 	}
 }
 
@@ -214,10 +214,16 @@ func (r Reports) DisplayAll() {
 
 // ShowStatus displays a summary of compilation status along with counts of warnings and errors.
 func (r Reports) ShowStatus() {
+	warningCount := 0
+	probCount := 0
 
-	//show errors and warnings separately
-	warningCount := reports[WARNING]
-	probCount := reports[NORMAL_ERROR] + reports[CRITICAL_ERROR] + reports[SYNTAX_ERROR]
+	for _, report := range r {
+		if report.Level == WARNING {
+			warningCount++
+		} else if report.Level == NORMAL_ERROR || report.Level == CRITICAL_ERROR || report.Level == SYNTAX_ERROR {
+			probCount++
+		}
+	}
 
 	var messageColor colors.COLOR
 

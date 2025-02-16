@@ -33,12 +33,58 @@ func CheckAndDeclareFunction(funcNode ast.FunctionLiteral, name string, env *Typ
 	if err != nil {
 		report.Add(env.filePath, funcNode.Start.Line, funcNode.End.Line, funcNode.Start.Column, funcNode.End.Column, "error declaring function. "+err.Error()).SetLevel(report.CRITICAL_ERROR)
 	}
+
 	//check the function body
-	for _, stmt := range funcNode.Body.Contents {
-		checkAST(stmt, fnEnv)
+
+	var fnSatisfied bool
+
+	//return type is void, fnSatisfied is true by default
+	if _, ok := returnType.(Void); ok {
+		fnSatisfied = true
 	}
 
+	totalBlocks := 0
+	unsatisfiedBlocks := make([]Block, 0)
+
+	for _, stmt := range funcNode.Body.Contents {
+		val := checkAST(stmt, fnEnv)
+		switch v := val.(type) {
+		case ReturnType:
+			fnSatisfied = true
+		case Block:
+			totalBlocks++
+			if !v.IsSatisfied {
+				unsatisfiedBlocks = append(unsatisfiedBlocks, v)
+			}
+		}
+	}
+
+	checkSafeReturns(funcNode, unsatisfiedBlocks, fnSatisfied, totalBlocks, fnEnv)
+
 	return fn
+}
+
+func checkSafeReturns(funcNode ast.FunctionLiteral, unsatisfiedBlocks []Block, fnSatisfied bool, totalBlocks int, env *TypeEnvironment){
+
+	if len(unsatisfiedBlocks) > 0 {
+		for _, block := range unsatisfiedBlocks {
+			fnSatisfied = fnSatisfied || block.IsSatisfied
+			if !fnSatisfied {
+				report.Add(env.filePath, block.ProblemLocation.Start.Line, block.ProblemLocation.End.Line, block.ProblemLocation.Start.Column, block.ProblemLocation.End.Column, "missing return in this block").SetLevel(report.NORMAL_ERROR)
+			}
+		}
+	} else if len(unsatisfiedBlocks) == 0 && totalBlocks > 0 {
+		fnSatisfied = true
+	}
+
+	//if there is no return statement in the function, and the return type is not void. show an error
+	//if the nested blocks are satisfied, then the function is satisfied. No explicit return is needed
+	//if the nested blocks are not satisfied, then the function must have a return statement
+	if totalBlocks == 0 && !fnSatisfied {
+		report.Add(env.filePath, funcNode.Start.Line, funcNode.End.Line, funcNode.Start.Column, funcNode.End.Column, "missing return statement in function").SetLevel(report.NORMAL_ERROR)
+	} else if !fnSatisfied {
+		report.Add(env.filePath, funcNode.Start.Line, funcNode.End.Line, funcNode.Start.Column, funcNode.End.Column, "missing return statement in function").SetLevel(report.NORMAL_ERROR)
+	}
 }
 
 func checkandDeclareParamaters(params []ast.FunctionParam, fnEnv *TypeEnvironment) []FnParam {

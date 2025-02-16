@@ -28,7 +28,7 @@ import (
 // - An ast.Node representing the parsed struct literal.
 func parseStructLiteral(p *Parser) ast.Node {
 
-	//start := p.expect(lexer.AT_TOKEN).Start
+	start := p.expect(lexer.AT_TOKEN).Start
 
 	//struct will have a name (MyStruct{...}) or it will be annonymous (only struct{...})
 
@@ -36,23 +36,21 @@ func parseStructLiteral(p *Parser) ast.Node {
 
 	structName := ""
 
-	var idenStart, idenEnd lexer.Position
+	var idenEnd lexer.Position
 
 	if p.currentTokenKind() == lexer.STRUCT_TOKEN {
 		token := p.eat()
-		idenStart = token.Start
 		idenEnd = token.End
 	} else {
 		idetifierToken := p.expectError(lexer.IDENTIFIER_TOKEN, fmt.Errorf("expected a struct name"))
 		structName = idetifierToken.Value
-		idenStart = idetifierToken.Start
 		idenEnd = idetifierToken.End
 	}
 
 	identidier := ast.IdentifierExpr{
 		Name: structName,
 		Location: ast.Location{
-			Start: idenStart,
+			Start: start,
 			End:   idenEnd,
 		},
 	}

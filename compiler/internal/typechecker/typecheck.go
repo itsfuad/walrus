@@ -28,6 +28,9 @@ func Analyze(tree ast.Node, filePath string) {
 	env := ProgramEnv(filePath)
 
 	checkAST(tree, env)
+
+	env.ClearEnv()
+	ClearTypes()
 }
 
 func checkAST(node ast.Node, env *TypeEnvironment) Tc {

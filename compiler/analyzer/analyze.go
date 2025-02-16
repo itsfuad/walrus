@@ -17,8 +17,9 @@ func Analyze(filePath string, displayErrors, debug, save2Json bool) (reports rep
 	defer func() {
 		if r := recover(); r != nil {
 			e = fmt.Errorf("%v", r)
-			reports = report.GetDiagnostics()
+			reports = report.GetReports()
 		}
+		report.ClearReports()
 	}()
 
 	//must have .wal file
@@ -32,7 +33,7 @@ func Analyze(filePath string, displayErrors, debug, save2Json bool) (reports rep
 
 	tree, e := parser.NewParser(filePath, debug).Parse()
 	if e != nil {
-		return report.GetDiagnostics(), e
+		return report.GetReports(), e
 	}
 
 	if save2Json {
@@ -40,13 +41,13 @@ func Analyze(filePath string, displayErrors, debug, save2Json bool) (reports rep
 		e = wio.Serialize(&tree, folder, fileName)
 		if reports != nil {
 			err := errors.New(report.TreeFormatString(HALTED, "Error serializing AST", e.Error()))
-			return report.GetDiagnostics(), err
+			return report.GetReports(), err
 		}
 	}
 
 	typechecker.Analyze(tree, filePath)
 
-	reports = report.GetDiagnostics()
+	reports = report.GetReports()
 
 	return reports, nil
 }
