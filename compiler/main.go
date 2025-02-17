@@ -18,7 +18,7 @@ func main() {
 
 	filePath := os.Args[1]
 
-	r, err := analyzer.Analyze(filePath, true, false, false)
+	r, err := analyzer.Analyze(filePath, true, false, true)
 	if len(r) > 0 {
 		r.DisplayAll()
 	}

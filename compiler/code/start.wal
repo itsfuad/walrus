@@ -63,6 +63,6 @@ impl Point {
 }
 
 //implementing interface
-let iShape : IShape = @Point{x: 3, y: 4}; // Point must have area function to implement IShape
+let iShape : IShape = @Point{x: 3, y: 8}; // Point must have area function to implement IShape
 
 let float : f32 = 3 as f32;

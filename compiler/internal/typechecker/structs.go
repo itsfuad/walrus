@@ -135,7 +135,7 @@ func checkPropsType(structType Struct, structLit ast.StructLiteral, env *TypeEnv
 
 		err := validateTypeCompatibility(expectedType, providedType)
 		if err != nil {
-			report.Add(env.filePath, structProp.Prop.StartPos().Column, structProp.Value.EndPos().Line, structProp.Prop.StartPos().Column, structProp.Value.EndPos().Column, err.Error()).SetLevel(report.NORMAL_ERROR)
+			report.Add(env.filePath, structProp.Prop.StartPos().Line, structProp.Value.EndPos().Line, structProp.Prop.StartPos().Column, structProp.Value.EndPos().Column, err.Error()).SetLevel(report.NORMAL_ERROR)
 		}
 	}
 }
