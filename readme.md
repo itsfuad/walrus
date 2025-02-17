@@ -54,6 +54,8 @@ Walrus is a tiny and simple programming language designed for simplicity. Its sy
   - **Rich Error Reporting**
     - Displays multiple errors during parsing and type checking
 
+> **Note**: Currently the parser is based on pratt parsing. Structs{}, maps{}, if expr {}, else {}, have same structure so it's hard to distinguish them. If you have any idea to distinguish them, please let us know.
+
 ### Type Checking
 - Ensures type safety across all constructs.
 - Handles all parser-supported features except for loops and imports (in progress).
