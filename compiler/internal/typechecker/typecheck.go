@@ -50,7 +50,7 @@ func checkAST(node ast.Node, env *TypeEnvironment) Tc {
 	case ast.ForStmt:
 		return checkForStmt(t, env)
 	default:
-		return parseNodeValue(node, env)
+		return parseNodeValue(t, env)
 	}
 }
 

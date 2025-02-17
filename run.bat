@@ -1,3 +1,4 @@
 @echo off
 echo starting compiler
-go run cmd/walrus/main.go code/variables.wal
+cd compiler
+go run main.go code/variables.wal

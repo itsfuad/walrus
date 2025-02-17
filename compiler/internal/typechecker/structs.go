@@ -178,6 +178,7 @@ func checkPropertyAccess(expr ast.StructPropertyAccessExpr, env *TypeEnvironment
 	}
 
 	propType := ""
+	var propValue Tc
 
 	// Check if the property exists on the struct
 	if property, ok := structEnv.variables[prop.Name]; ok {
@@ -186,9 +187,11 @@ func checkPropertyAccess(expr ast.StructPropertyAccessExpr, env *TypeEnvironment
 		case StructMethod:
 			propType = "method"
 			isPrivate = t.IsPrivate
+			propValue = t.Fn
 		case StructProperty:
 			propType = "property"
 			isPrivate = t.IsPrivate
+			propValue = t.Type
 		default:
 			report.Add(env.filePath, prop.Start.Line, prop.End.Line, prop.Start.Column, prop.End.Column, fmt.Sprintf("'%s' is not a %s", prop.Name, propType)).SetLevel(report.CRITICAL_ERROR)
 		}
@@ -199,7 +202,7 @@ func checkPropertyAccess(expr ast.StructPropertyAccessExpr, env *TypeEnvironment
 				report.Add(env.filePath, prop.Start.Line, prop.End.Line, prop.Start.Column, prop.End.Column, fmt.Sprintf("cannot access private property '%s' from outside of the struct's scope", prop.Name)).SetLevel(report.NORMAL_ERROR)
 			}
 		}
-		return property
+		return propValue
 	}
 
 	report.Add(env.filePath, prop.Start.Line, prop.End.Line, prop.Start.Column, prop.End.Column, fmt.Sprintf("'%s' does not exist on type '%s'", prop.Name, objName)).SetLevel(report.CRITICAL_ERROR)

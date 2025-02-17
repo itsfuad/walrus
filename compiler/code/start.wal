@@ -51,13 +51,13 @@ type IShape interface {
 let castedType := c as f32;
 
 fn area() -> f32 {
-    let thisX := c as f32;
+    let outF := c as f32;
     ret c as f32;
 }
 
 impl Point {
     fn area() -> f32 {
-        let thisX := this.x as f32;
+        let inF := this.x as f32;
         ret this.x as f32;
     }
 }

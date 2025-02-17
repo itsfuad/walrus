@@ -67,6 +67,8 @@ func isCastable(src, dest Tc) error {
 		colors.BLUE.Printf("checking cast from %s to %s\n", srcStr, destStr)
 		if isNumberType(dest) {
 			return nil
+		} else {
+			colors.RED.Printf("'%s' is not a number type\n", destStr)
 		}
 	case Struct:
 		err = isCastableStruct(t, dest)
@@ -79,6 +81,7 @@ func isCastable(src, dest Tc) error {
 			return nil
 		}
 	default:
+		fmt.Printf("Came to default case: src '%s' dest '%s'\n", srcStr, destStr)
 		if srcStr == destStr {
 			return nil
 		}
