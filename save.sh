@@ -9,22 +9,12 @@ if [ ! -d .git ]; then
 fi
 
 # Format the codebase
-echo "🛠 Running code formatter..."
-cd compiler
-go fmt ./...
-cd ..
-cd lsp
-go fmt ./...
-cd ..
+./fmt.sh
 
 echo "✅ Code formatted successfully!"
 
 # Run tests
-echo "🧪 Running tests on compiler and LSP modules..."
-(cd compiler && go test ./...)
-(cd lsp && go test ./...)
-
-echo "✅ All tests passed!"
+./test.sh
 
 # Commit changes
 read -p "✏️  Enter commit message: " commit_message
