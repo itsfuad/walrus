@@ -1,7 +1,6 @@
 package report
 
 import (
-	"errors"
 	"fmt"
 	"os"
 	"strings"
@@ -72,29 +71,38 @@ func ClearReports() {
 // and panics if the diagnostic level is critical or indicates a syntax error.
 func printReport(r *Report) {
 
-	colors.GREY.Printf("%s:%d:%d: ", r.FilePath, r.LineStart, r.ColStart)
-
+	// Generate the code snippet and underline.
+	// hLen is the padding length for hint messages.
 	snippet, underline, hLen := makeParts(r)
 
-	var reportMsg string
+	var reportMsgType string
 
 	switch r.Level {
 	case WARNING:
-		reportMsg = "Warning: "
+		reportMsgType = "Warning: "
 	case INFO:
-		reportMsg = "Info: "
+		reportMsgType = "Info: "
 	case CRITICAL_ERROR:
-		reportMsg = "Critical Error: "
+		reportMsgType = "Critical Error: "
 	case SYNTAX_ERROR:
-		reportMsg = "Syntax Error: "
+		reportMsgType = "Syntax Error: "
 	case NORMAL_ERROR:
-		reportMsg = "Error: "
+		reportMsgType = "Error: "
 	}
 
 	reportColor := colorMap[r.Level]
-	reportColor.Print(reportMsg)
+
+	// The error message type and the message itself are printed in the same color.
+	reportColor.Print(reportMsgType)
 	reportColor.Print(r.Message + "\n")
 
+	//numlen is the length of the line number
+	numlen := len(fmt.Sprint(r.LineStart))
+
+	// The file path is printed in grey.
+	colors.GREY.Printf("%s> [%s:%d:%d]\n", strings.Repeat("=", numlen+1), r.FilePath, r.LineStart, r.ColStart)
+
+	// The code snippet and underline are printed in the same color.
 	fmt.Print(snippet)
 	reportColor.Print(underline)
 
@@ -103,7 +111,7 @@ func printReport(r *Report) {
 
 // makeParts reads the source file and generates a code snippet and underline
 // indicating the location of the diagnostic. It returns the snippet, underline,
-// and a hint padding value.
+// and a padding value.
 func makeParts(r *Report) (snippet, underline string, hLen int) {
 	fileData, err := os.ReadFile(r.FilePath)
 	if err != nil {
@@ -250,27 +258,4 @@ func (r Reports) ShowStatus() {
 
 	messageColor.Print(totalProblemsString)
 	messageColor.Println(" -------------")
-}
-
-// TreeFormatString formats one or more strings into a tree-like structure using specific tree characters.
-func TreeFormatString(strings ...string) string {
-	// use └, ├ as tree characters
-	str := ""
-	for i, prop := range strings {
-		if i == len(strings)-1 {
-			str += colors.GREY.Sprint("└── ") + colors.BROWN.Sprint(prop)
-		} else {
-			str += colors.GREY.Sprint("├── ") + colors.BROWN.Sprint(prop+"\n")
-		}
-	}
-	return str
-}
-
-// TreeFormatError creates an error by formatting multiple error messages into a tree-like structure.
-func TreeFormatError(errs ...error) error {
-	strs := []string{}
-	for _, err := range errs {
-		strs = append(strs, err.Error())
-	}
-	return errors.New(TreeFormatString(strs...))
 }

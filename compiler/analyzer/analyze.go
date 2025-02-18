@@ -40,8 +40,7 @@ func Analyze(filePath string, displayErrors, debug, save2Json bool) (reports rep
 		//write the tree to a file named 'expressions.json' in 'code/ast' folder
 		e = wio.Serialize(&tree, folder, fileName)
 		if reports != nil {
-			err := errors.New(report.TreeFormatString(HALTED, "Error serializing AST", e.Error()))
-			return report.GetReports(), err
+			return report.GetReports(), e
 		}
 	}
 

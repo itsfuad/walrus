@@ -189,7 +189,7 @@ func (t *TypeEnvironment) getStructType() (Struct, error) {
 		}, nil
 	}
 	if t.parent == nil {
-		return Struct{}, fmt.Errorf("not in struct scope")
+		return Struct{}, fmt.Errorf("not a struct")
 	}
 	return t.parent.getStructType()
 }

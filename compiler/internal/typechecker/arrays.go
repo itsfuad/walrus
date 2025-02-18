@@ -32,12 +32,12 @@ func evaluateIndexableAccess(indexable ast.Indexable, e *TypeEnvironment) Tc {
 	switch t := container.(type) {
 	case Array:
 		if !isIntType(index) {
-			report.Add(e.filePath, indexable.Start.Line, indexable.End.Line, indexable.Index.StartPos().Column, indexable.Index.EndPos().Column, fmt.Sprintf("cannot use type '%s' to index array\n", tcToString(index))+report.TreeFormatString("type must be a valid signed integer")).SetLevel(report.NORMAL_ERROR)
+			report.Add(e.filePath, indexable.Start.Line, indexable.End.Line, indexable.Index.StartPos().Column, indexable.Index.EndPos().Column, fmt.Sprintf("cannot use type '%s' to index array (type must be a valid signed integer)\n", tcToString(index))).SetLevel(report.NORMAL_ERROR)
 		}
 		indexedValueType = t.ArrayType
 	case Str:
 		if !isIntType(index) {
-			report.Add(e.filePath, indexable.Start.Line, indexable.End.Line, indexable.Index.StartPos().Column, indexable.Index.EndPos().Column, fmt.Sprintf("cannot use type '%s' to index string\n", tcToString(index))+report.TreeFormatString("type must be a valid signed integer")).SetLevel(report.NORMAL_ERROR)
+			report.Add(e.filePath, indexable.Start.Line, indexable.End.Line, indexable.Index.StartPos().Column, indexable.Index.EndPos().Column, fmt.Sprintf("cannot use type '%s' to index string (type must be a valid signed integer)\n", tcToString(index))).SetLevel(report.NORMAL_ERROR)
 		}
 		return NewInt(8, false)
 	case Map:

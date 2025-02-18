@@ -367,13 +367,12 @@ func checkMethodsImplementations(src, dest Tc) error {
 
 	//check if the provided type implements the interface
 	expectedTypeName := tcToString(dest)
-	errMsg := fmt.Sprintf("cannot use type '%s' as interface '%s'\n", tcToString(src), expectedTypeName)
 	errs := make([]error, 0)
 
 	var interfaceType Interface
 	interfaceType, ok := dest.(Interface)
 	if !ok {
-		return errors.New(errMsg + report.TreeFormatString(fmt.Sprintf("type '%s' must be an interface", expectedTypeName)))
+		return fmt.Errorf("type '%s' must be an interface", expectedTypeName)
 	}
 
 	//check if the provided type is a struct or interface
@@ -383,11 +382,15 @@ func checkMethodsImplementations(src, dest Tc) error {
 	case Interface:
 		handleInterfaceDest(t, interfaceType, &errs)
 	default:
-		return errors.New(errMsg + report.TreeFormatString("type must be a struct or interface"))
+		return fmt.Errorf("type '%s' must be a struct or interface", tcToString(src))
 	}
 
 	if len(errs) > 0 {
-		return errors.New(errMsg + report.TreeFormatError(errs...).Error())
+		errMsg := "cannot cast type to interface\nReasons:\n"
+		for _, err := range errs {
+			errMsg += "\n - " + err.Error()
+		}
+		return errors.New(errMsg)
 	}
 
 	return nil

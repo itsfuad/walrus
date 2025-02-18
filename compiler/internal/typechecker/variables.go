@@ -73,7 +73,7 @@ func checkVariableDeclaration(node ast.VarDeclStmt, env *TypeEnvironment) Tc {
 
 		// do not allow void type
 		if _, ok := expectedTypeInterface.(Void); ok {
-			report.Add(env.filePath, varToDecl.Identifier.StartPos().Line, varToDecl.Identifier.EndPos().Line, varToDecl.Identifier.StartPos().Column, varToDecl.Identifier.EndPos().Column, "cannot declare variable of type void\n"+report.TreeFormatString("a variable must have a non void type")).SetLevel(report.CRITICAL_ERROR)
+			report.Add(env.filePath, varToDecl.Identifier.StartPos().Line, varToDecl.Identifier.EndPos().Line, varToDecl.Identifier.StartPos().Column, varToDecl.Identifier.EndPos().Column, "cannot declare variable of type void\n - a variable must be a non void type").SetLevel(report.CRITICAL_ERROR)
 		}
 
 		if varToDecl.Value != nil && varToDecl.ExplicitType != nil {

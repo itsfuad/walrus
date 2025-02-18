@@ -53,7 +53,7 @@ func createLexer(filePath *string) *Lexer {
 
 	fileText, err := os.ReadFile(*filePath)
 	if err != nil {
-		panic(colors.RED.Sprint("error reading file\n") + report.TreeFormatString(colors.BROWN.Sprint(err.Error())))
+		panic(err)
 	}
 
 	lex := &Lexer{

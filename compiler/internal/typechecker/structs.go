@@ -94,8 +94,14 @@ func composeErrors(structLit ast.StructLiteral, missingProps []string, env *Type
 	if len(missingProps) == 0 {
 		return
 	}
-	errMsg := fmt.Sprintf("incomplete struct literal for struct '%s'\n", structLit.Identifier.Name)
-	errMsg += report.TreeFormatString(missingProps...)
+	errMsg := fmt.Sprintf("incomplete struct literal for struct '%s' - missing: (", structLit.Identifier.Name)
+	for i, prop := range missingProps {
+		errMsg += prop
+		if i < len(missingProps)-1 {
+			errMsg += ", "
+		}
+	}
+	errMsg += ")"
 	report.Add(env.filePath, structLit.StartPos().Line, structLit.EndPos().Line, structLit.StartPos().Column, structLit.EndPos().Column, errMsg).SetLevel(report.NORMAL_ERROR)
 }
 
@@ -114,7 +120,7 @@ func checkMissingProps(structType Struct, structLit ast.StructLiteral) []string 
 		if utils.None(toHaveProps, func(p ast.StructProp) bool {
 			return p.Prop.Name == propname
 		}) {
-			missingProps = append(missingProps, fmt.Sprintf("missing property '%s'", propname))
+			missingProps = append(missingProps, propname)
 		}
 	}
 
@@ -135,7 +141,10 @@ func checkPropsType(structType Struct, structLit ast.StructLiteral, env *TypeEnv
 
 		err := validateTypeCompatibility(expectedType, providedType)
 		if err != nil {
-			report.Add(env.filePath, structProp.Prop.StartPos().Line, structProp.Value.EndPos().Line, structProp.Prop.StartPos().Column, structProp.Value.EndPos().Column, err.Error()).SetLevel(report.NORMAL_ERROR)
+			exptypeStr := tcToString(expectedType)
+			provtypeStr := tcToString(providedType)
+			report.Add(env.filePath, structProp.Prop.StartPos().Line, structProp.Value.EndPos().Line, structProp.Prop.StartPos().Column, structProp.Value.EndPos().Column, fmt.Sprintf("property '%s' should be '%s' but found '%s'", structProp.Prop.Name, exptypeStr, provtypeStr)).SetLevel(report.NORMAL_ERROR)
+			//report.Add(env.filePath, structProp.Prop.StartPos().Line, structProp.Value.EndPos().Line, structProp.Prop.StartPos().Column, structProp.Value.EndPos().Column, err.Error()).SetLevel(report.NORMAL_ERROR)
 		}
 	}
 }
@@ -145,7 +154,7 @@ func getObject(expr ast.StructPropertyAccessExpr, env *TypeEnvironment) Tc {
 	if ok := expr.Object.(ast.IdentifierExpr); ok.Name == "this" {
 		obj, err := env.getStructType()
 		if err != nil {
-			report.Add(env.filePath, expr.Object.StartPos().Line, expr.Object.EndPos().Line, expr.Object.StartPos().Column, expr.Object.EndPos().Column, err.Error()).SetLevel(report.CRITICAL_ERROR)
+			report.Add(env.filePath, expr.Object.StartPos().Line, expr.Object.EndPos().Line, expr.Object.StartPos().Column, expr.Object.EndPos().Column, "invalid use of 'this' outside of struct scope").SetLevel(report.CRITICAL_ERROR)
 		}
 		return obj
 	} else {

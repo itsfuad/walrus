@@ -88,7 +88,7 @@ func isCastable(src, dest Tc) error {
 	}
 
 	if err != nil {
-		return fmt.Errorf("cannot cast '%s' to '%s'\n%s", srcStr, destStr, report.TreeFormatError(err))
+		return fmt.Errorf("cannot cast '%s' to '%s'\n - %s", srcStr, destStr, err.Error())
 	}
 
 	return fmt.Errorf("cannot cast '%s' to '%s'", srcStr, destStr)
@@ -134,7 +134,15 @@ func checkMissingFields(src Struct, dest Struct) error {
 	}
 
 	if len(errs) > 0 {
-		return errors.New(report.TreeFormatError(errs...).Error())
+		errMsg := "("
+		for i, err := range errs {
+			errMsg += err.Error()
+			if i < len(errs)-1 {
+				errMsg += ", "
+			}
+		}
+		errMsg += ")"
+		return errors.New(errMsg)
 	}
 
 	return nil
