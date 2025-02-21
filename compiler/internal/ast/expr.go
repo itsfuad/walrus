@@ -265,6 +265,22 @@ func (a VarAssignmentExpr) EndPos() lexer.Position {
 	return a.Location.End
 }
 
+type RangeExpr struct {
+	Start Node
+	End   Node
+	Location
+}
+
+func (a RangeExpr) INode() {
+	//empty method implements Node interface
+}
+func (a RangeExpr) StartPos() lexer.Position {
+	return a.Location.Start
+}
+func (a RangeExpr) EndPos() lexer.Position {
+	return a.Location.End
+}
+
 type ArrayLiteral struct {
 	Values []Node
 	Location

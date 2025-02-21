@@ -26,6 +26,7 @@ const (
 	ARRAY        = "array"
 	MAP          = "map"
 	VOID         = "void"
+	RANGE        = "range"
 	USER_DEFINED = "user_defined"
 )
 

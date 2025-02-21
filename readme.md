@@ -22,7 +22,7 @@ Walrus is a tiny and simple programming language designed for simplicity. Its sy
     - Null: `null`
     - Void: `void`
     - Map: `map[key]value`
-    - Maybe: `maybe{type}`
+    - Range: `type..type` for example `i32..i32`
   - **Variable Declaration and Assignment**
     - Mutable variables with `let`
     - Constant variables with `const`
@@ -184,7 +184,7 @@ c[0][0] = 10; // c = [[10, 2], [3, 4], [5, 6]]
 
 ## Map
 ```rs
-let myMap : map[str]i32 = map[str]i32 {
+let myMap : map[str]i32 = $map[str]i32 {
     "a" => 10,
     "b" => 20,
     "c" => 30
@@ -192,26 +192,6 @@ let myMap : map[str]i32 = map[str]i32 {
 
 let a := myMap["a"]; // a = 10
 myMap["a"] = 20; // myMap = {"a": 20, "b": 20, "c": 30}
-```
-
-## Maybe
-Maybe is a type which can be null or the type specified. It is used to handle null values.
-```rs
-let a: maybe{i32} = null; // a can be null or an integer
-
-a = 10; // a can be assigned an integer but the value is still maybe{i32}
-a = null; // a can be assigned null
-
-let b := 12;
-
-//Now to use the value of a, we need to check if it is null or not
-safe a {
-    // when a is not null, this block will be executed
-    b = 23 + a; // b = 33
-} otherwise {
-    // when a is null, this block will be executed
-    b = 23;
-}
 ```
 
 ## Struct
@@ -222,13 +202,13 @@ type Person struct{
 }
 
 //Assign the type with @Name syntax. So we can distinguish between type and variable.
-let p := Person {
+let p := @Person {
     name: "John",
     age: 20
 };
 
 // We could also assign the type with type inference
-let p : Person = Person { // Here 'Person' is the type, @Person is the type instance
+let p : Person = @Person { // Here 'Person' is the type, @Person is the type instance
     name: "John",
     age: 20
 };
@@ -236,7 +216,7 @@ let p : Person = Person { // Here 'Person' is the type, @Person is the type inst
 
 ## Struct property access
 ```rs
-let p := Person {
+let p := @Person {
     name: "John",
     priv age: 20 // Private property
 };
@@ -319,7 +299,7 @@ type FnType fn(a: i32, b: i32) -> i32;
 
 type WrapperInt i32;
 
-let c := Circle {
+let c := @Circle {
     radius: 10.0
 };
 
@@ -396,7 +376,7 @@ impl Person {
     }
 }
 
-let p := Person {
+let p := @Person {
     name: "John",
     age: 20
 };
@@ -408,9 +388,31 @@ fn printPerson(p: Printable) {
 ```
 
 ## Roadmap
+- [x] Variable declaration and assignment
+- [x] Expressions
+- [x] Data structures
+- [x] Conditionals
+- [x] Functions
+- [x] User-defined types
+- [x] Structs
+- [x] Interfaces
+- [x] Unary operators
+- [x] Increment/Decrement operators
+- [x] Assignment operators
+- [x] Grouping
+- [x] Type casting
+- [x] Array
+- [x] Map
+- [x] Range
+- [x] Rich error reporting
+- [x] Branch analysis
 - [ ] For loops
+- [ ] While loops
+- [ ] Switch statements
 - [ ] Imports and modules
+- [ ] Nullable or optional types or pointers or references
 - [ ] Generics
 - [ ] Advanced code generation
+- [ ] Error handling
 
 Stay tuned for updates and contribute to the project!

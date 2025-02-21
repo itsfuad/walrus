@@ -78,6 +78,8 @@ func parseNodeValue(node ast.Node, env *TypeEnvironment) Tc {
 		return checkUnaryExpr(t, env) // value
 	case ast.IncrementalInterface:
 		return checkIncrementalExpr(t, env) // value
+	case ast.RangeExpr:
+		return checkRange(t, env) // value
 	case ast.ArrayLiteral:
 		return evaluateArrayExpr(t, env) // value
 	case ast.Indexable:

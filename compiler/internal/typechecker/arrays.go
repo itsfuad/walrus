@@ -81,3 +81,21 @@ func evaluateArrayExpr(array ast.ArrayLiteral, env *TypeEnvironment) Tc {
 		ArrayType: expectedType,
 	}
 }
+
+// checkRange checks the type of an array range expression.
+func checkRange(arrayRange ast.RangeExpr, env *TypeEnvironment) Tc {
+	start := parseNodeValue(arrayRange.Start, env)
+	end := parseNodeValue(arrayRange.End, env)
+
+	//check start and end are same or not
+	err := validateTypeCompatibility(start, end)
+	if err != nil {
+		report.Add(env.filePath, arrayRange.StartPos().Line, arrayRange.EndPos().Line, arrayRange.StartPos().Column, arrayRange.EndPos().Column, "range start and end must be of the same type").SetLevel(report.NORMAL_ERROR)
+	}
+
+	return Range{
+		DataType:   RANGE_TYPE,
+		RangeStart: start,
+		RangeEnd:   end,
+	}
+}

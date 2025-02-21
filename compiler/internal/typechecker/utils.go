@@ -99,10 +99,29 @@ func evaluateTypeName(dtype ast.DataType, env *TypeEnvironment) Tc {
 		return evalUD(t, env)
 	case ast.StructType:
 		return evalStruct(t, env)
+	case ast.RangeType:
+		return evalRange(t, env)
 	case nil:
 		return NewVoid()
 	default:
 		return evalDefaultType(dtype, env)
+	}
+}
+
+func evalRange(r ast.RangeType, env *TypeEnvironment) Range {
+
+	start := evaluateTypeName(r.RangeStart, env)
+	end := evaluateTypeName(r.RangeEnd, env)
+
+	// type must be same
+	if err := validateTypeCompatibility(start, end); err != nil {
+		report.Add(env.filePath, r.StartPos().Line, r.EndPos().Line, r.StartPos().Column, r.EndPos().Column, "range start and end must be of the same type").SetLevel(report.NORMAL_ERROR)
+	}
+
+	return Range{
+		DataType:   RANGE_TYPE,
+		RangeStart: start,
+		RangeEnd:   end,
 	}
 }
 
@@ -169,7 +188,7 @@ func evalUD(analyzedUD ast.UserDefinedType, env *TypeEnvironment) Tc {
 func evalArray(analyzedArray ast.ArrayType, env *TypeEnvironment) Tc {
 	val := evaluateTypeName(analyzedArray.ArrayType, env)
 	arr := Array{
-		DataType:  builtins.ARRAY,
+		DataType:  ARRAY_TYPE,
 		ArrayType: val,
 	}
 	return arr
@@ -318,6 +337,8 @@ func tcToString(val Tc) string {
 		return fmt.Sprintf("maybe{%s}", tcToString(t.MaybeType))
 	case UserDefined:
 		return tcToString(unwrapType(t.TypeDef))
+	case Range:
+		return fmt.Sprintf("%s..%s", tcToString(t.RangeStart), tcToString(t.RangeEnd))
 	default:
 		if t == nil {
 			return "void"

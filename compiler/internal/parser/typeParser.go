@@ -23,12 +23,36 @@ func typeNUD(kind builtins.TOKEN_KIND, handler typeNUDHandler) {
 	typeNUDLookup[kind] = handler
 }
 
+func typeLED(kind builtins.TOKEN_KIND, bp BINDING_POWER, handler typeLEDHandler) {
+	bpTypeLookups[kind] = bp
+	typeLEDLookup[kind] = handler
+}
+
 func bindTypeLookups() {
 	typeNUD(lexer.IDENTIFIER_TOKEN, parseDataType)
 	typeNUD(lexer.OPEN_BRACKET, parseArrayType)
 	typeNUD(lexer.FUNCTION_TOKEN, parseFunctionType)
 	typeNUD(lexer.MAP_TOKEN, parseMapType)
 	typeNUD(lexer.STRUCT_TOKEN, parseStructType)
+
+	typeLED(lexer.RANGE_TOKEN, PRIMARY_BP, parseRangeType)
+}
+
+func parseRangeType(p *Parser, left ast.DataType, bp BINDING_POWER) ast.DataType {
+
+	p.expect(lexer.RANGE_TOKEN)
+
+	end := parseType(p, DEFAULT_BP)
+
+	return ast.RangeType{
+		TypeName:   builtins.PARSER_TYPE(builtins.RANGE),
+		RangeStart: left,
+		RangeEnd:   end,
+		Location: ast.Location{
+			Start: left.StartPos(),
+			End:   end.EndPos(),
+		},
+	}
 }
 
 func parseMapType(p *Parser) ast.DataType {

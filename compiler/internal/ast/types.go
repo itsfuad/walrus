@@ -193,6 +193,25 @@ func (a MapType) EndPos() lexer.Position {
 	return a.Location.End
 }
 
+type RangeType struct {
+	TypeName   builtins.PARSER_TYPE
+	RangeStart DataType
+	RangeEnd   DataType
+	Location
+}
+
+func (a RangeType) Type() builtins.PARSER_TYPE {
+	return a.TypeName
+}
+
+func (a RangeType) StartPos() lexer.Position {
+	return a.Location.Start
+}
+
+func (a RangeType) EndPos() lexer.Position {
+	return a.Location.End
+}
+
 type UserDefinedType struct {
 	TypeName  builtins.PARSER_TYPE
 	AliasName string

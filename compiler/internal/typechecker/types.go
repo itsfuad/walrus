@@ -24,6 +24,7 @@ const (
 	STRUCT_TYPE       builtins.TC_TYPE = builtins.STRUCT
 	INTERFACE_TYPE    builtins.TC_TYPE = builtins.INTERFACE
 	ARRAY_TYPE        builtins.TC_TYPE = builtins.ARRAY
+	RANGE_TYPE        builtins.TC_TYPE = builtins.RANGE
 	MAP_TYPE          builtins.TC_TYPE = builtins.MAP
 	USER_DEFINED_TYPE builtins.TC_TYPE = builtins.USER_DEFINED
 	BLOCK_TYPE        builtins.TC_TYPE = "block"
@@ -138,6 +139,16 @@ type Struct struct {
 }
 
 func (t Struct) DType() builtins.TC_TYPE {
+	return t.DataType
+}
+
+type Range struct {
+	DataType   builtins.TC_TYPE
+	RangeStart Tc
+	RangeEnd   Tc
+}
+
+func (t Range) DType() builtins.TC_TYPE {
 	return t.DataType
 }
 

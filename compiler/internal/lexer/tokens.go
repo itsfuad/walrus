@@ -44,6 +44,8 @@ const (
 	INTERFACE_TOKEN builtins.TOKEN_KIND = builtins.INTERFACE
 	MAP_TOKEN       builtins.TOKEN_KIND = builtins.MAP
 
+	//array range operator
+	RANGE_TOKEN builtins.TOKEN_KIND = ".."
 	//increment and decrement
 	PLUS_PLUS_TOKEN   builtins.TOKEN_KIND = "++"
 	MINUS_MINUS_TOKEN builtins.TOKEN_KIND = "--"

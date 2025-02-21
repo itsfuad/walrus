@@ -63,6 +63,12 @@ impl Point {
 }
 
 //implementing interface
-let iShape : IShape = @Point{x: 23, y: 2.6}; // Point must have area function to implement IShape
+let iShape : IShape = @Point{x: 23, y: 2}; // Point must have area function to implement IShape
 
 let float : f32 = 3 as f32;
+
+let oneDArray1 := [1, 2, 3, 4, 5]; //array of integers
+let range1 := 1..10; // range of integers
+let range2 : i32..i32 = 1..10; // range of integers
+
+let twoDArray := [[1, 2, 3], [4, 5, 6]]; //2D array

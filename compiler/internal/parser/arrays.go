@@ -41,6 +41,20 @@ func parseArrayExpr(p *Parser) ast.Node {
 	}
 }
 
+func parseRange(p *Parser, left ast.Node, bp BINDING_POWER) ast.Node {
+	start := left.StartPos()
+	p.expect(lexer.RANGE_TOKEN)
+	end := parseExpr(p, DEFAULT_BP)
+	return ast.RangeExpr{
+		Start: left,
+		End:   end,
+		Location: ast.Location{
+			Start: start,
+			End:   end.EndPos(),
+		},
+	}
+}
+
 // parseIndexable parses an array access expression from the input.
 // It expects the current token to be an opening bracket '[' and parses
 // the index expression inside the brackets. The function returns an
